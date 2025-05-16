@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://drrarjj0668n"]
+[gd_scene load_steps=6 format=3 uid="uid://drrarjj0668n"]
 
 [ext_resource type="Script" uid="uid://bp5vvj23w57js" path="res://addons/curved_lines_2d/svg_importer_dock.gd" id="1_gt4al"]
 [ext_resource type="LabelSettings" uid="uid://bspk1rkq1cmhx" path="res://addons/curved_lines_2d/info_label_settings.tres" id="2_rycm0"]
+[ext_resource type="PackedScene" uid="uid://dwns40mbgt82s" path="res://addons/curved_lines_2d/scalable_vector_shape_edit_tab.tscn" id="3_0eedo"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rycm0"]
 content_margin_left = 10.0
@@ -25,107 +26,109 @@ border_width_bottom = 4
 border_color = Color(0.439216, 0.729412, 0.980392, 1)
 border_blend = true
 
-[node name="SVGImporterDock" type="Control"]
-layout_mode = 3
+[node name="SVGImporterDock" type="TabContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+current_tab = 0
 script = ExtResource("1_gt4al")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Import SVG File" type="HBoxContainer" parent="."]
+layout_mode = 2
 theme_override_constants/separation = 20
+metadata/_tab_index = 0
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="Import SVG File"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2"]
+[node name="Label" type="Label" parent="Import SVG File/VBoxContainer2"]
 layout_mode = 2
 text = "Import Settings"
 
-[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/VBoxContainer2"]
+[node name="PanelContainer" type="PanelContainer" parent="Import SVG File/VBoxContainer2"]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_rycm0")
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/PanelContainer"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="Import SVG File/VBoxContainer2/PanelContainer"]
 layout_mode = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer2"]
+[node name="ScrollContainer" type="ScrollContainer" parent="Import SVG File/VBoxContainer2/PanelContainer/VBoxContainer2"]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 10.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Import SVG File/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer"]
 layout_mode = 2
 
-[node name="ImportCollisionPolygonsCheckBox" type="CheckBox" parent="HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer"]
-layout_mode = 2
-text = "Import collision polygons"
-
-[node name="ImportCollisionPolygonsForAllShapesCheckBox" type="CheckBox" parent="HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer"]
-visible = false
-layout_mode = 2
-text = "Also import strokes as collision polygon"
-
-[node name="KeepDrawablePath2DNodeCheckBox" type="CheckBox" parent="HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer"]
+[node name="KeepDrawablePath2DNodeCheckBox" type="CheckBox" parent="Import SVG File/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 button_pressed = true
-text = "Use DrawablePath2D to manage Bezier Curves of imported shapes"
+text = "Import as ScalableVectorShape2D"
 
-[node name="LockShapesCheckBox" type="CheckBox" parent="HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer"]
+[node name="LockShapesCheckBox" type="CheckBox" parent="Import SVG File/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 button_pressed = true
 text = "Lock imported shapes in editor"
 
-[node name="AntialiasedCheckBox" type="CheckBox" parent="HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer"]
+[node name="AntialiasedCheckBox" type="CheckBox" parent="Import SVG File/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 tooltip_text = "It's probably better to use project settings for this."
 text = "Flag on antialiased for Polygon2D and Line2D*"
 
-[node name="OpenFileDialogButton" type="Button" parent="HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer2"]
+[node name="ImportCollisionPolygonsCheckBox" type="CheckBox" parent="Import SVG File/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "Import collision polygons"
+
+[node name="ImportCollisionPolygonsForAllShapesCheckBox" type="CheckBox" parent="Import SVG File/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+text = "Also import strokes as collision polygon"
+
+[node name="OpenFileDialogButton" type="Button" parent="Import SVG File/VBoxContainer2/PanelContainer/VBoxContainer2"]
 layout_mode = 2
 size_flags_vertical = 10
 text = "Pick a file to import"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Import SVG File"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="Import SVG File/VBoxContainer"]
 layout_mode = 2
 text = "SVG Import Log"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="Import SVG File/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_gt4al")
 
-[node name="ImportLogContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/ScrollContainer"]
+[node name="ImportLogContainer" type="VBoxContainer" parent="Import SVG File/VBoxContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = -5
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/ScrollContainer/ImportLogContainer"]
+[node name="Label" type="Label" parent="Import SVG File/VBoxContainer/ScrollContainer/ImportLogContainer"]
 layout_mode = 2
 size_flags_vertical = 6
 text = " - Dag/Drop an svg-file here to start import -"
 label_settings = ExtResource("2_rycm0")
 horizontal_alignment = 1
 
-[connection signal="toggled" from="HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer/ImportCollisionPolygonsCheckBox" to="." method="_on_import_collision_polygons_check_box_toggled"]
-[connection signal="toggled" from="HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer/ImportCollisionPolygonsForAllShapesCheckBox" to="." method="_on_import_collision_polygons_for_all_shapes_check_box_toggled"]
-[connection signal="toggled" from="HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer/KeepDrawablePath2DNodeCheckBox" to="." method="_on_keep_drawable_path_2d_node_check_box_toggled"]
-[connection signal="toggled" from="HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer/LockShapesCheckBox" to="." method="_on_lock_shapes_check_box_toggled"]
-[connection signal="toggled" from="HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer/AntialiasedCheckBox" to="." method="_on_antialiased_check_box_toggled"]
-[connection signal="pressed" from="HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer2/OpenFileDialogButton" to="." method="_on_open_file_dialog_button_pressed"]
+[node name="Scalable Vector Shapes" parent="." instance=ExtResource("3_0eedo")]
+visible = false
+layout_mode = 2
+
+[connection signal="toggled" from="Import SVG File/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer/KeepDrawablePath2DNodeCheckBox" to="." method="_on_keep_drawable_path_2d_node_check_box_toggled"]
+[connection signal="toggled" from="Import SVG File/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer/LockShapesCheckBox" to="." method="_on_lock_shapes_check_box_toggled"]
+[connection signal="toggled" from="Import SVG File/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer/AntialiasedCheckBox" to="." method="_on_antialiased_check_box_toggled"]
+[connection signal="toggled" from="Import SVG File/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer/ImportCollisionPolygonsCheckBox" to="." method="_on_import_collision_polygons_check_box_toggled"]
+[connection signal="toggled" from="Import SVG File/VBoxContainer2/PanelContainer/VBoxContainer2/ScrollContainer/VBoxContainer/ImportCollisionPolygonsForAllShapesCheckBox" to="." method="_on_import_collision_polygons_for_all_shapes_check_box_toggled"]
+[connection signal="pressed" from="Import SVG File/VBoxContainer2/PanelContainer/VBoxContainer2/OpenFileDialogButton" to="." method="_on_open_file_dialog_button_pressed"]
+[connection signal="toggle_editing" from="Scalable Vector Shapes" to="." method="_on_enable_editing_checkbox_toggled"]
+[connection signal="toggle_hints" from="Scalable Vector Shapes" to="." method="_on_enable_hints_checkbox_toggled"]

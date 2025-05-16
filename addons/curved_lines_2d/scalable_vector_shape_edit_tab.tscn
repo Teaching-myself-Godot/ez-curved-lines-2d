@@ -1,0 +1,160 @@
+[gd_scene load_steps=2 format=3 uid="uid://dwns40mbgt82s"]
+
+[ext_resource type="Script" uid="uid://tl3hcapnk7lb" path="res://addons/curved_lines_2d/scalable_vector_shape_edit_tab.gd" id="1_nt5in"]
+
+[node name="ScalableVectorShapeEditTab" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+script = ExtResource("1_nt5in")
+metadata/_tab_index = 1
+metadata/_edit_vertical_guides_ = [170.0]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 13
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+custom_minimum_size = Vector2(157, 0)
+layout_mode = 2
+text = "Editor Settings"
+
+[node name="EnableEditingCheckbox" type="CheckBox" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+button_pressed = true
+text = "Enable ScalableVectorShape2D Editing in 2D Viewport"
+
+[node name="EnableHintsCheckbox" type="CheckBox" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+button_pressed = true
+text = "Show Edit Hints in 2D Viewport"
+
+[node name="HSeparator2" type="HSeparator" parent="."]
+layout_mode = 2
+
+[node name="RectBuilderContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RectBuilderContainer"]
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+text = "Create Rectangle"
+
+[node name="WidthSliderContainer" type="PanelContainer" parent="RectBuilderContainer"]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HeightSliderContainer" type="PanelContainer" parent="RectBuilderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="XRadiusSliderContainer" type="PanelContainer" parent="RectBuilderContainer"]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="YRadiusSliderContainer" type="PanelContainer" parent="RectBuilderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StrokeWidthContainer" type="PanelContainer" parent="RectBuilderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RectBuilderContainer2" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="FillLabel" type="Label" parent="RectBuilderContainer2"]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Fill:"
+
+[node name="FillPickerButton" type="ColorPickerButton" parent="RectBuilderContainer2"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Fill"
+
+[node name="StrokeLabel" type="Label" parent="RectBuilderContainer2"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Stroke"
+
+[node name="StrokePickerButton" type="ColorPickerButton" parent="RectBuilderContainer2"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Fill"
+color = Color(1, 1, 1, 1)
+
+[node name="CreateRectButton" type="Button" parent="RectBuilderContainer2"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Create Rectangle"
+
+[node name="HSeparator" type="HSeparator" parent="."]
+layout_mode = 2
+
+[node name="EllipseBuilderContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="EllipseBuilderContainer"]
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+text = "Create Circle / Ellipse"
+
+[node name="EllipseXRadiusSliderContainer" type="PanelContainer" parent="EllipseBuilderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EllipseYRadiusSliderContainer" type="PanelContainer" parent="EllipseBuilderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EllipseStrokeWidthContainer" type="PanelContainer" parent="EllipseBuilderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EllipseBuilderContainer2" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="FillLabel" type="Label" parent="EllipseBuilderContainer2"]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Fill:"
+
+[node name="EllipseFillPickerButton" type="ColorPickerButton" parent="EllipseBuilderContainer2"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Fill"
+
+[node name="StrokeLabel" type="Label" parent="EllipseBuilderContainer2"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Stroke"
+
+[node name="EllipseStrokePickerButton" type="ColorPickerButton" parent="EllipseBuilderContainer2"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Fill"
+color = Color(1, 1, 1, 1)
+
+[node name="CreateCircleButton" type="Button" parent="EllipseBuilderContainer2"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+text = "Create Circle / Ellipse"
+
+[node name="HSeparator3" type="HSeparator" parent="."]
+layout_mode = 2
+
+[connection signal="toggled" from="HBoxContainer/EnableEditingCheckbox" to="." method="_on_enable_editing_checkbox_toggled"]
+[connection signal="toggled" from="HBoxContainer/EnableHintsCheckbox" to="." method="_on_enable_hints_checkbox_toggled"]
+[connection signal="pressed" from="RectBuilderContainer2/CreateRectButton" to="." method="_on_create_rect_button_pressed"]
+[connection signal="pressed" from="EllipseBuilderContainer2/CreateCircleButton" to="." method="_on_create_circle_button_pressed"]

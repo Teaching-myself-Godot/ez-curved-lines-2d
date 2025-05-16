@@ -175,16 +175,41 @@ My humble invitation to you is to try it out, give feedback, suggest improvement
 
 ### Should have
 - [x] Better path attribute string parsing (support leading and trailing whitespace, newlines)
-- [ ] Apply paint-order to imported CollisionPolygon2D (treat it as a guide)
-- [ ] It should be easier to select DrawableCurve2D in the 2D editor window
-- [ ] Draw a more subtle path in stead of hiding the Path2D
-- [ ] Set 'offset' from editor, repositioning path around this new position (hijack the offset-button?)
+- [x] It should be easier to select ScalableVectorShape2D in the 2D editor window
+- [x] Set 'offset' from editor, repositioning path around this new position (hijack the offset-button?)
+- [x] Draw a more subtle path in stead of hiding the Path2D
+- [x] Draw handles for ScalableVectorShape2D bezier manipulation (like inkscape)
+- [x] Make handles interactable with mouse, closed shapes should merge begin- and endpoint (like inkscape does)
+- [x] BUG FIXES: missing / empty curve
+- [x] Right click removes a (control-) point from the selected shape
+- [x] Show a hint on closest point on curve if distance to that point is smaller that N pixels (N=15)
+- [x] Determine on which curve segment that point resides
+- [x] Double click adds a point to the selected shape's curve at either on-segment hint-point (if present) or mouse position
+- [x] Show closed curve start and end index as follows: (0 ∞ N)
+- [x] Show gui-hints next to mouse pointer ("double click adds node, hold shift does X, etc")
+- [x] Draw unselected curve
+- [x] Toggle closed curve on double click
+- [x] Drag to change segment curve using quadratic bezier
+- [x] Convert DrawablePath2D's to ScalableVectorShape2D's with button
+- [x] Update SVG importer settings
+- [x] Rename dock to "Scalable Vector Shapes 2D"
+- [x] Add a Show/Hide GUI hints toggle in edit dock
+- [x] Enable/Disable editing toggle in edit dock
+- [x] Create Rect and Ellipse in editor tab in dock
+- [ ] New icon for ScalableVectorShape2D node
+- [ ] New name for the plugin
+- [ ] Updated manual in README
+
 
 ### Could have
-- [ ] Add button to editor to call center node position func
-- [ ] Helper nodes for gradient from-, stop- and to-handles (Node2D @tool, use _draw only in edit mode)
-- [ ] SVG Import log: add button to select node with problem
+- [ ] Curve local to scene in edit dock
+- [ ] More options in edit tab of dock (fill props/gradient? stroke props?)
 - [ ] Import inkscape pivot point to override the centered position with
+- [ ] Expand bottom dock to supply primitive shapes: rect and circle
+- [ ] Apply paint-order to imported CollisionPolygon2D (treat it as a guide)
+- [ ] Add button to editor to call center node position func
+- [ ] Helper nodes for gradient from-, stop- and to-handles
+- [ ] SVG Import log: add button to select node with problem
 - [ ] SVG Import log: show/hide different log levels, clear log
 - [ ] Import `<text>` (with embedded fonts? reference to ttf with a dialog?)
 
@@ -194,4 +219,4 @@ My humble invitation to you is to try it out, give feedback, suggest improvement
 - [ ] Gradient fills for Line2D strokes (would probably require a shader)
 - [ ] Gradient skew, rotate, fx/fy/fr
 - [ ] Pattern fills
-- [ ] Undo/Redo (Undo = delete SvgImport node)
+- [ ] Undo/Redo SVG Import (Undo = delete SvgImport node)

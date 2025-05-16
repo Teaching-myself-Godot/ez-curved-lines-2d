@@ -1,7 +1,8 @@
-## A custom node that extends Path2D so it can be drawn as a Line2D
-## Original adapted code: https://www.hedberggames.com/blog/rendering-curves-in-godot
 @tool
 extends Path2D
+## A custom node that extends Path2D so it can be drawn as a Line2D
+## Original adapted code: https://www.hedberggames.com/blog/rendering-curves-in-godot
+## @deprecated: Use [ScalableVectorShape2D] instead.
 class_name  DrawablePath2D
 
 ## Emitted when a new set of points was calculated for a connected Line2D, Polygon2D, or CollisionPolygon2D
@@ -37,14 +38,14 @@ signal assigned_node_changed()
 ## Controls the paramaters used to divide up the line  in segments.
 ## These settings are prefilled with the default values.
 @export_group("Tesselation settings")
-## Controls how many subdivisions a curve segment may face before it is considered approximate enough. 
-## Each subdivision splits the segment in half, so the default 5 stages may mean up to 32 subdivisions 
+## Controls how many subdivisions a curve segment may face before it is considered approximate enough.
+## Each subdivision splits the segment in half, so the default 5 stages may mean up to 32 subdivisions
 ## per curve segment. Increase with care!
 @export_range(1, 10) var max_stages : int = 5:
 	set(_max_stages):
 		max_stages = _max_stages
 		assigned_node_changed.emit()
-## Controls how many degrees the midpoint of a segment may deviate from the real curve, before the 
+## Controls how many degrees the midpoint of a segment may deviate from the real curve, before the
 ## segment has to be subdivided.
 @export_range(0.0, 180.0) var tolerance_degrees := 4.0:
 	set(_tolerance_degrees):
@@ -97,7 +98,7 @@ func _on_assigned_node_changed():
 # Redraw the line based on the new curve, using its tesselate method
 func curve_changed():
 	if (not is_instance_valid(line) and not is_instance_valid(polygon)
-			and not is_instance_valid(collision_polygon) 
+			and not is_instance_valid(collision_polygon)
 			and not path_changed.has_connections()):
 		# guard against needlessly invoking expensive tesselate operation
 		return
@@ -119,7 +120,7 @@ func curve_changed():
 func get_bounding_rect() -> Rect2:
 	var points := curve.tessellate(max_stages, tolerance_degrees)
 	if points.size() < 1:
-		# Cannot calculate a center for 0 points 
+		# Cannot calculate a center for 0 points
 		return Rect2(Vector2.ZERO, Vector2.ZERO)
 	var minx := INF
 	var miny := INF

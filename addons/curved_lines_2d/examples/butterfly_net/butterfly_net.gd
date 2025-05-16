@@ -78,4 +78,4 @@ func _handle_update(target_net_cap_position : Vector2, net_curve_handle_position
 		net_curve.set_point_out(0, _net_out_curve_handle_pos_orig)
 	else:
 		net_curve.set_point_out(0, -_net_out_curve_handle_pos_orig)
-	
+

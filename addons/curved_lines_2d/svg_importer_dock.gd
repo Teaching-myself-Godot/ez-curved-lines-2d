@@ -1,6 +1,13 @@
 @tool
 extends Control
 
+class_name SvgImporterDock
+
+signal toggle_gui_editing(toggled_on : bool)
+signal toggle_gui_hints(toggled_on : bool)
+
+const IMPORT_TAB_NAME :=  "Import SVG File"
+const EDIT_TAB_NAME := "Scalable Vector Shapes"
 # Fraction of a radius for a bezier control point
 const R_TO_CP = 0.5523
 const SUPPORTED_STYLES : Array[String] = ["opacity", "stroke", "stroke-width", "stroke-opacity",
@@ -45,6 +52,7 @@ func _enter_tree() -> void:
 	EditorInterface.get_base_control().add_child(import_file_dialog)
 	warning_dialog = AcceptDialog.new()
 	EditorInterface.get_base_control().add_child(warning_dialog)
+	find_child(EDIT_TAB_NAME).warning_dialog = warning_dialog
 
 
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
@@ -74,6 +82,7 @@ func log_message(msg : String, log_level : LogLevel = LogLevel.INFO) -> void:
 
 
 func _drop_data(at_position: Vector2, data: Variant) -> void:
+	find_child(IMPORT_TAB_NAME).show()
 	if _can_drop_data(at_position, data):
 		var svg_root = _load_svg(data["files"][0])
 
@@ -438,12 +447,11 @@ func process_svg_path(element:XMLParser, current_node : Node2D, scene_root : Nod
 func create_path2d(path_name: String, parent: Node, curve: Curve2D, transform: Transform2D,
 						style: Dictionary, scene_root: Node2D, gradients : Array[Dictionary],
 						is_closed := false, pos_override := Vector2.ZERO) -> void:
-	var new_path = DrawablePath2D.new()
+	var new_path = ScalableVectorShape2D.new()
 	new_path.name = path_name
 	new_path.position = pos_override
 	new_path.curve = curve
 	new_path.lock_assigned_shapes = keep_drawable_path_node and lock_shapes
-	new_path.self_modulate = Color.TRANSPARENT
 	if pos_override == Vector2.ZERO:
 		new_path.set_position_to_center()
 
@@ -485,7 +493,7 @@ func create_path2d(path_name: String, parent: Node, curve: Curve2D, transform: T
 		add_fill_to_path(new_path, style, scene_root, gradients, gradient_point_parent)
 
 	# FIXME: Apply paint-order to imported CollisionPolygon2D (treat it as a guide)
-	if (import_collision_polygons and 
+	if (import_collision_polygons and
 			("fill" in style or import_collision_polygons_for_all_shapes)):
 		var poly := CollisionPolygon2D.new()
 		new_path.add_child(poly, true)
@@ -533,7 +541,7 @@ func add_stroke_to_path(new_path : Node2D, style: Dictionary, scene_root : Node2
 		line.closed = is_closed
 
 
-func add_fill_to_path(new_path : DrawablePath2D, style: Dictionary, scene_root : Node2D,
+func add_fill_to_path(new_path : ScalableVectorShape2D, style: Dictionary, scene_root : Node2D,
 		gradients : Array[Dictionary], gradient_point_parent : Node2D):
 
 	if style.has("fill") and style["fill"] != "none":
@@ -556,7 +564,7 @@ func add_fill_to_path(new_path : DrawablePath2D, style: Dictionary, scene_root :
 		new_path.polygon = polygon
 
 
-func add_gradient_to_fill(new_path : DrawablePath2D, svg_gradient: Dictionary, polygon : Polygon2D,
+func add_gradient_to_fill(new_path : ScalableVectorShape2D, svg_gradient: Dictionary, polygon : Polygon2D,
 		scene_root : Node2D, gradients : Array[Dictionary], gradient_point_parent : Node2D) -> void:
 	if "xlink:href" in svg_gradient:
 		svg_gradient.merge(get_gradient_by_href(svg_gradient["xlink:href"], gradients), false)
@@ -601,7 +609,7 @@ func add_gradient_to_fill(new_path : DrawablePath2D, svg_gradient: Dictionary, p
 	polygon.texture = texture
 
 
-func apply_gradient(new_path : DrawablePath2D, svg_gradient: Dictionary, polygon : Polygon2D,
+func apply_gradient(new_path : ScalableVectorShape2D, svg_gradient: Dictionary, polygon : Polygon2D,
 		scene_root : Node2D, gradients : Array[Dictionary], gradient_point_parent : Node2D, box : Rect2,
 		texture : GradientTexture2D, fill_from : Vector2, fill_to : Vector2, gradient_transform : Transform2D) -> void:
 	var gradient_transform_node = create_helper_node("Gradient(%s)" % new_path.name, gradient_point_parent, scene_root, Vector2.ZERO, gradient_transform)
@@ -722,3 +730,11 @@ func _on_antialiased_check_box_toggled(toggled_on: bool) -> void:
 
 func _on_open_file_dialog_button_pressed() -> void:
 	import_file_dialog.popup_file_dialog()
+
+
+func _on_enable_editing_checkbox_toggled(toggled_on: bool) -> void:
+	toggle_gui_editing.emit(toggled_on)
+
+
+func _on_enable_hints_checkbox_toggled(toggled_on: bool) -> void:
+	toggle_gui_hints.emit(toggled_on)
