@@ -1,10 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://bqudr864ptf7r"]
+[gd_scene load_steps=2 format=3 uid="uid://bqudr864ptf7r"]
 
-[ext_resource type="Texture2D" uid="uid://cc8salyqmquir" path="res://addons/curved_lines_2d/Collapse.svg" id="1_vcm5l"]
 [ext_resource type="Script" uid="uid://1a3nrkdo50tg" path="res://addons/curved_lines_2d/assign_collision_inspector_form.gd" id="1_wi77q"]
-
-[sub_resource type="FontVariation" id="FontVariation_wi77q"]
-variation_embolden = 0.8
 
 [node name="AssignCollisionInspectorForm" type="VBoxContainer"]
 anchors_preset = 15
@@ -13,30 +9,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_wi77q")
-
-[node name="HSeparator2" type="HSeparator" parent="."]
-layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="TitleButton" type="Button" parent="."]
-layout_mode = 2
-focus_mode = 0
-theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = SubResource("FontVariation_wi77q")
-toggle_mode = true
-button_pressed = true
-text = "Collision Polygon"
-icon = ExtResource("1_vcm5l")
-alignment = 0
 
 [node name="ButtonContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
@@ -81,6 +53,5 @@ tooltip_text = "Click on this button to select the CollisionPolygon2D node that 
 Use this for advanced features which are already built-in into godot."
 text = "Edit CollisionPolygon2D"
 
-[connection signal="toggled" from="TitleButton" to="." method="_on_title_button_toggled"]
 [connection signal="pressed" from="ButtonContainer/CreateCollisionButton" to="." method="_on_create_collision_button_pressed"]
 [connection signal="pressed" from="ButtonContainer2/GotoCollisionButton" to="." method="_on_goto_collision_button_pressed"]

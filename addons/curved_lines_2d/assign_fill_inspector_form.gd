@@ -6,10 +6,6 @@ class_name AssignFillInspectorForm
 var scalable_vector_shape_2d : ScalableVectorShape2D
 var create_button : Button
 var select_button : Button
-var title_button : Button
-var collapse_icon : Texture2D
-var expand_icon : Texture2D
-var collapsible_siblings : Array[Node]
 var color_button : ColorPickerButton
 
 var remove_gradient_toggle_button : Button
@@ -20,11 +16,8 @@ var other_texture_toggle_button : Button
 func _enter_tree() -> void:
 	if not is_instance_valid(scalable_vector_shape_2d):
 		return
-	collapse_icon = preload("res://addons/curved_lines_2d/Collapse.svg")
-	expand_icon = preload("res://addons/curved_lines_2d/Expand.svg")
 	create_button = find_child("CreateFillButton")
 	select_button = find_child("GotoPolygon2DButton")
-	title_button = find_child("TitleButton")
 	color_button = find_child("ColorPickerButton")
 	remove_gradient_toggle_button = find_child("RemoveGradientToggleButton")
 	linear_gradient_toggle_button = find_child("LinearGradientToggleButton")
@@ -32,7 +25,6 @@ func _enter_tree() -> void:
 	other_texture_toggle_button = find_child("OtherTextureToggleButton")
 	if 'assigned_node_changed' in scalable_vector_shape_2d:
 		scalable_vector_shape_2d.assigned_node_changed.connect(_on_svs_assignment_changed)
-	collapsible_siblings = get_children().filter(func(x): return x != title_button and not x is Label)
 	_on_svs_assignment_changed()
 	_initialize_keyframe_capabilities()
 
@@ -83,11 +75,7 @@ func _on_svs_assignment_changed() -> void:
 func _on_color_picker_button_color_changed(color: Color) -> void:
 	if not is_instance_valid(scalable_vector_shape_2d.polygon):
 		return
-	var undo_redo = EditorInterface.get_editor_undo_redo()
-	undo_redo.create_action("Adjust Polygon2D color for %s" % str(scalable_vector_shape_2d))
-	undo_redo.add_do_property(scalable_vector_shape_2d.polygon, 'color', color)
-	undo_redo.add_undo_property(scalable_vector_shape_2d.polygon, 'color', scalable_vector_shape_2d.polygon.color)
-	undo_redo.commit_action()
+	scalable_vector_shape_2d.polygon.color = color
 
 
 func _on_goto_polygon_2d_button_pressed() -> void:
@@ -118,18 +106,6 @@ func _on_create_fill_button_pressed():
 	undo_redo.commit_action()
 
 
-func _on_title_button_toggled(toggled_on: bool) -> void:
-	if toggled_on:
-		title_button.icon = collapse_icon
-		for n in collapsible_siblings:
-			n.show()
-		_on_svs_assignment_changed()
-	else:
-		title_button.icon = expand_icon
-		for n in collapsible_siblings:
-			n.hide()
-
-
 func _set_texture(texture : Texture2D, texture_offset := Vector2.ZERO) -> void:
 	var undo_redo = EditorInterface.get_editor_undo_redo()
 	undo_redo.create_action("Set texture for %s" % str(scalable_vector_shape_2d))
@@ -143,13 +119,23 @@ func _set_texture(texture : Texture2D, texture_offset := Vector2.ZERO) -> void:
 
 
 func _update_stop_color(idx : int, color : Color) -> void:
-	var new_colors = scalable_vector_shape_2d.polygon.texture.gradient.colors.duplicate()
-	new_colors[idx] = color
+	scalable_vector_shape_2d.polygon.texture.gradient.colors[idx] = color
+
+
+func _handle_stop_color_undo_redo_action(idx : int, btn : ColorPickerButton, toggled_on : bool) -> void:
 	var undo_redo = EditorInterface.get_editor_undo_redo()
-	undo_redo.create_action("Set stop color for %s" % str(scalable_vector_shape_2d))
-	undo_redo.add_do_property(scalable_vector_shape_2d.polygon.texture.gradient, 'colors', new_colors)
-	undo_redo.add_undo_property(scalable_vector_shape_2d.polygon.texture.gradient, 'colors', scalable_vector_shape_2d.polygon.texture.gradient.colors)
-	undo_redo.commit_action()
+	if toggled_on:
+		undo_redo.create_action("Set stop color for %s" % str(scalable_vector_shape_2d))
+		undo_redo.add_undo_property(scalable_vector_shape_2d.polygon.texture.gradient, 'colors',
+				scalable_vector_shape_2d.polygon.texture.gradient.colors)
+		undo_redo.add_undo_property(btn, 'color',
+				scalable_vector_shape_2d.polygon.texture.gradient.colors[idx])
+	else:
+		var new_colors = scalable_vector_shape_2d.polygon.texture.gradient.colors.duplicate()
+		new_colors[idx] = btn.color
+		undo_redo.add_do_property(scalable_vector_shape_2d.polygon.texture.gradient, 'colors', new_colors)
+		undo_redo.add_do_property(btn, 'color', btn.color)
+		undo_redo.commit_action()
 
 
 func _on_remove_gradient_toggle_button_button_down() -> void:
@@ -179,6 +165,7 @@ func _set_gradient_stop_color_buttons() -> void:
 		new_button.color = color
 		container.add_child(new_button)
 		new_button.color_changed.connect(func(c): _update_stop_color(idx, c))
+		new_button.toggled.connect(func(toggled_on): _handle_stop_color_undo_redo_action(idx, new_button, toggled_on))
 		new_button.custom_minimum_size = Vector2(40, 40)
 
 
@@ -261,3 +248,15 @@ func _on_batch_insert_gradient_key_frame_button_pressed() -> void:
 		track_position, p2d.texture.fill_to)
 
 	undo_redo.commit_action()
+
+
+func _on_color_picker_button_toggled(toggled_on: bool) -> void:
+	if not is_instance_valid(scalable_vector_shape_2d.line):
+		return
+	var undo_redo = EditorInterface.get_editor_undo_redo()
+	if toggled_on:
+		undo_redo.create_action("Adjust Polygon2D color for %s" % str(scalable_vector_shape_2d))
+		undo_redo.add_undo_property(scalable_vector_shape_2d.polygon, 'color', scalable_vector_shape_2d.polygon.color)
+	else:
+		undo_redo.add_do_property(scalable_vector_shape_2d.polygon, 'color', color_button.color)
+		undo_redo.commit_action(false)

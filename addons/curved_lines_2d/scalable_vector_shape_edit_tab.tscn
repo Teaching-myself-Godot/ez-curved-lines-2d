@@ -98,7 +98,8 @@ size_flags_horizontal = 3
 [node name="CreateEmptyShapeButton" type="Button" parent="VBoxContainer/DrawSettingsContainer"]
 custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
-text = "Create Empty Shape"
+tooltip_text = "Will create a ScalableVectorShape2D with zero points"
+text = "Create Empty Path"
 
 [node name="DrawSettingsContainer2" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -253,7 +254,11 @@ layout_mode = 2
 [node name="Label" type="Label" parent="VBoxContainer/RectBuilderContainer"]
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
-text = "Create Rectangle"
+tooltip_text = "Create a Rectangle as:
+- ScalableRect2D: a primitive rect, which extends from ScalableVectorShape2D (easier to edit)
+ - ScalableVectorShape2D (editable as a path)"
+mouse_filter = 0
+text = "Create Rectangle*"
 
 [node name="WidthSliderContainer" type="PanelContainer" parent="VBoxContainer/RectBuilderContainer"]
 custom_minimum_size = Vector2(30, 0)
@@ -274,10 +279,18 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="CreateRectButton" type="Button" parent="VBoxContainer/RectBuilderContainer"]
-custom_minimum_size = Vector2(180, 0)
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 size_flags_horizontal = 8
+tooltip_text = "Create a new ScalableRect2D"
 text = "Create Rectangle"
+
+[node name="CreateRectAsPathButton" type="Button" parent="VBoxContainer/RectBuilderContainer"]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+tooltip_text = "Create a new Rectangle as a ScalableVectorShape2D"
+text = "Create Path"
 
 [node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
 layout_mode = 2
@@ -288,7 +301,11 @@ layout_mode = 2
 [node name="Label" type="Label" parent="VBoxContainer/EllipseBuilderContainer"]
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
-text = "Create Circle / Ellipse"
+tooltip_text = "Create an Ellipse as:
+- ScalableEllipse2D: a primitive ellipse, which extends from ScalableVectorShape2D (easier to edit)
+ - ScalableVectorShape2D (editable as a path)"
+mouse_filter = 0
+text = "Create Ellipse*"
 
 [node name="EllipseXRadiusSliderContainer" type="PanelContainer" parent="VBoxContainer/EllipseBuilderContainer"]
 layout_mode = 2
@@ -298,10 +315,15 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CreateCircleButton" type="Button" parent="VBoxContainer/EllipseBuilderContainer"]
-custom_minimum_size = Vector2(180, 0)
+[node name="CreateEllipseButton" type="Button" parent="VBoxContainer/EllipseBuilderContainer"]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
-text = "Create Circle / Ellipse"
+text = "Create Ellipse"
+
+[node name="CreateCircleButton" type="Button" parent="VBoxContainer/EllipseBuilderContainer"]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+text = "Create Path"
 
 [node name="HSeparator3" type="HSeparator" parent="VBoxContainer"]
 layout_mode = 2
@@ -333,6 +355,12 @@ Right click to copy this link"
 [connection signal="mouse_entered" from="VBoxContainer/RectBuilderContainer/CreateRectButton" to="." method="_on_create_rect_button_mouse_entered"]
 [connection signal="mouse_exited" from="VBoxContainer/RectBuilderContainer/CreateRectButton" to="." method="_on_create_rect_button_mouse_exited"]
 [connection signal="pressed" from="VBoxContainer/RectBuilderContainer/CreateRectButton" to="." method="_on_create_rect_button_pressed"]
+[connection signal="mouse_entered" from="VBoxContainer/RectBuilderContainer/CreateRectAsPathButton" to="." method="_on_create_rect_button_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/RectBuilderContainer/CreateRectAsPathButton" to="." method="_on_create_rect_button_mouse_exited"]
+[connection signal="pressed" from="VBoxContainer/RectBuilderContainer/CreateRectAsPathButton" to="." method="_on_create_rect_as_path_button_pressed"]
+[connection signal="mouse_entered" from="VBoxContainer/EllipseBuilderContainer/CreateEllipseButton" to="." method="_on_create_circle_button_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/EllipseBuilderContainer/CreateEllipseButton" to="." method="_on_create_circle_button_mouse_exited"]
+[connection signal="pressed" from="VBoxContainer/EllipseBuilderContainer/CreateEllipseButton" to="." method="_on_create_ellipse_button_pressed"]
 [connection signal="mouse_entered" from="VBoxContainer/EllipseBuilderContainer/CreateCircleButton" to="." method="_on_create_circle_button_mouse_entered"]
 [connection signal="mouse_exited" from="VBoxContainer/EllipseBuilderContainer/CreateCircleButton" to="." method="_on_create_circle_button_mouse_exited"]
 [connection signal="pressed" from="VBoxContainer/EllipseBuilderContainer/CreateCircleButton" to="." method="_on_create_circle_button_pressed"]

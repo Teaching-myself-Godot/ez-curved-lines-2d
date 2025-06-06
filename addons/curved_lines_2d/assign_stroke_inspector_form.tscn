@@ -1,11 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://bm31gemem22uc"]
+[gd_scene load_steps=3 format=3 uid="uid://bm31gemem22uc"]
 
 [ext_resource type="Script" uid="uid://bv0hffvudv51d" path="res://addons/curved_lines_2d/assign_stroke_inspector_form.gd" id="1_j8wjx"]
-[ext_resource type="Texture2D" uid="uid://cc8salyqmquir" path="res://addons/curved_lines_2d/Collapse.svg" id="2_vq8nc"]
 [ext_resource type="Texture2D" uid="uid://31qakec1dm6y" path="res://addons/curved_lines_2d/Key.svg" id="3_2fv2a"]
-
-[sub_resource type="FontVariation" id="FontVariation_vq8nc"]
-variation_embolden = 0.8
 
 [node name="AssignStrokeInspectorForm" type="VBoxContainer"]
 anchors_preset = 15
@@ -14,31 +10,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_j8wjx")
-
-[node name="HSeparator2" type="HSeparator" parent="."]
-layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="TitleButton" type="Button" parent="."]
-layout_mode = 2
-focus_mode = 0
-theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_constants/outline_size = 0
-theme_override_fonts/font = SubResource("FontVariation_vq8nc")
-toggle_mode = true
-button_pressed = true
-text = "Stroke"
-icon = ExtResource("2_vq8nc")
-alignment = 0
 
 [node name="StrokeColorFieldContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
@@ -136,8 +107,8 @@ tooltip_text = "Click on this button to select the Line2D node that is assigned 
 Use this for advanced features which are already built-in into godot, like gradients, width curvature, and repeating textures."
 text = "Edit Line2D"
 
-[connection signal="toggled" from="TitleButton" to="." method="_on_title_button_toggled"]
 [connection signal="color_changed" from="StrokeColorFieldContainer/HBoxContainer/ColorPickerButton" to="." method="_on_color_picker_button_color_changed"]
+[connection signal="toggled" from="StrokeColorFieldContainer/HBoxContainer/ColorPickerButton" to="." method="_on_color_picker_button_toggled"]
 [connection signal="pressed" from="StrokeColorFieldContainer/HBoxContainer/AddStrokeColorKeyFrameButton" to="." method="_on_add_stroke_color_key_frame_button_pressed"]
 [connection signal="pressed" from="StrokeWidthFieldContainer/HBoxContainer/AddStrokeWidthKeyFrameButton" to="." method="_on_add_stroke_width_key_frame_button_pressed"]
 [connection signal="pressed" from="ButtonContainer/CreateStrokeButton" to="." method="_on_create_stroke_button_pressed"]

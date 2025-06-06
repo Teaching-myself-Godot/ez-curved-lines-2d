@@ -4,42 +4,40 @@ extends Node2D
 ## Original adapted code: https://www.hedberggames.com/blog/rendering-curves-in-godot
 class_name ScalableVectorShape2D
 
-## Emitted when a new set of points was calculated for a connected Line2D, Polygon2D, or CollisionPolygon2D
+## Emitted when a new set of points was calculated for the [member curve].
 signal path_changed(new_points : PackedVector2Array)
 
 ## This signal is used internally in editor-mode to tell the DrawablePath2D tool that
-## the instance of assigned Line2D, Polygon2D, or CollisionPolygon2D has changed
+## the instance of assigned [member line], [member polygon], or [member collision_polygon] has changed.
 signal assigned_node_changed()
 
+## This signal is emitted when the properties for describing an ellipse or rectangle change.
+## Further reading: [member shape_type]
+signal dimensions_changed()
 
-## The 'Fill' of a [ScalableVectorShape2D] is simply an instance of a [Polygon2D] node
-## assigned to the `polygon` property.
-## If you remove that [Polygon2D] node, you need to unassign it here as well, before
-## you can add a new 'Fill' with the 'Add Fill' button
-## The polygon's shape is controlled by this node's curve ([Curve2D]) property,
-## it does _not_ have to be the child of this ScalableVectorShape2D
-@export var polygon: Polygon2D:
-	set(_poly):
-		polygon = _poly
-		assigned_node_changed.emit()
+## The constant used to convert a radius unit to the equivalent cubic Beziér control point length
+const R_TO_CP = 0.5523
 
 
-## The 'Stroke' of a [ScalableVectorShape2D] is simply an instance of a [Line2D] node
-## assigned to the `line` property.
-## If you remove that Line2D node, you need to unassign it here as well, before
-## you can add a new 'Stroke' with the 'Add Stroke' button
-## The line's shape is controlled by this node's curve ([Curve2D]) pproperty, it
-## does _not_ have to be the child of this [ScalableVectorShape2D]
-@export var line: Line2D:
-	set(_line):
-		line = _line
-		assigned_node_changed.emit()
-
-## The CollisionPolygon2D controlled by this node's curve property
-@export var collision_polygon: CollisionPolygon2D:
-	set(_poly):
-		collision_polygon = _poly
-		assigned_node_changed.emit()
+enum ShapeType {
+	## Gives every point in the [member curve] a handle, as well as their in- and out- control points.
+	## Ignores the [member size], [member offset], [member rx] and [member ry] properties when
+	## drawing the shape.
+	PATH,
+	## Keeps the shape of the [member curve] as a rectangle, based on the [member offset],
+	## [member size], [member rx] and [member ry].
+	## Provides one handle to change [member size],	and two handles to change [member rx] and
+	## [member ry] for rounded corners.
+	## The [member offset] can change by using the pivot-tool in the 2D Editor
+	RECT,
+	## Keeps the shape of the [member curve] as an ellipse, based on the [member offset] and
+	## [member size]
+	## Provides one handle to change [member size]. The [member size] determines the radii of the
+	## ellipse on the y- and x- axis, so [member rx] and [member ry] are always sync'ed with
+	## [member size] (and vice-versa)
+		## The [member offset] can change by using the pivot-tool in the 2D Editor
+	ELLIPSE
+}
 
 ## Controls the paramaters used to divide up the line  in segments.
 ## These settings are prefilled with the default values.
@@ -70,6 +68,90 @@ signal assigned_node_changed()
 		tolerance_degrees = _tolerance_degrees
 		assigned_node_changed.emit()
 
+@export_group("Fill")
+## The 'Fill' of a [ScalableVectorShape2D] is simply an instance of a [Polygon2D] node
+## assigned to the `polygon` property.
+## If you remove that [Polygon2D] node, you need to unassign it here as well, before
+## you can add a new 'Fill' with the 'Add Fill' button
+## The polygon's shape is controlled by this node's curve ([Curve2D]) property,
+## it does _not_ have to be the child of this ScalableVectorShape2D
+@export var polygon: Polygon2D:
+	set(_poly):
+		polygon = _poly
+		assigned_node_changed.emit()
+
+@export_group("Stroke")
+## The 'Stroke' of a [ScalableVectorShape2D] is simply an instance of a [Line2D] node
+## assigned to the `line` property.
+## If you remove that Line2D node, you need to unassign it here as well, before
+## you can add a new 'Stroke' with the 'Add Stroke' button
+## The line's shape is controlled by this node's curve ([Curve2D]) pproperty, it
+## does _not_ have to be the child of this [ScalableVectorShape2D]
+@export var line: Line2D:
+	set(_line):
+		line = _line
+		assigned_node_changed.emit()
+
+@export_group("Collision Polygon")
+## The CollisionPolygon2D controlled by this node's curve property
+@export var collision_polygon: CollisionPolygon2D:
+	set(_poly):
+		collision_polygon = _poly
+		assigned_node_changed.emit()
+
+@export_group("Shape Type Settings")
+## Determines what handles are shown in the editor and how the [member curve] is (re)drawn on changing
+## properties [member size], [member offset], [member rx], and [member ry].
+@export var shape_type := ShapeType.PATH:
+	set(st):
+		shape_type = st
+		if st == ShapeType.PATH:
+			assigned_node_changed.emit()
+		else:
+			if shape_type == ShapeType.RECT:
+				rx = 0.0
+				ry = 0.0
+			dimensions_changed.emit()
+
+@export var offset : Vector2 = Vector2(0.0, 0.0):
+	set(ofs):
+		offset = ofs
+		dimensions_changed.emit()
+
+@export var size : Vector2 = Vector2(100.0, 100.0):
+	set(sz):
+		if sz.x < 0:
+			sz.x = 0.001
+		if sz.y < 0:
+			sz.y = 0.001
+		if shape_type == ShapeType.RECT:
+			if sz.x < rx * 2.001:
+				sz.x = rx * 2.001
+			if sz.y < ry * 2.001:
+				sz.y = ry * 2.001
+			size = sz
+			dimensions_changed.emit()
+		elif shape_type == ShapeType.ELLIPSE:
+			size = sz
+			rx = sz.x * 0.5
+			ry = sz.y * 0.5
+
+@export var rx : float = 0.0:
+	set(_rx):
+		rx = _rx if _rx > 0 else 0
+		if shape_type == ShapeType.RECT:
+			if rx > size.x * 0.49:
+				rx = size.x * 0.49
+		dimensions_changed.emit()
+
+@export var ry : float = 0.0:
+	set(_ry):
+		ry = _ry if _ry > 0 else 0
+		if shape_type == ShapeType.RECT:
+			if ry > size.y * 0.49:
+				ry = size.y * 0.49
+		dimensions_changed.emit()
+
 @export_group("Editor settings")
 ## The [Color] used to draw the this shape's curve in the editor
 @export var shape_hint_color := Color.LIME_GREEN
@@ -84,10 +166,15 @@ func _ready():
 	if update_curve_at_runtime:
 		if not curve.changed.is_connected(curve_changed):
 			curve.changed.connect(curve_changed)
+	if not dimensions_changed.is_connected(_on_dimensions_changed):
+		dimensions_changed.connect(_on_dimensions_changed)
 
 
 # Wire up signals on enter tree for the editor
 func _enter_tree():
+	# ensure forward compatibility by assigning the default ShapeType
+	if shape_type == null:
+		shape_type = ShapeType.PATH
 	if Engine.is_editor_hint():
 		if not curve.changed.is_connected(curve_changed):
 			curve.changed.connect(curve_changed)
@@ -97,12 +184,27 @@ func _enter_tree():
 	if update_curve_at_runtime:
 		if not curve.changed.is_connected(curve_changed):
 			curve.changed.connect(curve_changed)
-
+	# updates the curve points when size, offset, rx, or ry prop changes
+	# (used for ShapeType.RECT and ShapeType.ELLIPSE)
+	if not dimensions_changed.is_connected(_on_dimensions_changed):
+		dimensions_changed.connect(_on_dimensions_changed)
+	_on_dimensions_changed()
 
 # Clean up signals (ie. when closing scene) to prevent error messages in the editor
 func _exit_tree():
 	if curve.changed.is_connected(curve_changed):
 		curve.changed.disconnect(curve_changed)
+
+
+func _on_dimensions_changed():
+	if shape_type == ShapeType.RECT:
+		var width = size.x
+		var height = size.y
+		# curve is passed by reference to trigger changed on existing instance
+		set_rect_points(curve, width, height, rx, ry, offset)
+	elif shape_type == ShapeType.ELLIPSE:
+		# curve is passed by reference to trigger changed on existing instance
+		set_ellipse_points(curve, size, offset)
 
 
 func _on_assigned_node_changed():
@@ -199,11 +301,18 @@ func set_position_to_center() -> void:
 
 func set_origin(global_pos : Vector2) -> void:
 	var local_pos = to_local(global_pos)
-	for i in range(curve.get_point_count()):
-		curve.set_point_position(i, curve.get_point_position(i) - local_pos)
-	global_position = global_pos
-	if is_instance_valid(polygon) and polygon.texture is GradientTexture2D:
-		polygon.texture_offset = -get_bounding_rect().position
+	match shape_type:
+		ShapeType.RECT, ShapeType.ELLIPSE:
+			offset = offset - to_local(global_pos)
+			global_position = global_pos
+			if is_instance_valid(polygon) and polygon.texture is GradientTexture2D:
+				polygon.texture_offset = -get_bounding_rect().position
+		ShapeType.PATH, _:
+			for i in range(curve.get_point_count()):
+				curve.set_point_position(i, curve.get_point_position(i) - local_pos)
+			global_position = global_pos
+			if is_instance_valid(polygon) and polygon.texture is GradientTexture2D:
+				polygon.texture_offset = -get_bounding_rect().position
 
 
 
@@ -238,6 +347,22 @@ func is_curve_closed() -> bool:
 
 
 func get_curve_handles() -> Array:
+	if shape_type == ShapeType.RECT or shape_type == ShapeType.ELLIPSE:
+		var point_pos := size + get_bounding_rect().position
+		var rx_handle := Vector2(rx, 0)
+		var ry_handle := Vector2(0, ry)
+		var top_left := offset + Vector2(-size.x, -size.y) * 0.5
+		return [{
+			"point_position": to_global(point_pos),
+			"mirrored": true,
+			"in": rx_handle,
+			"out": ry_handle,
+			"in_position": to_global(top_left + rx_handle),
+			"out_position": to_global(top_left + ry_handle),
+			"is_closed": ""
+		}]
+
+
 	var n = curve.point_count
 	var is_closed := is_curve_closed()
 	var result := []
@@ -360,3 +485,42 @@ func get_closest_point_on_curve(global_pos : Vector2) -> Dictionary:
 		"point_position": to_global(closest_result),
 		"before_segment": before_segment
 	}
+
+## Convert an existing [Curve2D] instance to a (rounded) rectangle.
+## [param curve] is passed by reference so the curve's [signal Resource.changed]
+## signal is emitted.
+static func set_rect_points(curve : Curve2D, width : float, height : float, rx := 0.0, ry := 0.0,
+		offset := Vector2.ZERO) -> void:
+	curve.clear_points()
+	var top_left := offset + Vector2(-width, -height) * 0.5
+	var top_right := offset + Vector2(width, -height) * 0.5
+	var bottom_right := offset + Vector2(width, height) * 0.5
+	var bottom_left := offset + Vector2(-width, height) * 0.5
+	if rx == 0 and ry == 0:
+		curve.add_point(top_left)
+		curve.add_point(top_right)
+		curve.add_point(bottom_right)
+		curve.add_point(bottom_left)
+		curve.add_point(top_left)
+	else:
+		curve.add_point(top_left + Vector2(width - rx, 0), Vector2.ZERO, Vector2(rx * R_TO_CP, 0))
+		curve.add_point(top_left + Vector2(width, ry), Vector2(0, -ry * R_TO_CP))
+		curve.add_point(top_left + Vector2(width, height - ry), Vector2.ZERO, Vector2(0, ry * R_TO_CP))
+		curve.add_point(top_left + Vector2(width - rx, height), Vector2(rx * R_TO_CP, 0))
+		curve.add_point(top_left + Vector2(rx, height), Vector2.ZERO, Vector2(-rx * R_TO_CP, 0))
+		curve.add_point(top_left + Vector2(0, height - ry), Vector2(0, ry * R_TO_CP))
+		curve.add_point(top_left + Vector2(0, ry), Vector2.ZERO, Vector2(0, -ry *  R_TO_CP))
+		curve.add_point(top_left + Vector2(rx, 0), Vector2(-rx * R_TO_CP, 0))
+		curve.add_point(top_left + Vector2(width - rx, 0), Vector2.ZERO, Vector2(rx * R_TO_CP, 0))
+
+
+## Convert an existing [Curve2D] instance to an ellipse.
+## [param curve] is passed by reference so the curve's [signal Resource.changed]
+## signal is emitted.
+static func set_ellipse_points(curve : Curve2D, size: Vector2, offset := Vector2.ZERO):
+	curve.clear_points()
+	curve.add_point(offset + Vector2(size.x * 0.5, 0), Vector2.ZERO, Vector2(0, size.y * 0.5 * SvgImporterDock.R_TO_CP))
+	curve.add_point(offset + Vector2(0, size.y * 0.5), Vector2(size.x * 0.5 * SvgImporterDock.R_TO_CP, 0), Vector2(-size.x * 0.5 * SvgImporterDock.R_TO_CP, 0))
+	curve.add_point(offset + Vector2(-size.x * 0.5, 0), Vector2(0, size.y * 0.5 * SvgImporterDock.R_TO_CP), Vector2(0, -size.y * 0.5 * SvgImporterDock.R_TO_CP))
+	curve.add_point(offset + Vector2(0, -size.y * 0.5), Vector2(-size.x * 0.5 * SvgImporterDock.R_TO_CP, 0), Vector2(size.x * 0.5 * SvgImporterDock.R_TO_CP, 0))
+	curve.add_point(offset + Vector2(size.x * 0.5, 0), Vector2(0, -size.y * 0.5 * SvgImporterDock.R_TO_CP))
