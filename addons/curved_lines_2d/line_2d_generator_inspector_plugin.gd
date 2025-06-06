@@ -19,6 +19,12 @@ func _parse_begin(object: Object) -> void:
 		button.text = "Convert to ScalableVectorShape2D"
 		add_custom_control(button)
 		button.pressed.connect(func(): _on_convert_button_pressed(object))
+	if object is ScalableVectorShape2D and object.shape_type != ScalableVectorShape2D.ShapeType.PATH:
+		var button : Button = Button.new()
+		button.text = "Convert to Path*"
+		button.tooltip_text = "Pressing this button will change the way it is edited to Path mode."
+		add_custom_control(button)
+		button.pressed.connect(func(): _on_convert_to_path_button_pressed(object, button))
 
 
 func _parse_group(object: Object, group: String) -> void:
@@ -62,3 +68,16 @@ func _on_convert_button_pressed(orig : DrawablePath2D):
 	orig.replace_by(replacement, true)
 	replacement.name = "ScalableVectorShape2D" if orig.name == "DrawablePath2D" else orig.name
 	EditorInterface.call_deferred('edit_node', replacement)
+
+
+func _on_convert_to_path_button_pressed(svs : ScalableVectorShape2D, button : Button):
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	undo_redo.create_action("Change shape type to path for %s" % str(svs))
+	undo_redo.add_do_property(svs, 'shape_type', ScalableVectorShape2D.ShapeType.PATH)
+	undo_redo.add_undo_property(svs, 'shape_type', svs.shape_type)
+	undo_redo.add_undo_property(svs, 'size', svs.size)
+	undo_redo.add_undo_property(svs, 'rx', svs.rx)
+	undo_redo.add_undo_property(svs, 'ry', svs.ry)
+	undo_redo.add_undo_property(svs, 'offset', svs.offset)
+	undo_redo.commit_action()
+	button.hide()

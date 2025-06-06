@@ -6,25 +6,17 @@ class_name AssignStrokeInspectorForm
 var scalable_vector_shape_2d : ScalableVectorShape2D
 var create_button : Button
 var select_button : Button
-var title_button : Button
-var collapse_icon : Texture2D
-var expand_icon : Texture2D
-var collapsible_siblings : Array[Node]
 var color_button : ColorPickerButton
 var stroke_width_input : EditorSpinSlider
 
 func _enter_tree() -> void:
 	if not is_instance_valid(scalable_vector_shape_2d):
 		return
-	collapse_icon = preload("res://addons/curved_lines_2d/Collapse.svg")
-	expand_icon = preload("res://addons/curved_lines_2d/Expand.svg")
 	create_button = find_child("CreateStrokeButton")
 	select_button = find_child("GotoLine2DButton")
-	title_button = find_child("TitleButton")
 	color_button = find_child("ColorPickerButton")
 	if 'assigned_node_changed' in scalable_vector_shape_2d:
 		scalable_vector_shape_2d.assigned_node_changed.connect(_on_svs_assignment_changed)
-	collapsible_siblings = get_children().filter(func(x): return x != title_button and not x is Label)
 	stroke_width_input = _make_float_input("Stroke Width", 10.0, 0.0, 100.0, "px")
 	find_child("StrokeWidthFloatFieldContainer").add_child(stroke_width_input)
 	_on_svs_assignment_changed()
@@ -55,18 +47,16 @@ func _on_stroke_width_changed(new_value : float) -> void:
 	var undo_redo = EditorInterface.get_editor_undo_redo()
 	undo_redo.create_action("Adjust Line2D width for %s" % str(scalable_vector_shape_2d))
 	undo_redo.add_do_property(scalable_vector_shape_2d.line, 'width', new_value)
+	undo_redo.add_do_method(stroke_width_input, 'set_value_no_signal', new_value)
 	undo_redo.add_undo_property(scalable_vector_shape_2d.line, 'width', scalable_vector_shape_2d.line.width)
+	undo_redo.add_undo_method(stroke_width_input, 'set_value_no_signal', scalable_vector_shape_2d.line.width)
 	undo_redo.commit_action()
 
 
 func _on_color_picker_button_color_changed(color: Color) -> void:
 	if not is_instance_valid(scalable_vector_shape_2d.line):
 		return
-	var undo_redo = EditorInterface.get_editor_undo_redo()
-	undo_redo.create_action("Adjust Line2D default_color for %s" % str(scalable_vector_shape_2d))
-	undo_redo.add_do_property(scalable_vector_shape_2d.line, 'default_color', color)
-	undo_redo.add_undo_property(scalable_vector_shape_2d.line, 'default_color', scalable_vector_shape_2d.line.default_color)
-	undo_redo.commit_action()
+	scalable_vector_shape_2d.line.default_color = color
 
 
 func _on_goto_line_2d_button_pressed() -> void:
@@ -101,17 +91,6 @@ func _on_create_stroke_button_pressed():
 	undo_redo.commit_action()
 
 
-func _on_title_button_toggled(toggled_on: bool) -> void:
-	if toggled_on:
-		title_button.icon = collapse_icon
-		for n in collapsible_siblings:
-			n.show()
-	else:
-		title_button.icon = expand_icon
-		for n in collapsible_siblings:
-			n.hide()
-
-
 func _make_float_input(lbl : String, value : float, min_value : float, max_value : float, suffix : String) -> EditorSpinSlider:
 	var x_slider := EditorSpinSlider.new()
 	x_slider.value = value
@@ -141,3 +120,17 @@ func _on_add_stroke_color_key_frame_button_pressed() -> void:
 func _on_key_frame_capabilities_changed():
 	find_child("AddStrokeColorKeyFrameButton").visible = _is_key_frame_capable()
 	find_child("AddStrokeWidthKeyFrameButton").visible = _is_key_frame_capable()
+
+
+func _on_color_picker_button_toggled(toggled_on: bool) -> void:
+	if not is_instance_valid(scalable_vector_shape_2d.line):
+		return
+	var undo_redo = EditorInterface.get_editor_undo_redo()
+	if toggled_on:
+		undo_redo.create_action("Adjust Line2D default_color for %s" % str(scalable_vector_shape_2d))
+		undo_redo.add_undo_property(scalable_vector_shape_2d.line, 'default_color', scalable_vector_shape_2d.line.default_color)
+		undo_redo.add_undo_property(color_button, 'color', scalable_vector_shape_2d.line.default_color)
+	else:
+		undo_redo.add_do_property(scalable_vector_shape_2d.line, 'default_color', color_button.color)
+		undo_redo.add_do_property(color_button, 'color', color_button.color)
+		undo_redo.commit_action(false)

@@ -1,13 +1,9 @@
-[gd_scene load_steps=13 format=3 uid="uid://53oqf8j7uyuu"]
+[gd_scene load_steps=11 format=3 uid="uid://53oqf8j7uyuu"]
 
-[ext_resource type="Texture2D" uid="uid://cc8salyqmquir" path="res://addons/curved_lines_2d/Collapse.svg" id="1_2eiat"]
 [ext_resource type="Script" uid="uid://b1ii4843yuwkw" path="res://addons/curved_lines_2d/assign_fill_inspector_form.gd" id="1_ogtsd"]
 [ext_resource type="StyleBox" uid="uid://v0ueesjbdyrk" path="res://addons/curved_lines_2d/snazzy_toggle_button.stylebox" id="3_alhox"]
 [ext_resource type="Texture2D" uid="uid://31qakec1dm6y" path="res://addons/curved_lines_2d/Key.svg" id="3_d26vq"]
 [ext_resource type="Texture2D" uid="uid://caqsvv6rdxkm4" path="res://addons/curved_lines_2d/Gradients.svg" id="4_d26vq"]
-
-[sub_resource type="FontVariation" id="FontVariation_ogtsd"]
-variation_embolden = 0.8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ogtsd"]
 content_margin_left = 4.0
@@ -41,26 +37,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ogtsd")
-
-[node name="TitleButton" type="Button" parent="."]
-layout_mode = 2
-focus_mode = 0
-theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = SubResource("FontVariation_ogtsd")
-toggle_mode = true
-button_pressed = true
-text = "Fill"
-icon = ExtResource("1_2eiat")
-alignment = 0
 
 [node name="FillColorFieldContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
@@ -254,8 +230,8 @@ tooltip_text = "Click on this button to select the Polygon2D node that is assign
 Use this for advanced features which are already built-in into godot, like gradients and repeating textures."
 text = "Edit Polygon2D"
 
-[connection signal="toggled" from="TitleButton" to="." method="_on_title_button_toggled"]
 [connection signal="color_changed" from="FillColorFieldContainer/HBoxContainer/ColorPickerButton" to="." method="_on_color_picker_button_color_changed"]
+[connection signal="toggled" from="FillColorFieldContainer/HBoxContainer/ColorPickerButton" to="." method="_on_color_picker_button_toggled"]
 [connection signal="pressed" from="FillColorFieldContainer/HBoxContainer/AddFillKeyFrameButton" to="." method="_on_add_fill_key_frame_button_pressed"]
 [connection signal="button_down" from="GradientFieldContainer/HBoxContainer/RemoveGradientToggleButton" to="." method="_on_remove_gradient_toggle_button_button_down"]
 [connection signal="button_down" from="GradientFieldContainer/HBoxContainer/LinearGradientToggleButton" to="." method="_on_linear_gradient_toggle_button_button_down"]

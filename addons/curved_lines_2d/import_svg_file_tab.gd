@@ -240,44 +240,33 @@ func process_svg_ellipse(element:XMLParser, current_node : Node2D, scene_root : 
 func create_path_from_ellipse(element:XMLParser, path_name : String, rx : float, ry: float,
 		pos : Vector2, current_node : Node2D, scene_root : Node2D,
 		gradients : Array[Dictionary]) -> void:
-	var curve := Curve2D.new()
-	curve.add_point(Vector2(rx, 0), Vector2.ZERO, Vector2(0, ry * R_TO_CP))
-	curve.add_point(Vector2(0, ry), Vector2(rx * R_TO_CP, 0), Vector2(-rx * R_TO_CP, 0))
-	curve.add_point(Vector2(-rx, 0), Vector2(0, ry * R_TO_CP), Vector2(0, -ry * R_TO_CP))
-	curve.add_point(Vector2(0, -ry), Vector2(-rx * R_TO_CP, 0), Vector2(rx * R_TO_CP, 0))
-	curve.add_point(Vector2(rx, 0), Vector2(0, -ry * R_TO_CP))
-	create_path2d(path_name, current_node, curve,
-			get_svg_transform(element),
-			get_svg_style(element), scene_root, gradients, true, pos)
+	var new_ellipse := ScalableVectorShape2D.new()
+	new_ellipse.shape_type = ScalableVectorShape2D.ShapeType.ELLIPSE
+	new_ellipse.size = Vector2(rx * 2, ry * 2)
+	new_ellipse.position = pos
+	new_ellipse.name = path_name
+	_post_process_shape(new_ellipse, current_node, get_svg_transform(element), get_svg_style(element),
+			scene_root, gradients)
 
 
 func process_svg_rectangle(element:XMLParser, current_node : Node2D, scene_root : Node2D,
 		gradients : Array[Dictionary]) -> void:
-	var curve := Curve2D.new()
 	var x = float(element.get_named_attribute_value("x"))
 	var y = float(element.get_named_attribute_value("y"))
 	var ry = float(element.get_named_attribute_value("ry")) if element.has_attribute("ry") else 0
 	var rx = float(element.get_named_attribute_value("rx")) if element.has_attribute("rx") else ry
 	var width = float(element.get_named_attribute_value("width"))
 	var height = float(element.get_named_attribute_value("height"))
-	if rx == 0 and ry == 0:
-		curve.add_point(Vector2.ZERO)
-		curve.add_point(Vector2(width, 0))
-		curve.add_point(Vector2(width, height))
-		curve.add_point(Vector2(0, height))
-	else:
-		curve.add_point(Vector2(width - rx, 0), Vector2.ZERO, Vector2(rx * R_TO_CP, 0))
-		curve.add_point(Vector2(width, ry), Vector2(0, -ry * R_TO_CP))
-		curve.add_point(Vector2(width, height - ry), Vector2.ZERO, Vector2(0, ry * R_TO_CP))
-		curve.add_point(Vector2(width - rx, height), Vector2(rx * R_TO_CP, 0))
-		curve.add_point(Vector2(rx, height), Vector2.ZERO, Vector2(-rx * R_TO_CP, 0))
-		curve.add_point(Vector2(0, height - ry), Vector2(0, ry * R_TO_CP))
-		curve.add_point(Vector2(0, ry), Vector2.ZERO, Vector2(0, -ry * R_TO_CP))
-		curve.add_point(Vector2(rx, 0), Vector2(-rx * R_TO_CP, 0))
-	var path_name = element.get_named_attribute_value("id") if element.has_attribute("id") else "Rect"
-	create_path2d(path_name, current_node, curve,
-			get_svg_transform(element), get_svg_style(element), scene_root, gradients, true,
-			Vector2(x, y))
+	var new_rect := ScalableVectorShape2D.new()
+	new_rect.shape_type = ScalableVectorShape2D.ShapeType.RECT
+	new_rect.shape_type = ScalableVectorShape2D.ShapeType.RECT
+	new_rect.size = Vector2(width, height)
+	new_rect.position = Vector2(x, y) + new_rect.size * 0.5
+	new_rect.rx = rx
+	new_rect.ry = ry
+	new_rect.name = element.get_named_attribute_value("id") if element.has_attribute("id") else "Rectangle"
+	_post_process_shape(new_rect, current_node, get_svg_transform(element), get_svg_style(element),
+			scene_root, gradients)
 
 
 func process_svg_polygon(element:XMLParser, current_node : Node2D, scene_root : Node2D, is_closed : bool,
@@ -467,55 +456,57 @@ func process_svg_path(element:XMLParser, current_node : Node2D, scene_root : Nod
 
 func create_path2d(path_name: String, parent: Node, curve: Curve2D, transform: Transform2D,
 						style: Dictionary, scene_root: Node2D, gradients : Array[Dictionary],
-						is_closed := false, pos_override := Vector2.ZERO) -> void:
+						is_closed := false) -> void:
 	var new_path = ScalableVectorShape2D.new()
 	new_path.name = path_name
-	new_path.position = pos_override
 	new_path.curve = curve
 
 	if (is_closed and curve.point_count > 1 and  curve.get_point_position(0).distance_to(
 				curve.get_point_position(curve.point_count - 1)) > 0.001):
 		curve.add_point(curve.get_point_position(0))
-	new_path.lock_assigned_shapes = keep_drawable_path_node and lock_shapes
-	if pos_override == Vector2.ZERO:
-		new_path.set_position_to_center()
+	new_path.set_position_to_center()
+	_post_process_shape(new_path, parent, transform, style, scene_root, gradients)
 
+
+func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform : Transform2D,
+			style : Dictionary, scene_root : Node2D, gradients : Array[Dictionary]) -> void:
+	svs.lock_assigned_shapes = keep_drawable_path_node and lock_shapes
 	var ancestor = parent
 	while !ancestor.has_meta(SVG_ROOT_META_NAME):
 		style.merge(ancestor.get_meta(SVG_STYLE_META_NAME, {}))
 		ancestor = ancestor.get_parent()
 	var gradient_point_parent : Node2D = parent
 	if transform == Transform2D.IDENTITY:
-		_managed_add_child_and_set_owner(parent, new_path, scene_root)
+		_managed_add_child_and_set_owner(parent, svs, scene_root)
 	else:
 		var transform_node := Node2D.new()
-		transform_node.name = path_name + "Transform"
+		transform_node.name = svs.name + "Transform"
 		transform_node.transform = transform
 		_managed_add_child_and_set_owner(parent, transform_node, scene_root)
-		_managed_add_child_and_set_owner(transform_node, new_path, scene_root)
+		_managed_add_child_and_set_owner(transform_node, svs, scene_root)
 		gradient_point_parent = transform_node
 
 	if style.has("opacity"):
-		new_path.modulate.a = float(style["opacity"])
+		svs.modulate.a = float(style["opacity"])
 	if style.is_empty():
 		var line := Line2D.new()
 		line.name = "Stroke"
 		line.antialiased = antialiased_shapes
-		_managed_add_child_and_set_owner(new_path, line, scene_root, 'line')
+		_managed_add_child_and_set_owner(svs, line, scene_root, 'line')
 		line.width = 1.0
 	elif "fill" not in style and "stroke" not in style:
 		style["fill"] = "#000000"
 
 	for func_name in PAINT_ORDER_MAP[get_paint_order(style)]:
-		call(func_name, new_path, style, scene_root, gradients, gradient_point_parent)
+		call(func_name, svs, style, scene_root, gradients, gradient_point_parent)
 
 	if not keep_drawable_path_node:
 		var bare_node := Node2D.new()
-		bare_node.name = new_path.name
-		bare_node.position = new_path.position
-		undo_redo.add_do_method(new_path, 'replace_by', bare_node)
+		bare_node.name = svs.name
+		bare_node.position = svs.position
+		undo_redo.add_do_method(svs, 'replace_by', bare_node)
 		undo_redo.add_do_reference(bare_node)
-		new_path.replace_by(bare_node)
+		svs.replace_by(bare_node)
 
 
 func get_paint_order(style : Dictionary) -> String:
