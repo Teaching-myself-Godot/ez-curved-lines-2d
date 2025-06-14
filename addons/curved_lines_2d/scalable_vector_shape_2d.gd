@@ -496,6 +496,45 @@ func get_closest_point_on_curve(global_pos : Vector2) -> Dictionary:
 		"before_segment": before_segment
 	}
 
+
+func get_svg_viewbox() -> String:
+	print("TODO: recursive viewbox")
+	var box := get_bounding_rect().grow(
+		line.width / 2.0 if is_instance_valid(line) else 0
+	)
+	return "%f %f %f %f" % [box.position.x, box.position.y, box.size.x, box.size.y]
+
+
+func get_svg_shape() -> String:
+	match(shape_type):
+		ShapeType.ELLIPSE:
+			return """
+				<ellipse cx="%f" cy="%f" rx="%f" ry="%f" transform="%s"
+					style="%s" />
+			""" % [
+				offset.x, offset.y, rx, ry, get_svg_transform(),
+				get_svg_style()
+			]
+		_:
+			return "TODO"
+
+func get_svg_style() -> String:
+	var s := ""
+	if is_instance_valid(line):
+		s += "stroke-width: %f;" % line.width
+		s += "stroke: #%s;" % line.default_color.to_html()
+	if is_instance_valid(polygon):
+		if polygon.texture is GradientTexture2D:
+			print("TODO handle gradient modulated with color")
+		else:
+			s += "fill: #%s" % polygon.color.to_html()
+	return s
+
+func get_svg_transform() -> String:
+	print("TODO: get_svg_transform")
+	return ""
+
+
 ## Convert an existing [Curve2D] instance to a (rounded) rectangle.
 ## [param curve] is passed by reference so the curve's [signal Resource.changed]
 ## signal is emitted.

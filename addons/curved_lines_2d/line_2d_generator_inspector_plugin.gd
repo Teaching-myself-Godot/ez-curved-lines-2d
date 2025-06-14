@@ -25,6 +25,12 @@ func _parse_begin(object: Object) -> void:
 		button.tooltip_text = "Pressing this button will change the way it is edited to Path mode."
 		add_custom_control(button)
 		button.pressed.connect(func(): _on_convert_to_path_button_pressed(object, button))
+	if object is ScalableVectorShape2D:
+		var button : Button = Button.new()
+		button.text = "Export SVG*"
+		button.tooltip_text = "SVG Export is even more experimental than SVG import"
+		add_custom_control(button)
+		button.pressed.connect(func(): _on_export_svg_button_pressed(object))
 
 
 func _parse_group(object: Object, group: String) -> void:
@@ -81,3 +87,12 @@ func _on_convert_to_path_button_pressed(svs : ScalableVectorShape2D, button : Bu
 	undo_redo.add_undo_property(svs, 'offset', svs.offset)
 	undo_redo.commit_action()
 	button.hide()
+
+
+func _on_export_svg_button_pressed(svs : ScalableVectorShape2D):
+	var svg_str := """
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="%s">
+			%s
+		</svg>
+	""" % [svs.get_svg_viewbox(), svs.get_svg_shape()]
+	print(svg_str)
