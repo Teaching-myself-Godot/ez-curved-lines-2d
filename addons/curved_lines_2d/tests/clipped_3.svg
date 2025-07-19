@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="329.14258"
+   height="255.78909"
+   viewBox="0 0 329.14258 255.78909"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="clipped_3.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="2.3120679"
+     inkscape:cx="164.57129"
+     inkscape:cy="128.02392"
+     inkscape:current-layer="svg1" />
+  <path
+     id="rect1"
+     style="opacity:1;fill:#ffffff;fill-rule:evenodd"
+     d="m 51.255786,100.52151 v 67.67753 h 87.085644 v -67.67753 z m 71.259591,24.04298 v 23.40012 h 23 Z" />
+  <path
+     id="rect2"
+     style="opacity:0.99;fill:#ffffff;fill-rule:evenodd;stroke-width:0.845079;stroke-miterlimit:80;paint-order:stroke fill markers"
+     d="m 1.255786,0.52151 v 67.67753 h 87.085644 v -67.67753 z m 31.259591,24.04298 h 22.696293 v 23.40012 H 32.515377 Z" />
+  <path
+     id="rect3"
+     style="opacity:1;fill:#ffffff;fill-rule:nonzero"
+     d="m 51.255786,170.52151 v 67.67753 h 87.085644 v -67.67753 z m 71.259591,24.04298 v 23.40012 h 23 Z" />
+  <path
+     id="rect4"
+     style="opacity:0.99;fill:#ffffff;fill-rule:evenodd;stroke-width:3.194;stroke-miterlimit:80;paint-order:stroke fill markers"
+     d="M 209.76953 40.65625 L 209.76953 96.882812 L 292.81055 96.882812 L 292.81055 40.65625 L 209.76953 40.65625 z M 249.77734 57.523438 A 15.786734 15.570477 0 0 1 265.5625 73.095703 A 15.786734 15.570477 0 0 1 249.77734 88.666016 A 15.786734 15.570477 0 0 1 233.99023 73.095703 A 15.786734 15.570477 0 0 1 249.77734 57.523438 z " />
+</svg>

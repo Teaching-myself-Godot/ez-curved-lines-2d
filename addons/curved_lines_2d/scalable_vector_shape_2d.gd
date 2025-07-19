@@ -100,9 +100,20 @@ enum ShapeType {
 		assigned_node_changed.emit()
 
 
+## List of line segments that represent an arc in stead of bézier curve
+## When there are entries present, some line segments in the [Curve2D] are overridden by arcs.
 @export var arc_list : ScalableArcList = ScalableArcList.new():
 	set(_arc_list):
 		arc_list = _arc_list if _arc_list != null else ScalableArcList.new()
+		assigned_node_changed.emit()
+
+
+## List of shapes that cut into this shape. Shapes are stored as resources (data objects) consisting
+## of the same information the [ScalableVectorShape2D] itself has: one [Curve2D] and a
+## [ScalableArcList]
+@export var clip_path_list : ClipPathList = ClipPathList.new():
+	set(c):
+		clip_path_list = c if c != null else ClipPathList.new()
 		assigned_node_changed.emit()
 
 
@@ -175,6 +186,8 @@ func _ready():
 			curve.changed.connect(curve_changed)
 		if not arc_list.changed.is_connected(curve_changed):
 			arc_list.changed.connect(curve_changed)
+		if not clip_path_list.changed.is_connected(curve_changed):
+			clip_path_list.changed.connect(curve_changed)
 	if not dimensions_changed.is_connected(_on_dimensions_changed):
 		dimensions_changed.connect(_on_dimensions_changed)
 
@@ -187,11 +200,16 @@ func _enter_tree():
 	# ensure forward compatibility by assigning the default arc_list
 	if arc_list == null:
 		arc_list = ScalableArcList.new()
+	if clip_path_list == null:
+		clip_path_list = ClipPathList.new()
+
 	if Engine.is_editor_hint():
 		if not curve.changed.is_connected(curve_changed):
 			curve.changed.connect(curve_changed)
 		if not arc_list.changed.is_connected(curve_changed):
 			arc_list.changed.connect(curve_changed)
+		if not clip_path_list.changed.is_connected(curve_changed):
+			clip_path_list.changed.connect(curve_changed)
 		if not assigned_node_changed.is_connected(_on_assigned_node_changed):
 			assigned_node_changed.connect(_on_assigned_node_changed)
 	# handles update when reparenting
@@ -200,6 +218,8 @@ func _enter_tree():
 			curve.changed.connect(curve_changed)
 		if not arc_list.changed.is_connected(curve_changed):
 			arc_list.changed.connect(curve_changed)
+		if not clip_path_list.changed.is_connected(curve_changed):
+			clip_path_list.changed.connect(curve_changed)
 	# updates the curve points when size, offset, rx, or ry prop changes
 	# (used for ShapeType.RECT and ShapeType.ELLIPSE)
 	if not dimensions_changed.is_connected(_on_dimensions_changed):
