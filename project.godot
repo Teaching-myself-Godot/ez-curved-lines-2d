@@ -11,10 +11,10 @@ config_version=5
 [addons]
 
 curved_lines_2d/add_collision_enabled=false
-curved_lines_2d/add_stroke_enabled=true
-curved_lines_2d/add_fill_enabled=true
-curved_lines_2d/stroke_color=Color(0.664063, 0.163422, 0.163422, 1)
-curved_lines_2d/stroke_width=1.0
+curved_lines_2d/add_stroke_enabled=false
+curved_lines_2d/add_fill_enabled=false
+curved_lines_2d/stroke_color=Color(0.31, 0.2418, 0.217, 1)
+curved_lines_2d/stroke_width=2.0
 curved_lines_2d/line_joint_mode=0
 curved_lines_2d/line_end_cap=0
 curved_lines_2d/line_begin_cap=0
@@ -24,7 +24,7 @@ curved_lines_2d/hints_enabled=true
 curved_lines_2d/snap_to_pixel=true
 curved_lines_2d/snap_resolution=1.0
 curved_lines_2d/editing_enabled=true
-curved_lines_2d/fill_color=Color(0.435294, 0.431373, 0.431373, 0.52549)
+curved_lines_2d/fill_color=Color(0.89, 0.741667, 0.6675, 1)
 
 [application]
 

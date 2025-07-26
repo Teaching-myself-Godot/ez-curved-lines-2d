@@ -11,7 +11,6 @@
   <path d="M200,300 Q400,50 600,300 T1000,300"
         fill="none" stroke="red" stroke-width="5"  />
 
-
   <path d="M200,310 q200,-250 400,0 t400,0"
         fill="none" stroke="blue" stroke-width="5"  />
   <!-- End points -->
@@ -28,4 +27,8 @@
   <path d="M200,300 L400,50 L600,300
            L800,550 L1000,300"
         fill="none" stroke="#888888" stroke-width="2" />
+  <path
+    id="heart"
+    d="M10,30 A20,20,0,0,1,50,30 A20,20,0,0,1,90,30 Q90,60,50,90 Q10,60,10,30 Z" />
+
 </svg>

@@ -323,11 +323,9 @@ func process_svg_path(element:XMLParser, current_node : Node2D, scene_root : Nod
 		string_array_top.append(a)
 	string_arrays.append(string_array_top)
 
-	var string_array_count = -1
-	if string_arrays.size() > 1:
-		log_message("WARNING: jumps in a path using the 'M' or 'm' operation - i.e. clipping - is not supported", LogLevel.WARN)
-
+	var string_array_count = 0
 	var cursor = Vector2.ZERO
+	var main_shape : ScalableVectorShape2D = null
 	for string_array in string_arrays:
 		var curve = Curve2D.new()
 		var arcs : Array[ScalableArc] = []
@@ -336,12 +334,14 @@ func process_svg_path(element:XMLParser, current_node : Node2D, scene_root : Nod
 		for i in string_array.size():
 			match string_array[i]:
 				"m":
+					log_message("⚠️ Support for the m/M (move to) command is limited to cut-outs in svg paths")
 					while string_array.size() > i + 2 and string_array[i+1].is_valid_float():
 						cursor += Vector2(float(string_array[i+1]), float(string_array[i+2]))
 						curve.add_point(cursor)
 						i += 2
 						cursor_start = cursor
 				"M":
+					log_message("⚠️ Support for the m/M (move to) command is limited to cut-outs in svg paths")
 					while string_array.size() > i + 2 and string_array[i+1].is_valid_float():
 						cursor = Vector2(float(string_array[i+1]), float(string_array[i+2]))
 						curve.add_point(cursor)
@@ -481,17 +481,22 @@ func process_svg_path(element:XMLParser, current_node : Node2D, scene_root : Nod
 				"z", "Z":
 					cursor = cursor_start
 
-
 		if curve.get_point_count() > 1:
 			var id = element.get_named_attribute_value("id") if element.has_attribute("id") else "Path"
-			create_path2d(id, current_node,  curve, arcs,
-						get_svg_transform(element), get_svg_style(element), scene_root, gradients,
-						string_array[string_array.size()-1].to_upper() == "Z")
+			if string_array_count > 1:
+				create_path2d("CutoutFor%s" % id, current_node,  curve, arcs,
+							Transform2D.IDENTITY, {}, scene_root, gradients,
+							string_array[string_array.size()-1].to_upper() == "Z", main_shape)
+			else:
+				main_shape = create_path2d(id, current_node,  curve, arcs,
+							get_svg_transform(element), get_svg_style(element), scene_root, gradients,
+							string_array[string_array.size()-1].to_upper() == "Z")
 
 
 func create_path2d(path_name: String, parent: Node, curve: Curve2D, arcs: Array[ScalableArc],
 						transform: Transform2D, style: Dictionary, scene_root: Node2D,
-						gradients : Array[Dictionary], is_closed := false) -> void:
+						gradients : Array[Dictionary], is_closed := false,
+						is_cutout_for : ScalableVectorShape2D = null) -> ScalableVectorShape2D:
 	var new_path = ScalableVectorShape2D.new()
 	new_path.name = path_name
 	new_path.curve = curve
@@ -499,12 +504,26 @@ func create_path2d(path_name: String, parent: Node, curve: Curve2D, arcs: Array[
 	if (is_closed and curve.point_count > 1 and  curve.get_point_position(0).distance_to(
 				curve.get_point_position(curve.point_count - 1)) > 0.001):
 		curve.add_point(curve.get_point_position(0))
-	new_path.set_position_to_center()
-	_post_process_shape(new_path, parent, transform, style, scene_root, gradients)
 
+	if is_cutout_for:
+		new_path.transform = is_cutout_for.transform.affine_inverse()
+		new_path.set_position_to_center()
+		_post_process_shape(new_path, is_cutout_for, transform, style, scene_root, gradients, is_cutout_for != null)
+		var new_clip_paths := is_cutout_for.clip_paths.duplicate()
+		new_clip_paths.append(new_path)
+		is_cutout_for.clip_paths = new_clip_paths
+		undo_redo.add_do_property(is_cutout_for, 'clip_paths', new_clip_paths)
+		undo_redo.add_undo_property(is_cutout_for, 'clip_paths', is_cutout_for.clip_paths)
+	else:
+		new_path.set_position_to_center()
+		_post_process_shape(new_path, parent, transform, style, scene_root, gradients, is_cutout_for != null)
+
+
+	return new_path
 
 func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform : Transform2D,
-			style : Dictionary, scene_root : Node2D, gradients : Array[Dictionary]) -> void:
+			style : Dictionary, scene_root : Node2D, gradients : Array[Dictionary],
+			is_cutout := false) -> void:
 	svs.lock_assigned_shapes = keep_drawable_path_node and lock_shapes
 	var ancestor = parent
 	while !ancestor.has_meta(SVG_ROOT_META_NAME):
@@ -523,13 +542,13 @@ func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform :
 
 	if style.has("opacity"):
 		svs.modulate.a = float(style["opacity"])
-	if style.is_empty():
+	if style.is_empty() and not is_cutout:
 		var line := Line2D.new()
 		line.name = "Stroke"
 		line.antialiased = antialiased_shapes
 		_managed_add_child_and_set_owner(svs, line, scene_root, 'line')
 		line.width = 1.0
-	elif "fill" not in style and "stroke" not in style:
+	elif "fill" not in style and "stroke" not in style and not is_cutout:
 		style["fill"] = "#000000"
 
 	for func_name in PAINT_ORDER_MAP[get_paint_order(style)]:

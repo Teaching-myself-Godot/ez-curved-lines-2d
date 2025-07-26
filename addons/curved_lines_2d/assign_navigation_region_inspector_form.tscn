@@ -1,0 +1,38 @@
+[gd_scene load_steps=2 format=3 uid="uid://eo53xo3ylo1a"]
+
+[ext_resource type="Script" uid="uid://dsfcnewvnijjx" path="res://addons/curved_lines_2d/assign_navigation_region_inspector_form.gd" id="1_opyos"]
+
+[node name="AssignNavigationRegionInspectorForm" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_opyos")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Creates and assigns a NavigationRegion2D to this shape."
+mouse_filter = 0
+text = "Navigation Region *"
+
+[node name="AddNavigationRegionButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Add"
+
+[node name="GoToNavigationRegionButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Go To Node"
+
+[connection signal="pressed" from="HBoxContainer/AddNavigationRegionButton" to="." method="_on_add_navigation_region_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/GoToNavigationRegionButton" to="." method="_on_go_to_navigation_region_button_pressed"]

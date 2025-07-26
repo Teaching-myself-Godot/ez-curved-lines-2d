@@ -35,6 +35,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 	- [Closing the loop and breaking the loop](#closing-the-loop-and-breaking-the-loop)
 	- [Deleting points and control points](#deleting-points-and-control-points)
 	- [Setting the global position of a point / curve handle manually](#setting-the-global-position-of-a-point--curve-handle-manually)
+	- [Create a cutout shape (a hole)](#create-a-cutout-shape-a-hole)
 	- [Converting a line segment into an arc-segment](#converting-a-line-segment-into-an-arc-segment)
 	- [Editing arc properties](#editing-arc-properties)
 	- [Setting the pivot of your shape](#setting-the-pivot-of-your-shape)
@@ -44,12 +45,13 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 	- [Add new color stops](#add-new-color-stops)
 - [The Project Settings in the Scalable Vector Shapes panel](#the-project-settings-in-the-scalable-vector-shapes-panel)
 - [Using the Inspector Form for `ScalableVectorShape2D`](#using-the-inspector-form-for-scalablevectorshape2d)
-	- [Inspector Buttons](#inspector-buttons)
+	- [Inspector Form](#inspector-form)
 		- [Convert to Path button](#convert-to-path-button)
 		- [Export as PNG button](#export-as-png-button)
 	- [The Fill inspector form](#the-fill-inspector-form)
 	- [The Stroke inspector form](#the-stroke-inspector-form)
 	- [The Collision inspector form](#the-collision-inspector-form)
+	- [The Navigation inspector form](#the-navigation-inspector-form)
 	- [The Curve settings inspector form](#the-curve-settings-inspector-form)
 	- [The Shape type inspector form](#the-shape-type-inspector-form)
 	- [The Editor settings inspector form](#the-editor-settings-inspector-form)
@@ -182,6 +184,16 @@ Using `Alt+Click` you can now open a form to set the global position of a point 
 
 ![global position popup dialog](./addons/curved_lines_2d/screenshots/global_position_popup.png)
 
+## Create a cutout shape (a hole)
+
+Using `Ctrl+Shift+Click` __on__ your selected shape will create _and_ select a new `ScalableVectorShape2D` which will act as a cutout (a hole / scissors if you will):
+
+![add a hole](./addons/curved_lines_2d/screenshots/add_a_hole.png)
+
+The created cutout will have only _one_ point, so to see the effect you'd need to add more points to using regular `Ctrl+Click`:
+
+![a hole was added](./addons/curved_lines_2d/screenshots/hole_added.png)
+
 ## Converting a line segment into an arc-segment
 
 Use `Right click` on a line segment to convert it into an arc[^3] (a an ellipse-shaped bend with an x- and y-radius).
@@ -216,6 +228,7 @@ This rat will want to rotate it's head elsewhere:
 Like this:
 
 ![set origin 2](./addons/curved_lines_2d/screenshots/16a-set_origin.png)
+
 
 # Manipulating gradients
 
@@ -270,6 +283,7 @@ The following custom forms were added, with extensive tooltips to help explain t
 - [Fill](#the-fill-inspector-form) (actually the assigned `Polygon2D`)
 - [Stroke](#the-stroke-inspector-form) (actually the assigned `Line2D`)
 - [Collision](#the-collision-inspector-form) (manages an assigned `CollisionObject2D`)
+- [Navigation](#the-navigation-inspector-form) (manages an assigned `NavigationRegion2D`)
 - [Curve Settings](#the-curve-settings-inspector-form)
 - [Shape Type Settings](#the-shape-type-inspector-form)
 - [Editor Settings](#the-editor-settings-inspector-form)
@@ -277,7 +291,7 @@ The following custom forms were added, with extensive tooltips to help explain t
 ![screenshot of the inspector](./addons/curved_lines_2d/screenshots/inspector-in-2.6.png)
 
 
-## Inspector Buttons
+## Inspector Form
 
 ### Convert to Path button
 
@@ -333,8 +347,13 @@ Every time the shape is changed, one or more `Polygon2D` nodes will be added/upd
 - `CharacterBody2D`
 - `PhysicalBone2D`
 
+## The Navigation inspector form
+
+This form can hold a reference to an assigned `NavigationRegion2D`. When the shape changes, a new navigation polygon is calculated.ß
 
 ## The Curve settings inspector form
+
+![A screenshot of the Curve settings inspector form as per release 2.9](./addons/curved_lines_2d/screenshots/curve_settings_inspector_form.png)
 
 The curve settings inspector form provides the following options
 - A `Batch insert` keyframes button for all the `Curve2D`'s control points (the whole shape). This will be active when a valid track is being edited in a `AnimationPlayer` via the bottom panel
@@ -342,7 +361,9 @@ The curve settings inspector form provides the following options
 - The `update_curve_at_runtime` checkbox, which enables animating the entire shape
 - The `max_stages` property which influences smoothness (and performance!) of curve drawing; a higher value means smoother lines
 - The `tolerance_degrees` property, which also influences smoothness (and performance) of curve drawing: a lower value adds a smoother curve, especially for very subtle bends
-- The `arc_list`: a container for the metadata-objects describing elliptical arc segments of the curve (implemented via `ScalableArc2D` and `ScalableArcList` resource-classes).
+- The `arc_list` property: a container for the metadata-objects describing elliptical arc segments of the curve (implemented via `ScalableArc2D` and `ScalableArcList` resource-classes).
+- The `clip_paths` property: an array of assigned `ScalableVectorShape2D`-nodes, which describe the shape to cut out of this shape
+
 
 ## The Shape type inspector form
 

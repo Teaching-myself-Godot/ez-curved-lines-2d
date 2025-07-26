@@ -60,7 +60,10 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 		var assign_collision_inspector_form = load("res://addons/curved_lines_2d/assign_collision_object_inspector_form.tscn").instantiate()
 		assign_collision_inspector_form.scalable_vector_shape_2d = object
 		add_custom_control(assign_collision_inspector_form)
-
+	elif name == "navigation_region" and (object is ScalableVectorShape2D):
+		var assign_nav_form = load("res://addons/curved_lines_2d/assign_navigation_region_inspector_form.tscn").instantiate()
+		assign_nav_form.scalable_vector_shape_2d = object as ScalableVectorShape2D
+		add_custom_control(assign_nav_form)
 	return false
 
 

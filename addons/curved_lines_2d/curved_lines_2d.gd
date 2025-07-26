@@ -143,18 +143,25 @@ func _on_shape_created(curve : Curve2D, scene_root : Node2D, node_name : String)
 	_create_shape(new_shape, scene_root, node_name)
 
 
-func _create_shape(new_shape : Node2D, scene_root : Node2D, node_name : String) -> void:
+func _create_shape(new_shape : Node2D, scene_root : Node2D, node_name : String, is_cutout_for : ScalableVectorShape2D = null) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	var parent = current_selection if current_selection is Node2D else scene_root
 	new_shape.name = node_name
-	new_shape.position = _get_viewport_center() if parent == scene_root else Vector2.ZERO
+	if not is_instance_valid(is_cutout_for):
+		new_shape.position = _get_viewport_center() if parent == scene_root else Vector2.ZERO
 	undo_redo.create_action("Add a %s to the scene " % node_name)
 	undo_redo.add_do_method(parent, 'add_child', new_shape, true)
 	undo_redo.add_do_method(new_shape, 'set_owner', scene_root)
 	undo_redo.add_do_reference(new_shape)
 	undo_redo.add_undo_method(parent, 'remove_child', new_shape)
-	for draw_fn in PAINT_ORDER_MAP[_get_default_paint_order()]:
-		call(draw_fn, new_shape, scene_root)
+	if is_instance_valid(is_cutout_for):
+		var new_clip_paths := is_cutout_for.clip_paths.duplicate()
+		new_clip_paths.append(new_shape)
+		undo_redo.add_do_property(is_cutout_for, 'clip_paths', new_clip_paths)
+		undo_redo.add_undo_property(is_cutout_for, 'clip_paths', is_cutout_for.clip_paths)
+	else:
+		for draw_fn in PAINT_ORDER_MAP[_get_default_paint_order()]:
+			call(draw_fn, new_shape, scene_root)
 	undo_redo.add_do_method(self, 'select_node_reversibly', new_shape)
 	undo_redo.add_undo_method(self, 'select_node_reversibly', parent)
 	undo_redo.commit_action()
@@ -594,7 +601,7 @@ func _draw_curve(viewport_control : Control, svs : ScalableVectorShape2D,
 	var points = svs.get_poly_points().map(_vp_transform)
 	var color := svs.shape_hint_color if svs.shape_hint_color else Color.LIME_GREEN
 	if not is_selected:
-		color = Color.WEB_GRAY
+		color = Color(0.5, 0.5, 0.5, 0.2)
 	var last_p := Vector2.INF
 	for p : Vector2 in points:
 		if last_p != Vector2.INF:
@@ -620,15 +627,25 @@ func _draw_crosshair(viewport_control : Control, p : Vector2, orbit := 2.0, oute
 
 
 func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
-	var p := _vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position())
-	if Input.is_key_pressed(KEY_CTRL):
+	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	var p := _vp_transform(mouse_pos)
+	if Input.is_key_pressed(KEY_CTRL) and Input.is_key_pressed(KEY_SHIFT):
+		if svs.has_fine_point(mouse_pos):
+			_draw_crosshair(viewport_control, p)
+			_draw_hint(viewport_control, "- Click to start a cutout shape here (Ctrl+Shift held)")
+		else:
+			_draw_hint(viewport_control, "- Start a cutout shape while hovering over selected shape (Ctrl+Shift held)")
+	elif Input.is_key_pressed(KEY_CTRL):
 		_draw_crosshair(viewport_control, p)
 		_draw_hint(viewport_control, "- Click to add point here (Ctrl held)")
 	elif Input.is_key_pressed(KEY_SHIFT):
 		_draw_hint(viewport_control, "- Use mousewheel to resize shape (Shift held)")
 	elif not svs.has_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE):
-		_draw_hint(viewport_control, "- Hold Ctrl to add points to selected shape
-				- Hold Shift to resize shape with mouswheel")
+		var hint := "- Hold Ctrl to add points to selected shape
+				- Hold Shift to resize shape with mouswheel"
+		if svs.has_fine_point(mouse_pos):
+			hint += "\n- Hold Ctrl-Shift to start a cutout shape here"
+		_draw_hint(viewport_control, hint)
 
 
 func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
@@ -1100,6 +1117,15 @@ func _add_point_on_position(svs : ScalableVectorShape2D, pos : Vector2) -> void:
 	_add_point_to_curve(svs, svs.to_local(pos))
 
 
+func _start_cutout_shape(svs : ScalableVectorShape2D, pos : Vector2) -> void:
+	var new_shape = ScalableVectorShape2D.new()
+	new_shape.curve = Curve2D.new()
+	new_shape.curve.add_point(Vector2.ZERO)
+	new_shape.position = svs.to_local(EditorInterface.get_editor_viewport_2d().get_mouse_position())
+
+	_create_shape(new_shape, EditorInterface.get_edited_scene_root(), "CutoutOf%s" % svs.name, svs)
+
+
 func _add_point_on_curve_segment(svs : ScalableVectorShape2D) -> void:
 	if svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:
 		return
@@ -1195,6 +1221,11 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 							_is_snapped_to_pixel(),
 							_get_snap_resolution()
 					)
+				return true
+			elif _is_svs_valid(current_selection) and Input.is_key_pressed(KEY_CTRL) and Input.is_key_pressed(KEY_SHIFT):
+				if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and
+							current_selection.has_fine_point(mouse_pos)):
+					_start_cutout_shape(current_selection, mouse_pos)
 				return true
 			elif _is_svs_valid(current_selection) and Input.is_key_pressed(KEY_CTRL):
 				if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
