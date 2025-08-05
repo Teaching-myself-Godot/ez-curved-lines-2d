@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://de7qp86gcbt0j"]
 
-[ext_resource type="Script" uid="uid://cqncbgw8tm4cf" path="res://chasing_light.gd" id="1_5swdf"]
+[ext_resource type="Script" uid="uid://cqncbgw8tm4cf" path="res://addons/curved_lines_2d/examples/pinball/chasing_light.gd" id="1_5swdf"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_qxspa"]
 radius = 18.0

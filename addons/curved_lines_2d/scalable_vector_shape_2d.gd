@@ -227,7 +227,7 @@ func _ready():
 	if not dimensions_changed.is_connected(_on_dimensions_changed):
 		dimensions_changed.connect(_on_dimensions_changed)
 	if not Engine.is_editor_hint():
-		EngineDebugger.register_message_capture(str(get_path()), _capture_debug)
+		EngineDebugger.register_message_capture("svs_2d%s" % str(get_path()), _capture_debug)
 
 
 # Wire up signals on enter tree for the editor
@@ -270,7 +270,7 @@ func _exit_tree():
 		arc_list.changed.disconnect(curve_changed)
 
 
-func _capture_debug(message, data):
+func _capture_debug(message : String, data : Array):
 	print(message, " - received")
 	if message == "remote_curve_update":
 		print(data)

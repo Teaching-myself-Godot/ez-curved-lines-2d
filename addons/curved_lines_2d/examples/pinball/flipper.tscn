@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://c4qvvoxq5w28e"]
 
-[ext_resource type="Script" uid="uid://dl0gawkliv8ak" path="res://flipper.gd" id="1_k5dyu"]
+[ext_resource type="Script" uid="uid://dl0gawkliv8ak" path="res://addons/curved_lines_2d/examples/pinball/flipper.gd" id="1_k5dyu"]
 [ext_resource type="Script" uid="uid://de3jpss66xjfh" path="res://addons/curved_lines_2d/scalable_vector_shape_2d.gd" id="1_mhtlv"]
 [ext_resource type="Script" uid="uid://dlbv4pit17dnu" path="res://addons/curved_lines_2d/scalable_arc.gd" id="2_k5dyu"]
 [ext_resource type="Script" uid="uid://dl1t88tthmwts" path="res://addons/curved_lines_2d/scalable_arc_list.gd" id="3_muof8"]

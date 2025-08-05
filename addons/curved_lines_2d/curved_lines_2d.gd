@@ -56,8 +56,9 @@ const PAINT_ORDER_MAP := {
 class RemoteCurveUpdateEditorDebugger extends EditorDebuggerPlugin:
 	func broadcast_curve_update(scene_root : Node, svs : ScalableVectorShape2D):
 		var svs_path := "/root/" + scene_root.name + "/" + str(scene_root.get_path_to(svs))
+		var prefix := "svs_2d%s" % svs_path
 		for session : EditorDebuggerSession in get_sessions():
-			session.send_message(svs_path + ":remote_curve_update",
+			session.send_message(prefix + ":remote_curve_update",
 					["echo"])
 
 
