@@ -54,12 +54,30 @@ const PAINT_ORDER_MAP := {
 
 
 class RemoteCurveUpdateEditorDebugger extends EditorDebuggerPlugin:
-	func broadcast_curve_update(scene_root : Node, svs : ScalableVectorShape2D):
+	func _get_prefix(scene_root : Node, svs : ScalableVectorShape2D) -> String:
 		var svs_path := "/root/" + scene_root.name + "/" + str(scene_root.get_path_to(svs))
-		var prefix := "svs_2d%s" % svs_path
+		return "svs_2d%s" % svs_path
+
+	func _get_under_edit_as_string(object : Object) -> String:
+		if object is ScalableArcList:
+			return "arclist"
+		elif object is Curve2D:
+			return "curve"
+		else:
+			return "self"
+
+	func broadcast_curve_update_method(scene_root : Node, svs : ScalableVectorShape2D, arglist : Array):
+		var what := _get_under_edit_as_string(arglist[0])
+		var data = [false, what] + arglist
 		for session : EditorDebuggerSession in get_sessions():
-			session.send_message(prefix + ":remote_curve_update",
-					["echo"])
+			session.send_message(_get_prefix(scene_root, svs) + ":remote_curve_update", data)
+
+	func broadcast_curve_update_property(scene_root : Node, svs : ScalableVectorShape2D, arglist : Array):
+		var what := _get_under_edit_as_string(arglist[0])
+		var data = [true, what] + arglist
+		for session : EditorDebuggerSession in get_sessions():
+			session.send_message(_get_prefix(scene_root, svs) + ":remote_curve_update", data)
+
 
 
 var plugin : Line2DGeneratorInspectorPlugin
@@ -760,16 +778,25 @@ func _start_undo_redo_transaction(name := "") -> void:
 func _commit_undo_redo_transaction() -> void:
 	if not in_undo_redo_transaction:
 		return
+
+	var svs := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	var scene_root := EditorInterface.get_edited_scene_root()
 	in_undo_redo_transaction = false
 	undo_redo.create_action(undo_redo_transaction[UndoRedoEntry.NAME])
+
+	for do_method in undo_redo_transaction[UndoRedoEntry.DOS]:
+		undo_redo.callv('add_do_method', do_method)
+		debugger.broadcast_curve_update_method(scene_root, svs, do_method)
+		undo_redo.add_do_method(debugger, 'broadcast_curve_update_method', scene_root, svs, do_method)
+	for do_prop in undo_redo_transaction[UndoRedoEntry.DO_PROPS]:
+		undo_redo.callv('add_do_property', do_prop)
+		debugger.broadcast_curve_update_property(scene_root, svs, do_prop)
+		undo_redo.add_do_method(debugger, 'broadcast_curve_update_property', scene_root, svs, do_prop)
+
 	for undo_method in undo_redo_transaction[UndoRedoEntry.UNDOS]:
 		undo_redo.callv('add_undo_method', undo_method)
 	for undo_prop in undo_redo_transaction[UndoRedoEntry.UNDO_PROPS]:
 		undo_redo.callv('add_undo_property', undo_prop)
-	for do_method in undo_redo_transaction[UndoRedoEntry.DOS]:
-		undo_redo.callv('add_do_method', do_method)
-	for do_prop in undo_redo_transaction[UndoRedoEntry.DO_PROPS]:
-		undo_redo.callv('add_do_property', do_prop)
 	undo_redo.commit_action(false)
 	undo_redo_transaction = {
 		UndoRedoEntry.NAME: name,
@@ -819,9 +846,6 @@ func _update_curve_point_position(current_selection : ScalableVectorShape2D, mou
 	])
 	current_selection.set_global_curve_point_position(mouse_pos, idx,
 			_is_snapped_to_pixel(), _get_snap_resolution())
-
-	var scene_root := EditorInterface.get_edited_scene_root()
-	debugger.broadcast_curve_update(scene_root, current_selection)
 
 
 func _update_rect_dimensions(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:

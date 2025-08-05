@@ -227,6 +227,7 @@ func _ready():
 	if not dimensions_changed.is_connected(_on_dimensions_changed):
 		dimensions_changed.connect(_on_dimensions_changed)
 	if not Engine.is_editor_hint():
+		print("svs_2d%s" % str(get_path()))
 		EngineDebugger.register_message_capture("svs_2d%s" % str(get_path()), _capture_debug)
 
 
