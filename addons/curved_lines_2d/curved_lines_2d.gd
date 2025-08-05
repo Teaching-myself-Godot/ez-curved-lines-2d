@@ -51,7 +51,18 @@ const PAINT_ORDER_MAP := {
 	PaintOrder.STROKE_MARKERS_FILL: ['_add_stroke_to_created_shape', '_add_collision_to_created_shape', '_add_fill_to_created_shape'],
 	PaintOrder.MARKERS_STROKE_FILL: ['_add_collision_to_created_shape', '_add_stroke_to_created_shape', '_add_fill_to_created_shape']
 }
+
+
+class RemoteCurveUpdateEditorDebugger extends EditorDebuggerPlugin:
+	func broadcast_curve_update(scene_root : Node, svs : ScalableVectorShape2D):
+		var svs_path := "/root/" + scene_root.name + "/" + str(scene_root.get_path_to(svs))
+		for session : EditorDebuggerSession in get_sessions():
+			session.send_message(svs_path + ":remote_curve_update",
+					["echo"])
+
+
 var plugin : Line2DGeneratorInspectorPlugin
+var debugger := RemoteCurveUpdateEditorDebugger.new()
 var scalable_vector_shapes_2d_dock
 var select_mode_button : Button
 var undo_redo : EditorUndoRedoManager
@@ -70,6 +81,7 @@ var undo_redo_transaction : Dictionary = {
 var set_global_position_popup_panel : PopupPanel
 var arc_settings_popup_panel : PopupPanel
 
+
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
 	plugin = preload("res://addons/curved_lines_2d/line_2d_generator_inspector_plugin.gd").new()
@@ -86,12 +98,12 @@ func _enter_tree():
 		preload("res://addons/curved_lines_2d/scalable_vector_shape_2d.gd"),
 		preload("res://addons/curved_lines_2d/DrawablePath2D.svg")
 	)
+	add_debugger_plugin(debugger)
 	undo_redo = get_undo_redo()
 	add_control_to_bottom_panel(scalable_vector_shapes_2d_dock as Control, "Scalable Vector Shapes 2D")
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
 	undo_redo.version_changed.connect(update_overlays)
 	make_bottom_panel_item_visible(scalable_vector_shapes_2d_dock)
-
 	set_global_position_popup_panel = preload("res://addons/curved_lines_2d/set_global_position_popup_panel.tscn").instantiate()
 	arc_settings_popup_panel = preload("res://addons/curved_lines_2d/arc_settings_popup_panel.tscn").instantiate()
 	EditorInterface.get_base_control().add_child(set_global_position_popup_panel)
@@ -807,6 +819,9 @@ func _update_curve_point_position(current_selection : ScalableVectorShape2D, mou
 	current_selection.set_global_curve_point_position(mouse_pos, idx,
 			_is_snapped_to_pixel(), _get_snap_resolution())
 
+	var scene_root := EditorInterface.get_edited_scene_root()
+	debugger.broadcast_curve_update(scene_root, current_selection)
+
 
 func _update_rect_dimensions(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
 	if not in_undo_redo_transaction:
@@ -1451,5 +1466,6 @@ func _exit_tree():
 	remove_custom_type("DrawablePath2D")
 	remove_custom_type("ScalableVectorShape2D")
 	remove_control_from_bottom_panel(scalable_vector_shapes_2d_dock)
+	remove_debugger_plugin(debugger)
 	scalable_vector_shapes_2d_dock.free()
 	set_global_position_popup_panel.free()
