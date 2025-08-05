@@ -52,34 +52,6 @@ const PAINT_ORDER_MAP := {
 	PaintOrder.MARKERS_STROKE_FILL: ['_add_collision_to_created_shape', '_add_stroke_to_created_shape', '_add_fill_to_created_shape']
 }
 
-
-class RemoteCurveUpdateEditorDebugger extends EditorDebuggerPlugin:
-	func _get_prefix(scene_root : Node, svs : ScalableVectorShape2D) -> String:
-		var svs_path := "/root/" + scene_root.name + "/" + str(scene_root.get_path_to(svs))
-		return "svs_2d%s" % svs_path
-
-	func _get_under_edit_as_string(object : Object) -> String:
-		if object is ScalableArcList:
-			return "arclist"
-		elif object is Curve2D:
-			return "curve"
-		else:
-			return "self"
-
-	func broadcast_curve_update_method(scene_root : Node, svs : ScalableVectorShape2D, arglist : Array):
-		var what := _get_under_edit_as_string(arglist[0])
-		var data = [false, what] + arglist
-		for session : EditorDebuggerSession in get_sessions():
-			session.send_message(_get_prefix(scene_root, svs) + ":remote_curve_update", data)
-
-	func broadcast_curve_update_property(scene_root : Node, svs : ScalableVectorShape2D, arglist : Array):
-		var what := _get_under_edit_as_string(arglist[0])
-		var data = [true, what] + arglist
-		for session : EditorDebuggerSession in get_sessions():
-			session.send_message(_get_prefix(scene_root, svs) + ":remote_curve_update", data)
-
-
-
 var plugin : Line2DGeneratorInspectorPlugin
 var debugger := RemoteCurveUpdateEditorDebugger.new()
 var scalable_vector_shapes_2d_dock
@@ -780,23 +752,21 @@ func _commit_undo_redo_transaction() -> void:
 		return
 
 	var svs := EditorInterface.get_selection().get_selected_nodes().pop_back()
-	var scene_root := EditorInterface.get_edited_scene_root()
 	in_undo_redo_transaction = false
 	undo_redo.create_action(undo_redo_transaction[UndoRedoEntry.NAME])
-
 	for do_method in undo_redo_transaction[UndoRedoEntry.DOS]:
 		undo_redo.callv('add_do_method', do_method)
-		debugger.broadcast_curve_update_method(scene_root, svs, do_method)
-		undo_redo.add_do_method(debugger, 'broadcast_curve_update_method', scene_root, svs, do_method)
+		undo_redo.add_do_method(debugger, 'broadcast_curve_update_method', svs, do_method)
 	for do_prop in undo_redo_transaction[UndoRedoEntry.DO_PROPS]:
 		undo_redo.callv('add_do_property', do_prop)
-		debugger.broadcast_curve_update_property(scene_root, svs, do_prop)
-		undo_redo.add_do_method(debugger, 'broadcast_curve_update_property', scene_root, svs, do_prop)
-
+		undo_redo.add_do_method(debugger, 'broadcast_curve_update_property', svs, do_prop)
 	for undo_method in undo_redo_transaction[UndoRedoEntry.UNDOS]:
 		undo_redo.callv('add_undo_method', undo_method)
+		undo_redo.add_undo_method(debugger, 'broadcast_curve_update_method', svs, undo_method)
 	for undo_prop in undo_redo_transaction[UndoRedoEntry.UNDO_PROPS]:
 		undo_redo.callv('add_undo_property', undo_prop)
+		undo_redo.add_undo_method(debugger, 'broadcast_curve_update_property', svs, undo_prop)
+
 	undo_redo.commit_action(false)
 	undo_redo_transaction = {
 		UndoRedoEntry.NAME: name,
@@ -831,6 +801,7 @@ func _update_curve_point_position(current_selection : ScalableVectorShape2D, mou
 			current_selection.curve, 'set_point_position', idx, current_selection.curve.get_point_position(idx)
 		])
 
+	var root := EditorInterface.get_edited_scene_root()
 	undo_redo_transaction[UndoRedoEntry.DOS] = []
 	if idx == 0 and current_selection.is_curve_closed():
 		var idx_1 = current_selection.curve.point_count - 1
@@ -840,6 +811,7 @@ func _update_curve_point_position(current_selection : ScalableVectorShape2D, mou
 		])
 		current_selection.set_global_curve_point_position(mouse_pos, idx_1,
 				_is_snapped_to_pixel(), _get_snap_resolution())
+
 	undo_redo_transaction[UndoRedoEntry.DOS].append([
 			current_selection, 'set_global_curve_point_position', mouse_pos, idx,
 			_is_snapped_to_pixel(), _get_snap_resolution()
@@ -1030,20 +1002,14 @@ func _set_shape_origin(current_selection : ScalableVectorShape2D, mouse_pos : Ve
 	undo_redo.commit_action()
 
 
-func _get_curve_backup(curve_in : Curve2D) -> Curve2D:
-	var curve_copy := Curve2D.new()
-	for i in range(curve_in.point_count):
-		curve_copy.add_point(curve_in.get_point_position(i),
-				curve_in.get_point_in(i), curve_in.get_point_out(i))
-	return curve_copy
-
-
 func _resize_shape(svs : ScalableVectorShape2D, s : float) -> void:
 	if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 		if not in_undo_redo_transaction:
+			var backup := svs.curve.duplicate()
 			_start_undo_redo_transaction("Resize shape %s" % str(svs))
+			undo_redo.add_undo_reference(backup)
 			undo_redo_transaction[UndoRedoEntry.UNDOS].append([
-					svs, 'replace_curve_points', _get_curve_backup(svs.curve)])
+					svs, 'replace_curve_points', backup])
 
 		undo_redo_transaction[UndoRedoEntry.DOS] = []
 		for idx in range(svs.curve.point_count):
@@ -1069,7 +1035,7 @@ func _remove_point_from_curve(current_selection : ScalableVectorShape2D, idx : i
 	if current_selection.is_curve_closed() and idx == 0:
 		idx = orig_n - 1
 
-	var backup := _get_curve_backup(current_selection.curve)
+	var backup := current_selection.curve.duplicate()
 	undo_redo.create_action("Remove point %d from %s" % [idx, str(current_selection)])
 	undo_redo.add_do_method(current_selection.curve, 'set_point_in', 0, Vector2.ZERO)
 	if orig_n > 2:
@@ -1083,6 +1049,7 @@ func _remove_point_from_curve(current_selection : ScalableVectorShape2D, idx : i
 
 	undo_redo.add_do_method(current_selection.curve, 'remove_point', idx)
 	undo_redo.add_do_method(current_selection.arc_list, 'handle_point_removed_at_index', idx)
+	undo_redo.add_undo_reference(backup)
 	undo_redo.add_undo_method(current_selection, 'replace_curve_points', backup)
 	undo_redo.add_undo_method(current_selection.arc_list, 'handle_point_added_at_index', idx)
 	for a in redo_arcs:
@@ -1494,3 +1461,30 @@ func _exit_tree():
 	remove_debugger_plugin(debugger)
 	scalable_vector_shapes_2d_dock.free()
 	set_global_position_popup_panel.free()
+
+
+class RemoteCurveUpdateEditorDebugger extends EditorDebuggerPlugin:
+	func _get_prefix(svs : ScalableVectorShape2D) -> String:
+		var scene_root := EditorInterface.get_edited_scene_root()
+		var svs_path := "/root/" + scene_root.name + "/" + str(scene_root.get_path_to(svs))
+		return "svs_2d%s" % svs_path
+
+	func _get_under_edit_as_string(object : Object) -> String:
+		if object is ScalableArcList:
+			return "arc_list"
+		elif object is Curve2D:
+			return "curve"
+		else:
+			return "self"
+
+	func broadcast_curve_update_method(svs : ScalableVectorShape2D, arglist : Array):
+		var what := _get_under_edit_as_string(arglist[0])
+		var data = [false, what] + arglist.filter(func(arg): return not arg is Object)
+		for session : EditorDebuggerSession in get_sessions():
+			session.send_message(_get_prefix(svs) + ":remote_curve_update", data)
+
+	func broadcast_curve_update_property(svs : ScalableVectorShape2D, arglist : Array):
+		var what := _get_under_edit_as_string(arglist[0])
+		var data = [true, what] + arglist.filter(func(arg): return not arg is Object)
+		for session : EditorDebuggerSession in get_sessions():
+			session.send_message(_get_prefix(svs) + ":remote_curve_update", data)
