@@ -167,37 +167,38 @@ func _export_png(svs : ScalableVectorShape2D, filename : String, dialog : Node) 
 
 func _export_baked_scene(svs : ScalableVectorShape2D, filepath : String, dialog : Node) -> void:
 	dialog.queue_free()
-	
+
 	var svs_owner: Node = svs.owner
 	var svs_parent: Node = svs.get_parent()
 	var svs_index: int = svs.get_index()
 	var scene: PackedScene = _create_baked_scene(svs, filepath)
-	var node: Node2D = scene.instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
-	
-	# We are replacing the entire branch.
-	svs_parent.remove_child(svs)
-	svs_parent.add_child(node, true)
-	svs_parent.move_child(node, svs_index)
-	
-	node.owner = svs_owner
-	node.scene_file_path = filepath
-	node.transform = svs.transform
-	
-	var undo_redo := EditorInterface.get_editor_undo_redo()
-	undo_redo.create_action("Export 'baked' scene")
-	undo_redo.add_do_method(svs_parent, "remove_child", svs)
-	undo_redo.add_undo_method(svs_parent, "remove_child", node)
-	undo_redo.add_do_method(svs_parent, "add_child", node, true)
-	undo_redo.add_undo_method(svs_parent, "add_child", svs, true)
-	undo_redo.add_do_method(svs_parent, "move_child", node, svs_index)
-	undo_redo.add_undo_method(svs_parent, "move_child", svs, svs_index)
-	undo_redo.add_do_property(node, "owner", svs_owner)
-	undo_redo.add_undo_property(svs, "owner", svs_owner)
-	undo_redo.add_do_method(self, "_replace_owner", node, null, svs_owner)
-	undo_redo.add_undo_method(self, "_replace_owner", svs, null, svs_owner)
-	undo_redo.add_do_reference(node)
-	undo_redo.add_undo_reference(svs)
-	undo_redo.commit_action(false)
+	EditorInterface.open_scene_from_path(filepath)
+	#var node: Node2D = scene.instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
+	#
+	## We are replacing the entire branch.
+	#svs_parent.remove_child(svs)
+	#svs_parent.add_child(node, true)
+	#svs_parent.move_child(node, svs_index)
+	#
+	#node.owner = svs_owner
+	#node.scene_file_path = filepath
+	#node.transform = svs.transform
+	#
+	#var undo_redo := EditorInterface.get_editor_undo_redo()
+	#undo_redo.create_action("Export 'baked' scene")
+	#undo_redo.add_do_method(svs_parent, "remove_child", svs)
+	#undo_redo.add_undo_method(svs_parent, "remove_child", node)
+	#undo_redo.add_do_method(svs_parent, "add_child", node, true)
+	#undo_redo.add_undo_method(svs_parent, "add_child", svs, true)
+	#undo_redo.add_do_method(svs_parent, "move_child", node, svs_index)
+	#undo_redo.add_undo_method(svs_parent, "move_child", svs, svs_index)
+	#undo_redo.add_do_property(node, "owner", svs_owner)
+	#undo_redo.add_undo_property(svs, "owner", svs_owner)
+	#undo_redo.add_do_method(self, "_replace_owner", node, null, svs_owner)
+	#undo_redo.add_undo_method(self, "_replace_owner", svs, null, svs_owner)
+	#undo_redo.add_do_reference(node)
+	#undo_redo.add_undo_reference(svs)
+	#undo_redo.commit_action(false)
 
 # It will temporarily modify the current branch so we can create the baked scene.
 func _create_baked_scene(svs : ScalableVectorShape2D, filepath: String) -> PackedScene:
@@ -208,43 +209,43 @@ func _create_baked_scene(svs : ScalableVectorShape2D, filepath: String) -> Packe
 	var root := Node2D.new()
 	root.name = svs.name
 	replace_map[svs] = root
-	
+
 	while svs_children.size() > 0:
 		var child: Node = svs_children.pop_back()
-		
+
 		if child is AnimationPlayer:
 			continue
-		
+
 		svs_children.append_array(child.get_children())
-		
+
 		if child.owner == svs_owner:
 			svs_ownership.append(child)
-		
+
 		if child is ScalableVectorShape2D:
 			var node := Node2D.new()
 			node.name = child.name
 			node.unique_name_in_owner = child.unique_name_in_owner
 			node.transform = child.transform
 			replace_map[child] = node
-	
+
 	_replace_nodes(replace_map)
-	
+
 	for child in svs_ownership:
 		if child in replace_map: # Got replaced, so update the replacement instead.
 			replace_map[child].owner = root
 		else:
 			child.owner = root
-	
+
 	var scene := PackedScene.new()
 	scene.pack(root)
 	ResourceSaver.save(scene, filepath, ResourceSaver.FLAG_NONE)
-	
+
 	# Undo modifications.
 	_replace_nodes(replace_map, true)
-	
+
 	for child in svs_ownership:
 		child.owner = svs_owner
-	
+
 	return ResourceLoader.load(filepath) as PackedScene
 
 # Replace nodes in the map by the counterpart (key <-> value).
@@ -267,5 +268,5 @@ func _replace_owner(node: Node, old_owner: Node, new_owner: Node) -> void:
 	for child in node.get_children():
 		if child.owner == old_owner:
 			child.owner = new_owner
-		
+
 		_replace_owner(child, old_owner, new_owner)
