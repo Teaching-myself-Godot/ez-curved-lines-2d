@@ -449,11 +449,15 @@ func add_clip_path(svs : ScalableVectorShape2D):
 
 
 func _update_polygon_texture():
-	if polygon.texture is GradientTexture2D:
+	if polygon.texture is GradientTexture2D or polygon.texture is ImageTexture:
 		var box := get_bounding_rect()
 		polygon.texture_offset = -box.position
-		polygon.texture.width = 1 if box.size.x < 1 else box.size.x
-		polygon.texture.height = 1 if box.size.y < 1 else box.size.y
+		if polygon.texture is GradientTexture2D:
+			polygon.texture.width = 1 if box.size.x < 1 else box.size.x
+			polygon.texture.height = 1 if box.size.y < 1 else box.size.y
+		else:
+			if not polygon.texture_repeat:
+				polygon.texture_scale = polygon.texture.get_size() / box.size
 
 
 func _apply_polygon_operations_on_clip_paths(polygon_points : PackedVector2Array, valid_clip_paths : Array[ScalableVectorShape2D]) -> Array[PackedVector2Array]:

@@ -152,6 +152,8 @@ func _load_svg(file_path : String) -> void:
 				current_node = current_node.get_parent()
 		elif xml_data.get_node_name() == "rect":
 			process_svg_rectangle(xml_data, current_node, scene_root, svg_gradients)
+		elif xml_data.get_node_name() == "image":
+			process_svg_image(xml_data, current_node, scene_root, svg_gradients)
 		elif xml_data.get_node_name() == "polygon":
 			process_svg_polygon(xml_data, current_node, scene_root, true, svg_gradients)
 		elif xml_data.get_node_name() == "polyline":
@@ -265,6 +267,39 @@ func create_path_from_ellipse(element:XMLParser, path_name : String, rx : float,
 	_post_process_shape(new_ellipse, current_node, get_svg_transform(element), get_svg_style(element),
 			scene_root, gradients)
 
+func process_svg_image(element:XMLParser, current_node : Node2D, scene_root : Node,
+		gradients : Array[Dictionary]) -> void:
+	var x = float(element.get_named_attribute_value("x")) if element.has_attribute("x") else 0.0
+	var y = float(element.get_named_attribute_value("y")) if element.has_attribute("y") else 0.0
+	var width = float(element.get_named_attribute_value("width"))
+	var height = float(element.get_named_attribute_value("height"))
+	var new_image_rect := ScalableVectorShape2D.new()
+	new_image_rect.shape_type = ScalableVectorShape2D.ShapeType.RECT
+	new_image_rect.size = Vector2(width, height)
+	new_image_rect.position = Vector2(x, y) + new_image_rect.size * 0.5
+	new_image_rect.name = element.get_named_attribute_value("id") if element.has_attribute("id") else "Image"
+	var image_data : String = (
+		element.get_named_attribute_value("xlink:href")
+			if element.has_attribute("xlink:href") else
+		element.get_named_attribute_value_safe("href")
+	)
+	var image_texture : ImageTexture = null
+	if image_data.begins_with("data:image") and image_data.contains("base64"):
+		var parts_a := image_data.split(",")
+		var parts_b := parts_a[0].split("/")
+		var format := parts_b[1].replace(";", "").replace("base64", "").strip_edges()
+		var base_64_data := parts_a[1].strip_edges()
+		var unmarshalled := Marshalls.base64_to_raw(base_64_data)
+		var image := Image.new()
+		image.call("load_%s_from_buffer" % format.to_lower(), unmarshalled)
+		image_texture = ImageTexture.create_from_image(image)
+		log_message("Parsed image format: %s" % format, LogLevel.DEBUG)
+	else:
+		log_message("⚠️ Only base64 encoded embedded images are supported", LogLevel.WARN)
+
+	_post_process_shape(new_image_rect, current_node, get_svg_transform(element), get_svg_style(element),
+			scene_root, gradients, false, image_texture)
+
 
 func process_svg_rectangle(element:XMLParser, current_node : Node2D, scene_root : Node,
 		gradients : Array[Dictionary]) -> void:
@@ -279,7 +314,6 @@ func process_svg_rectangle(element:XMLParser, current_node : Node2D, scene_root 
 	var width = float(element.get_named_attribute_value("width"))
 	var height = float(element.get_named_attribute_value("height"))
 	var new_rect := ScalableVectorShape2D.new()
-	new_rect.shape_type = ScalableVectorShape2D.ShapeType.RECT
 	new_rect.shape_type = ScalableVectorShape2D.ShapeType.RECT
 	new_rect.size = Vector2(width, height)
 	new_rect.position = Vector2(x, y) + new_rect.size * 0.5
@@ -538,7 +572,7 @@ func create_path2d(path_name: String, parent: Node, curve: Curve2D, arcs: Array[
 
 func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform : Transform2D,
 			style : Dictionary, scene_root : Node, gradients : Array[Dictionary],
-			is_cutout := false) -> void:
+			is_cutout := false, image_texture : ImageTexture = null) -> void:
 	svs.lock_assigned_shapes = keep_drawable_path_node and lock_shapes
 	var ancestor = parent
 	while !ancestor.has_meta(SVG_ROOT_META_NAME):
@@ -567,7 +601,8 @@ func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform :
 
 	if not is_cutout:
 		for func_name in PAINT_ORDER_MAP[get_paint_order(style)]:
-			call(func_name, svs, style, scene_root, gradients, gradient_point_parent)
+			call(func_name, svs, style, scene_root, gradients,
+					gradient_point_parent, image_texture)
 
 	if not keep_drawable_path_node:
 		var bare_node := Node2D.new()
@@ -586,7 +621,8 @@ func get_paint_order(style : Dictionary) -> String:
 
 
 func add_stroke_to_path(new_path : Node2D, style: Dictionary, scene_root : Node,
-			_gradients : Array[Dictionary], _gradient_point_parent : Node2D):
+			_gradients : Array[Dictionary], _gradient_point_parent : Node2D,
+			_image_texture : ImageTexture):
 	if style.has("stroke") and style["stroke"] != "none":
 		var line := Line2D.new()
 		line.name = "Stroke"
@@ -627,13 +663,19 @@ func add_stroke_to_path(new_path : Node2D, style: Dictionary, scene_root : Node,
 
 
 func add_fill_to_path(new_path : ScalableVectorShape2D, style: Dictionary, scene_root : Node,
-			gradients : Array[Dictionary], gradient_point_parent : Node2D):
-	if style.has("fill") and style["fill"] != "none":
+			gradients : Array[Dictionary], gradient_point_parent : Node2D,
+			image_texture : ImageTexture):
+	if image_texture or style.has("fill") and style["fill"] != "none":
 		var polygon := Polygon2D.new()
 		polygon.name = "Fill"
 		polygon.antialiased = antialiased_shapes
 		_managed_add_child_and_set_owner(new_path, polygon, scene_root, 'polygon')
-		if style["fill"].begins_with("url"):
+		if image_texture != null:
+			var box := new_path.get_bounding_rect()
+			polygon.texture = image_texture
+			polygon.texture_offset = -box.position
+			polygon.texture_scale = polygon.texture.get_size() / box.size
+		elif style["fill"].begins_with("url"):
 			var href : String = style["fill"].replace("url(", "").replace(")", "")
 			var svg_gradient = get_gradient_by_href(href, gradients)
 			if svg_gradient.is_empty():
@@ -653,7 +695,8 @@ func add_fill_to_path(new_path : ScalableVectorShape2D, style: Dictionary, scene
 
 
 func add_collision_to_path(new_path : ScalableVectorShape2D, style : Dictionary, scene_root : Node,
-			_gradients : Array[Dictionary], _gradient_point_parent : Node2D) -> void:
+			_gradients : Array[Dictionary], _gradient_point_parent : Node2D,
+			_image_texture : ImageTexture) -> void:
 	if (collision_object_type != ScalableVectorShape2D.CollisionObjectType.NONE and
 			("fill" in style or import_collision_polygons_for_all_shapes)):
 		match collision_object_type:
