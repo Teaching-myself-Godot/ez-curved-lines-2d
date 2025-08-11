@@ -31,22 +31,35 @@ func _set_svg_resource(new_resource: SVGResource) -> void:
 		return
 
 	# Disconnect from old resource if it exists
-	if svg_resource and svg_resource.is_connected("texture_updated", _on_texture_updated):
-		svg_resource.texture_updated.disconnect(_on_texture_updated)
+	if svg_resource:
+		if svg_resource.is_connected("texture_updated", _on_texture_updated):
+			svg_resource.texture_updated.disconnect(_on_texture_updated)
+		# Disconnect from the changed signal
+		if svg_resource.is_connected("changed", _on_resource_changed):
+			svg_resource.changed.disconnect(_on_resource_changed)
 
 	svg_resource = new_resource
 
 	if svg_resource:
 		svg_resource.texture_updated.connect(_on_texture_updated)
+		# CONNECT TO THE CHANGED SIGNAL
+		svg_resource.changed.connect(_on_resource_changed)
+
 		# If the resource already has a texture, apply it immediately.
 		if svg_resource.texture:
 			_on_texture_updated(svg_resource.texture)
 		# Queue a render to ensure it's the correct size.
 		_queue_render()
 
+# Handles resource changes
+func _on_resource_changed() -> void:
+	# This gets called when svg_file_path or render_scale changes
+	_queue_render()
+
 func _on_texture_updated(new_texture: Texture2D) -> void:
 	if _parent_control and not target_property.is_empty():
-		_parent_control.set(target_property, new_texture)
+		# Set the new texture on the parent control
+		_parent_control.set_deferred(target_property, new_texture)
 
 ## Called on resize or when the resource changes.
 func _queue_render() -> void:
