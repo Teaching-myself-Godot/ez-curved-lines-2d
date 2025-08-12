@@ -104,6 +104,31 @@ func _get_viewport_center() -> Vector2:
 	return (sz / 2) / tr.get_scale() - og / tr.get_scale()
 
 
+class SVGXMLElement:
+	var name : String
+	var attributes : Dictionary[String, String]
+	var children : Array[SVGXMLElement]
+	var parent : SVGXMLElement
+
+	func _init(xml_data : XMLParser, with_parent : SVGXMLElement = null):
+		name = xml_data.get_node_name()
+		for i in xml_data.get_attribute_count():
+			attributes[xml_data.get_attribute_name(i)] = xml_data.get_attribute_value(i)
+		parent = with_parent
+
+	func add_child(ch : SVGXMLElement):
+		children.append(ch)
+
+
+	func _to_string() -> String:
+		var attrs := PackedStringArray(attributes.keys().map(func(k): return k + "=\"" + attributes[k] + "\""))
+		var ch := PackedStringArray(children.map(str))
+		if children.is_empty():
+			return "<" + name + " " + " ".join(attrs) + " />"
+		else:
+			return "<" + name + " " + " ".join(attrs) + ">" + "\n".join(ch) + "</" + name + ">"
+
+
 func _load_svg(file_path : String) -> void:
 	for child in %ImportLogContainer.get_children():
 		child.queue_free()
@@ -130,16 +155,39 @@ func _load_svg(file_path : String) -> void:
 	var current_node := svg_root
 	var svg_gradients : Array[Dictionary] = []
 
-	# first pass
+	var svg_xml_node : SVGXMLElement = null
 	while xml_data.read() == OK:
 		if not xml_data.get_node_type() in [XMLParser.NODE_ELEMENT, XMLParser.NODE_ELEMENT_END]:
 			continue
+		if xml_data.get_node_type() == XMLParser.NODE_ELEMENT and xml_data.is_empty() and xml_data.get_node_name() in ["defs", "g", "clipPath"]:
+			continue
+		if xml_data.get_node_type() == XMLParser.NODE_ELEMENT_END:
+			log_message("out < " + xml_data.get_node_name())
+			if svg_xml_node.parent:
+				svg_xml_node = svg_xml_node.parent
+		else:
+			log_message("in > " + xml_data.get_node_name())
+			var new_svg_xml_node := SVGXMLElement.new(xml_data, svg_xml_node)
+			if svg_xml_node:
+				svg_xml_node.add_child(new_svg_xml_node)
+			if not xml_data.is_empty():
+				svg_xml_node = new_svg_xml_node
+			#log_message(str(svg_xml_node))
+	print(svg_xml_node)
+
+	# first pass
+	xml_data.open(file_path)
+	while xml_data.read() == OK:
+		if not xml_data.get_node_type() in [XMLParser.NODE_ELEMENT, XMLParser.NODE_ELEMENT_END]:
+			continue
+
 		if xml_data.get_node_name() == "linearGradient" or xml_data.get_node_name() == "radialGradient":
 			svg_gradients.append(parse_gradient(xml_data))
 
 	# second pass
 	xml_data.open(file_path)
 	while xml_data.read() == OK:
+
 		if not xml_data.get_node_type() in [XMLParser.NODE_ELEMENT, XMLParser.NODE_ELEMENT_END]:
 			continue
 		elif xml_data.get_node_name() == "g":
