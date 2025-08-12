@@ -4,20 +4,26 @@ extends TabContainer
 signal shape_created(curve : Curve2D, scene_root : Node2D, node_name : String)
 signal set_shape_preview(curve : Curve2D)
 
-const IMPORT_TAB_NAME :=  "Import SVG File"
-const EDIT_TAB_NAME := "Scalable Vector Shapes"
+const TABS_NAME := [
+	"Scalable Vector Shapes",
+	"Import SVG File"
+]
 
 var warning_dialog : AcceptDialog
-var edit_tab : ScalableVectorShapeEditTab
-var import_tab : SvgImporterDock
+var edit_tab : SVSEditTab
+var import_tab : SVGImportTab
 
 func _enter_tree() -> void:
+	for i in min(TABS_NAME.size(), get_child_count()):
+		set_tab_title(i, TABS_NAME[i])
+	
+	edit_tab = %SVSEditTab
+	import_tab = %SVGImportTab
 	warning_dialog = AcceptDialog.new()
 	EditorInterface.get_base_control().add_child(warning_dialog)
-	import_tab = find_child(IMPORT_TAB_NAME)
-	import_tab.warning_dialog = warning_dialog
-	edit_tab = find_child(EDIT_TAB_NAME)
 	edit_tab.warning_dialog = warning_dialog
+	import_tab.warning_dialog = warning_dialog
+	
 	if not edit_tab.shape_created.is_connected(shape_created.emit):
 		edit_tab.shape_created.connect(shape_created.emit)
 	if not edit_tab.set_shape_preview.is_connected(set_shape_preview.emit):

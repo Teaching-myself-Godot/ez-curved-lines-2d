@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://drrarjj0668n"]
 
 [ext_resource type="Script" uid="uid://dtiys8sevuh65" path="res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.gd" id="1_1mm15"]
-[ext_resource type="PackedScene" uid="uid://cfeemeccrtef7" path="res://addons/curved_lines_2d/import_svg_file_tab.tscn" id="2_0fwlu"]
-[ext_resource type="PackedScene" uid="uid://dwns40mbgt82s" path="res://addons/curved_lines_2d/scalable_vector_shape_edit_tab.tscn" id="3_psho1"]
+[ext_resource type="PackedScene" uid="uid://cfeemeccrtef7" path="res://addons/curved_lines_2d/svg_import_tab.tscn" id="2_0fwlu"]
+[ext_resource type="PackedScene" uid="uid://dwns40mbgt82s" path="res://addons/curved_lines_2d/svs_edit_tab.tscn" id="3_psho1"]
 
 [node name="ScalableVectorShapes2DDock" type="TabContainer"]
 custom_minimum_size = Vector2(0, 326)
@@ -14,11 +14,15 @@ grow_vertical = 2
 current_tab = 0
 script = ExtResource("1_1mm15")
 
-[node name="Scalable Vector Shapes" parent="." instance=ExtResource("3_psho1")]
+[node name="SVSEditTab" parent="." instance=ExtResource("3_psho1")]
+unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 0
+metadata/_tab_name = "Scalable Vector Shapes"
 
-[node name="Import SVG File" parent="." instance=ExtResource("2_0fwlu")]
+[node name="SVGImportTab" parent="." instance=ExtResource("2_0fwlu")]
+unique_name_in_owner = true
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
+metadata/_tab_name = "Import SVG File"

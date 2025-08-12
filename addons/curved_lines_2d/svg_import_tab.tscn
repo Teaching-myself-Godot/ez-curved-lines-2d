@@ -1,10 +1,10 @@
 [gd_scene load_steps=8 format=3 uid="uid://cfeemeccrtef7"]
 
-[ext_resource type="Script" uid="uid://bp5vvj23w57js" path="res://addons/curved_lines_2d/import_svg_file_tab.gd" id="1_fhkel"]
-[ext_resource type="LabelSettings" uid="uid://bspk1rkq1cmhx" path="res://addons/curved_lines_2d/info_label_settings.tres" id="1_x2xey"]
-[ext_resource type="Texture2D" uid="uid://b8ludy6aqsejg" path="res://addons/curved_lines_2d/LockViewport.svg" id="2_38alv"]
-[ext_resource type="PackedScene" uid="uid://cmoxkoulpd7so" path="res://addons/curved_lines_2d/link_button_with_copy_hint.tscn" id="2_fhkel"]
-[ext_resource type="PackedScene" uid="uid://cjbkvx1pj7gq2" path="res://addons/curved_lines_2d/collision_object_type_option_button.tscn" id="3_kpb1b"]
+[ext_resource type="Script" uid="uid://bp5vvj23w57js" path="res://addons/curved_lines_2d/svg_import_tab.gd" id="1_dlf5g"]
+[ext_resource type="Texture2D" uid="uid://b8ludy6aqsejg" path="res://addons/curved_lines_2d/LockViewport.svg" id="2_v8p2q"]
+[ext_resource type="PackedScene" uid="uid://cjbkvx1pj7gq2" path="res://addons/curved_lines_2d/collision_object_type_option_button.tscn" id="3_tqnmm"]
+[ext_resource type="LabelSettings" uid="uid://bspk1rkq1cmhx" path="res://addons/curved_lines_2d/info_label_settings.tres" id="4_4seqe"]
+[ext_resource type="PackedScene" uid="uid://cmoxkoulpd7so" path="res://addons/curved_lines_2d/link_button_with_copy_hint.tscn" id="5_wpk81"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rycm0"]
 content_margin_left = 10.0
@@ -28,14 +28,14 @@ border_width_bottom = 4
 border_color = Color(0.439216, 0.729412, 0.980392, 1)
 border_blend = true
 
-[node name="ImportSVGFileTab" type="HBoxContainer"]
+[node name="SVGImportTab" type="HBoxContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
-script = ExtResource("1_fhkel")
+script = ExtResource("1_dlf5g")
 metadata/_tab_index = 0
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="."]
@@ -78,14 +78,14 @@ tooltip_text = "- Adds a lock to the Line2D, Polygon2D and CollisionPolygon2D as
 - This lock makes sure these nodes are not transformed via the 2D editor"
 button_pressed = true
 text = "Lock imported shapes in editor *"
-icon = ExtResource("2_38alv")
+icon = ExtResource("2_v8p2q")
 
 [node name="AntialiasedCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer"]
 layout_mode = 2
 tooltip_text = "It's probably better to use project settings for this, but checking this on will ensure that the antialised property is checked on for imported Line2D and Polygon2D"
 text = "Flag on antialiased for Polygon2D and Line2D*"
 
-[node name="CollisionObjectTypeOptionButton" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" instance=ExtResource("3_kpb1b")]
+[node name="CollisionObjectTypeOptionButton" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" instance=ExtResource("3_tqnmm")]
 layout_mode = 2
 
 [node name="ImportCollisionPolygonsForAllShapesCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer"]
@@ -126,10 +126,10 @@ theme_override_constants/separation = -5
 layout_mode = 2
 size_flags_vertical = 10
 text = " - Drag/Drop an svg-file here to start import -"
-label_settings = ExtResource("1_x2xey")
+label_settings = ExtResource("4_4seqe")
 horizontal_alignment = 1
 
-[node name="LinkButton2" parent="VBoxContainer/LogScrollContainer/ImportLogContainer" instance=ExtResource("2_fhkel")]
+[node name="LinkButton2" parent="VBoxContainer/LogScrollContainer/ImportLogContainer" instance=ExtResource("5_wpk81")]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 2

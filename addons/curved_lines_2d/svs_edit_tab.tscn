@@ -1,6 +1,6 @@
 [gd_scene load_steps=26 format=3 uid="uid://dwns40mbgt82s"]
 
-[ext_resource type="Script" uid="uid://tl3hcapnk7lb" path="res://addons/curved_lines_2d/scalable_vector_shape_edit_tab.gd" id="1_nt5in"]
+[ext_resource type="Script" uid="uid://tl3hcapnk7lb" path="res://addons/curved_lines_2d/svs_edit_tab.gd" id="1_nt5in"]
 [ext_resource type="StyleBox" uid="uid://v0ueesjbdyrk" path="res://addons/curved_lines_2d/snazzy_toggle_button.stylebox" id="2_3cgh6"]
 [ext_resource type="PackedScene" uid="uid://cjbkvx1pj7gq2" path="res://addons/curved_lines_2d/collision_object_type_option_button.tscn" id="2_kh00m"]
 [ext_resource type="Texture2D" uid="uid://7hhlkt6n4b32" path="res://addons/curved_lines_2d/PaintOrder.svg" id="2_qgati"]
@@ -76,7 +76,7 @@ region = Rect2(0, 32, 32, 32)
 atlas = ExtResource("4_xku8w")
 region = Rect2(32, 32, 32, 32)
 
-[node name="ScalableVectorShapeEditTab" type="ScrollContainer"]
+[node name="SVSEditTab" type="ScrollContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
