@@ -104,42 +104,17 @@ func _get_viewport_center() -> Vector2:
 	return (sz / 2) / tr.get_scale() - og / tr.get_scale()
 
 
-class SVGXMLElement:
-	var name : String
-	var attributes : Dictionary[String, String]
-	var children : Array[SVGXMLElement]
-	var parent : SVGXMLElement
-
-	func _init(xml_data : XMLParser, with_parent : SVGXMLElement = null):
-		name = xml_data.get_node_name()
-		for i in xml_data.get_attribute_count():
-			attributes[xml_data.get_attribute_name(i)] = xml_data.get_attribute_value(i)
-		parent = with_parent
-
-	func add_child(ch : SVGXMLElement):
-		children.append(ch)
-
-
-	func _to_string() -> String:
-		var attrs := PackedStringArray(attributes.keys().map(func(k): return k + "=\"" + attributes[k] + "\""))
-		var ch := PackedStringArray(children.map(str))
-		if children.is_empty():
-			return "<" + name + " " + " ".join(attrs) + " />"
-		else:
-			return "<" + name + " " + " ".join(attrs) + ">" + "\n".join(ch) + "</" + name + ">"
-
-
 func _load_svg(file_path : String) -> void:
 	for child in %ImportLogContainer.get_children():
 		child.queue_free()
-	var xml_data = XMLParser.new()
+	var xml_parser = XMLParser.new()
 	var scene_root := EditorInterface.get_edited_scene_root()
 	var selected_nodes := EditorInterface.get_selection().get_selected_nodes()
 	var parent_node := scene_root if selected_nodes.is_empty() else selected_nodes[0]
 	if not scene_root is Node:
 		log_message("ERROR: Can only import into an opened scene", LogLevel.ERROR)
 		return
-	if xml_data.open(file_path) != OK:
+	if xml_parser.open(file_path) != OK:
 		log_message("ERROR: Failed to open %s for reading" % file_path, LogLevel.ERROR)
 		return
 
@@ -155,66 +130,43 @@ func _load_svg(file_path : String) -> void:
 	var current_node := svg_root
 	var svg_gradients : Array[Dictionary] = []
 
+	var svg_xml_node : SVGXMLElement = parse_svg_xml_file(xml_parser)
+	process_svg_xml_tree(svg_xml_node, scene_root, svg_root, current_node, svg_gradients)
+	log_message("Import finished.\n\nThe SVG importer is still incrementally improving (slowly).")
+
+	var link_button : LinkButtonWithCopyHint = LinkButtonScene.instantiate()
+	link_button.text = "Click here to report issues or improvement requests on github"
+	link_button.uri = "https://github.com/Teaching-myself-Godot/ez-curved-lines-2d/issues"
+	%ImportLogContainer.add_child(link_button)
+	undo_redo.commit_action(false)
+	EditorInterface.call_deferred('edit_node', svg_root)
+
+
+func parse_svg_xml_file(xml_parser : XMLParser) -> SVGXMLElement:
 	var svg_xml_node : SVGXMLElement = null
-	while xml_data.read() == OK:
-		if not xml_data.get_node_type() in [XMLParser.NODE_ELEMENT, XMLParser.NODE_ELEMENT_END]:
+	while xml_parser.read() == OK:
+		if not xml_parser.get_node_type() in [XMLParser.NODE_ELEMENT, XMLParser.NODE_ELEMENT_END]:
 			continue
-		if xml_data.get_node_type() == XMLParser.NODE_ELEMENT and xml_data.is_empty() and xml_data.get_node_name() in ["defs", "g", "clipPath"]:
+		if xml_parser.get_node_type() == XMLParser.NODE_ELEMENT and xml_parser.is_empty() and xml_parser.get_node_name() in ["defs", "g", "clipPath"]:
 			continue
-		if xml_data.get_node_type() == XMLParser.NODE_ELEMENT_END:
-			log_message("out < " + xml_data.get_node_name())
+		if xml_parser.get_node_type() == XMLParser.NODE_ELEMENT_END:
 			if svg_xml_node.parent:
 				svg_xml_node = svg_xml_node.parent
 		else:
-			log_message("in > " + xml_data.get_node_name())
-			var new_svg_xml_node := SVGXMLElement.new(xml_data, svg_xml_node)
+			var new_svg_xml_node := SVGXMLElement.new(xml_parser, svg_xml_node)
 			if svg_xml_node:
 				svg_xml_node.add_child(new_svg_xml_node)
-			if not xml_data.is_empty():
+			if not xml_parser.is_empty():
 				svg_xml_node = new_svg_xml_node
-			#log_message(str(svg_xml_node))
-	print(svg_xml_node)
+	return svg_xml_node
 
-	# first pass
-	xml_data.open(file_path)
-	while xml_data.read() == OK:
-		if not xml_data.get_node_type() in [XMLParser.NODE_ELEMENT, XMLParser.NODE_ELEMENT_END]:
-			continue
-
-		if xml_data.get_node_name() == "linearGradient" or xml_data.get_node_name() == "radialGradient":
-			svg_gradients.append(parse_gradient(xml_data))
-
-	# second pass
-	xml_data.open(file_path)
-	while xml_data.read() == OK:
-
-		if not xml_data.get_node_type() in [XMLParser.NODE_ELEMENT, XMLParser.NODE_ELEMENT_END]:
-			continue
-		elif xml_data.get_node_name() == "g":
-			if xml_data.get_node_type() == XMLParser.NODE_ELEMENT:
-				current_node = process_group(xml_data, current_node, scene_root)
-			elif xml_data.get_node_type() == XMLParser.NODE_ELEMENT_END:
-				if current_node == svg_root:
-					printerr("Hierarchy error, current node is already scene root")
-					break
-				current_node = current_node.get_parent()
-		elif xml_data.get_node_name() == "rect":
-			process_svg_rectangle(xml_data, current_node, scene_root, svg_gradients)
-		elif xml_data.get_node_name() == "image":
-			process_svg_image(xml_data, current_node, scene_root, svg_gradients)
-		elif xml_data.get_node_name() == "polygon":
-			process_svg_polygon(xml_data, current_node, scene_root, true, svg_gradients)
-		elif xml_data.get_node_name() == "polyline":
-			process_svg_polygon(xml_data, current_node, scene_root, false, svg_gradients)
-		elif xml_data.get_node_name() == "path":
-			process_svg_path(xml_data, current_node, scene_root, svg_gradients)
-		elif xml_data.get_node_name() == "circle":
-			process_svg_circle(xml_data, current_node, scene_root, svg_gradients)
-		elif xml_data.get_node_name() == "ellipse":
-			process_svg_ellipse(xml_data, current_node, scene_root, svg_gradients)
-		elif xml_data.get_node_name() == "svg":
+func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root :
+			Node2D, current_node : Node2D, svg_gradients : Array[Dictionary]) -> void:
+	log_message("Parsing element <%s>" % xml_data.name)
+	match xml_data.name:
+		"svg":
 			if xml_data.has_attribute("viewBox") and xml_data.has_attribute("width") and xml_data.has_attribute("height"):
-				var view_box := xml_data.get_named_attribute_value("viewBox").split_floats(" ")
+				var view_box = xml_data.get_named_attribute_value("viewBox").split_floats(" ")
 				var width := float(xml_data.get_named_attribute_value("width"))
 				var height := float(xml_data.get_named_attribute_value("height"))
 				svg_root.scale.x = width / view_box[2]
@@ -227,22 +179,33 @@ func _load_svg(file_path : String) -> void:
 					svg_root.scale *= 37.8
 			if xml_data.has_attribute("style"):
 				current_node.set_meta(SVG_STYLE_META_NAME, get_svg_style(xml_data))
-		elif xml_data.get_node_name() == "style" and xml_data.get_node_type() == XMLParser.NODE_ELEMENT:
-			log_message("⚠️ Skipping <style> node, only inline style attribute and some presentation attributes are supported", LogLevel.WARN)
-		elif xml_data.get_node_name() == "defs":
+		"g":
+			current_node = process_group(xml_data, current_node, scene_root)
+		"rect":
+			process_svg_rectangle(xml_data, current_node, scene_root, svg_gradients)
+		"image":
+			process_svg_image(xml_data, current_node, scene_root, svg_gradients)
+		"polygon":
+			process_svg_polygon(xml_data, current_node, scene_root, true, svg_gradients)
+		"polyline":
+			process_svg_polygon(xml_data, current_node, scene_root, false, svg_gradients)
+		"path":
+			process_svg_path(xml_data, current_node, scene_root, svg_gradients)
+		"circle":
+			process_svg_circle(xml_data, current_node, scene_root, svg_gradients)
+		"ellipse":
+			process_svg_ellipse(xml_data, current_node, scene_root, svg_gradients)
+		"linearGradient", "radialGradient":
+			svg_gradients.append(parse_gradient(xml_data))
+		"defs", "stop":
 			pass
-		elif xml_data.get_node_type() == XMLParser.NODE_ELEMENT:
-			log_message("⚠️ Skipping  unsupported node: <%s>" % xml_data.get_node_name(), LogLevel.DEBUG)
-	log_message("Import finished.\n\nThe SVG importer is still incrementally improving (slowly).")
+		_: log_message("⚠️ Skipping  unsupported node: <%s>" % xml_data.name, LogLevel.DEBUG)
 
-
-	var link_button : LinkButtonWithCopyHint = LinkButtonScene.instantiate()
-	link_button.text = "Click here to report issues or improvement requests on github"
-	link_button.uri = "https://github.com/Teaching-myself-Godot/ez-curved-lines-2d/issues"
-	%ImportLogContainer.add_child(link_button)
-
-	undo_redo.commit_action(false)
-	EditorInterface.call_deferred('edit_node', svg_root)
+	var defs := xml_data.children.filter(func(ch): return ch.name == "defs")
+	var clip_paths := xml_data.children.filter(func(ch): return ch.name == "clipPath")
+	var remainder := xml_data.children.filter(func(ch): return ch.name != "defs" and ch.name != "clipPath")
+	for ch in defs + clip_paths + remainder:
+		process_svg_xml_tree(ch, scene_root, svg_root, current_node, svg_gradients)
 
 
 func get_gradient_by_href(href : String, gradients : Array[Dictionary]) -> Dictionary:
@@ -252,27 +215,26 @@ func get_gradient_by_href(href : String, gradients : Array[Dictionary]) -> Dicti
 	return gradients[idx]
 
 
-func parse_gradient(element : XMLParser) -> Dictionary:
-	var new_gradient := {
-		'is_radial': element.get_node_name() == "radialGradient"
+func parse_gradient(gradient_xml : SVGXMLElement) -> Dictionary:
+	var new_gradient = {
+		'is_radial': gradient_xml.get_node_name() == "radialGradient"
 	}
-	for i in range(element.get_attribute_count()):
-		new_gradient[element.get_attribute_name(i)] = element.get_attribute_value(i)
-	if not element.is_empty():
+	for x in gradient_xml.attributes:
+		new_gradient[x] = gradient_xml.attributes[x]
+	if not gradient_xml.is_empty():
 		new_gradient["stops"] = []
-		while element.read() == OK:
-			if element.get_node_type() == XMLParser.NODE_ELEMENT and element.get_node_name() == "stop":
+		for element in gradient_xml.children:
+			if element.get_node_name() == "stop":
 				new_gradient["stops"].append({
 					"style": get_svg_style(element),
 					"offset": float(element.get_named_attribute_value_safe("offset")),
 					"id": element.get_named_attribute_value_safe("id")
 				})
-			elif element.get_node_type() == XMLParser.NODE_ELEMENT_END and element.get_node_name() == "linearGradient":
-				break
+
 	return new_gradient
 
 
-func process_group(element:XMLParser, current_node : Node2D, scene_root : Node) -> Node2D:
+func process_group(element:SVGXMLElement, current_node : Node2D, scene_root : Node) -> Node2D:
 	var new_group = Node2D.new()
 	new_group.name = element.get_named_attribute_value("id") if element.has_attribute("id") else "Group"
 	new_group.transform = get_svg_transform(element)
@@ -285,7 +247,7 @@ func process_group(element:XMLParser, current_node : Node2D, scene_root : Node) 
 	return new_group
 
 
-func process_svg_circle(element:XMLParser, current_node : Node2D, scene_root : Node,
+func process_svg_circle(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
 		gradients : Array[Dictionary]) -> void:
 	var cx = float(element.get_named_attribute_value("cx"))
 	var cy = float(element.get_named_attribute_value("cy"))
@@ -294,7 +256,7 @@ func process_svg_circle(element:XMLParser, current_node : Node2D, scene_root : N
 	create_path_from_ellipse(element, path_name, r, r, Vector2(cx, cy), current_node, scene_root, gradients)
 
 
-func process_svg_ellipse(element:XMLParser, current_node : Node2D, scene_root : Node,
+func process_svg_ellipse(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
 		gradients : Array[Dictionary]) -> void:
 	var cx = float(element.get_named_attribute_value("cx"))
 	var cy = float(element.get_named_attribute_value("cy"))
@@ -304,7 +266,7 @@ func process_svg_ellipse(element:XMLParser, current_node : Node2D, scene_root : 
 	create_path_from_ellipse(element, path_name, rx, ry, Vector2(cx, cy), current_node, scene_root, gradients)
 
 
-func create_path_from_ellipse(element:XMLParser, path_name : String, rx : float, ry: float,
+func create_path_from_ellipse(element:SVGXMLElement, path_name : String, rx : float, ry: float,
 		pos : Vector2, current_node : Node2D, scene_root : Node,
 		gradients : Array[Dictionary]) -> void:
 	var new_ellipse := ScalableVectorShape2D.new()
@@ -315,7 +277,7 @@ func create_path_from_ellipse(element:XMLParser, path_name : String, rx : float,
 	_post_process_shape(new_ellipse, current_node, get_svg_transform(element), get_svg_style(element),
 			scene_root, gradients)
 
-func process_svg_image(element:XMLParser, current_node : Node2D, scene_root : Node,
+func process_svg_image(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
 		gradients : Array[Dictionary]) -> void:
 	var x = float(element.get_named_attribute_value("x")) if element.has_attribute("x") else 0.0
 	var y = float(element.get_named_attribute_value("y")) if element.has_attribute("y") else 0.0
@@ -349,7 +311,7 @@ func process_svg_image(element:XMLParser, current_node : Node2D, scene_root : No
 			scene_root, gradients, false, image_texture)
 
 
-func process_svg_rectangle(element:XMLParser, current_node : Node2D, scene_root : Node,
+func process_svg_rectangle(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
 		gradients : Array[Dictionary]) -> void:
 	var x = float(element.get_named_attribute_value("x"))
 	var y = float(element.get_named_attribute_value("y"))
@@ -372,7 +334,7 @@ func process_svg_rectangle(element:XMLParser, current_node : Node2D, scene_root 
 			scene_root, gradients)
 
 
-func process_svg_polygon(element:XMLParser, current_node : Node2D, scene_root : Node, is_closed : bool,
+func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_root : Node, is_closed : bool,
 		gradients : Array[Dictionary]) -> void:
 	var points_split = element.get_named_attribute_value("points").split(" ", false)
 	var curve = Curve2D.new()
@@ -387,7 +349,7 @@ func process_svg_polygon(element:XMLParser, current_node : Node2D, scene_root : 
 			get_svg_transform(element), get_svg_style(element), scene_root, gradients, is_closed)
 
 
-func process_svg_path(element:XMLParser, current_node : Node2D, scene_root : Node,
+func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
 		gradients : Array[Dictionary]) -> void:
 
 	# FIXME: implement better parsing here
@@ -835,7 +797,7 @@ func create_helper_node(node_name : String, node_parent : Node2D, node_owner : N
 	return helper_node
 
 
-func get_svg_transform(element:XMLParser) -> Transform2D:
+func get_svg_transform(element:SVGXMLElement) -> Transform2D:
 	if element.has_attribute("transform"):
 		return process_svg_transform(element.get_named_attribute_value("transform"))
 	else:
@@ -887,8 +849,7 @@ func process_svg_transform(svg_transform_attr : String) -> Transform2D:
 	return transform
 
 
-func get_svg_style(element:XMLParser) -> Dictionary:
-	# FXIME: better parsing
+func get_svg_style(element: SVGXMLElement) -> Dictionary:
 	var style = {}
 	if element.has_attribute("style"):
 		var svg_style = element.get_named_attribute_value("style")
