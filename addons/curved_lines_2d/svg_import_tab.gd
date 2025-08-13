@@ -8,9 +8,11 @@ const R_TO_CP = 0.5523
 const PLC_EXP = "__PLC_EXP__"
 
 const SUPPORTED_STYLES : Array[String] = ["opacity", "stroke", "stroke-width", "stroke-opacity",
-		"fill", "fill-opacity", "paint-order", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit"]
+		"fill", "fill-opacity", "paint-order", "stroke-linecap", "stroke-linejoin",
+		"stroke-miterlimit", "clip-path"]
 const SVG_ROOT_META_NAME := "svg_root"
 const SVG_STYLE_META_NAME := "svg_style"
+
 const PAINT_ORDER_MAP := {
 	"normal": ['add_fill_to_path', 'add_stroke_to_path', 'add_collision_to_path'],
 	"fill stroke markers": ['add_fill_to_path', 'add_stroke_to_path', 'add_collision_to_path'],
@@ -180,6 +182,8 @@ func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root 
 			if xml_data.has_attribute("style"):
 				current_node.set_meta(SVG_STYLE_META_NAME, get_svg_style(xml_data))
 		"g":
+			current_node = process_group(xml_data, current_node, scene_root)
+		"clipPath":
 			current_node = process_group(xml_data, current_node, scene_root)
 		"rect":
 			process_svg_rectangle(xml_data, current_node, scene_root, svg_gradients)
@@ -614,6 +618,23 @@ func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform :
 			call(func_name, svs, style, scene_root, gradients,
 					gradient_point_parent, image_texture)
 
+	if "clip-path" in style:
+		var href : String = style["clip-path"].replace("url(#", "").replace(")", "")
+		var clip_path_node := scene_root.find_child(href)
+		var new_clip_paths : Array[ScalableVectorShape2D] = []
+		for clip_path : ScalableVectorShape2D in clip_path_node.find_children("*", "ScalableVectorShape2D"):
+			clip_path.use_interect_when_clipping = true
+			if clip_path.line:
+				clip_path.line.hide()
+			if clip_path.polygon:
+				clip_path.polygon.hide()
+			new_clip_paths.append(clip_path)
+		log_message("Processing %d clip-paths for %s" % [new_clip_paths.size(), svs.name], LogLevel.DEBUG)
+		svs.clip_paths = new_clip_paths
+		undo_redo.add_do_property(svs, 'clip_paths', new_clip_paths)
+		undo_redo.add_undo_property(svs, 'clip_paths', [])
+
+
 	if not keep_drawable_path_node:
 		var bare_node := Node2D.new()
 		bare_node.name = svs.name
@@ -675,6 +696,7 @@ func add_stroke_to_path(new_path : Node2D, style: Dictionary, scene_root : Node,
 func add_fill_to_path(new_path : ScalableVectorShape2D, style: Dictionary, scene_root : Node,
 			gradients : Array[Dictionary], gradient_point_parent : Node2D,
 			image_texture : ImageTexture):
+
 	if image_texture or style.has("fill") and style["fill"] != "none":
 		var polygon := Polygon2D.new()
 		polygon.name = "Fill"
