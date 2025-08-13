@@ -164,7 +164,6 @@ func parse_svg_xml_file(xml_parser : XMLParser) -> SVGXMLElement:
 
 func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root :
 			Node2D, current_node : Node2D, svg_gradients : Array[Dictionary]) -> void:
-	log_message("Parsing element <%s>" % xml_data.name)
 	match xml_data.name:
 		"svg":
 			if xml_data.has_attribute("viewBox") and xml_data.has_attribute("width") and xml_data.has_attribute("height"):
@@ -183,8 +182,11 @@ func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root 
 				current_node.set_meta(SVG_STYLE_META_NAME, get_svg_style(xml_data))
 		"g":
 			current_node = process_group(xml_data, current_node, scene_root)
-		"clipPath":
-			current_node = process_group(xml_data, current_node, scene_root)
+		"clipPath", "defs":
+			current_node = process_group(xml_data, current_node, scene_root, xml_data.name)
+			current_node.hide()
+		"use":
+			process_svg_use(xml_data, current_node, scene_root, svg_gradients)
 		"rect":
 			process_svg_rectangle(xml_data, current_node, scene_root, svg_gradients)
 		"image":
@@ -238,9 +240,9 @@ func parse_gradient(gradient_xml : SVGXMLElement) -> Dictionary:
 	return new_gradient
 
 
-func process_group(element:SVGXMLElement, current_node : Node2D, scene_root : Node) -> Node2D:
+func process_group(element:SVGXMLElement, current_node : Node2D, scene_root : Node, alt_name := "Group") -> Node2D:
 	var new_group = Node2D.new()
-	new_group.name = element.get_named_attribute_value("id") if element.has_attribute("id") else "Group"
+	new_group.name = element.get_named_attribute_value("id") if element.has_attribute("id") else alt_name
 	new_group.transform = get_svg_transform(element)
 	var style := get_svg_style(element)
 	new_group.set_meta(SVG_STYLE_META_NAME, style)
@@ -249,6 +251,38 @@ func process_group(element:SVGXMLElement, current_node : Node2D, scene_root : No
 		new_group.visible = false
 	_managed_add_child_and_set_owner(current_node, new_group, scene_root)
 	return new_group
+
+
+func process_svg_use(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
+		gradients : Array[Dictionary]) -> void:
+	var href = element.get_named_attribute_value_safe("xlink:href")
+	if href.is_empty():
+		href = element.get_named_attribute_value_safe("href")
+	if href.is_empty():
+		return
+	var reuse_node = scene_root.find_child(href.replace("#", ""))
+	if not reuse_node is ScalableVectorShape2D:
+		return
+
+	var new_node = reuse_node.duplicate()
+	new_node.name = "Use(" + reuse_node.name + ")"
+	var style := get_svg_style(element)
+	_merge_styles_in_place(style, current_node)
+	var x = float(element.get_named_attribute_value("x")) if element.has_attribute("x") else 0.0
+	var y = float(element.get_named_attribute_value("y")) if element.has_attribute("y") else 0.0
+	new_node.position += Vector2(x, y)
+	_managed_add_child_and_set_owner(current_node, new_node, scene_root)
+	var child_list = [new_node]
+	while child_list.size() > 0:
+		var child : Node = child_list.pop_back()
+		child_list.append_array(child.get_children())
+		undo_redo.add_do_property(child, "owner", scene_root)
+		undo_redo.add_undo_property(child, "owner", scene_root)
+		child.owner = scene_root
+
+
+	if "clip-path" in style:
+		_apply_clip_path_by_href(style["clip-path"], new_node, scene_root)
 
 
 func process_svg_circle(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
@@ -562,6 +596,8 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 		undo_redo.add_undo_property(main_shape, 'clip_paths', [])
 
 
+
+
 func create_path2d(path_name: String, parent: Node, curve: Curve2D, arcs: Array[ScalableArc],
 						transform: Transform2D, style: Dictionary, scene_root: Node,
 						gradients : Array[Dictionary], is_closed := false,
@@ -584,15 +620,36 @@ func create_path2d(path_name: String, parent: Node, curve: Curve2D, arcs: Array[
 	return new_path
 
 
-func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform : Transform2D,
-			style : Dictionary, scene_root : Node, gradients : Array[Dictionary],
-			is_cutout := false, image_texture : ImageTexture = null) -> void:
-	svs.lock_assigned_shapes = keep_drawable_path_node and lock_shapes
+func _apply_clip_path_by_href(href : String, svs : ScalableVectorShape2D, scene_root : Node):
+	var clip_path_node := scene_root.find_child(href.replace("url(#", "").replace(")", ""))
+	var new_clip_paths : Array[ScalableVectorShape2D] = []
+	for clip_path : ScalableVectorShape2D in clip_path_node.find_children("*", "ScalableVectorShape2D"):
+		clip_path.use_interect_when_clipping = true
+		if clip_path.line:
+			clip_path.line.hide()
+		if clip_path.polygon:
+			clip_path.polygon.hide()
+		new_clip_paths.append(clip_path)
+	log_message("Processing %d clip-paths for %s" % [new_clip_paths.size(), svs.name], LogLevel.DEBUG)
+	svs.clip_paths = new_clip_paths
+	undo_redo.add_do_property(svs, 'clip_paths', new_clip_paths)
+	undo_redo.add_undo_property(svs, 'clip_paths', [])
+
+
+func _merge_styles_in_place(style : Dictionary, parent : Node) -> void:
 	var ancestor = parent
 	while !ancestor.has_meta(SVG_ROOT_META_NAME):
 		style.merge(ancestor.get_meta(SVG_STYLE_META_NAME, {}))
 		ancestor = ancestor.get_parent()
 	style.merge(ancestor.get_meta(SVG_STYLE_META_NAME, {}))
+
+
+func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform : Transform2D,
+			style : Dictionary, scene_root : Node, gradients : Array[Dictionary],
+			is_cutout := false, image_texture : ImageTexture = null) -> void:
+	svs.lock_assigned_shapes = keep_drawable_path_node and lock_shapes
+	var ancestor = parent
+	_merge_styles_in_place(style, parent)
 	var gradient_point_parent : Node2D = parent
 	if transform == Transform2D.IDENTITY:
 		_managed_add_child_and_set_owner(parent, svs, scene_root)
@@ -619,21 +676,7 @@ func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform :
 					gradient_point_parent, image_texture)
 
 	if "clip-path" in style:
-		var href : String = style["clip-path"].replace("url(#", "").replace(")", "")
-		var clip_path_node := scene_root.find_child(href)
-		var new_clip_paths : Array[ScalableVectorShape2D] = []
-		for clip_path : ScalableVectorShape2D in clip_path_node.find_children("*", "ScalableVectorShape2D"):
-			clip_path.use_interect_when_clipping = true
-			if clip_path.line:
-				clip_path.line.hide()
-			if clip_path.polygon:
-				clip_path.polygon.hide()
-			new_clip_paths.append(clip_path)
-		log_message("Processing %d clip-paths for %s" % [new_clip_paths.size(), svs.name], LogLevel.DEBUG)
-		svs.clip_paths = new_clip_paths
-		undo_redo.add_do_property(svs, 'clip_paths', new_clip_paths)
-		undo_redo.add_undo_property(svs, 'clip_paths', [])
-
+		_apply_clip_path_by_href(style["clip-path"], svs, scene_root)
 
 	if not keep_drawable_path_node:
 		var bare_node := Node2D.new()
