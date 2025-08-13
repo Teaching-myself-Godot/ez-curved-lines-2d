@@ -7,9 +7,6 @@ class_name SVGImportTab
 const R_TO_CP = 0.5523
 const PLC_EXP = "__PLC_EXP__"
 
-const SUPPORTED_STYLES : Array[String] = ["opacity", "stroke", "stroke-width", "stroke-opacity",
-		"fill", "fill-opacity", "paint-order", "stroke-linecap", "stroke-linejoin",
-		"stroke-miterlimit", "clip-path"]
 const SVG_ROOT_META_NAME := "svg_root"
 const SVG_STYLE_META_NAME := "svg_style"
 
