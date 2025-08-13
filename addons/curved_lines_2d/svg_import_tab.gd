@@ -164,6 +164,23 @@ func parse_svg_xml_file(xml_parser : XMLParser) -> SVGXMLElement:
 
 func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root :
 			Node2D, current_node : Node2D, svg_gradients : Array[Dictionary]) -> void:
+
+	if xml_data.name == "use":
+		var href = xml_data.get_named_attribute_value_safe("xlink:href")
+		if href.is_empty():
+			href = xml_data.get_named_attribute_value_safe("href")
+		var reuse_xml_node = xml_data.find_by_id(href.replace("#", ""))
+		var style = xml_data.get_svg_style(log_message)
+		style.merge(reuse_xml_node.get_merged_styles(log_message))
+		var preserve_id := xml_data.get_named_attribute_value_safe("id")
+		xml_data.attributes.erase("xlink:href")
+		xml_data.attributes.merge(reuse_xml_node.attributes)
+		xml_data.attributes["id"] = preserve_id
+		xml_data.attributes["style"] = "; ".join(style.keys().map(func(k): return k + ": " + style[k]))
+		if preserve_id.is_empty():
+			xml_data.attributes.erase("id")
+		xml_data.name = reuse_xml_node.name
+
 	match xml_data.name:
 		"svg":
 			if xml_data.has_attribute("viewBox") and xml_data.has_attribute("width") and xml_data.has_attribute("height"):
@@ -179,14 +196,12 @@ func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root 
 					log_message("⚠️ Units for this image are centimeters (cm), image scale set to 37.8")
 					svg_root.scale *= 37.8
 			if xml_data.has_attribute("style"):
-				current_node.set_meta(SVG_STYLE_META_NAME, get_svg_style(xml_data))
+				current_node.set_meta(SVG_STYLE_META_NAME, xml_data.get_merged_styles(log_message))
 		"g":
 			current_node = process_group(xml_data, current_node, scene_root)
 		"clipPath", "defs":
 			current_node = process_group(xml_data, current_node, scene_root, xml_data.name)
 			current_node.hide()
-		"use":
-			process_svg_use(xml_data, current_node, scene_root, svg_gradients)
 		"rect":
 			process_svg_rectangle(xml_data, current_node, scene_root, svg_gradients)
 		"image":
@@ -232,7 +247,7 @@ func parse_gradient(gradient_xml : SVGXMLElement) -> Dictionary:
 		for element in gradient_xml.children:
 			if element.get_node_name() == "stop":
 				new_gradient["stops"].append({
-					"style": get_svg_style(element),
+					"style": element.get_merged_styles(log_message),
 					"offset": float(element.get_named_attribute_value_safe("offset")),
 					"id": element.get_named_attribute_value_safe("id")
 				})
@@ -244,44 +259,13 @@ func process_group(element:SVGXMLElement, current_node : Node2D, scene_root : No
 	var new_group = Node2D.new()
 	new_group.name = element.get_named_attribute_value("id") if element.has_attribute("id") else alt_name
 	new_group.transform = get_svg_transform(element)
-	var style := get_svg_style(element)
+	var style := element.get_merged_styles(log_message)
 	new_group.set_meta(SVG_STYLE_META_NAME, style)
 
 	if style.has("display") and style['display'] == "none":
 		new_group.visible = false
 	_managed_add_child_and_set_owner(current_node, new_group, scene_root)
 	return new_group
-
-
-func process_svg_use(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
-		gradients : Array[Dictionary]) -> void:
-	var href = element.get_named_attribute_value_safe("xlink:href")
-	if href.is_empty():
-		href = element.get_named_attribute_value_safe("href")
-	if href.is_empty():
-		return
-	var reuse_node = scene_root.find_child(href.replace("#", ""))
-	if not reuse_node is ScalableVectorShape2D:
-		return
-
-	var new_node = reuse_node.duplicate()
-	new_node.name = "Use(" + reuse_node.name + ")"
-	var style := get_svg_style(element)
-	_merge_styles_in_place(style, current_node)
-	var x = float(element.get_named_attribute_value("x")) if element.has_attribute("x") else 0.0
-	var y = float(element.get_named_attribute_value("y")) if element.has_attribute("y") else 0.0
-	new_node.position += Vector2(x, y)
-	_managed_add_child_and_set_owner(current_node, new_node, scene_root)
-	var child_list = [new_node]
-	while child_list.size() > 0:
-		var child : Node = child_list.pop_back()
-		child_list.append_array(child.get_children())
-		undo_redo.add_do_property(child, "owner", scene_root)
-		undo_redo.add_undo_property(child, "owner", scene_root)
-		child.owner = scene_root
-	if "clip-path" in style:
-		_apply_clip_path_by_href(style["clip-path"], new_node, scene_root)
-	log_message("⚠️ Support for <use> node is limited, style overrides are not supported yet")
 
 
 func process_svg_circle(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
@@ -311,8 +295,8 @@ func create_path_from_ellipse(element:SVGXMLElement, path_name : String, rx : fl
 	new_ellipse.size = Vector2(rx * 2, ry * 2)
 	new_ellipse.position = pos
 	new_ellipse.name = path_name
-	_post_process_shape(new_ellipse, current_node, get_svg_transform(element), get_svg_style(element),
-			scene_root, gradients)
+	_post_process_shape(new_ellipse, current_node, get_svg_transform(element),
+			element.get_merged_styles(log_message), scene_root, gradients)
 
 func process_svg_image(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
 		gradients : Array[Dictionary]) -> void:
@@ -344,8 +328,8 @@ func process_svg_image(element:SVGXMLElement, current_node : Node2D, scene_root 
 	else:
 		log_message("⚠️ Only base64 encoded embedded images are supported", LogLevel.WARN)
 
-	_post_process_shape(new_image_rect, current_node, get_svg_transform(element), get_svg_style(element),
-			scene_root, gradients, false, image_texture)
+	_post_process_shape(new_image_rect, current_node, get_svg_transform(element),
+			element.get_merged_styles(log_message), scene_root, gradients, false, image_texture)
 
 
 func process_svg_rectangle(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
@@ -367,8 +351,8 @@ func process_svg_rectangle(element:SVGXMLElement, current_node : Node2D, scene_r
 	new_rect.rx = rx
 	new_rect.ry = ry
 	new_rect.name = element.get_named_attribute_value("id") if element.has_attribute("id") else "Rectangle"
-	_post_process_shape(new_rect, current_node, get_svg_transform(element), get_svg_style(element),
-			scene_root, gradients)
+	_post_process_shape(new_rect, current_node, get_svg_transform(element),
+			element.get_merged_styles(log_message), scene_root, gradients)
 
 
 func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_root : Node, is_closed : bool,
@@ -382,8 +366,8 @@ func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_roo
 			"Polygon" if is_closed else
 			"Polyline"
 	)
-	create_path2d(path_name, current_node, curve, [],
-			get_svg_transform(element), get_svg_style(element), scene_root, gradients, is_closed)
+	create_path2d(path_name, current_node, curve, [], get_svg_transform(element),
+			element.get_merged_styles(log_message), scene_root, gradients, is_closed)
 
 
 func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
@@ -582,8 +566,8 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 							Transform2D.IDENTITY, {}, scene_root, gradients,
 							string_array[string_array.size()-1].to_upper() == "Z", main_shape))
 			else:
-				var result := create_path2d(id, current_node,  curve, arcs,
-							get_svg_transform(element), get_svg_style(element), scene_root, gradients,
+				var result := create_path2d(id, current_node,  curve, arcs, get_svg_transform(element),
+							element.get_merged_styles(log_message), scene_root, gradients,
 							string_array[string_array.size()-1].to_upper() == "Z")
 				if string_array_count == 1:
 					main_shape = result
@@ -635,20 +619,11 @@ func _apply_clip_path_by_href(href : String, svs : ScalableVectorShape2D, scene_
 	undo_redo.add_undo_property(svs, 'clip_paths', [])
 
 
-func _merge_styles_in_place(style : Dictionary, parent : Node) -> void:
-	var ancestor = parent
-	while !ancestor.has_meta(SVG_ROOT_META_NAME):
-		style.merge(ancestor.get_meta(SVG_STYLE_META_NAME, {}))
-		ancestor = ancestor.get_parent()
-	style.merge(ancestor.get_meta(SVG_STYLE_META_NAME, {}))
-
-
 func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform : Transform2D,
 			style : Dictionary, scene_root : Node, gradients : Array[Dictionary],
 			is_cutout := false, image_texture : ImageTexture = null) -> void:
 	svs.lock_assigned_shapes = keep_drawable_path_node and lock_shapes
-	var ancestor = parent
-	_merge_styles_in_place(style, parent)
+
 	var gradient_point_parent : Node2D = parent
 	if transform == Transform2D.IDENTITY:
 		_managed_add_child_and_set_owner(parent, svs, scene_root)
@@ -911,31 +886,6 @@ func process_svg_transform(svg_transform_attr : String) -> Transform2D:
 			for i in 3:
 				transform[i] = Vector2(matrix[i*2], matrix[i*2+1])
 	return transform
-
-
-func get_svg_style(element: SVGXMLElement) -> Dictionary:
-	var style = {}
-	if element.has_attribute("style"):
-		var svg_style = element.get_named_attribute_value("style")
-		svg_style = svg_style.rstrip(";")
-		svg_style = svg_style.replacen(": ", ":")
-		svg_style = svg_style.replacen(":", "\":\"")
-		svg_style = svg_style.replacen("; ", "\",\"")
-		svg_style = svg_style.replacen(";", "\",\"")
-		svg_style = "{\"" + svg_style + "\"}"
-		var json = JSON.new()
-		var error = json.parse(svg_style)
-		if error == OK:
-			style = json.data
-		else:
-			log_message("Failed to parse some styles for <%s id=\"%s\">" % [element.get_node_name(),
-					element.get_named_attribute_value("id") if element.has_attribute("id") else "?"],
-					LogLevel.WARN)
-	for style_prop in SUPPORTED_STYLES:
-		if element.has_attribute(style_prop):
-			style[style_prop] = element.get_named_attribute_value(style_prop)
-
-	return style
 
 
 func _managed_add_child_and_set_owner(parent : Node, child : Node,
