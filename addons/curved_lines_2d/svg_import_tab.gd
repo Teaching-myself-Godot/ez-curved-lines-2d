@@ -279,10 +279,9 @@ func process_svg_use(element:SVGXMLElement, current_node : Node2D, scene_root : 
 		undo_redo.add_do_property(child, "owner", scene_root)
 		undo_redo.add_undo_property(child, "owner", scene_root)
 		child.owner = scene_root
-
-
 	if "clip-path" in style:
 		_apply_clip_path_by_href(style["clip-path"], new_node, scene_root)
+	log_message("⚠️ Support for <use> node is limited, style overrides are not supported yet")
 
 
 func process_svg_circle(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
