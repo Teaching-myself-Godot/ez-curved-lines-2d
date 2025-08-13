@@ -203,7 +203,7 @@ func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root 
 			process_svg_ellipse(xml_data, current_node, scene_root, svg_gradients)
 		"linearGradient", "radialGradient":
 			svg_gradients.append(parse_gradient(xml_data))
-		"defs", "stop":
+		"stop":
 			pass
 		_: log_message("⚠️ Skipping  unsupported node: <%s>" % xml_data.name, LogLevel.DEBUG)
 
