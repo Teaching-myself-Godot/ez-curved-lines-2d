@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.11.3 - 2025-14-08
+
+### Added
+- SVG Importer now supports `<clipPath>`, `<use>` and embedded base64 encoded `<image>` (results may vary)
+
+### Changed
+- Use Pascal case in stead of Camel case to represent imported svg file names
+- Rename dock nodes in order to reference them with unique name
 
 ## 2.11.2 - 2025-10-08
 

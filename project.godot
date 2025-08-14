@@ -46,8 +46,5 @@ enabled=PackedStringArray("res://addons/curved_lines_2d/plugin.cfg", "res://addo
 
 [rendering]
 
-renderer/rendering_method="gl_compatibility"
-renderer/rendering_method.mobile="gl_compatibility"
-anti_aliasing/screen_space_roughness_limiter/amount=4.0
+anti_aliasing/quality/msaa_2d=3
 environment/defaults/default_clear_color=Color(0.211765, 0.239216, 0.290196, 1)
-anti_aliasing/quality/screen_space_aa=1
