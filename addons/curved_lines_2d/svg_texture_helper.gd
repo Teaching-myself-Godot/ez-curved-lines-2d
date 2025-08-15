@@ -2,6 +2,13 @@
 class_name SVGTextureHelper
 extends Node
 
+# Map property names → default values
+const PROPERTY_MAPPINGS: Dictionary = {
+	"expand_mode": TextureRect.EXPAND_IGNORE_SIZE,
+	"expand_icon": true,
+	"ignore_texture_size": true
+}
+
 @export var svg_resource: SVGResource : set = _set_svg_resource
 @export var target_property: String = "texture" ## e.g., "icon", "texture", "theme_override_icon"
 
@@ -10,6 +17,7 @@ extends Node
 @export_range(1.0, 20.0, 0.1) var render_downscale_factor: float = 10.0 # For memory safety
 
 var _parent_control: Control
+
 
 func _ready() -> void:
 	# Ensure the parent is a Control node.
@@ -22,9 +30,29 @@ func _ready() -> void:
 	# Connect to the parent's resize signal to trigger re-renders.
 	_parent_control.resized.connect(_queue_render)
 
+	# Change parent texture properties
+	_update_parent_properties()
+
 	# Perform initial render if we have a resource.
 	if svg_resource:
 		_queue_render()
+
+
+func _update_parent_properties() -> void:
+	if _parent_control == null:
+		return
+
+	for prop in PROPERTY_MAPPINGS.keys():
+		if _has_property(_parent_control, prop):
+			_parent_control.set(prop, PROPERTY_MAPPINGS[prop])
+
+
+func _has_property(target: Object, prop_name: StringName) -> bool:
+	for info in target.get_property_list():
+		if info.name == prop_name:
+			return true
+	return false
+
 
 func _set_svg_resource(new_resource: SVGResource) -> void:
 	if svg_resource == new_resource:
@@ -51,15 +79,18 @@ func _set_svg_resource(new_resource: SVGResource) -> void:
 		# Queue a render to ensure it's the correct size.
 		_queue_render()
 
+
 # Handles resource changes
 func _on_resource_changed() -> void:
 	# This gets called when svg_file_path or render_scale changes
 	_queue_render()
 
+
 func _on_texture_updated(new_texture: Texture2D) -> void:
 	if _parent_control and not target_property.is_empty():
 		# Set the new texture on the parent control
 		_parent_control.set_deferred(target_property, new_texture)
+
 
 ## Called on resize or when the resource changes.
 func _queue_render() -> void:
