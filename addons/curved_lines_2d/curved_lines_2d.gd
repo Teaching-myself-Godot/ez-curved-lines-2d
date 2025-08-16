@@ -926,6 +926,8 @@ func _update_curve_cp_in_position(current_selection : ScalableVectorShape2D, mou
 
 
 func _update_gradient_from_position(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Move gradient from position for %s" % str(svs))
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS].append([svs.polygon.texture, 'fill_from',
@@ -938,6 +940,8 @@ func _update_gradient_from_position(svs : ScalableVectorShape2D, mouse_pos : Vec
 
 
 func _update_gradient_to_position(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Move gradient from position for %s" % str(svs))
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS].append([svs.polygon.texture, 'fill_to',
@@ -958,6 +962,8 @@ func _get_gradient_offset(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> f
 
 
 func _update_gradient_stop_color_pos(svs : ScalableVectorShape2D, mouse_pos : Vector2, idx : int) -> void:
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	var new_offset := _get_gradient_offset(svs, mouse_pos)
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Move gradient offset  %d on %s" % [idx, svs])
