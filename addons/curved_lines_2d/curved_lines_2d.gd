@@ -1215,6 +1215,8 @@ func _drag_curve_segment(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> vo
 	if svs.is_arc_start(md_closest_point.before_segment - 1) or md_closest_point.before_segment >= svs.curve.point_count or md_closest_point.before_segment < 1:
 		return
 
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	# Compute control points based on mouse position to align middle of segment curve to it
 	# using the quadratic Bézier control point
 	var idx : int = md_closest_point.before_segment
