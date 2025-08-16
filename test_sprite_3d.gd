@@ -7,6 +7,7 @@ var base_node_scale : Vector2
 var base_viewport_dimensions : Vector2
 var my_base_pixel_size : float
 
+
 func _ready() -> void:
 	if is_instance_valid(my_viewport):
 		my_node_2d = my_viewport.get_child(0)
@@ -16,7 +17,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	var distance_to_cam := global_position.distance_to(get_viewport().get_camera_3d().global_position)
+
+	var distance_to_cam := ($FiddlePoint as Node3D).global_position.distance_to(get_viewport().get_camera_3d().global_position)
 	$Label.text = """
 		distance to camera: %f
 		node 2d scale: %s
@@ -26,10 +28,14 @@ func _process(delta: float) -> void:
 		str(my_viewport.size)
 	]
 	if distance_to_cam < 0.5:
+		my_node_2d.scale = base_node_scale * 32.0
+		my_viewport.size = base_viewport_dimensions * 32.0
+		pixel_size = my_base_pixel_size * (0.06125  * 0.5)
+	elif distance_to_cam < 1.0:
 		my_node_2d.scale = base_node_scale * 16.0
 		my_viewport.size = base_viewport_dimensions * 16.0
 		pixel_size = my_base_pixel_size * 0.06125
-	elif distance_to_cam < 1.0:
+	elif distance_to_cam < 2.0:
 		my_node_2d.scale = base_node_scale * 8.0
 		my_viewport.size = base_viewport_dimensions * 8.0
 		pixel_size = my_base_pixel_size * 0.125

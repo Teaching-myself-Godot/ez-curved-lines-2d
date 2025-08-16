@@ -1,0 +1,130 @@
+[gd_scene load_steps=9 format=3 uid="uid://b34pt7k35lqka"]
+
+[ext_resource type="Script" uid="uid://yl0gmihjb4kw" path="res://addons/curved_lines_2d/scalable_texture_mapper.gd" id="1_ld3u7"]
+[ext_resource type="PackedScene" uid="uid://3sg5abgwcwu0" path="res://cloudpath.tscn" id="2_ld3u7"]
+[ext_resource type="Script" uid="uid://b5e1mexer7td8" path="res://addons/curved_lines_2d/scalable_sprite_3d.gd" id="3_1ab3t"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_p4ntb"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_ld3u7"]
+sky_material = SubResource("ProceduralSkyMaterial_p4ntb")
+
+[sub_resource type="Environment" id="Environment_1ab3t"]
+background_mode = 2
+sky = SubResource("Sky_ld3u7")
+tonemap_mode = 2
+
+[sub_resource type="GDScript" id="GDScript_p4ntb"]
+script/source = "extends Camera3D
+
+
+func _process(delta) -> void:
+	if Input.is_key_pressed(KEY_A):
+		position.z -= delta
+	if Input.is_key_pressed(KEY_Z):
+		position.z += delta
+"
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_1ab3t"]
+viewport_path = NodePath("ScalableTextureMapper/SubViewport(16x16)")
+
+[node name="Tester3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_1ab3t")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.71737)
+script = SubResource("GDScript_p4ntb")
+
+[node name="ScalableTextureMapper" type="Node" parent="."]
+script = ExtResource("1_ld3u7")
+TextureScene = ExtResource("2_ld3u7")
+metadata/_custom_type_script = "uid://yl0gmihjb4kw"
+
+[node name="SubViewport(16x16)" type="SubViewport" parent="ScalableTextureMapper"]
+transparent_bg = true
+size = Vector2i(16, 16)
+
+[node name="CloudPath" type="Node2D" parent="ScalableTextureMapper/SubViewport(16x16)" instance=ExtResource("2_ld3u7")]
+metadata/_edit_vertical_guides_ = [16.0]
+metadata/_edit_horizontal_guides_ = [16.0]
+
+[node name="SubViewport(32x32)" type="SubViewport" parent="ScalableTextureMapper"]
+transparent_bg = true
+size = Vector2i(32, 32)
+
+[node name="CloudPath" type="Node2D" parent="ScalableTextureMapper/SubViewport(32x32)" instance=ExtResource("2_ld3u7")]
+scale = Vector2(2, 2)
+metadata/_edit_vertical_guides_ = [16.0]
+metadata/_edit_horizontal_guides_ = [16.0]
+
+[node name="SubViewport(64x64)" type="SubViewport" parent="ScalableTextureMapper"]
+transparent_bg = true
+size = Vector2i(64, 64)
+
+[node name="CloudPath" type="Node2D" parent="ScalableTextureMapper/SubViewport(64x64)" instance=ExtResource("2_ld3u7")]
+scale = Vector2(4, 4)
+metadata/_edit_vertical_guides_ = [16.0]
+metadata/_edit_horizontal_guides_ = [16.0]
+
+[node name="SubViewport(128x128)" type="SubViewport" parent="ScalableTextureMapper"]
+transparent_bg = true
+size = Vector2i(128, 128)
+
+[node name="CloudPath" type="Node2D" parent="ScalableTextureMapper/SubViewport(128x128)" instance=ExtResource("2_ld3u7")]
+scale = Vector2(8, 8)
+metadata/_edit_vertical_guides_ = [16.0]
+metadata/_edit_horizontal_guides_ = [16.0]
+
+[node name="SubViewport(256x256)" type="SubViewport" parent="ScalableTextureMapper"]
+transparent_bg = true
+size = Vector2i(256, 256)
+
+[node name="CloudPath" type="Node2D" parent="ScalableTextureMapper/SubViewport(256x256)" instance=ExtResource("2_ld3u7")]
+scale = Vector2(16, 16)
+metadata/_edit_vertical_guides_ = [16.0]
+metadata/_edit_horizontal_guides_ = [16.0]
+
+[node name="SubViewport(512x512)" type="SubViewport" parent="ScalableTextureMapper"]
+transparent_bg = true
+
+[node name="CloudPath" type="Node2D" parent="ScalableTextureMapper/SubViewport(512x512)" instance=ExtResource("2_ld3u7")]
+scale = Vector2(32, 32)
+metadata/_edit_vertical_guides_ = [16.0]
+metadata/_edit_horizontal_guides_ = [16.0]
+
+[node name="SubViewport(1024x1024)" type="SubViewport" parent="ScalableTextureMapper"]
+transparent_bg = true
+size = Vector2i(1024, 1024)
+
+[node name="CloudPath" type="Node2D" parent="ScalableTextureMapper/SubViewport(1024x1024)" instance=ExtResource("2_ld3u7")]
+scale = Vector2(64, 64)
+metadata/_edit_vertical_guides_ = [16.0]
+metadata/_edit_horizontal_guides_ = [16.0]
+
+[node name="SubViewport(2048x2048)" type="SubViewport" parent="ScalableTextureMapper"]
+transparent_bg = true
+size = Vector2i(2048, 2048)
+
+[node name="CloudPath" type="Node2D" parent="ScalableTextureMapper/SubViewport(2048x2048)" instance=ExtResource("2_ld3u7")]
+scale = Vector2(128, 128)
+metadata/_edit_vertical_guides_ = [16.0]
+metadata/_edit_horizontal_guides_ = [16.0]
+
+[node name="ScalableSprite3D" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
+texture = SubResource("ViewportTexture_1ab3t")
+script = ExtResource("3_1ab3t")
+texture_source = NodePath("../ScalableTextureMapper")
+metadata/_custom_type_script = "uid://b5e1mexer7td8"
+
+[node name="Label" type="Label" parent="ScalableSprite3D"]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "
+		unprojected_pos: (1249.5, 491.5)
+		my diameter: 16.6262454986572
+		current texture diameter: 22.627417
+	"
