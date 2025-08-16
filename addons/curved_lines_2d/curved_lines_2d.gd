@@ -659,6 +659,8 @@ func _draw_crosshair(viewport_control : Control, p : Vector2, orbit := 2.0, oute
 
 func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2D, only_cutout_hints : bool) -> void:
 	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	var p := _vp_transform(mouse_pos)
 	if _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
 		if svs.has_fine_point(mouse_pos):
@@ -1178,8 +1180,11 @@ func _add_point_on_position(svs : ScalableVectorShape2D, pos : Vector2) -> void:
 
 func _start_cutout_shape(svs : ScalableVectorShape2D, pos : Vector2) -> void:
 	var new_shape = ScalableVectorShape2D.new()
+	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	new_shape.curve = Curve2D.new()
-	new_shape.position = svs.to_local(EditorInterface.get_editor_viewport_2d().get_mouse_position())
+	new_shape.position = svs.to_local(mouse_pos)
 	new_shape.shape_type = current_cutout_shape
 	new_shape.curve.add_point(Vector2.ZERO)
 
@@ -1301,11 +1306,15 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 					)
 				return true
 			elif _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
+				if _is_snapped_to_pixel():
+					mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 				if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and
 							current_selection.has_fine_point(mouse_pos)):
 					_start_cutout_shape(current_selection, mouse_pos)
 				return true
 			elif _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed():
+				if _is_snapped_to_pixel():
+					mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 				if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 					_add_point_on_position(current_selection, mouse_pos)
 				return true
