@@ -867,6 +867,8 @@ func _update_rect_dimensions(svs : ScalableVectorShape2D, mouse_pos : Vector2) -
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Change rect size on " + str(svs))
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS] = [[svs, 'size', svs.size]]
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	svs.size = svs.to_local(mouse_pos) - svs.get_bounding_rect().position
 	undo_redo_transaction[UndoRedoEntry.DO_PROPS] = [[svs, 'size', svs.size]]
 
@@ -877,6 +879,8 @@ func _update_rect_corner_radius(svs : ScalableVectorShape2D, mouse_pos : Vector2
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS] = [
 			[svs, 'rx', svs.rx], [svs, 'ry', svs.ry]
 		]
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	if prop_name == 'rx':
 		svs.rx = svs.to_local(mouse_pos).x - svs.get_bounding_rect().position.x
 		if is_symmetrical:
