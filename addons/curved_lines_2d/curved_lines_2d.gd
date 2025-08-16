@@ -688,9 +688,9 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 		_draw_hint(viewport_control, "- Use mousewheel to resize shape (Shift held)")
 	elif not svs.has_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE):
 		var hint := "- Hold Ctrl to add points to selected shape (or Cmd for mac)
-				- Hold Shift to resize shape with mouswheel"
+				- Hold Shift to resize shape with mousewheel"
 		if only_cutout_hints:
-			hint = "- Hold Shift to resize shape with mouswheel"
+			hint = "- Hold Shift to resize shape with mousewheel"
 		if svs.has_fine_point(mouse_pos):
 			hint += "\n- Hold Ctrl+Shift to %s %s here (or Cmd+Shift for mac)\n" % [
 					OPERATION_NAME_MAP[current_clip_operation]["verb"],
