@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://b34pt7k35lqka"]
 
 [ext_resource type="Script" uid="uid://yl0gmihjb4kw" path="res://addons/curved_lines_2d/scalable_texture_mapper.gd" id="1_ld3u7"]
-[ext_resource type="PackedScene" uid="uid://3sg5abgwcwu0" path="res://cloudpath.tscn" id="2_ld3u7"]
+[ext_resource type="PackedScene" uid="uid://8lbql6r3mi2o" path="res://icon-redesigned.tscn" id="2_1ab3t"]
 [ext_resource type="Script" uid="uid://b5e1mexer7td8" path="res://addons/curved_lines_2d/scalable_sprite_3d.gd" id="3_1ab3t"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_p4ntb"]
@@ -27,7 +27,7 @@ func _process(delta) -> void:
 		position.z += delta
 "
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_1ab3t"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_dy6qc"]
 viewport_path = NodePath("ScalableTextureMapper/SubViewport(16x16)")
 
 [node name="Tester3D" type="Node3D"]
@@ -41,14 +41,14 @@ script = SubResource("GDScript_p4ntb")
 
 [node name="ScalableTextureMapper" type="Node" parent="."]
 script = ExtResource("1_ld3u7")
-TextureScene = ExtResource("2_ld3u7")
+TextureScene = ExtResource("2_1ab3t")
 metadata/_custom_type_script = "uid://yl0gmihjb4kw"
 
 [node name="SubViewport(16x16)" type="SubViewport" parent="ScalableTextureMapper"]
 transparent_bg = true
 size = Vector2i(16, 16)
 
-[node name="CloudPath" type="Node2D" parent="ScalableTextureMapper/SubViewport(16x16)" instance=ExtResource("2_ld3u7")]
+[node name="Icon-redesigned" type="Node2D" parent="ScalableTextureMapper/SubViewport(16x16)" instance=ExtResource("2_1ab3t")]
 metadata/_edit_vertical_guides_ = [16.0]
 metadata/_edit_horizontal_guides_ = [16.0]
 
@@ -56,7 +56,7 @@ metadata/_edit_horizontal_guides_ = [16.0]
 transparent_bg = true
 size = Vector2i(32, 32)
 
-[node name="CloudPath" type="Node2D" parent="ScalableTextureMapper/SubViewport(32x32)" instance=ExtResource("2_ld3u7")]
+[node name="Icon-redesigned" type="Node2D" parent="ScalableTextureMapper/SubViewport(32x32)" instance=ExtResource("2_1ab3t")]
 scale = Vector2(2, 2)
 metadata/_edit_vertical_guides_ = [16.0]
 metadata/_edit_horizontal_guides_ = [16.0]
@@ -65,7 +65,7 @@ metadata/_edit_horizontal_guides_ = [16.0]
 transparent_bg = true
 size = Vector2i(64, 64)
 
-[node name="CloudPath" type="Node2D" parent="ScalableTextureMapper/SubViewport(64x64)" instance=ExtResource("2_ld3u7")]
+[node name="Icon-redesigned" type="Node2D" parent="ScalableTextureMapper/SubViewport(64x64)" instance=ExtResource("2_1ab3t")]
 scale = Vector2(4, 4)
 metadata/_edit_vertical_guides_ = [16.0]
 metadata/_edit_horizontal_guides_ = [16.0]
@@ -74,7 +74,7 @@ metadata/_edit_horizontal_guides_ = [16.0]
 transparent_bg = true
 size = Vector2i(128, 128)
 
-[node name="CloudPath" type="Node2D" parent="ScalableTextureMapper/SubViewport(128x128)" instance=ExtResource("2_ld3u7")]
+[node name="Icon-redesigned" type="Node2D" parent="ScalableTextureMapper/SubViewport(128x128)" instance=ExtResource("2_1ab3t")]
 scale = Vector2(8, 8)
 metadata/_edit_vertical_guides_ = [16.0]
 metadata/_edit_horizontal_guides_ = [16.0]
@@ -83,7 +83,7 @@ metadata/_edit_horizontal_guides_ = [16.0]
 transparent_bg = true
 size = Vector2i(256, 256)
 
-[node name="CloudPath" type="Node2D" parent="ScalableTextureMapper/SubViewport(256x256)" instance=ExtResource("2_ld3u7")]
+[node name="Icon-redesigned" type="Node2D" parent="ScalableTextureMapper/SubViewport(256x256)" instance=ExtResource("2_1ab3t")]
 scale = Vector2(16, 16)
 metadata/_edit_vertical_guides_ = [16.0]
 metadata/_edit_horizontal_guides_ = [16.0]
@@ -91,7 +91,7 @@ metadata/_edit_horizontal_guides_ = [16.0]
 [node name="SubViewport(512x512)" type="SubViewport" parent="ScalableTextureMapper"]
 transparent_bg = true
 
-[node name="CloudPath" type="Node2D" parent="ScalableTextureMapper/SubViewport(512x512)" instance=ExtResource("2_ld3u7")]
+[node name="Icon-redesigned" type="Node2D" parent="ScalableTextureMapper/SubViewport(512x512)" instance=ExtResource("2_1ab3t")]
 scale = Vector2(32, 32)
 metadata/_edit_vertical_guides_ = [16.0]
 metadata/_edit_horizontal_guides_ = [16.0]
@@ -100,7 +100,7 @@ metadata/_edit_horizontal_guides_ = [16.0]
 transparent_bg = true
 size = Vector2i(1024, 1024)
 
-[node name="CloudPath" type="Node2D" parent="ScalableTextureMapper/SubViewport(1024x1024)" instance=ExtResource("2_ld3u7")]
+[node name="Icon-redesigned" type="Node2D" parent="ScalableTextureMapper/SubViewport(1024x1024)" instance=ExtResource("2_1ab3t")]
 scale = Vector2(64, 64)
 metadata/_edit_vertical_guides_ = [16.0]
 metadata/_edit_horizontal_guides_ = [16.0]
@@ -109,13 +109,14 @@ metadata/_edit_horizontal_guides_ = [16.0]
 transparent_bg = true
 size = Vector2i(2048, 2048)
 
-[node name="CloudPath" type="Node2D" parent="ScalableTextureMapper/SubViewport(2048x2048)" instance=ExtResource("2_ld3u7")]
+[node name="Icon-redesigned" type="Node2D" parent="ScalableTextureMapper/SubViewport(2048x2048)" instance=ExtResource("2_1ab3t")]
 scale = Vector2(128, 128)
 metadata/_edit_vertical_guides_ = [16.0]
 metadata/_edit_horizontal_guides_ = [16.0]
 
 [node name="ScalableSprite3D" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
-texture = SubResource("ViewportTexture_1ab3t")
+transform = Transform3D(0.859273, -1.85169e-06, -0.511518, 1.85169e-06, 1, -5.09432e-07, 0.511518, -5.09432e-07, 0.859273, 0.546742, 0, 7.02955)
+texture = SubResource("ViewportTexture_dy6qc")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
 metadata/_custom_type_script = "uid://b5e1mexer7td8"

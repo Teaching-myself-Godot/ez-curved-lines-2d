@@ -5,8 +5,13 @@ class_name ScalableTextureMapper
 
 @export var TextureScene : PackedScene:
 	set(ts):
+		if not is_inside_tree():
+			return
+		var should_update := TextureScene != ts
+		print("shoudl update ", should_update, " ", ts, " ", TextureScene)
 		TextureScene = ts
-		_on_scene_picked()
+		if should_update:
+			_on_scene_picked()
 @export var smallest_size := Vector2(16.0, 16.0)
 @export var smallest_scale := Vector2.ONE
 @export var mipmaps := 8
@@ -14,9 +19,11 @@ class_name ScalableTextureMapper
 
 func _on_scene_picked():
 	if Engine.is_editor_hint():
+		print(get_children())
 		for vp in get_children():
 			vp.queue_free()
 			remove_child(vp)
+		print(get_children())
 		if TextureScene == null:
 			return
 		var s_node := smallest_scale

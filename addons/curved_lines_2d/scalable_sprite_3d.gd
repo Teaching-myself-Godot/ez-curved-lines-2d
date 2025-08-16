@@ -62,7 +62,7 @@ func _process(_delta: float) -> void:
 		current_texture_idx += 1
 		pixel_size *= 0.5
 		texture = texture_source.get_child(current_texture_idx).get_texture()
-	elif current_sprite_diameter < current_texture_diameter * pixel_size and current_texture_idx > 0:
+	elif current_sprite_diameter < current_texture_diameter * 0.5 and current_texture_idx > 0:
 		current_texture_idx -= 1
 		pixel_size *= 2.0
 		texture = texture_source.get_child(current_texture_idx).get_texture()
