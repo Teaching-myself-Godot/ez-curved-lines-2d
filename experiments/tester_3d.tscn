@@ -1,8 +1,8 @@
 [gd_scene load_steps=14 format=3 uid="uid://b34pt7k35lqka"]
 
-[ext_resource type="Script" uid="uid://yl0gmihjb4kw" path="res://addons/curved_lines_2d/scalable_texture_mapper.gd" id="1_ld3u7"]
-[ext_resource type="PackedScene" uid="uid://8lbql6r3mi2o" path="res://icon-redesigned.tscn" id="2_1ab3t"]
-[ext_resource type="Script" uid="uid://b5e1mexer7td8" path="res://addons/curved_lines_2d/scalable_sprite_3d.gd" id="3_1ab3t"]
+[ext_resource type="Script" uid="uid://yl0gmihjb4kw" path="res://experiments/scalable_texture_mapper.gd" id="1_ld3u7"]
+[ext_resource type="PackedScene" uid="uid://8lbql6r3mi2o" path="res://experiments/icon-redesigned.tscn" id="2_1ab3t"]
+[ext_resource type="Script" uid="uid://b5e1mexer7td8" path="res://experiments/scalable_sprite_3d.gd" id="3_1ab3t"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_p4ntb"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -15,6 +15,7 @@ sky_material = SubResource("ProceduralSkyMaterial_p4ntb")
 background_mode = 2
 sky = SubResource("Sky_ld3u7")
 sky_custom_fov = 53.2
+reflected_light_source = 1
 tonemap_mode = 2
 
 [sub_resource type="GDScript" id="GDScript_p4ntb"]
@@ -109,7 +110,7 @@ script = SubResource("GDScript_1ab3t")
 [node name="ScalableSprite3D" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 1, -0.0226511, 0, -1.16293)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -118,7 +119,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D3" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.237813, 0, -0.308419, 0, 0.25, 0, 0.0771048, 0, 0.95125, 1.5297, -9.53674e-07, -0.824854)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -127,7 +128,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D2" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.0300683, 0, -0.342184, 0, 0.032, 0, 0.0109499, 0, 0.939633, 0.41907, 0, 0.735201)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -136,7 +137,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D4" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.0252253, 0, -0.615304, 0, 0.032, 0, 0.0196897, 0, 0.78829, 1.36447, -9.53674e-07, 1.11698)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -145,7 +146,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D5" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.0313976, 0, 0.193121, 0, 0.032, 0, -0.00617986, 0, 0.981175, -0.00861874, 0.00559828, 1.85564)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -154,7 +155,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D6" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.031773, 0, -0.118907, 0, 0.032, 0, 0.00380501, 0, 0.992905, 1.03237, 0.354552, 1.69343)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -163,7 +164,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D7" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.0166394, 0.00812655, -0.815553, -0.00944373, 0.0303807, 0.107472, 0.0256505, 0.0059136, 0.568615, 1.50975, 0.100477, 2.33667)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -172,7 +173,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D8" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.00777918, 0.00812651, -0.936168, -0.00792265, 0.0303807, 0.193251, 0.0300119, 0.00591359, 0.293673, 2.01085, -0.19645, 3.17349)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -181,7 +182,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D9" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.0277389, 0.00812654, -0.429063, -0.00986122, 0.0303807, -0.0606541, 0.0125424, 0.00591357, 0.901235, 0.638618, 0.56061, 3.08846)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -190,7 +191,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D10" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.022152, 0.00812653, -0.675498, -0.00997911, 0.0303807, 0.0373462, 0.0208256, 0.00591357, 0.736416, 1.50678, 0.244465, 3.5196)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -199,7 +200,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D11" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.029481, -0.0123923, -0.0356175, 0.012383, 0.0295031, -0.0149606, 0.00123622, 8.64267e-10, 0.999254, -0.759879, -0.83012, 2.39666)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -208,7 +209,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D12" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.0276923, -0.0123923, -0.318023, 0.0116317, 0.0295031, -0.133581, 0.011038, 1.23978e-08, 0.938626, 0.177622, -0.43634, 2.47123)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -217,7 +218,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D13" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.0258212, -0.0123923, 0.446009, 0.0108457, 0.0295031, 0.187339, -0.0154802, -2.57492e-08, 0.875203, -0.926711, -0.515635, 3.58369)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -226,7 +227,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D14" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.0289643, -0.0123922, 0.175399, 0.0121659, 0.0295031, 0.0736736, -0.00608779, -1.35899e-08, 0.981737, -0.088781, -0.163678, 3.12159)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -235,7 +236,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D15" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.0254919, -0.00296494, -0.597333, 0.000464509, 0.0317066, -0.134332, 0.0193377, 0.00314692, 0.790663, 0.609931, -0.145774, 3.58816)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -244,7 +245,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D16" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.0183539, -0.00296493, -0.813907, -0.000883918, 0.0317066, -0.132261, 0.0261983, 0.00314693, 0.565742, 1.40062, -0.135717, 4.23178)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -253,7 +254,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D17" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.0317038, -0.00296493, -0.099216, 0.00262082, 0.0317066, -0.107462, 0.00346442, 0.00314693, 0.989246, -0.121145, 0.0462251, 4.57022)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")
@@ -262,7 +263,7 @@ metadata/_custom_type_script = "uid://b5e1mexer7td8"
 [node name="ScalableSprite3D18" type="Sprite3D" parent="." node_paths=PackedStringArray("texture_source")]
 transform = Transform3D(0.029179, -0.00296493, -0.399942, 0.00143248, 0.0317066, -0.127483, 0.0130588, 0.00314693, 0.90763, 0.884893, 0.125893, 4.71539)
 shaded = true
-alpha_cut = 2
+alpha_cut = 3
 texture = SubResource("ViewportTexture_1ab3t")
 script = ExtResource("3_1ab3t")
 texture_source = NodePath("../ScalableTextureMapper")

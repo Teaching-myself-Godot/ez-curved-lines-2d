@@ -36,9 +36,11 @@ config/icon="uid://b5yxa1e62b0hb"
 
 [display]
 
-window/size/viewport_width=1080
+window/size/viewport_width=1920
 window/size/viewport_height=1080
-window/size/borderless=true
+window/size/mode=3
+window/size/initial_position_type=4
+window/size/transparent=true
 
 [editor_plugins]
 
@@ -46,5 +48,10 @@ enabled=PackedStringArray("res://addons/curved_lines_2d/plugin.cfg", "res://addo
 
 [rendering]
 
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=5
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality.mobile=5
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality=5
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality.mobile=5
 anti_aliasing/quality/msaa_2d=3
 environment/defaults/default_clear_color=Color(0.211765, 0.239216, 0.290196, 1)
+viewport/transparent_background=true
