@@ -26,11 +26,12 @@ func _process(delta) -> void:
 	if Input.is_key_pressed(KEY_A):
 		acceleration = acceleration - 0.1 if acceleration > -5.0 else -5.0
 	if Input.is_key_pressed(KEY_Z):
-		acceleration = acceleration + 0.1 if acceleration < 5.0 else 5.0
+		acceleration = acceleration + 0.05 if acceleration < 5.0 else 5.0
 
+	$Label.text = str(position.z)
 	position.z += acceleration * delta
-	if position.z < -1.0:
-		position.z = -1.0
+	if position.z < -0.3275:
+		position.z = -0.3275
 		acceleration = 0.0
 "
 
@@ -65,8 +66,12 @@ albedo_texture = SubResource("NoiseTexture2D_5ihpa")
 environment = SubResource("Environment_1ab3t")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 9.06653)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 28.0734)
 script = SubResource("GDScript_p4ntb")
+
+[node name="Label" type="Label" parent="Camera3D"]
+offset_right = 40.0
+offset_bottom = 23.0
 
 [node name="ScalableTextureMapper" type="Node" parent="."]
 script = ExtResource("1_ld3u7")

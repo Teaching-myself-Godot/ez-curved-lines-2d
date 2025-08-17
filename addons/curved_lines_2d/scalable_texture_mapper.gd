@@ -8,7 +8,6 @@ class_name ScalableTextureMapper
 		if not is_inside_tree():
 			return
 		var should_update := TextureScene != ts
-		print("shoudl update ", should_update, " ", ts, " ", TextureScene)
 		TextureScene = ts
 		if should_update:
 			_on_scene_picked()
@@ -42,5 +41,5 @@ func _on_scene_picked():
 			s_vp *= 2
 			viewport.transparent_bg = true
 			add_child(viewport)
-			viewport.owner = EditorInterface.get_edited_scene_root()
-			texture_node.owner = EditorInterface.get_edited_scene_root()
+			#viewport.owner = EditorInterface.get_edited_scene_root()
+			#texture_node.owner = EditorInterface.get_edited_scene_root()
