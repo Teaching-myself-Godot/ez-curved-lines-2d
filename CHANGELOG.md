@@ -1,5 +1,14 @@
 # Changelog
 
+
+## 2.11.4 - 2025-16-08
+
+### Added
+- Snap to pixel when adding points
+- Snap to pixel when dragging curve edges
+- Snap to pixel when dragging gradient stops
+- Snap to pixel when changing rx/ry and size of primitive shapes
+
 ## 2.11.3 - 2025-14-08
 
 ### Added

@@ -659,6 +659,8 @@ func _draw_crosshair(viewport_control : Control, p : Vector2, orbit := 2.0, oute
 
 func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2D, only_cutout_hints : bool) -> void:
 	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	var p := _vp_transform(mouse_pos)
 	if _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
 		if svs.has_fine_point(mouse_pos):
@@ -688,9 +690,9 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 		_draw_hint(viewport_control, "- Use mousewheel to resize shape (Shift held)")
 	elif not svs.has_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE):
 		var hint := "- Hold Ctrl to add points to selected shape (or Cmd for mac)
-				- Hold Shift to resize shape with mouswheel"
+				- Hold Shift to resize shape with mousewheel"
 		if only_cutout_hints:
-			hint = "- Hold Shift to resize shape with mouswheel"
+			hint = "- Hold Shift to resize shape with mousewheel"
 		if svs.has_fine_point(mouse_pos):
 			hint += "\n- Hold Ctrl+Shift to %s %s here (or Cmd+Shift for mac)\n" % [
 					OPERATION_NAME_MAP[current_clip_operation]["verb"],
@@ -867,6 +869,8 @@ func _update_rect_dimensions(svs : ScalableVectorShape2D, mouse_pos : Vector2) -
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Change rect size on " + str(svs))
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS] = [[svs, 'size', svs.size]]
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	svs.size = svs.to_local(mouse_pos) - svs.get_bounding_rect().position
 	undo_redo_transaction[UndoRedoEntry.DO_PROPS] = [[svs, 'size', svs.size]]
 
@@ -877,6 +881,8 @@ func _update_rect_corner_radius(svs : ScalableVectorShape2D, mouse_pos : Vector2
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS] = [
 			[svs, 'rx', svs.rx], [svs, 'ry', svs.ry]
 		]
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	if prop_name == 'rx':
 		svs.rx = svs.to_local(mouse_pos).x - svs.get_bounding_rect().position.x
 		if is_symmetrical:
@@ -920,6 +926,8 @@ func _update_curve_cp_in_position(current_selection : ScalableVectorShape2D, mou
 
 
 func _update_gradient_from_position(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Move gradient from position for %s" % str(svs))
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS].append([svs.polygon.texture, 'fill_from',
@@ -932,6 +940,8 @@ func _update_gradient_from_position(svs : ScalableVectorShape2D, mouse_pos : Vec
 
 
 func _update_gradient_to_position(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Move gradient from position for %s" % str(svs))
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS].append([svs.polygon.texture, 'fill_to',
@@ -952,6 +962,8 @@ func _get_gradient_offset(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> f
 
 
 func _update_gradient_stop_color_pos(svs : ScalableVectorShape2D, mouse_pos : Vector2, idx : int) -> void:
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	var new_offset := _get_gradient_offset(svs, mouse_pos)
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Move gradient offset  %d on %s" % [idx, svs])
@@ -1174,8 +1186,11 @@ func _add_point_on_position(svs : ScalableVectorShape2D, pos : Vector2) -> void:
 
 func _start_cutout_shape(svs : ScalableVectorShape2D, pos : Vector2) -> void:
 	var new_shape = ScalableVectorShape2D.new()
+	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	new_shape.curve = Curve2D.new()
-	new_shape.position = svs.to_local(EditorInterface.get_editor_viewport_2d().get_mouse_position())
+	new_shape.position = svs.to_local(mouse_pos)
 	new_shape.shape_type = current_cutout_shape
 	new_shape.curve.add_point(Vector2.ZERO)
 
@@ -1206,6 +1221,8 @@ func _drag_curve_segment(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> vo
 	if svs.is_arc_start(md_closest_point.before_segment - 1) or md_closest_point.before_segment >= svs.curve.point_count or md_closest_point.before_segment < 1:
 		return
 
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	# Compute control points based on mouse position to align middle of segment curve to it
 	# using the quadratic Bézier control point
 	var idx : int = md_closest_point.before_segment
@@ -1297,11 +1314,15 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 					)
 				return true
 			elif _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
+				if _is_snapped_to_pixel():
+					mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 				if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and
 							current_selection.has_fine_point(mouse_pos)):
 					_start_cutout_shape(current_selection, mouse_pos)
 				return true
 			elif _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed():
+				if _is_snapped_to_pixel():
+					mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 				if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 					_add_point_on_position(current_selection, mouse_pos)
 				return true
