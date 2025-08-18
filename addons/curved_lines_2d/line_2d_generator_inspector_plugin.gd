@@ -183,6 +183,8 @@ static func _export_baked_scene(svs : ScalableVectorShape2D, filepath : String, 
 
 
 static func _copy_baked_node(src_node : Node, dst_parent : Node, dst_owner : Node) -> Node:
+	if src_node is ScalableVectorShape2D and src_node.get_children().is_empty():
+		return null
 	var dst_node : Node = (
 		Node2D.new() if src_node is ScalableVectorShape2D else
 		ClassDB.instantiate(src_node.get_class())
