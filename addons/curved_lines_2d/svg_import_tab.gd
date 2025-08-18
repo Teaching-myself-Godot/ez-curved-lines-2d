@@ -131,14 +131,11 @@ func _load_svg(file_path : String) -> void:
 
 	var svg_xml_node : SVGXMLElement = parse_svg_xml_file(xml_parser)
 	process_svg_xml_tree(svg_xml_node, scene_root, svg_root, current_node, svg_gradients)
+	undo_redo.commit_action(false)
 
 
 	if not import_as_svs:
-		var result := Line2DGeneratorInspectorPlugin._copy_baked_node(svg_root, parent_node, scene_root)
-		undo_redo.add_do_method(parent_node, 'remove_child', svg_root)
-		undo_redo.add_undo_method(parent_node, 'add_child', svg_root)
-		undo_redo.add_undo_method(parent_node, 'remove_node', result)
-		undo_redo.add_undo_reference(result)
+		Line2DGeneratorInspectorPlugin._copy_baked_node(svg_root, parent_node, scene_root)
 		parent_node.remove_child(svg_root)
 
 
@@ -147,7 +144,6 @@ func _load_svg(file_path : String) -> void:
 	link_button.text = "Click here to report issues or improvement requests on github"
 	link_button.uri = "https://github.com/Teaching-myself-Godot/ez-curved-lines-2d/issues"
 	%ImportLogContainer.add_child(link_button)
-	undo_redo.commit_action(false)
 	EditorInterface.call_deferred('edit_node', svg_root)
 
 
@@ -658,14 +654,6 @@ func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform :
 
 	if "clip-path" in style:
 		_apply_clip_path_by_href(style["clip-path"], svs, scene_root)
-
-	#if not import_as_svs:
-		#var bare_node := Node2D.new()
-		#bare_node.name = svs.name
-		#bare_node.position = svs.position
-		#undo_redo.add_do_method(svs, 'replace_by', bare_node)
-		#undo_redo.add_do_reference(bare_node)
-		#svs.replace_by(bare_node)
 
 
 func get_paint_order(style : Dictionary) -> String:
