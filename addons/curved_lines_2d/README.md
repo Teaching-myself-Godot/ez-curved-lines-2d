@@ -49,8 +49,6 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 - [Using the Inspector Form for `ScalableVectorShape2D`](#using-the-inspector-form-for-scalablevectorshape2d)
   - [Inspector Form](#inspector-form)
     - [Convert to Path button](#convert-to-path-button)
-    - [Export as PNG button](#export-as-png-button)
-    - [Export as 'baked' scene button](#export-as-baked-scene-button)
   - [The Fill inspector form](#the-fill-inspector-form)
   - [The Stroke inspector form](#the-stroke-inspector-form)
   - [The Collision inspector form](#the-collision-inspector-form)
@@ -59,6 +57,10 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
   - [The Masking Inspector form](#the-masking-inspector-form)
   - [The Shape type inspector form](#the-shape-type-inspector-form)
   - [The Editor settings inspector form](#the-editor-settings-inspector-form)
+  - [The Export Options inspector form](#the-export-options-inspector-form)
+    - [Export as PNG button](#export-as-png-button)
+    - [Export as 'baked' scene button](#export-as-baked-scene-button)
+      - [Caveats when 'Baking'](#caveats-when-baking)
 - [More about assigned `Line2D`, `Polygon2D` and `CollisionObject2D`](#more-about-assigned-line2d-polygon2d-and-collisionobject2d)
   - [Watch the chapter about working with collisions, paint order and the node hierarchy on youtube](#watch-the-chapter-about-working-with-collisions-paint-order-and-the-node-hierarchy-on-youtube)
 - [Animating / Changing shapes at runtime](#animating--changing-shapes-at-runtime)
@@ -304,8 +306,6 @@ There are 4 ways to get around this:
 
 The following custom forms were added, with extensive tooltips to help explain the actual functions they provide:
 
-- [Convert to Path button](#convert-to-path-button)
-- [Export as PNG button](#export-as-png-button)
 - [Fill](#the-fill-inspector-form) (actually the assigned `Polygon2D`)
 - [Stroke](#the-stroke-inspector-form) (actually the assigned `Line2D`)
 - [Collision](#the-collision-inspector-form) (manages an assigned `CollisionObject2D`)
@@ -314,6 +314,7 @@ The following custom forms were added, with extensive tooltips to help explain t
 - [Masking](#the-masking-inspector-form)
 - [Shape Type Settings](#the-shape-type-inspector-form)
 - [Editor Settings](#the-editor-settings-inspector-form)
+- [Export Options](#the-export-options-inspector-form)
 
 ![screenshot of the inspector](./screenshots/inspector-in-2.6.png)
 
@@ -323,22 +324,6 @@ The following custom forms were added, with extensive tooltips to help explain t
 ### Convert to Path button
 
 When a primitive shape (basic rectangle or ellipse) is selected, a `Convert to Path`-button is available at the top of the inspector.
-
-### Export as PNG button
-
-With the `Export as PNG`-button you can save any `ScalableVectorShape2D` and its children as a new `.png`-file. Note that nodes which are assigned as Fill or Stroke that are higher up in the hierarchy will be excluded from the exported file.
-
-You _can_ however change the type of any `Node2D` to `ScalableVectorShape2D` temporarily in order to export group of shapes as a PNG file.
-
-### Export as 'baked' scene button
-
-With the `Export as baked scene` button you can generate a new scene (like `Save branch as scene`), with all the `ScalableVectorShape2D`-nodes converted to basic `Node2D`-nodes.
-
-Use this when you are done drawing entirely and do not want to update curves at runtime, or when you want to keep the shapes but drop the dependency of this plugin from your project.
-
-This button is not feature-complete yet[^7]
-
-[^7]: AnimationPlayer will not be included, cutouts are not yet supported for this feature. Alternatively, you can manually unlock any generated polygons and lines and copy+paste them into a new scene.
 
 ## The Fill inspector form
 
@@ -429,6 +414,22 @@ This form exposes 2 settings:
 - Shape Hint Color: the color of the line with which this shape is drawn, when selected
 - Lock Assigned Shapes: when this is checked, added strokes, fills and collision polygons will be locked in the editor, once created.
 
+## The Export Options inspector form
+
+### Export as PNG button
+
+With the `Export as PNG`-button you can save any `ScalableVectorShape2D` and its children as a new `.png`-file. Note that nodes which are assigned as Fill or Stroke that are higher up in the hierarchy will be excluded from the exported file.
+
+You _can_ however change the type of any `Node2D` to `ScalableVectorShape2D` temporarily in order to export group of shapes as a PNG file.
+
+### Export as 'baked' scene button
+
+With the `Export as baked scene` button you can generate a new scene (like `Save branch as scene`), with all the `ScalableVectorShape2D`-nodes converted to basic `Node2D`-nodes.
+
+Use this when you are done drawing entirely and do not want to update curves at runtime, or when you want to keep the shapes but drop the dependency of this plugin from your project.
+
+#### Caveats when 'Baking'
+An exported AnimationPlayer will not support animated curves, track references will, however, remain.
 
 
 # More about assigned `Line2D`, `Polygon2D` and `CollisionObject2D`

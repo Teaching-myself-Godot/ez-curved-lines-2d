@@ -55,7 +55,6 @@ enum CollisionObjectType {
 	PHYSICAL_BONE_2D
 }
 
-
 @export_group("Fill")
 ## The 'Fill' of a [ScalableVectorShape2D] is simply an instance of a [Polygon2D] node
 ## assigned to the `polygon` property.
@@ -236,9 +235,11 @@ enum CollisionObjectType {
 ## controls them
 @export var lock_assigned_shapes := true
 
+@export_group("Export Options")
+@export var show_export_options := true
+
 var cached_outline : PackedVector2Array = []
 var cached_clipped_polygons : Array[PackedVector2Array] = []
-
 
 # Wire up signals at runtime
 func _ready():

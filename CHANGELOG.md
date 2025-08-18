@@ -1,13 +1,17 @@
 # Changelog
 
-
-## 2.11.4 - 2025-16-08
+## 2.11.5 - 2025-18-08
 
 ### Added
 - Snap to pixel when adding points
 - Snap to pixel when dragging curve edges
 - Snap to pixel when dragging gradient stops
 - Snap to pixel when changing rx/ry and size of primitive shapes
+
+### Changed
+- Export as 'baked' scene now supports cutouts, clips and merged shapes
+- Import SVG as Node2D in stead of ScalableVectorShape2D now works with cutouts, clips and merged shapes
+- Export buttons moved to inspector group `ScalableVectorShape2D > Export Options` to save screen real-estate
 
 ## 2.11.3 - 2025-14-08
 
