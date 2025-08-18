@@ -52,7 +52,17 @@ func _on_svs_assignment_changed() -> void:
 		begin_cap_button_map[CurvedLines2D._get_default_begin_cap()].button_pressed = true
 		end_cap_button_map[CurvedLines2D._get_default_end_cap()].button_pressed = true
 		joint_button_map[CurvedLines2D._get_default_joint_mode()].button_pressed = true
-
+	printerr("TODO: refactor stroke properties")
+	if is_instance_valid(scalable_vector_shape_2d.poly_stroke):
+		%CreatePolyStrokeButton.get_parent().hide()
+		%GotoPolygon2DButton.get_parent().show()
+		%CreatePolyStrokeButton.disabled = true
+		%GotoPolygon2DButton.disabled = false
+	else:
+		%CreatePolyStrokeButton.get_parent().show()
+		%GotoPolygon2DButton.get_parent().hide()
+		%CreatePolyStrokeButton.disabled = false
+		%GotoPolygon2DButton.disabled = true
 
 func _on_stroke_width_changed(new_value : float) -> void:
 	if not is_instance_valid(scalable_vector_shape_2d.line):
@@ -78,6 +88,14 @@ func _on_goto_line_2d_button_pressed() -> void:
 	if not is_instance_valid(scalable_vector_shape_2d.line):
 		return
 	EditorInterface.call_deferred('edit_node', scalable_vector_shape_2d.line)
+
+
+func _on_goto_polygon_2d_button_pressed() -> void:
+	if not is_instance_valid(scalable_vector_shape_2d):
+		return
+	if not is_instance_valid(scalable_vector_shape_2d.poly_stroke):
+		return
+	EditorInterface.call_deferred('edit_node', scalable_vector_shape_2d.poly_stroke)
 
 
 func _get_selected_begin_cap_mode() -> Line2D.LineCapMode:
@@ -110,6 +128,7 @@ func _on_create_stroke_button_pressed():
 	var line_2d := Line2D.new()
 	var root := EditorInterface.get_edited_scene_root()
 	var undo_redo = EditorInterface.get_editor_undo_redo()
+	line_2d.name = "Stroke"
 	line_2d.default_color = %ColorPickerButton.color
 	line_2d.width = stroke_width_input.value
 	line_2d.begin_cap_mode = _get_selected_begin_cap_mode()
@@ -123,6 +142,32 @@ func _on_create_stroke_button_pressed():
 	undo_redo.add_do_property(scalable_vector_shape_2d, 'line', line_2d)
 	undo_redo.add_undo_method(scalable_vector_shape_2d, 'remove_child', line_2d)
 	undo_redo.add_undo_property(scalable_vector_shape_2d, 'line', null)
+	undo_redo.commit_action()
+
+
+func _on_create_poly_stroke_button_pressed() -> void:
+	if not is_instance_valid(scalable_vector_shape_2d):
+		return
+	if is_instance_valid(scalable_vector_shape_2d.poly_stroke):
+		return
+
+	var poly_stroke := Polygon2D.new()
+	var root := EditorInterface.get_edited_scene_root()
+	var undo_redo = EditorInterface.get_editor_undo_redo()
+	poly_stroke.name = "PolyStroke"
+	poly_stroke.color = %ColorPickerButton.color
+	#poly_stroke.width = stroke_width_input.value
+	#poly_stroke.begin_cap_mode = _get_selected_begin_cap_mode()
+	#poly_stroke.end_cap_mode = _get_selected_end_cap_mode()
+	#poly_stroke.joint_mode = _get_selected_joint_mode()
+	#poly_stroke.sharp_limit = 90.0
+	undo_redo.create_action("Add Polygon2D for Stroke to %s " % str(scalable_vector_shape_2d))
+	undo_redo.add_do_method(scalable_vector_shape_2d, 'add_child', poly_stroke, true)
+	undo_redo.add_do_method(poly_stroke, 'set_owner', root)
+	undo_redo.add_do_reference(poly_stroke)
+	undo_redo.add_do_property(scalable_vector_shape_2d, 'poly_stroke', poly_stroke)
+	undo_redo.add_undo_method(scalable_vector_shape_2d, 'remove_child', poly_stroke)
+	undo_redo.add_undo_property(scalable_vector_shape_2d, 'poly_stroke', null)
 	undo_redo.commit_action()
 
 
@@ -227,3 +272,4 @@ func _on_line_joint_bevel_toggle_button_button_down() -> void:
 
 func _on_line_joint_round_toggle_button_button_down() -> void:
 	_set_joint_mode(Line2D.LineJointMode.LINE_JOINT_ROUND)
+

@@ -71,12 +71,23 @@ enum CollisionObjectType {
 ## The 'Stroke' of a [ScalableVectorShape2D] is simply an instance of a [Line2D] node
 ## assigned to the `line` property.
 ## If you remove that Line2D node, you need to unassign it here as well, before
-## you can add a new 'Stroke' with the 'Add Stroke' button
+## you can add a new 'Line2D Stroke' with the 'Add Line2D Stroke' button
 ## The line's shape is controlled by this node's curve ([Curve2D]) pproperty, it
 ## does _not_ have to be the child of this [ScalableVectorShape2D]
 @export var line: Line2D:
 	set(_line):
 		line = _line
+		assigned_node_changed.emit()
+
+## The 'Stroke' of a [ScalableVectorShape2D] can be an instance of a [Polygon2D] node
+## assigned to the `poly_stroke` property.
+## If you remove that Polygon2D node, you need to unassign it here as well, before
+## you can add a new 'Poly Stroke' with the 'Add Polygon2D Stroke' button
+## The line's shape is controlled by this node's curve ([Curve2D]) pproperty, it
+## does _not_ have to be the child of this [ScalableVectorShape2D]
+@export var poly_stroke: Polygon2D:
+	set(_ps):
+		poly_stroke = _ps
 		assigned_node_changed.emit()
 
 
@@ -336,6 +347,8 @@ func _on_assigned_node_changed(_x : Variant = null):
 	if lock_assigned_shapes:
 		if is_instance_valid(line):
 			line.set_meta("_edit_lock_", true)
+		if is_instance_valid(poly_stroke):
+			poly_stroke.set_meta("_edit_lock_", true)
 		if is_instance_valid(polygon):
 			polygon.set_meta("_edit_lock_", true)
 		if is_instance_valid(collision_polygon):
@@ -426,6 +439,28 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 	if is_instance_valid(line):
 		line.points = polygon_points
 		line.closed = is_curve_closed()
+	if is_instance_valid(poly_stroke) and not polygon_points.size() < 2:
+		poly_stroke.polygons.clear()
+		printerr("FIXME: move most poly_stroke code to Geometry2DUtil.calculate_polystroke")
+		var poly_strokes := Geometry2D.offset_polyline(tessellate(), 10.0,
+				Geometry2D.JOIN_ROUND, Geometry2D.END_ROUND)
+		var result_poly_strokes := Array(poly_strokes.filter(func(ps): return not Geometry2D.is_polygon_clockwise(ps)), TYPE_PACKED_VECTOR2_ARRAY, "", null)
+		var result_poly_holes := Array(poly_strokes.filter(Geometry2D.is_polygon_clockwise), TYPE_PACKED_VECTOR2_ARRAY, "", null)
+		if not result_poly_holes.is_empty():
+			Geometry2DUtil.slice_polygons_with_holes(result_poly_strokes, result_poly_holes)
+
+		printerr("FIXME: move polygon indices calculator to Geometry2DUtil.get_polygon_indices")
+		var clipped_polygons : PackedVector2Array = []
+		var p_count = 0
+		var clipped_polygon_point_indices = []
+		for poly_points in result_poly_strokes:
+			var p_range := range(p_count, poly_points.size() + p_count)
+			clipped_polygons.append_array(poly_points)
+			clipped_polygon_point_indices.append(p_range)
+			p_count += poly_points.size()
+
+		poly_stroke.polygons = clipped_polygon_point_indices
+		poly_stroke.polygon = clipped_polygons
 	if is_instance_valid(polygon):
 		polygon.polygons.clear()
 		polygon.polygon = polygon_points
@@ -487,6 +522,7 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 	var clip_result := _apply_polygon_operations_on_clip_paths(polygon_points, valid_clip_paths)
 	cached_clipped_polygons = clip_result
 
+	printerr("FIXME: move polygon indices calculator to Geometry2DUtil.get_polygon_indices")
 	var p_count = 0
 	var clipped_polygon_point_indices = []
 	var clipped_polygons : PackedVector2Array = []
@@ -519,8 +555,8 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 				existing[polyline_index].joint_mode = line.joint_mode
 				existing[polyline_index].default_color = line.default_color
 				existing[polyline_index].show()
-
-
+	if is_instance_valid(poly_stroke):
+		printerr("FIXME: calculate polygons for stroke")
 	if is_instance_valid(polygon):
 		if clip_result.is_empty():
 			polygon.hide()

@@ -117,21 +117,26 @@ static func apply_clips_to_polygon(
 		current_polygons, clips, operation
 	)
 	if not holes.is_empty():
-		var result_polygons : Array[PackedVector2Array] = []
-		for hole in holes:
-			for current_points : PackedVector2Array in current_polygons:
-				var slices := slice_polygon_vertical(
-					current_points, get_polygon_center(hole)
-				)
-				for slice in slices:
-					var result = Geometry2D.clip_polygons(slice, hole)
-					for poly_points in result:
-						if not Geometry2D.is_polygon_clockwise(poly_points):
-							result_polygons.append(poly_points)
-			current_polygons.clear()
-			current_polygons.append_array(result_polygons)
-			result_polygons.clear()
+		slice_polygons_with_holes(current_polygons, holes)
 	return current_polygons
+
+
+static func slice_polygons_with_holes(current_polygons : Array[PackedVector2Array], holes : Array[PackedVector2Array]) -> void:
+	var result_polygons : Array[PackedVector2Array] = []
+	for hole in holes:
+		for current_points : PackedVector2Array in current_polygons:
+			var slices := slice_polygon_vertical(
+				current_points, get_polygon_center(hole)
+			)
+			for slice in slices:
+				var result = Geometry2D.clip_polygons(slice, hole)
+				for poly_points in result:
+					if not Geometry2D.is_polygon_clockwise(poly_points):
+						result_polygons.append(poly_points)
+		current_polygons.clear()
+		current_polygons.append_array(result_polygons)
+		result_polygons.clear()
+
 
 
 static func calculate_outlines(result : Array[PackedVector2Array]) -> Array[PackedVector2Array]:

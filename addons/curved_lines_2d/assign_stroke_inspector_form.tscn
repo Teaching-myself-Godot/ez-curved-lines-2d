@@ -347,14 +347,39 @@ layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "This will create a new Line2D node and assign it to the line property of this ScalableVectorScape2D."
 mouse_filter = 0
-text = "Add Stroke"
+text = "Add Line2D Stroke *"
 
 [node name="CreateStrokeButton" type="Button" parent="ButtonContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 2
 tooltip_text = "This will create a new Line2D node and assign it to the line property of this ScalableVectorScape2D."
-text = "Add Stroke"
+text = "Add Line2D Stroke"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ButtonContainer"]
+layout_mode = 2
+
+[node name="ButtonContainer3" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="ButtonContainer3"]
+clip_contents = true
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "This will create a new Polygon2D node and assign it to the poly_stroke property of this ScalableVectorScape2D."
+mouse_filter = 0
+text = "Add Polygon2D Stroke *"
+
+[node name="CreatePolyStrokeButton" type="Button" parent="ButtonContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 2
+tooltip_text = "This will create a new Polygon2D node and assign it to the poly_stroke property of this ScalableVectorScape2D."
+text = "Add  Polygon2D Stroke"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ButtonContainer3"]
+layout_mode = 2
 
 [node name="HSeparator" type="HSeparator" parent="."]
 layout_mode = 2
@@ -381,6 +406,28 @@ tooltip_text = "Click on this button to select the Line2D node that is assigned 
 Use this for advanced features which are already built-in into godot, like gradients, width curvature, and repeating textures."
 text = "Edit Line2D"
 
+[node name="ButtonContainer4" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="ButtonContainer4"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Click on this button to select the Polygon2D node that is assigned to this shape  in the Scene Tree.
+
+Use this for advanced features which are already built-in into godot, like image textures."
+mouse_filter = 0
+text = "Edit Polygon2D *"
+
+[node name="GotoPolygon2DButton" type="Button" parent="ButtonContainer4"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 2
+tooltip_text = "Click on this button to select the Polygon2D node that is assigned to this shape  in the Scene Tree.
+
+Use this for advanced features which are already built-in into godot, like image textures."
+text = "Edit Polygon2D"
+
 [connection signal="color_changed" from="StrokeColorFieldContainer/HBoxContainer/ColorPickerButton" to="." method="_on_color_picker_button_color_changed"]
 [connection signal="toggled" from="StrokeColorFieldContainer/HBoxContainer/ColorPickerButton" to="." method="_on_color_picker_button_toggled"]
 [connection signal="pressed" from="StrokeColorFieldContainer/HBoxContainer/AddStrokeColorKeyFrameButton" to="." method="_on_add_stroke_color_key_frame_button_pressed"]
@@ -395,4 +442,6 @@ text = "Edit Line2D"
 [connection signal="button_down" from="LineJointFieldContainer/HBoxContainer/LineJointBevelToggleButton" to="." method="_on_line_joint_bevel_toggle_button_button_down"]
 [connection signal="button_down" from="LineJointFieldContainer/HBoxContainer/LineJointRoundToggleButton" to="." method="_on_line_joint_round_toggle_button_button_down"]
 [connection signal="pressed" from="ButtonContainer/CreateStrokeButton" to="." method="_on_create_stroke_button_pressed"]
+[connection signal="pressed" from="ButtonContainer3/CreatePolyStrokeButton" to="." method="_on_create_poly_stroke_button_pressed"]
 [connection signal="pressed" from="ButtonContainer2/GotoLine2DButton" to="." method="_on_goto_line_2d_button_pressed"]
+[connection signal="pressed" from="ButtonContainer4/GotoPolygon2DButton" to="." method="_on_goto_polygon_2d_button_pressed"]
