@@ -4,7 +4,7 @@ extends EditorInspectorPlugin
 class_name  Line2DGeneratorInspectorPlugin
 
 const GROUP_NAME_CURVE_SETTINGS := "Curve settings"
-
+const GROUP_NAME_EXPORT_OPTIONS := "Export Options"
 
 func _can_handle(obj) -> bool:
 	return obj is DrawablePath2D or obj is ScalableVectorShape2D
@@ -25,22 +25,6 @@ func _parse_begin(object: Object) -> void:
 		button.tooltip_text = "Pressing this button will change the way it is edited to Path mode."
 		add_custom_control(button)
 		button.pressed.connect(func(): _on_convert_to_path_button_pressed(object, button))
-	if object is ScalableVectorShape2D:
-		var button : Button = Button.new()
-		button.text = "Export as PNG*"
-		button.tooltip_text = "The export will only contain this node and its children,
-				assigned nodes outside this subtree will not be drawn."
-		add_custom_control(button)
-		button.pressed.connect(func(): _on_export_png_button_pressed(object))
-	if object is ScalableVectorShape2D:
-		var button : Button = Button.new()
-		button.text = "Export as baked scene*"
-		button.tooltip_text = "The export will only contain this node and its children,
-				assigned nodes outside this subtree will not be drawn.\n
-				⚠️ Warning: An exported AnimationPlayer will not support animated curves"
-
-		add_custom_control(button)
-		button.pressed.connect(func(): _on_export_baked_scene_pressed(object))
 
 
 func _parse_group(object: Object, group: String) -> void:
@@ -48,7 +32,26 @@ func _parse_group(object: Object, group: String) -> void:
 		var key_frame_form = load("res://addons/curved_lines_2d/batch_insert_curve_point_key_frames_inspector_form.tscn").instantiate()
 		key_frame_form.scalable_vector_shape_2d = object
 		add_custom_control(key_frame_form)
+	elif group == GROUP_NAME_EXPORT_OPTIONS and object is ScalableVectorShape2D:
+		var box := VBoxContainer.new()
+		var export_png_button : Button = Button.new()
+		export_png_button.text = "Export as PNG*"
+		export_png_button.tooltip_text = "The export will only contain this node and its children,
+				assigned nodes outside this subtree will not be drawn."
+		export_png_button.pressed.connect(func(): _on_export_png_button_pressed(object))
+		var bake_button : Button = Button.new()
+		bake_button.text = "Export as baked scene*"
+		bake_button.tooltip_text = "The export will only contain this node and its children,
+				assigned nodes outside this subtree will not be drawn.\n
+				⚠️ Warning: An exported AnimationPlayer will not support animated curves"
+		box.add_theme_constant_override("separation", 5)
+		box.add_spacer(true)
+		box.add_child(export_png_button)
+		box.add_child(bake_button)
+		box.add_spacer(false)
 
+		add_custom_control(box)
+		bake_button.pressed.connect(func(): _on_export_baked_scene_pressed(object))
 
 func _parse_property(object: Object, type: Variant.Type, name: String, hint_type: PropertyHint, hint_string: String, usage_flags: int, wide: bool) -> bool:
 	if name == "line" and (object is  ScalableVectorShape2D):
@@ -73,6 +76,8 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 		var assign_nav_form = load("res://addons/curved_lines_2d/assign_navigation_region_inspector_form.tscn").instantiate()
 		assign_nav_form.scalable_vector_shape_2d = object as ScalableVectorShape2D
 		add_custom_control(assign_nav_form)
+	elif name == "show_export_options" and (object is ScalableVectorShape2D):
+		return true
 	return false
 
 
