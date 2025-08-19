@@ -176,6 +176,17 @@ static func calculate_outlines(result : Array[PackedVector2Array]) -> Array[Pack
 	return result + holes
 
 
+static func calculate_polystroke(outline : PackedVector2Array, stroke_width : float,
+			end_mode : Geometry2D.PolyEndType, joint_mode : Geometry2D.PolyJoinType,
+			polystroke_indices : Array) -> PackedVector2Array:
+	var poly_strokes := Geometry2D.offset_polyline(outline, stroke_width, joint_mode, end_mode)
+	var result_poly_strokes := Array(poly_strokes.filter(func(ps): return not Geometry2D.is_polygon_clockwise(ps)), TYPE_PACKED_VECTOR2_ARRAY, "", null)
+	var result_poly_holes := Array(poly_strokes.filter(Geometry2D.is_polygon_clockwise), TYPE_PACKED_VECTOR2_ARRAY, "", null)
+	if not result_poly_holes.is_empty():
+		slice_polygons_with_holes(result_poly_strokes, result_poly_holes)
+	return get_polygon_indices(result_poly_strokes, polystroke_indices)
+
+
 static func get_polygon_indices(polygons : Array[PackedVector2Array], indices : Array) -> PackedVector2Array:
 	var result : PackedVector2Array = []
 	var p_count = 0
@@ -186,3 +197,5 @@ static func get_polygon_indices(polygons : Array[PackedVector2Array], indices : 
 		indices.append(p_range)
 		p_count += poly_points.size()
 	return result
+
+

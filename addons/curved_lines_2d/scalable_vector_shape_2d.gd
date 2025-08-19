@@ -517,17 +517,12 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 	if is_instance_valid(line):
 		line.points = polygon_points
 		line.closed = is_curve_closed()
-	if is_instance_valid(poly_stroke) and not polygon_points.size() < 2:
-
-		printerr("FIXME: move most poly_stroke code to Geometry2DUtil.calculate_polystroke")
+	if is_instance_valid(poly_stroke) and not cached_outline.size() < 2:
 		var cap_mode := Geometry2D.END_JOINED if is_curve_closed() else CAP_MODE_MAP[begin_cap_mode]
-		var poly_strokes := Geometry2D.offset_polyline(tessellate(), stroke_width,
-				JOINT_MODE_MAP[line_joint_mode], cap_mode)
-		var result_poly_strokes := Array(poly_strokes.filter(func(ps): return not Geometry2D.is_polygon_clockwise(ps)), TYPE_PACKED_VECTOR2_ARRAY, "", null)
-		var result_poly_holes := Array(poly_strokes.filter(Geometry2D.is_polygon_clockwise), TYPE_PACKED_VECTOR2_ARRAY, "", null)
-		if not result_poly_holes.is_empty():
-			Geometry2DUtil.slice_polygons_with_holes(result_poly_strokes, result_poly_holes)
-		poly_stroke.polygon = Geometry2DUtil.get_polygon_indices(result_poly_strokes, poly_stroke.polygons)
+		poly_stroke.polygon = Geometry2DUtil.calculate_polystroke(cached_outline,
+				stroke_width * 0.5, cap_mode, JOINT_MODE_MAP[line_joint_mode],
+				poly_stroke.polygons)
+
 	if is_instance_valid(polygon):
 		polygon.polygons.clear()
 		polygon.polygon = polygon_points
