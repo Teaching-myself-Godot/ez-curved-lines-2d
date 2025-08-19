@@ -24,13 +24,13 @@ signal clip_paths_changed()
 ## The constant used to convert a radius unit to the equivalent cubic Beziér control point length
 const R_TO_CP = 0.5523
 
-const CAP_MODE_MAP := {
+const CAP_MODE_MAP :  Dictionary[Line2D.LineCapMode, Geometry2D.PolyEndType]  = {
 	Line2D.LINE_CAP_NONE: Geometry2D.END_BUTT,
 	Line2D.LINE_CAP_ROUND: Geometry2D.END_ROUND,
 	Line2D.LINE_CAP_BOX: Geometry2D.END_SQUARE,
 }
 
-const JOINT_MODE_MAP := {
+const JOINT_MODE_MAP : Dictionary[Line2D.LineJointMode, Geometry2D.PolyJoinType] = {
 	Line2D.LINE_JOINT_SHARP: Geometry2D.JOIN_MITER,
 	Line2D.LINE_JOINT_BEVEL: Geometry2D.JOIN_SQUARE,
 	Line2D.LINE_JOINT_ROUND: Geometry2D.JOIN_ROUND,
@@ -518,27 +518,16 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 		line.points = polygon_points
 		line.closed = is_curve_closed()
 	if is_instance_valid(poly_stroke) and not polygon_points.size() < 2:
-		poly_stroke.polygons.clear()
+
 		printerr("FIXME: move most poly_stroke code to Geometry2DUtil.calculate_polystroke")
+		var cap_mode := Geometry2D.END_JOINED if is_curve_closed() else CAP_MODE_MAP[begin_cap_mode]
 		var poly_strokes := Geometry2D.offset_polyline(tessellate(), stroke_width,
-				JOINT_MODE_MAP[line_joint_mode], CAP_MODE_MAP[begin_cap_mode])
+				JOINT_MODE_MAP[line_joint_mode], cap_mode)
 		var result_poly_strokes := Array(poly_strokes.filter(func(ps): return not Geometry2D.is_polygon_clockwise(ps)), TYPE_PACKED_VECTOR2_ARRAY, "", null)
 		var result_poly_holes := Array(poly_strokes.filter(Geometry2D.is_polygon_clockwise), TYPE_PACKED_VECTOR2_ARRAY, "", null)
 		if not result_poly_holes.is_empty():
 			Geometry2DUtil.slice_polygons_with_holes(result_poly_strokes, result_poly_holes)
-
-		printerr("FIXME: move polygon indices calculator to Geometry2DUtil.get_polygon_indices")
-		var clipped_polygons : PackedVector2Array = []
-		var p_count = 0
-		var clipped_polygon_point_indices = []
-		for poly_points in result_poly_strokes:
-			var p_range := range(p_count, poly_points.size() + p_count)
-			clipped_polygons.append_array(poly_points)
-			clipped_polygon_point_indices.append(p_range)
-			p_count += poly_points.size()
-
-		poly_stroke.polygons = clipped_polygon_point_indices
-		poly_stroke.polygon = clipped_polygons
+		poly_stroke.polygon = Geometry2DUtil.get_polygon_indices(result_poly_strokes, poly_stroke.polygons)
 	if is_instance_valid(polygon):
 		polygon.polygons.clear()
 		polygon.polygon = polygon_points
@@ -600,16 +589,8 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 	var clip_result := _apply_polygon_operations_on_clip_paths(polygon_points, valid_clip_paths)
 	cached_clipped_polygons = clip_result
 
-	printerr("FIXME: move polygon indices calculator to Geometry2DUtil.get_polygon_indices")
-	var p_count = 0
 	var clipped_polygon_point_indices = []
-	var clipped_polygons : PackedVector2Array = []
-	for poly_points in clip_result:
-		var p_range := range(p_count, poly_points.size() + p_count)
-		clipped_polygons.append_array(poly_points)
-		clipped_polygon_point_indices.append(p_range)
-		p_count += poly_points.size()
-
+	var clipped_polygons := Geometry2DUtil.get_polygon_indices(clip_result, clipped_polygon_point_indices)
 
 	if is_instance_valid(line):
 		if clip_result.is_empty():

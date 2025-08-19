@@ -174,3 +174,15 @@ static func calculate_outlines(result : Array[PackedVector2Array]) -> Array[Pack
 			result.remove_at(idx)
 		result.append_array(merged_to_be_appended)
 	return result + holes
+
+
+static func get_polygon_indices(polygons : Array[PackedVector2Array], indices : Array) -> PackedVector2Array:
+	var result : PackedVector2Array = []
+	var p_count = 0
+	indices.clear()
+	for poly_points in polygons:
+		var p_range := range(p_count, poly_points.size() + p_count)
+		result.append_array(poly_points)
+		indices.append(p_range)
+		p_count += poly_points.size()
+	return result
