@@ -317,6 +317,7 @@ var stroke_width := 10.0:
 
 var cached_outline : PackedVector2Array = []
 var cached_clipped_polygons : Array[PackedVector2Array] = []
+var cached_poly_strokes : Array[PackedVector2Array] = []
 
 # Wire up signals at runtime
 func _ready():
@@ -521,8 +522,8 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 		var cap_mode := Geometry2D.END_JOINED if is_curve_closed() else CAP_MODE_MAP[begin_cap_mode]
 		var result := Geometry2DUtil.calculate_polystroke(cached_outline,
 				stroke_width * 0.5, cap_mode, JOINT_MODE_MAP[line_joint_mode])
+		cached_poly_strokes = result
 		poly_stroke.polygon = Geometry2DUtil.get_polygon_indices(result, poly_stroke.polygons)
-
 	if is_instance_valid(polygon):
 		polygon.polygons.clear()
 		polygon.polygon = polygon_points
@@ -530,9 +531,19 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 	if is_instance_valid(collision_polygon):
 		collision_polygon.polygon = polygon_points
 	if is_instance_valid(collision_object):
-		var ch = collision_object.get_children().filter(func(c): return c is CollisionPolygon2D)
-		var c_poly : CollisionPolygon2D = _make_new_collision_polygon_2d() if ch.is_empty() else ch[0]
-		c_poly.polygon = polygon_points
+		var existing = collision_object.get_children().filter(func(c): return c is CollisionPolygon2D)
+		var collision_polygons = [polygon_points] + cached_poly_strokes
+		for idx in existing.size():
+			if idx >= collision_polygons.size():
+				existing[idx].hide()
+				existing[idx].disabled = true
+		for polygon_index in collision_polygons.size():
+			if polygon_index >= existing.size():
+				existing.append(_make_new_collision_polygon_2d())
+			existing[polygon_index].polygon = collision_polygons[polygon_index]
+			existing[polygon_index].show()
+			existing[polygon_index].disabled = false
+
 	if is_instance_valid(navigation_region):
 		var navigation_poly = NavigationPolygon.new()
 		navigation_poly.add_outline(polygon_points)
@@ -558,7 +569,8 @@ func _update_polygon_texture():
 				polygon.texture_scale = polygon.texture.get_size() / box.size
 
 
-func _apply_polygon_operations_on_clip_paths(polygon_points : PackedVector2Array, valid_clip_paths : Array[ScalableVectorShape2D]) -> Array[PackedVector2Array]:
+func _apply_polygon_operations_on_clip_paths(polygon_points : PackedVector2Array,
+			valid_clip_paths : Array[ScalableVectorShape2D]) -> Array[PackedVector2Array]:
 	var merges := valid_clip_paths.filter(func(cp : ScalableVectorShape2D): return cp.use_union_in_stead_of_clipping)
 	var clips := valid_clip_paths.filter(func(cp : ScalableVectorShape2D): return cp.use_interect_when_clipping)
 	var cutouts := valid_clip_paths.filter(func(cp : ScalableVectorShape2D): return not cp.use_interect_when_clipping and not cp.use_union_in_stead_of_clipping)
@@ -616,12 +628,18 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 		else:
 			poly_stroke.show()
 			var clipped_polylines := Geometry2DUtil.calculate_outlines(clip_result.duplicate())
-			var result :Array[PackedVector2Array] = []
-			var p_count = 0
+			var polystroke_result : Array[PackedVector2Array] = []
 			for clipped_polyline in clipped_polylines:
-				result.append_array(Geometry2DUtil.calculate_polystroke(clipped_polyline,
+				polystroke_result.append_array(Geometry2DUtil.calculate_polystroke(clipped_polyline,
 						stroke_width * 0.5, Geometry2D.END_JOINED, JOINT_MODE_MAP[line_joint_mode]))
-			poly_stroke.polygon = Geometry2DUtil.get_polygon_indices(result, poly_stroke.polygons)
+			var clips := valid_clip_paths.filter(func(cp : ScalableVectorShape2D): return cp.use_interect_when_clipping)
+			var intersect_results := Geometry2DUtil.apply_clips_to_polygon(
+				polystroke_result,
+				Array(clips.map(_clip_path_to_local), TYPE_PACKED_VECTOR2_ARRAY, "", null),
+				Geometry2D.PolyBooleanOperation.OPERATION_INTERSECTION
+			)
+			cached_poly_strokes = intersect_results
+			poly_stroke.polygon = Geometry2DUtil.get_polygon_indices(intersect_results, poly_stroke.polygons)
 	if is_instance_valid(polygon):
 		if clip_result.is_empty():
 			polygon.hide()
@@ -630,22 +648,19 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 			polygon.polygons = clipped_polygon_point_indices
 			polygon.polygon = clipped_polygons
 			_update_polygon_texture()
-
-
 	if is_instance_valid(collision_polygon):
 		collision_polygon.polygon = polygon_points
-
 	if is_instance_valid(collision_object):
 		var existing = collision_object.get_children().filter(func(c): return c is CollisionPolygon2D)
+		var collision_polygons = clip_result + cached_poly_strokes
 		for idx in existing.size():
-			if idx >= clip_result.size():
+			if idx >= collision_polygons.size():
 				existing[idx].hide()
 				existing[idx].disabled = true
-
-		for polygon_index in clip_result.size():
+		for polygon_index in collision_polygons.size():
 			if polygon_index >= existing.size():
 				existing.append(_make_new_collision_polygon_2d())
-			existing[polygon_index].polygon = clip_result[polygon_index]
+			existing[polygon_index].polygon = collision_polygons[polygon_index]
 			existing[polygon_index].show()
 			existing[polygon_index].disabled = false
 
@@ -697,19 +712,28 @@ func get_bounding_rect() -> Rect2:
 
 func has_point(global_pos : Vector2) -> bool:
 	return get_bounding_rect().grow(
-		line.width / 2.0 if is_instance_valid(line) else 0
+		stroke_width / 2.0 if is_instance_valid(line) or is_instance_valid(poly_stroke) else 0
 	).has_point(to_local(global_pos))
 
 
 func has_fine_point(global_pos : Vector2) -> bool:
 	var poly_points := self.tessellate()
-	return Geometry2D.is_point_in_polygon(to_local(global_pos), poly_points)
+	if Geometry2D.is_point_in_polygon(to_local(global_pos), poly_points):
+		return true
+	if is_instance_valid(poly_stroke):
+		for poly_points1 in cached_poly_strokes:
+			if Geometry2D.is_point_in_polygon(to_local(global_pos), poly_points1):
+				return true
+	return false
 
 
 func clipped_polygon_has_point(global_pos : Vector2) -> bool:
 	if not has_point(global_pos) or not has_fine_point(global_pos):
 		return false
-
+	if is_instance_valid(line) or is_instance_valid(poly_stroke):
+		for poly_points1 in cached_poly_strokes:
+			if Geometry2D.is_point_in_polygon(to_local(global_pos), poly_points1):
+				return true
 	if cached_clipped_polygons.is_empty():
 		cached_clipped_polygons = _apply_polygon_operations_on_clip_paths(
 			self.tessellate(), clip_paths
@@ -748,7 +772,7 @@ func set_origin(global_pos : Vector2) -> void:
 
 func get_bounding_box() -> Array[Vector2]:
 	var rect = get_bounding_rect().grow(
-		line.width / 2.0 if is_instance_valid(line) else 0
+		stroke_width / 2.0 if is_instance_valid(line) or is_instance_valid(poly_stroke) else 0
 	)
 	return [
 		to_global(rect.position),
