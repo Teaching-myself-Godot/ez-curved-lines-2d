@@ -24,6 +24,20 @@ signal clip_paths_changed()
 ## The constant used to convert a radius unit to the equivalent cubic Beziér control point length
 const R_TO_CP = 0.5523
 
+const CAP_MODE_MAP := {
+	Line2D.LINE_CAP_NONE: Geometry2D.END_BUTT,
+	Line2D.LINE_CAP_ROUND: Geometry2D.END_ROUND,
+	Line2D.LINE_CAP_BOX: Geometry2D.END_SQUARE,
+}
+
+const JOINT_MODE_MAP := {
+	Line2D.LINE_JOINT_SHARP: Geometry2D.JOIN_MITER,
+	Line2D.LINE_JOINT_BEVEL: Geometry2D.JOIN_SQUARE,
+	Line2D.LINE_JOINT_ROUND: Geometry2D.JOIN_ROUND,
+}
+
+
+
 enum ShapeType {
 	## Gives every point in the [member curve] a handle, as well as their in- and out- control points.
 	## Ignores the [member size], [member offset], [member rx] and [member ry] properties when
@@ -70,9 +84,8 @@ enum CollisionObjectType {
 @export_group("Stroke")
 
 ## The color of the stroke, also sets the [member Line2D.default_color] of the
-## [member ScalableVectorShape2D.line] and the [member Polygon2D.color] of the
-## [member ScalableVectorShape2D.poly_stroke]
-@export var stroke_color : Color = ProjectSettings.get_setting("addons/curved_lines_2d/stroke_color", Color.WHITE):
+## [member line] and the [member Polygon2D.color] of the [member poly_stroke]
+@export var stroke_color := Color.WHITE:
 	set(_c):
 		stroke_color = _c
 		if is_instance_valid(line):
@@ -81,19 +94,19 @@ enum CollisionObjectType {
 			poly_stroke.color = _c
 		assigned_node_changed.emit()
 
-## The width of the stroke, also sets the [member Line2D.width] of the
-## [member ScalableVectorShape2D.line]
+## The width of the stroke, also sets the [member Line2D.width] of the [member line]
 @export_range(0.5, 100.0, 0.5, "suffix:px", "or_greater")
-var stroke_width : float = ProjectSettings.get_setting("addons/curved_lines_2d/stroke_width", 10.0):
+var stroke_width := 10.0:
 	set(_sw):
 		stroke_width = _sw
 		if is_instance_valid(line):
 			line.width = _sw
 		assigned_node_changed.emit()
 
-## The cap mode of the stroke start point, also sets the [member Line2D.begin_cap_mode] of the
-## [member ScalableVectorShape2D.line]
-@export var begin_cap_mode : Line2D.LineCapMode = ProjectSettings.get_setting("addons/curved_lines_2d/line_begin_cap", Line2D.LINE_CAP_NONE):
+## The cap mode of the stroke start point, also sets the [member Line2D.begin_cap_mode]
+## of the [member line].
+## The [member poly_stroke] caps both ends the same using [member begin_cap_mode]
+@export var begin_cap_mode := Line2D.LINE_CAP_NONE:
 	set(_bcm):
 		begin_cap_mode = _bcm
 		if is_instance_valid(line):
@@ -102,8 +115,10 @@ var stroke_width : float = ProjectSettings.get_setting("addons/curved_lines_2d/s
 
 
 ## The cap mode of the stroke end point, also sets the [member Line2D.end_cap_mode] of the
-## [member ScalableVectorShape2D.line]
-@export var end_cap_mode : Line2D.LineCapMode  = ProjectSettings.get_setting("addons/curved_lines_2d/line_end_cap", Line2D.LINE_CAP_NONE):
+## [member line].
+## The [member poly_stroke] caps both ends the same using [member begin_cap_mode],
+## so this property is ignored.
+@export var end_cap_mode := Line2D.LINE_CAP_NONE:
 	set(_ecm):
 		end_cap_mode = _ecm
 		if is_instance_valid(line):
@@ -111,12 +126,12 @@ var stroke_width : float = ProjectSettings.get_setting("addons/curved_lines_2d/s
 		assigned_node_changed.emit()
 
 ## The line joint mode of the stroke, also sets the [member Line2D.line_joint_mode] of the
-## [member ScalableVectorShape2D.line]
-@export var line_joint_mode : Line2D.LineJointMode  = ProjectSettings.get_setting("addons/curved_lines_2d/line_joint_mode", Line2D.LINE_JOINT_SHARP):
+## [member line]
+@export var line_joint_mode := Line2D.LINE_JOINT_SHARP:
 	set(_ljm):
 		line_joint_mode = _ljm
 		if is_instance_valid(line):
-			line.line_joint_mode = _ljm
+			line.joint_mode = _ljm
 		assigned_node_changed.emit()
 
 ## The 'Stroke' of a [ScalableVectorShape2D] is simply an instance of a [Line2D] node
@@ -144,7 +159,7 @@ var stroke_width : float = ProjectSettings.get_setting("addons/curved_lines_2d/s
 
 @export_group("Collision")
 ## The CollisionPolygon2D controlled by this node's curve property
-## @deprecated: Use [member ScalableVectorShape2D.collision_object] instead.
+## @deprecated: Use [member collision_object] instead.
 @export var collision_polygon: CollisionPolygon2D:
 	set(_poly):
 		collision_polygon = _poly
@@ -204,7 +219,7 @@ var stroke_width : float = ProjectSettings.get_setting("addons/curved_lines_2d/s
 @export_group("Masking")
 
 ## Holds the list of shapes used to make cutouts out of this shape, or
-## clippings of this shape when their [member ScalableVectorShape2D.use_interect_when_clipping]
+## clippings of this shape when their [member use_interect_when_clipping]
 ## is flagged on
 @export var clip_paths : Array[ScalableVectorShape2D] = []:
 	set(_clip_paths):
@@ -319,6 +334,18 @@ func _ready():
 
 # Wire up signals on enter tree for the editor
 func _enter_tree():
+	# ensure backward compatibility by overriding stroke properties by line's properties
+	if is_instance_valid(line):
+		if stroke_color != line.default_color:
+			stroke_color = line.default_color
+		if stroke_width != line.width:
+			stroke_width = line.width
+		if begin_cap_mode != line.begin_cap_mode:
+			begin_cap_mode = line.begin_cap_mode
+		if end_cap_mode != line.end_cap_mode:
+			end_cap_mode = line.end_cap_mode
+		if line_joint_mode != line.joint_mode:
+			line_joint_mode = line.joint_mode
 	# ensure forward compatibility by assigning the default ShapeType
 	if shape_type == null:
 		shape_type = ShapeType.PATH
@@ -493,8 +520,8 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 	if is_instance_valid(poly_stroke) and not polygon_points.size() < 2:
 		poly_stroke.polygons.clear()
 		printerr("FIXME: move most poly_stroke code to Geometry2DUtil.calculate_polystroke")
-		var poly_strokes := Geometry2D.offset_polyline(tessellate(), 10.0,
-				Geometry2D.JOIN_ROUND, Geometry2D.END_ROUND)
+		var poly_strokes := Geometry2D.offset_polyline(tessellate(), stroke_width,
+				JOINT_MODE_MAP[line_joint_mode], CAP_MODE_MAP[begin_cap_mode])
 		var result_poly_strokes := Array(poly_strokes.filter(func(ps): return not Geometry2D.is_polygon_clockwise(ps)), TYPE_PACKED_VECTOR2_ARRAY, "", null)
 		var result_poly_holes := Array(poly_strokes.filter(Geometry2D.is_polygon_clockwise), TYPE_PACKED_VECTOR2_ARRAY, "", null)
 		if not result_poly_holes.is_empty():
@@ -588,6 +615,7 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 		if clip_result.is_empty():
 			line.hide()
 		else:
+			# FIXME: closes the loop when original line is not closed
 			var clipped_polylines = Geometry2DUtil.calculate_outlines(clip_result.duplicate())
 			line.show()
 			line.points = clipped_polylines.pop_front()
