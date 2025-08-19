@@ -35,7 +35,7 @@ func _enter_tree() -> void:
 	rect_ry_input = _make_number_input("Corner Radius Y", 0, 0, 500, "")
 	snap_resolution_input = _make_number_input("Snap distance", 1.0, 1.0, 1024.0, "px", 1.0)
 
-	stroke_width_input = _make_number_input("Width", 10.0, 0.0, 100.0, "", 0.01)
+	stroke_width_input = _make_number_input("Width", 10.0, 0.5, 100.0, "px", 0.5)
 	%WidthSliderContainer.add_child(rect_width_input)
 	%HeightSliderContainer.add_child(rect_height_input)
 	%XRadiusSliderContainer.add_child(rect_rx_input)

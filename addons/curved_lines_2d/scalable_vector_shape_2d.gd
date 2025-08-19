@@ -68,6 +68,57 @@ enum CollisionObjectType {
 		assigned_node_changed.emit()
 
 @export_group("Stroke")
+
+## The color of the stroke, also sets the [member Line2D.default_color] of the
+## [member ScalableVectorShape2D.line] and the [member Polygon2D.color] of the
+## [member ScalableVectorShape2D.poly_stroke]
+@export var stroke_color : Color = ProjectSettings.get_setting("addons/curved_lines_2d/stroke_color", Color.WHITE):
+	set(_c):
+		stroke_color = _c
+		if is_instance_valid(line):
+			line.default_color = _c
+		if is_instance_valid(poly_stroke):
+			poly_stroke.color = _c
+		assigned_node_changed.emit()
+
+## The width of the stroke, also sets the [member Line2D.width] of the
+## [member ScalableVectorShape2D.line]
+@export_range(0.5, 100.0, 0.5, "suffix:px", "or_greater")
+var stroke_width : float = ProjectSettings.get_setting("addons/curved_lines_2d/stroke_width", 10.0):
+	set(_sw):
+		stroke_width = _sw
+		if is_instance_valid(line):
+			line.width = _sw
+		assigned_node_changed.emit()
+
+## The cap mode of the stroke start point, also sets the [member Line2D.begin_cap_mode] of the
+## [member ScalableVectorShape2D.line]
+@export var begin_cap_mode : Line2D.LineCapMode = ProjectSettings.get_setting("addons/curved_lines_2d/line_begin_cap", Line2D.LINE_CAP_NONE):
+	set(_bcm):
+		begin_cap_mode = _bcm
+		if is_instance_valid(line):
+			line.begin_cap_mode = _bcm
+		assigned_node_changed.emit()
+
+
+## The cap mode of the stroke end point, also sets the [member Line2D.end_cap_mode] of the
+## [member ScalableVectorShape2D.line]
+@export var end_cap_mode : Line2D.LineCapMode  = ProjectSettings.get_setting("addons/curved_lines_2d/line_end_cap", Line2D.LINE_CAP_NONE):
+	set(_ecm):
+		end_cap_mode = _ecm
+		if is_instance_valid(line):
+			line.end_cap_mode = _ecm
+		assigned_node_changed.emit()
+
+## The line joint mode of the stroke, also sets the [member Line2D.line_joint_mode] of the
+## [member ScalableVectorShape2D.line]
+@export var line_joint_mode : Line2D.LineJointMode  = ProjectSettings.get_setting("addons/curved_lines_2d/line_joint_mode", Line2D.LINE_JOINT_SHARP):
+	set(_ljm):
+		line_joint_mode = _ljm
+		if is_instance_valid(line):
+			line.line_joint_mode = _ljm
+		assigned_node_changed.emit()
+
 ## The 'Stroke' of a [ScalableVectorShape2D] is simply an instance of a [Line2D] node
 ## assigned to the `line` property.
 ## If you remove that Line2D node, you need to unassign it here as well, before
