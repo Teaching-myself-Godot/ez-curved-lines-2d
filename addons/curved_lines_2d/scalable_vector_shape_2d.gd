@@ -519,9 +519,9 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 		line.closed = is_curve_closed()
 	if is_instance_valid(poly_stroke) and not cached_outline.size() < 2:
 		var cap_mode := Geometry2D.END_JOINED if is_curve_closed() else CAP_MODE_MAP[begin_cap_mode]
-		poly_stroke.polygon = Geometry2DUtil.calculate_polystroke(cached_outline,
-				stroke_width * 0.5, cap_mode, JOINT_MODE_MAP[line_joint_mode],
-				poly_stroke.polygons)
+		var result := Geometry2DUtil.calculate_polystroke(cached_outline,
+				stroke_width * 0.5, cap_mode, JOINT_MODE_MAP[line_joint_mode])
+		poly_stroke.polygon = Geometry2DUtil.get_polygon_indices(result, poly_stroke.polygons)
 
 	if is_instance_valid(polygon):
 		polygon.polygons.clear()
@@ -591,10 +591,10 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 		if clip_result.is_empty():
 			line.hide()
 		else:
-			# FIXME: closes the loop when original line is not closed
 			var clipped_polylines = Geometry2DUtil.calculate_outlines(clip_result.duplicate())
 			line.show()
 			line.points = clipped_polylines.pop_front()
+			# FIXME: closes the loop when original line is not closed
 			line.closed = true
 			var existing = line.get_children().filter(func(c): return c is Line2D)
 			for idx in existing.size():
@@ -611,7 +611,17 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 				existing[polyline_index].default_color = line.default_color
 				existing[polyline_index].show()
 	if is_instance_valid(poly_stroke):
-		printerr("FIXME: calculate polygons for stroke")
+		if clip_result.is_empty():
+			poly_stroke.hide()
+		else:
+			poly_stroke.show()
+			var clipped_polylines := Geometry2DUtil.calculate_outlines(clip_result.duplicate())
+			var result :Array[PackedVector2Array] = []
+			var p_count = 0
+			for clipped_polyline in clipped_polylines:
+				result.append_array(Geometry2DUtil.calculate_polystroke(clipped_polyline,
+						stroke_width * 0.5, Geometry2D.END_JOINED, JOINT_MODE_MAP[line_joint_mode]))
+			poly_stroke.polygon = Geometry2DUtil.get_polygon_indices(result, poly_stroke.polygons)
 	if is_instance_valid(polygon):
 		if clip_result.is_empty():
 			polygon.hide()
