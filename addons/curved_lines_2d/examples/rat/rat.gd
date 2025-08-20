@@ -3,7 +3,7 @@ extends CharacterBody2D
 signal place_shape(global_pos : Vector2, curve : Curve2D)
 signal cut_shapes(global_pos : Vector2, curve : Curve2D)
 
-const SPEED := 500.0
+const SPEED := 400.0
 const JUMP_VELOCITY = -300.0
 
 var dead := false

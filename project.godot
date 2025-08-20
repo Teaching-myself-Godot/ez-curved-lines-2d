@@ -30,7 +30,7 @@ curved_lines_2d/add_collision_type=0
 [application]
 
 config/name="EZ Curved Lines 2D"
-run/main_scene="uid://bpjhx0g61ptyq"
+run/main_scene="uid://buueak60wkgnf"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://b5yxa1e62b0hb"
 
