@@ -1,0 +1,87 @@
+[gd_scene load_steps=8 format=3 uid="uid://cx2oiwhsrb3wk"]
+
+[ext_resource type="Script" uid="uid://cfu3r76f6aocm" path="res://addons/curved_lines_2d/line_cap_toggle_buttons.gd" id="1_k7j3x"]
+[ext_resource type="StyleBox" uid="uid://v0ueesjbdyrk" path="res://addons/curved_lines_2d/snazzy_toggle_button.stylebox" id="2_q65j6"]
+[ext_resource type="Texture2D" uid="uid://cdkf2g8b5e55r" path="res://addons/curved_lines_2d/LineCaps.svg" id="3_ymr1k"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_kh00m"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_85hwe"]
+atlas = ExtResource("3_ymr1k")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nh347"]
+atlas = ExtResource("3_ymr1k")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_exygk"]
+atlas = ExtResource("3_ymr1k")
+region = Rect2(32, 0, 32, 32)
+
+[node name="LineCapToggleButtons" type="HBoxContainer"]
+size_flags_horizontal = 3
+script = ExtResource("1_k7j3x")
+
+[node name="NoCapToggleButton" type="Button" parent="."]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "This will set the begin_cap_mode of the assigned Line2D node to:
+- Line Cap None
+"
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_styles/pressed = ExtResource("2_q65j6")
+toggle_mode = true
+button_pressed = true
+keep_pressed_outside = true
+button_group = SubResource("ButtonGroup_kh00m")
+icon = SubResource("AtlasTexture_85hwe")
+
+[node name="BoxCapToggleButton" type="Button" parent="."]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "This will set the begin_cap_mode of the assigned Line2D node to:
+- Line Cap Box
+
+"
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_styles/pressed = ExtResource("2_q65j6")
+toggle_mode = true
+keep_pressed_outside = true
+button_group = SubResource("ButtonGroup_kh00m")
+icon = SubResource("AtlasTexture_nh347")
+
+[node name="RoundCapToggleButton" type="Button" parent="."]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "This will set the begin_cap_mode of the assigned Line2D node to:
+- Line Cap Round
+
+"
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_styles/pressed = ExtResource("2_q65j6")
+toggle_mode = true
+keep_pressed_outside = true
+button_group = SubResource("ButtonGroup_kh00m")
+icon = SubResource("AtlasTexture_exygk")
+
+[connection signal="toggled" from="NoCapToggleButton" to="." method="_on_no_cap_toggle_button_toggled"]
+[connection signal="toggled" from="BoxCapToggleButton" to="." method="_on_box_cap_toggle_button_toggled"]
+[connection signal="toggled" from="RoundCapToggleButton" to="." method="_on_round_cap_toggle_button_toggled"]

@@ -105,9 +105,12 @@ var stroke_width := 10.0:
 
 ## The cap mode of the stroke start point, also sets the [member Line2D.begin_cap_mode]
 ## of the [member line].
-## The [member poly_stroke] caps both ends the same using [member begin_cap_mode]
+## The [member poly_stroke] and [member collision_object] can only set _one_ cap mode
+## using this property ([member begin_cap_mode]).
+## Therefore the [member end_cap_mode] is ignored
 @export var begin_cap_mode := Line2D.LINE_CAP_NONE:
 	set(_bcm):
+		print(_bcm)
 		begin_cap_mode = _bcm
 		if is_instance_valid(line):
 			line.begin_cap_mode = _bcm
@@ -116,8 +119,9 @@ var stroke_width := 10.0:
 
 ## The cap mode of the stroke end point, also sets the [member Line2D.end_cap_mode] of the
 ## [member line].
-## The [member poly_stroke] caps both ends the same using [member begin_cap_mode],
-## so this property is ignored.
+## The [member poly_stroke] and [member collision_object] can only set _one_ cap mode
+## using the [member begin_cap_mode]-property
+## This property ([member end_cap_mode]) is ignored by them!
 @export var end_cap_mode := Line2D.LINE_CAP_NONE:
 	set(_ecm):
 		end_cap_mode = _ecm

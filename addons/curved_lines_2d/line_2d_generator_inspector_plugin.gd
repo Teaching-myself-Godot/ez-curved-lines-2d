@@ -6,6 +6,9 @@ class_name  Line2DGeneratorInspectorPlugin
 const GROUP_NAME_CURVE_SETTINGS := "Curve settings"
 const GROUP_NAME_EXPORT_OPTIONS := "Export Options"
 
+var LineCapEditor = preload("res://addons/curved_lines_2d/line_cap_editor_property.gd")
+
+
 func _can_handle(obj) -> bool:
 	return obj is DrawablePath2D or obj is ScalableVectorShape2D
 
@@ -77,6 +80,9 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 		assign_nav_form.scalable_vector_shape_2d = object as ScalableVectorShape2D
 		add_custom_control(assign_nav_form)
 	elif name == "show_export_options" and (object is ScalableVectorShape2D):
+		return true
+	elif (name == "begin_cap_mode" or name == "end_cap_mode") and (object is ScalableVectorShape2D):
+		add_property_editor(name, LineCapEditor.new())
 		return true
 	return false
 
