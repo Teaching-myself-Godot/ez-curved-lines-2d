@@ -605,7 +605,7 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 	)
 
 	var intersect_results_polystroke : Array[PackedVector2Array] = []
-	if (is_instance_valid(line) and is_instance_valid(collision_polygon)) or is_instance_valid(poly_stroke):
+	if is_instance_valid(line) or is_instance_valid(poly_stroke):
 		var cutout_result_polylines : Array[PackedVector2Array] = (
 				Geometry2DUtil.calculate_outlines(cutout_results.duplicate())
 					if is_instance_valid(line) or is_instance_valid(poly_stroke) else
@@ -748,10 +748,9 @@ func has_fine_point(global_pos : Vector2) -> bool:
 	var poly_points := self.tessellate()
 	if Geometry2D.is_point_in_polygon(to_local(global_pos), poly_points):
 		return true
-	if is_instance_valid(poly_stroke):
-		for poly_points1 in cached_poly_strokes:
-			if Geometry2D.is_point_in_polygon(to_local(global_pos), poly_points1):
-				return true
+	for poly_points1 in cached_poly_strokes:
+		if Geometry2D.is_point_in_polygon(to_local(global_pos), poly_points1):
+			return true
 	return false
 
 
@@ -762,10 +761,9 @@ func clipped_polygon_has_point(global_pos : Vector2) -> bool:
 	if cached_clipped_polygons.is_empty() and has_fine_point(global_pos):
 		return true
 
-	if is_instance_valid(line) or is_instance_valid(poly_stroke):
-		for poly_points1 in cached_poly_strokes:
-			if Geometry2D.is_point_in_polygon(to_local(global_pos), poly_points1):
-				return true
+	for poly_points1 in cached_poly_strokes:
+		if Geometry2D.is_point_in_polygon(to_local(global_pos), poly_points1):
+			return true
 
 	for poly_points in cached_clipped_polygons:
 		if Geometry2D.is_point_in_polygon(to_local(global_pos), poly_points):
