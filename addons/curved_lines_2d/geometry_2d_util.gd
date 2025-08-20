@@ -178,6 +178,8 @@ static func calculate_outlines(result : Array[PackedVector2Array]) -> Array[Pack
 
 static func calculate_polystroke(outline : PackedVector2Array, stroke_width : float,
 			end_mode : Geometry2D.PolyEndType, joint_mode : Geometry2D.PolyJoinType) -> Array[PackedVector2Array]:
+	if outline.is_empty():
+		return []
 	var poly_strokes := Geometry2D.offset_polyline(outline, stroke_width, joint_mode, end_mode)
 	var result_poly_strokes := Array(poly_strokes.filter(func(ps): return not Geometry2D.is_polygon_clockwise(ps)), TYPE_PACKED_VECTOR2_ARRAY, "", null)
 	var result_poly_holes := Array(poly_strokes.filter(Geometry2D.is_polygon_clockwise), TYPE_PACKED_VECTOR2_ARRAY, "", null)
