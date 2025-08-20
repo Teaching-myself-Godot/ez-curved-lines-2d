@@ -110,7 +110,6 @@ var stroke_width := 10.0:
 ## Therefore the [member end_cap_mode] is ignored
 @export var begin_cap_mode := Line2D.LINE_CAP_NONE:
 	set(_bcm):
-		print(_bcm)
 		begin_cap_mode = _bcm
 		if is_instance_valid(line):
 			line.begin_cap_mode = _bcm

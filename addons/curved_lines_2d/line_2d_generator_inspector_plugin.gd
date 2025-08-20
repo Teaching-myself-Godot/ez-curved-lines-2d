@@ -7,7 +7,7 @@ const GROUP_NAME_CURVE_SETTINGS := "Curve settings"
 const GROUP_NAME_EXPORT_OPTIONS := "Export Options"
 
 var LineCapEditor = preload("res://addons/curved_lines_2d/line_cap_editor_property.gd")
-
+var LineJointModeEditor = preload("res://addons/curved_lines_2d/line_joint_editor_property.gd")
 
 func _can_handle(obj) -> bool:
 	return obj is DrawablePath2D or obj is ScalableVectorShape2D
@@ -52,9 +52,9 @@ func _parse_group(object: Object, group: String) -> void:
 		box.add_child(export_png_button)
 		box.add_child(bake_button)
 		box.add_spacer(false)
-
 		add_custom_control(box)
 		bake_button.pressed.connect(func(): _on_export_baked_scene_pressed(object))
+
 
 func _parse_property(object: Object, type: Variant.Type, name: String, hint_type: PropertyHint, hint_string: String, usage_flags: int, wide: bool) -> bool:
 	if name == "line" and (object is  ScalableVectorShape2D):
@@ -83,6 +83,9 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 		return true
 	elif (name == "begin_cap_mode" or name == "end_cap_mode") and (object is ScalableVectorShape2D):
 		add_property_editor(name, LineCapEditor.new())
+		return true
+	elif name == "line_joint_mode" and (object is ScalableVectorShape2D):
+		add_property_editor(name, LineJointModeEditor.new())
 		return true
 	return false
 

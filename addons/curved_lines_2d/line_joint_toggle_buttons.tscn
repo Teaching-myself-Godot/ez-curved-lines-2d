@@ -1,0 +1,82 @@
+[gd_scene load_steps=8 format=3 uid="uid://b6gmekfqgre3o"]
+
+[ext_resource type="Script" uid="uid://d100v4j1v1mpa" path="res://addons/curved_lines_2d/line_joint_toggle_buttons.gd" id="1_jujfb"]
+[ext_resource type="StyleBox" uid="uid://v0ueesjbdyrk" path="res://addons/curved_lines_2d/snazzy_toggle_button.stylebox" id="1_yalwy"]
+[ext_resource type="Texture2D" uid="uid://cdkf2g8b5e55r" path="res://addons/curved_lines_2d/LineCaps.svg" id="2_jujfb"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_xku8w"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k2toy"]
+atlas = ExtResource("2_jujfb")
+region = Rect2(64, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_em7di"]
+atlas = ExtResource("2_jujfb")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_84wj1"]
+atlas = ExtResource("2_jujfb")
+region = Rect2(32, 32, 32, 32)
+
+[node name="LineJointToggleButtons" type="HBoxContainer"]
+size_flags_horizontal = 3
+script = ExtResource("1_jujfb")
+
+[node name="LineJointSharpToggleButton" type="Button" parent="."]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "This will set the joint_mode of the assigned Line2D node to:
+- Sharp"
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_styles/pressed = ExtResource("1_yalwy")
+toggle_mode = true
+button_pressed = true
+keep_pressed_outside = true
+button_group = SubResource("ButtonGroup_xku8w")
+icon = SubResource("AtlasTexture_k2toy")
+
+[node name="LineJointBevelToggleButton" type="Button" parent="."]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "This will set the joint_mode of the assigned Line2D node to:
+- Bevel"
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_styles/pressed = ExtResource("1_yalwy")
+toggle_mode = true
+keep_pressed_outside = true
+button_group = SubResource("ButtonGroup_xku8w")
+icon = SubResource("AtlasTexture_em7di")
+
+[node name="LineJointRoundToggleButton" type="Button" parent="."]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "This will set the joint_mode of the assigned Line2D node to:
+- Round"
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_styles/pressed = ExtResource("1_yalwy")
+toggle_mode = true
+keep_pressed_outside = true
+button_group = SubResource("ButtonGroup_xku8w")
+icon = SubResource("AtlasTexture_84wj1")
+
+[connection signal="toggled" from="LineJointSharpToggleButton" to="." method="_on_line_joint_sharp_toggle_button_toggled"]
+[connection signal="toggled" from="LineJointBevelToggleButton" to="." method="_on_line_joint_bevel_toggle_button_toggled"]
+[connection signal="toggled" from="LineJointRoundToggleButton" to="." method="_on_line_joint_round_toggle_button_toggled"]
