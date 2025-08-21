@@ -135,7 +135,6 @@ size_flags_horizontal = 0
 tooltip_text = "When active, points you move will snap to whole numbers:
 - this will use the snapped global_position in the scene
 - .. so if any parent is not snapped to pixel, the local position of this point is also still not snapped"
-button_pressed = true
 text = "Snap to pixel*"
 
 [node name="SnapResolutionInputContainer" type="PanelContainer" parent="VBoxContainer/EditorSettingsContainer"]
@@ -163,7 +162,6 @@ size_flags_horizontal = 8
 tooltip_text = "- Toggled On: when creating a new shape via this panel, a Fill (Polygon2D) of this color will be automatically added
 - When a new ScalableVectorShape2D is generated via the Scene Tree or the 2D Viewport using add node, a Fill will _not_ be automatically assigned.
 - When generating a Fill via the Inspector button for ScalableVectorShape2D, the color configured here will be automatically picked."
-button_pressed = true
 text = "Fill*"
 alignment = 2
 
@@ -217,6 +215,7 @@ theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
+button_pressed = true
 keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_qgati")
 icon = SubResource("AtlasTexture_3cgh6")
@@ -247,7 +246,6 @@ theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
-button_pressed = true
 keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_qgati")
 icon = SubResource("AtlasTexture_kh00m")
@@ -322,11 +320,24 @@ text = "Stroke Settings*"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
-size_flags_horizontal = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/StrokeSettingsContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 0
+
+[node name="UseLine2DCheckButton" type="CheckButton" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "Use a Line2D node to represent the stroke with in stead of a Polygon2D. Cost/Benefit:
+- A Polygon2D stroke can be more neatly clipped than a Line2D
+- CollisionPolygon2D's match Polygon2D Stroke better
+- A Polygon2D stroke can be textured with gradients like Fills are textured
+- Line2D has sharper caps and line joints at high zoom
+- Line2D can be textured directionally in stead of like a Fill texture
+- Line2D can set different Begin and End Cap Modes where Polygon2D can only pick one"
+button_pressed = true
+text = "Use Line2D*"
 
 [node name="Label2" type="Label" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer"]
 clip_contents = true
@@ -402,11 +413,12 @@ keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_kh00m")
 icon = SubResource("AtlasTexture_exygk")
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/StrokeSettingsContainer"]
+[node name="EndCapForm" type="HBoxContainer" parent="VBoxContainer/StrokeSettingsContainer"]
+unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 0
 
-[node name="Label3" type="Label" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer2"]
+[node name="Label3" type="Label" parent="VBoxContainer/StrokeSettingsContainer/EndCapForm"]
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -420,7 +432,7 @@ mouse_filter = 0
 text = "End Cap Mode *"
 horizontal_alignment = 2
 
-[node name="EndNoCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer2"]
+[node name="EndNoCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/EndCapForm"]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
@@ -440,7 +452,7 @@ keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_k2toy")
 icon = SubResource("AtlasTexture_2t4g6")
 
-[node name="EndBoxCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer2"]
+[node name="EndBoxCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/EndCapForm"]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
@@ -460,7 +472,7 @@ keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_k2toy")
 icon = SubResource("AtlasTexture_pf6gx")
 
-[node name="EndRoundCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer2"]
+[node name="EndRoundCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/EndCapForm"]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
@@ -482,7 +494,7 @@ icon = SubResource("AtlasTexture_jph0d")
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/StrokeSettingsContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 0
 
 [node name="Label" type="Label" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer3"]
 clip_contents = true
@@ -666,12 +678,13 @@ uri = "https://youtu.be/_QOnMRrlIMk?t=126&feature=shared"
 [connection signal="toggled" from="VBoxContainer/DrawSettingsContainer/PaintOrderButton4" to="." method="_on_paint_order_button_4_toggled"]
 [connection signal="toggled" from="VBoxContainer/DrawSettingsContainer/PaintOrderButton5" to="." method="_on_paint_order_button_5_toggled"]
 [connection signal="pressed" from="VBoxContainer/DrawSettingsContainer/CreateEmptyShapeButton" to="." method="_on_create_empty_shape_button_pressed"]
+[connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/HBoxContainer/UseLine2DCheckButton" to="." method="_on_use_line_2d_check_button_toggled"]
 [connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/HBoxContainer/BeginNoCapToggleButton" to="." method="_on_begin_no_cap_toggle_button_toggled"]
 [connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/HBoxContainer/BeginBoxCapToggleButton" to="." method="_on_begin_box_cap_toggle_button_toggled"]
 [connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/HBoxContainer/BeginRoundCapToggleButton" to="." method="_on_begin_round_cap_toggle_button_toggled"]
-[connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/HBoxContainer2/EndNoCapToggleButton" to="." method="_on_end_no_cap_toggle_button_toggled"]
-[connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/HBoxContainer2/EndBoxCapToggleButton" to="." method="_on_end_box_cap_toggle_button_toggled"]
-[connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/HBoxContainer2/EndRoundCapToggleButton" to="." method="_on_end_round_cap_toggle_button_toggled"]
+[connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/EndCapForm/EndNoCapToggleButton" to="." method="_on_end_no_cap_toggle_button_toggled"]
+[connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/EndCapForm/EndBoxCapToggleButton" to="." method="_on_end_box_cap_toggle_button_toggled"]
+[connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/EndCapForm/EndRoundCapToggleButton" to="." method="_on_end_round_cap_toggle_button_toggled"]
 [connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/HBoxContainer3/LineJointSharpToggleButton" to="." method="_on_line_joint_sharp_toggle_button_toggled"]
 [connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/HBoxContainer3/LineJointBevelToggleButton" to="." method="_on_line_joint_bevel_toggle_button_toggled"]
 [connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/HBoxContainer3/LineJointRoundToggleButton" to="." method="_on_line_joint_round_toggle_button_toggled"]

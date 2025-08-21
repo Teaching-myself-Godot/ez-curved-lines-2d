@@ -8,6 +8,7 @@ const SETTING_NAME_HINTS_ENABLED := "addons/curved_lines_2d/hints_enabled"
 const SETTING_NAME_SHOW_POINT_NUMBERS := "addons/curved_lines_2d/show_point_numbers"
 const SETTING_NAME_STROKE_WIDTH := "addons/curved_lines_2d/stroke_width"
 const SETTING_NAME_STROKE_COLOR := "addons/curved_lines_2d/stroke_color"
+const SETTING_NAME_USE_LINE_2D_FOR_STROKE = "addons/curved_lines_2d/use_line_2d_for_stroke"
 const SETTING_NAME_FILL_COLOR := "addons/curved_lines_2d/fill_color"
 const SETTING_NAME_ADD_STROKE_ENABLED := "addons/curved_lines_2d/add_stroke_enabled"
 const SETTING_NAME_ADD_FILL_ENABLED := "addons/curved_lines_2d/add_fill_enabled"
@@ -215,14 +216,23 @@ func _add_fill_to_created_shape(new_shape : ScalableVectorShape2D, scene_root : 
 
 func _add_stroke_to_created_shape(new_shape : ScalableVectorShape2D, scene_root : Node) -> void:
 	if _is_add_stroke_enabled():
-		var line := Line2D.new()
-		line.name = "Stroke"
-		line.sharp_limit = 90.0
-		undo_redo.add_do_property(new_shape, 'line', line)
-		undo_redo.add_do_method(new_shape, 'add_child', line, true)
-		undo_redo.add_do_method(line, 'set_owner', scene_root)
-		undo_redo.add_do_reference(line)
-		undo_redo.add_undo_method(new_shape, 'remove_child', line)
+		if _using_line_2d_for_stroke():
+			var line := Line2D.new()
+			line.name = "Stroke"
+			line.sharp_limit = 90.0
+			undo_redo.add_do_property(new_shape, 'line', line)
+			undo_redo.add_do_method(new_shape, 'add_child', line, true)
+			undo_redo.add_do_method(line, 'set_owner', scene_root)
+			undo_redo.add_do_reference(line)
+			undo_redo.add_undo_method(new_shape, 'remove_child', line)
+		else:
+			var poly_stroke := Polygon2D.new()
+			poly_stroke.name = "Stroke"
+			undo_redo.add_do_property(new_shape, 'poly_stroke', poly_stroke)
+			undo_redo.add_do_method(new_shape, 'add_child', poly_stroke, true)
+			undo_redo.add_do_method(poly_stroke, 'set_owner', scene_root)
+			undo_redo.add_do_reference(poly_stroke)
+			undo_redo.add_undo_method(new_shape, 'remove_child', poly_stroke)
 
 
 func _add_collision_to_created_shape(new_shape : ScalableVectorShape2D, scene_root : Node) -> void:
@@ -1519,6 +1529,12 @@ static func _get_default_fill_color() -> Color:
 static func _is_add_stroke_enabled() -> bool:
 	if ProjectSettings.has_setting(SETTING_NAME_ADD_STROKE_ENABLED):
 		return ProjectSettings.get_setting(SETTING_NAME_ADD_STROKE_ENABLED)
+	return true
+
+
+static func _using_line_2d_for_stroke() -> bool:
+	if ProjectSettings.has_setting(SETTING_NAME_USE_LINE_2D_FOR_STROKE):
+		return ProjectSettings.get_setting(SETTING_NAME_USE_LINE_2D_FOR_STROKE)
 	return true
 
 
