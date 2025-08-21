@@ -663,7 +663,7 @@ func get_paint_order(style : Dictionary) -> String:
 		return "normal"
 
 
-func add_stroke_to_path(new_path : Node2D, style: Dictionary, scene_root : Node,
+func add_stroke_to_path(new_path : ScalableVectorShape2D, style: Dictionary, scene_root : Node,
 			_gradients : Array[Dictionary], _gradient_point_parent : Node2D,
 			_image_texture : ImageTexture):
 	if style.has("stroke") and style["stroke"] != "none":
@@ -675,28 +675,28 @@ func add_stroke_to_path(new_path : Node2D, style: Dictionary, scene_root : Node,
 			log_message("⚠️ Unsupported stroke style: " + style["stroke"])
 		elif style["stroke"].begins_with("rgba"):
 			var parts := _parse_svg_transform_params(style["stroke"].replace("rgba", ""))
-			line.default_color = Color.from_rgba8(parts[0], parts[1], parts[2], parts[3])
+			new_path.stroke_color = Color.from_rgba8(parts[0], parts[1], parts[2], parts[3])
 		elif style["stroke"].begins_with("rgb"):
 			var parts := _parse_svg_transform_params(style["stroke"].replace("rgb", ""))
-			line.default_color = Color.from_rgba8(parts[0], parts[1], parts[2])
+			new_path.stroke_color = Color.from_rgba8(parts[0], parts[1], parts[2])
 		else:
-			line.default_color = Color(style["stroke"])
+			new_path.stroke_color = Color(style["stroke"])
 		if style.has("stroke-width"):
-			line.width = float(style['stroke-width'])
+			new_path.stroke_width = float(style['stroke-width'])
 		if style.has("stroke-opacity"):
-			line.self_modulate.a = float(style["stroke-opacity"])
+			new_path.stroke_color.a = float(style["stroke-opacity"])
 
 		if style.has("stroke-linecap") and style["stroke-linecap"] in  STROKE_CAP_MAP:
-			line.end_cap_mode = STROKE_CAP_MAP[style["stroke-linecap"]]
-			line.begin_cap_mode = STROKE_CAP_MAP[style["stroke-linecap"]]
+			new_path.end_cap_mode = STROKE_CAP_MAP[style["stroke-linecap"]]
+			new_path.begin_cap_mode = STROKE_CAP_MAP[style["stroke-linecap"]]
 		else:
-			line.end_cap_mode = Line2D.LINE_CAP_NONE
-			line.begin_cap_mode = Line2D.LINE_CAP_NONE
+			new_path.end_cap_mode = Line2D.LINE_CAP_NONE
+			new_path.begin_cap_mode = Line2D.LINE_CAP_NONE
 
 		if style.has("stroke-linejoin") and style["stroke-linejoin"] in STROKE_JOINT_MAP:
-			line.joint_mode = STROKE_JOINT_MAP[style["stroke-linejoin"]]
+			new_path.line_joint_mode = STROKE_JOINT_MAP[style["stroke-linejoin"]]
 		else:
-			line.joint_mode = Line2D.LINE_JOINT_SHARP
+			new_path.line_joint_mode = Line2D.LINE_JOINT_SHARP
 
 		if style.has("stroke-miterlimit"):
 			line.sharp_limit = float(style["stroke-miterlimit"])

@@ -194,6 +194,11 @@ func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_na
 	undo_redo.add_do_method(self, 'select_node_reversibly', new_shape)
 	undo_redo.add_undo_method(self, 'select_node_reversibly', parent)
 	undo_redo.commit_action()
+	new_shape.stroke_color = _get_default_stroke_color()
+	new_shape.stroke_width = _get_default_stroke_width()
+	new_shape.begin_cap_mode = _get_default_begin_cap()
+	new_shape.end_cap_mode = _get_default_end_cap()
+	new_shape.line_joint_mode = _get_default_joint_mode()
 
 
 func _add_fill_to_created_shape(new_shape : ScalableVectorShape2D, scene_root : Node) -> void:
@@ -212,11 +217,6 @@ func _add_stroke_to_created_shape(new_shape : ScalableVectorShape2D, scene_root 
 	if _is_add_stroke_enabled():
 		var line := Line2D.new()
 		line.name = "Stroke"
-		line.default_color = _get_default_stroke_color()
-		line.width = _get_default_stroke_width()
-		line.begin_cap_mode = _get_default_begin_cap()
-		line.end_cap_mode = _get_default_end_cap()
-		line.joint_mode = _get_default_joint_mode()
 		line.sharp_limit = 90.0
 		undo_redo.add_do_property(new_shape, 'line', line)
 		undo_redo.add_do_method(new_shape, 'add_child', line, true)

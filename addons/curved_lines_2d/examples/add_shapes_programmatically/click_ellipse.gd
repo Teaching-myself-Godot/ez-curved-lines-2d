@@ -62,7 +62,7 @@ func add_ellipse(at_pos: Vector2):
 	if draw_strokes:
 		# assign a Line2D as stroke
 		ellipse.line = Line2D.new()
-		ellipse.line.default_color = Color.BLACK
+		ellipse.stroke_color = Color.BLACK
 		ellipse.add_child(ellipse.line)
 
 	if draw_collision:
