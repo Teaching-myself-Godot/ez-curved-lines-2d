@@ -40,7 +40,6 @@ var debug_label_settings : LabelSettings = null
 
 ## Settings
 var collision_object_type := ScalableVectorShape2D.CollisionObjectType.NONE
-var import_collision_polygons_for_all_shapes := false
 var import_as_svs := true
 var lock_shapes := true
 var antialiased_shapes := false
@@ -741,8 +740,7 @@ func add_fill_to_path(new_path : ScalableVectorShape2D, style: Dictionary, scene
 func add_collision_to_path(new_path : ScalableVectorShape2D, style : Dictionary, scene_root : Node,
 			_gradients : Array[Dictionary], _gradient_point_parent : Node2D,
 			_image_texture : ImageTexture) -> void:
-	if (collision_object_type != ScalableVectorShape2D.CollisionObjectType.NONE and
-			("fill" in style or import_collision_polygons_for_all_shapes)):
+	if collision_object_type != ScalableVectorShape2D.CollisionObjectType.NONE:
 		match collision_object_type:
 			ScalableVectorShape2D.CollisionObjectType.STATIC_BODY_2D:
 				_managed_add_child_and_set_owner(new_path, StaticBody2D.new(), scene_root, 'collision_object')
@@ -907,11 +905,6 @@ static func parse_attribute_string(raw_attribute_str : String) -> String:
 
 func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVectorShape2D.CollisionObjectType) -> void:
 	collision_object_type = obj_type
-	%ImportCollisionPolygonsForAllShapesCheckBox.visible = obj_type != ScalableVectorShape2D.CollisionObjectType.NONE
-
-
-func _on_import_collision_polygons_for_all_shapes_check_box_toggled(toggled_on: bool) -> void:
-	import_collision_polygons_for_all_shapes = toggled_on
 
 
 func _on_keep_drawable_path_2d_node_check_box_toggled(toggled_on: bool) -> void:

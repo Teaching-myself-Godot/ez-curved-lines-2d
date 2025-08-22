@@ -88,14 +88,6 @@ text = "Flag on antialiased for Polygon2D and Line2D*"
 [node name="CollisionObjectTypeOptionButton" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" instance=ExtResource("3_tqnmm")]
 layout_mode = 2
 
-[node name="ImportCollisionPolygonsForAllShapesCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-tooltip_text = "- Checking this on will make sure that shapes with only strokes will still generate a CollisionPolygon2D
-- This can always be done later using the inspector of ScalableVectorShape2D"
-text = "Also import strokes as collision polygon"
-
 [node name="OpenFileDialogButton" type="Button" parent="VBoxContainer2/PanelContainer/VBoxContainer2"]
 layout_mode = 2
 size_flags_vertical = 10
@@ -142,5 +134,4 @@ uri = "https://youtu.be/3j_OEfU8qbo?feature=shared"
 [connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/LockShapesCheckBox" to="." method="_on_lock_shapes_check_box_toggled"]
 [connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/AntialiasedCheckBox" to="." method="_on_antialiased_check_box_toggled"]
 [connection signal="type_selected" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
-[connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/ImportCollisionPolygonsForAllShapesCheckBox" to="." method="_on_import_collision_polygons_for_all_shapes_check_box_toggled"]
 [connection signal="pressed" from="VBoxContainer2/PanelContainer/VBoxContainer2/OpenFileDialogButton" to="." method="_on_open_file_dialog_button_pressed"]
