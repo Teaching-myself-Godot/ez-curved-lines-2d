@@ -296,7 +296,7 @@ A couple of settings in the bottom panel are stored across sessions to represent
   - Enable/Disable ScalableVectorShape2D Editing (when checked off, you can edit nodes the normal, built-in, godot-way. You _are_ going to need this)
   - Show/Hide Edit hints
   - Show Point Details (which are the exact _indices_ of each point on the `Curve2D` of this shape, what is it's global position)
-  - Snap to Pixel (snaps points and curve handles to whole pixels on the global transformß)
+  - Snap to Pixel (snaps points and curve handles to whole pixels on the global transform)
   - Snap distance (the snap step / resolution)
 - Draw Settings:
   - Enable/Disable Fill (when creating new shapes via this bottom panel)
@@ -373,7 +373,7 @@ With this form the following `ScalableVectorShape2D` properties can be edited:
 
 When a `Line2D` is assigned to draw the stroke with, these properties will be kept synchronized with the `ScalableVectorShape2D` properties.
 
-In case of a `Polygon2D` based stroke, the `stroke_color` will be kept synchronized with the `Polygon2D` color.ß
+In case of a `Polygon2D` based stroke, the `stroke_color` will be kept synchronized with the `Polygon2D` color.
 
 ### Creating new Strokes
 When the selected shape has no stroke, an extra set of buttons is provided:
