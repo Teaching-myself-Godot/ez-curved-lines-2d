@@ -85,6 +85,20 @@ layout_mode = 2
 tooltip_text = "It's probably better to use project settings for this, but checking this on will ensure that the antialised property is checked on for imported Line2D and Polygon2D"
 text = "Flag on antialiased for Polygon2D and Line2D*"
 
+[node name="UseLine2DCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "Use a Line2D node to represent the stroke with in stead of a Polygon2D. Cost/Benefit:
+- A Polygon2D stroke can be more neatly clipped than a Line2D
+- CollisionPolygon2D's match Polygon2D Stroke better
+- A Polygon2D stroke can be textured with gradients like Fills are textured
+- Line2D has sharper caps and line joints at high zoom
+- Line2D can be textured directionally in stead of like a Fill texture
+- Line2D can set different Begin and End Cap Modes where Polygon2D can only pick one"
+button_pressed = true
+text = "Use Line2D for Strokes*"
+
 [node name="CollisionObjectTypeOptionButton" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" instance=ExtResource("3_tqnmm")]
 layout_mode = 2
 
@@ -133,5 +147,6 @@ uri = "https://youtu.be/3j_OEfU8qbo?feature=shared"
 [connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/KeepDrawablePath2DNodeCheckBox" to="." method="_on_keep_drawable_path_2d_node_check_box_toggled"]
 [connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/LockShapesCheckBox" to="." method="_on_lock_shapes_check_box_toggled"]
 [connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/AntialiasedCheckBox" to="." method="_on_antialiased_check_box_toggled"]
+[connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/UseLine2DCheckBox" to="." method="_on_use_line_2d_check_box_toggled"]
 [connection signal="type_selected" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
 [connection signal="pressed" from="VBoxContainer2/PanelContainer/VBoxContainer2/OpenFileDialogButton" to="." method="_on_open_file_dialog_button_pressed"]

@@ -43,6 +43,7 @@ var collision_object_type := ScalableVectorShape2D.CollisionObjectType.NONE
 var import_as_svs := true
 var lock_shapes := true
 var antialiased_shapes := false
+var import_stroke_as_line_2d := true
 var import_file_dialog : EditorFileDialog = null
 var warning_dialog : AcceptDialog = null
 var undo_redo : EditorUndoRedoManager = null
@@ -666,10 +667,11 @@ func add_stroke_to_path(new_path : ScalableVectorShape2D, style: Dictionary, sce
 			_gradients : Array[Dictionary], _gradient_point_parent : Node2D,
 			_image_texture : ImageTexture):
 	if style.has("stroke") and style["stroke"] != "none":
-		var line := Line2D.new()
-		line.name = "Stroke"
-		line.antialiased = antialiased_shapes
-		_managed_add_child_and_set_owner(new_path, line, scene_root, 'line')
+		var stroke : Node2D = Line2D.new() if import_stroke_as_line_2d else Polygon2D.new()
+		var prop_name := "line" if import_stroke_as_line_2d else "poly_stroke"
+		stroke.name = "Stroke"
+		stroke.antialiased = antialiased_shapes
+		_managed_add_child_and_set_owner(new_path, stroke, scene_root, prop_name)
 		if style["stroke"].begins_with("url"):
 			log_message("⚠️ Unsupported stroke style: " + style["stroke"])
 		elif style["stroke"].begins_with("rgba"):
@@ -696,11 +698,11 @@ func add_stroke_to_path(new_path : ScalableVectorShape2D, style: Dictionary, sce
 			new_path.line_joint_mode = STROKE_JOINT_MAP[style["stroke-linejoin"]]
 		else:
 			new_path.line_joint_mode = Line2D.LINE_JOINT_SHARP
-
-		if style.has("stroke-miterlimit"):
-			line.sharp_limit = float(style["stroke-miterlimit"])
-		else:
-			line.sharp_limit = 4.0 # svg default
+		if stroke is Line2D:
+			if style.has("stroke-miterlimit"):
+				stroke.sharp_limit = float(style["stroke-miterlimit"])
+			else:
+				stroke.sharp_limit = 4.0 # svg default
 
 
 
@@ -922,3 +924,7 @@ func _on_antialiased_check_box_toggled(toggled_on: bool) -> void:
 
 func _on_open_file_dialog_button_pressed() -> void:
 	import_file_dialog.popup_file_dialog()
+
+
+func _on_use_line_2d_check_box_toggled(toggled_on: bool) -> void:
+	import_stroke_as_line_2d = toggled_on
