@@ -664,7 +664,7 @@ func get_paint_order(style : Dictionary) -> String:
 
 
 func add_stroke_to_path(new_path : ScalableVectorShape2D, style: Dictionary, scene_root : Node,
-			_gradients : Array[Dictionary], _gradient_point_parent : Node2D,
+			gradients : Array[Dictionary], gradient_point_parent : Node2D,
 			_image_texture : ImageTexture):
 	if style.has("stroke") and style["stroke"] != "none":
 		var stroke : Node2D = Line2D.new() if import_stroke_as_line_2d else Polygon2D.new()
@@ -673,7 +673,15 @@ func add_stroke_to_path(new_path : ScalableVectorShape2D, style: Dictionary, sce
 		stroke.antialiased = antialiased_shapes
 		_managed_add_child_and_set_owner(new_path, stroke, scene_root, prop_name)
 		if style["stroke"].begins_with("url"):
-			log_message("⚠️ Unsupported stroke style: " + style["stroke"])
+			if stroke is Line2D:
+				log_message("⚠️ Gradient stroke style not supported by Line2D: " + style["stroke"])
+			else:
+				var href : String = style["stroke"].replace("url(", "").replace(")", "")
+				var svg_gradient = get_gradient_by_href(href, gradients)
+				if svg_gradient.is_empty():
+					log_message("⚠️ Cannot find gradient for href=%s" % href, LogLevel.WARN)
+				else:
+					add_gradient_to_fill(new_path, svg_gradient, stroke, scene_root, gradients, gradient_point_parent)
 		elif style["stroke"].begins_with("rgba"):
 			var parts := _parse_svg_transform_params(style["stroke"].replace("rgba", ""))
 			new_path.stroke_color = Color.from_rgba8(parts[0], parts[1], parts[2], parts[3])

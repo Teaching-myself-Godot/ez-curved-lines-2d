@@ -543,6 +543,7 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 		line.closed = is_curve_closed()
 	if is_instance_valid(poly_stroke):
 		poly_stroke.polygon = Geometry2DUtil.get_polygon_indices(cached_poly_strokes, poly_stroke.polygons)
+		_update_polygon_texture(poly_stroke, true)
 	if is_instance_valid(polygon):
 		polygon.polygons.clear()
 		polygon.polygon = polygon_points
@@ -575,16 +576,16 @@ func add_clip_path(svs : ScalableVectorShape2D):
 	_on_clip_paths_changed()
 
 
-func _update_polygon_texture():
-	if polygon.texture is GradientTexture2D or polygon.texture is ImageTexture:
-		var box := get_bounding_rect()
-		polygon.texture_offset = -box.position
-		if polygon.texture is GradientTexture2D:
-			polygon.texture.width = 1 if box.size.x < 1 else box.size.x
-			polygon.texture.height = 1 if box.size.y < 1 else box.size.y
+func _update_polygon_texture(poly := polygon, grow := false):
+	if poly.texture is GradientTexture2D or poly.texture is ImageTexture:
+		var box := get_bounding_rect().grow(0.5 * stroke_width) if grow else get_bounding_rect()
+		poly.texture_offset = -box.position if grow else -box.position
+		if poly.texture is GradientTexture2D:
+			poly.texture.width = 1 if box.size.x < 1 else box.size.x
+			poly.texture.height = 1 if box.size.y < 1 else box.size.y
 		else:
-			if not polygon.texture_repeat:
-				polygon.texture_scale = polygon.texture.get_size() / box.size
+			if not poly.texture_repeat:
+				poly.texture_scale = poly.texture.get_size() / box.size
 
 
 func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, valid_clip_paths : Array[ScalableVectorShape2D]) -> void:
@@ -670,6 +671,7 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 		else:
 			poly_stroke.show()
 			poly_stroke.polygon = Geometry2DUtil.get_polygon_indices(cached_poly_strokes, poly_stroke.polygons)
+			_update_polygon_texture(poly_stroke, true)
 	if is_instance_valid(polygon):
 		if cached_clipped_polygons.is_empty():
 			polygon.hide()
