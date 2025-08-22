@@ -27,7 +27,9 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
   - [Creating Paths based on Bézier curves](#creating-paths-based-on-bézier-curves)
   - [Creating 'primitive' scapes: Rectangle and Ellipse](#creating-primitive-scapes-rectangle-and-ellipse)
 - [Using the `.svg` importer](#using-the-svg-importer)
-  - [Known issues explainer on Youtube:](#known-issues-explainer-on-youtube)
+  - [The SVG Importer dock](#the-svg-importer-dock)
+    - [`Line2D` Stroke versus `Polygon2D` Stroke](#line2d-stroke-versus-polygon2d-stroke)
+    - [The import log](#the-import-log)
 - [Manipulating shapes](#manipulating-shapes)
   - [Adding a point to a shape](#adding-a-point-to-a-shape)
   - [Bending a curve](#bending-a-curve)
@@ -51,6 +53,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
     - [Convert to Path button](#convert-to-path-button)
   - [The Fill inspector form](#the-fill-inspector-form)
   - [The Stroke inspector form](#the-stroke-inspector-form)
+    - [Creating new Strokes](#creating-new-strokes)
   - [The Collision inspector form](#the-collision-inspector-form)
   - [The Navigation inspector form](#the-navigation-inspector-form)
   - [The Curve settings inspector form](#the-curve-settings-inspector-form)
@@ -124,23 +127,33 @@ Rectangles will have a handle for `size` and 2 handles for rounded corners `rx` 
 [![watch explainer on youtube](./screenshots/importing-svg-files-youtube-thumbnail.png)](https://youtu.be/3j_OEfU8qbo?feature=shared)
 
 
-As mentioned in the introduction, the `.svg` import supports a small - _yet relevant_ - subset of the [W3C specification](https://www.w3.org/TR/SVG/).
+## The SVG Importer dock
 
-That being said, it's still pretty cool and serves my purposes quite well. You can drag any `.svg` resource file into the first tab of the bottom dock to see if it works for you too:
+![svg importer dock](./screenshots/svg_importer_dock.png)
 
-![svg importer dock](./screenshots/13-svg-importer-dock.png)
+On the left side of this panel is a form with a couple of options:
 
-On the left side of this panel is a form with a couple of options you can experiment with. On the right side is an import log, which will show warnings of known problems, usually unsupported stuff:
+- Import as ScalableVectorShape2D: check this Off if you want to import the svg file with only built-in godot nodes, without being able to edit/animate the curves in the editor.
+- Lock imported shapes in editor: this simply flags on the lock so that the `Polygon2D`, `Line2D`, etc are not selected on click, but the owning ScalableVectorShape2D is
+- Flag on antialiased on Polygon2D and Line2D: flags on the `antialiased` property of either
+- Use Line2D for Strokes: when flagged Off a `Polygon2D` is used for strokes in stead of a Line2D
+- Pick a `CollisionObject2D` type to also generate collision polygons when importing the svg file
 
-![svg importer log](./screenshots/14-import-warnings.png)
+### `Line2D` Stroke versus `Polygon2D` Stroke
 
-As the link in the log suggest, you can report [issues](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d/issues) on github; be sure to check if something is already listed.
+A tooltip highlights the costs and benefits when picking either of these to draw strokes with:
+- A `Polygon2D` stroke can be more neatly clipped than a `Line2D`
+- `CollisionPolygon2D`'s match `Polygon2D` Stroke better
+- A `Polygon2D` stroke can be textured with gradients like fills are textured
+- `Line2D` has sharper caps and line joints at high zoom
+- `Line2D` can be textured directionally in stead of like a Fill texture
+- `Line2D` can set different Begin and End Cap Modes where `Polygon2D` can only pick one
 
-Don't let that stop you, though, your future infinite zoomer and key-frame animator will love you for it.
+### The import log
 
-## Known issues explainer on Youtube:
+On the right side is an import log, which will show warnings of known problems, usually unsupported stuff.
 
-[![known issues explainer on youtube](./screenshots/known-issues-youtube-thumbnail.png)](https://www.youtube.com/watch?v=nVCKVRBMnWU)
+The link it shows is to the issues list on the github repository hosting this plugin. Here you can report any encountered bugs while importing SVG files using this plugin.
 
 # Manipulating shapes
 
@@ -276,20 +289,28 @@ Double clicking on the gradient line will add a new color stop (the assigned col
 # The Project Settings in the Scalable Vector Shapes panel
 
 A couple of settings in the bottom panel are stored across sessions to represent your preferences:
+
+![The Settings Panel](./screenshots/settings_panel.png)
+
 - Editor settings (how the 2D Viewport should behave):
   - Enable/Disable ScalableVectorShape2D Editing (when checked off, you can edit nodes the normal, built-in, godot-way. You _are_ going to need this)
   - Show/Hide Edit hints
   - Show Point Details (which are the exact _indices_ of each point on the `Curve2D` of this shape, what is it's global position)
-  - Snap to Pixel (snaps points and curve handles to whole pixels on the global transform, only when  `shape_type == ShapeType.Path`)
+  - Snap to Pixel (snaps points and curve handles to whole pixels on the global transformß)
   - Snap distance (the snap step / resolution)
 - Draw Settings:
-  - Stroke Width
-  - Enable/Disable Fill (when creating new shapes via the bottom panel)
-  - Fill color (when creating new shapes in the bottom panel)
-  - Enable/Disable Stroke (when creating new shapes via the bottom panel)
-  - Stroke color (when creating new shapes in the bottom panel)
-  - Choose a `CollisionObject2D` type (when creating new shapes via the bottom panel, default is no collision object assignment)
-- Paint order: a toggle which represent what comes in front of what (when creating new shapes in the bottom panel)
+  - Enable/Disable Fill (when creating new shapes via this bottom panel)
+  - Fill color (when creating new shapes in this bottom panel)
+  - Enable/Disable Stroke (when creating new shapes this this bottom panel)
+  - Stroke color (when creating new shapes in this bottom panel)
+  - Choose a `CollisionObject2D` type (when creating new shapes in this bottom panel, default is no collision object assignment)
+  - Paint order: a toggle which represent what comes in front of what (when creating new shapes in the bottom panel)
+- Stroke Settings:
+  - Stroke Width (when creating new shapes via this bottom panel)
+  - Use `Line2D`: when flagged off, a `Polygon2D` will be used to draw strokes with in stead (see also: [`Line2D Stroke` versus `Polygon2D Stroke`](#line2d-stroke-versus-polygon2d-stroke) )
+  - Begin- and End Cap modes
+  - Line Joint Mode
+
 
 # Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes
 
@@ -307,7 +328,7 @@ There are 4 ways to get around this:
 The following custom forms were added, with extensive tooltips to help explain the actual functions they provide:
 
 - [Fill](#the-fill-inspector-form) (actually the assigned `Polygon2D`)
-- [Stroke](#the-stroke-inspector-form) (actually the assigned `Line2D`)
+- [Stroke](#the-stroke-inspector-form) (actually the assigned `Line2D` or `Polygon2D`)
 - [Collision](#the-collision-inspector-form) (manages an assigned `CollisionObject2D`)
 - [Navigation](#the-navigation-inspector-form) (manages an assigned `NavigationRegion2D`)
 - [Curve Settings](#the-curve-settings-inspector-form)
@@ -341,15 +362,29 @@ Below that, a standard godot `Assign ...`-field is also available to set the `po
 
 ## The Stroke inspector form
 
-When the selected shape has no stroke, an `Add Stroke` button is provided. Clicking that will create and assign a new `Line2D` to the selected `ScalableVectorShape2D`:
+![screenshot of stroke formm](./screenshots/stroke_inspector.png)
 
-![screenshot of stroke form without stroke](./screenshots/stroke-form-no-stroke.png)
+With this form the following `ScalableVectorShape2D` properties can be edited:
+- `stroke_color`
+- `stroke_width`
+- `begin_cap_mode` (in case of a `Polygon2D`-based stroke, this will also set the end cap)
+- `end_cap_mode`
+- `line_joint_mode`
 
-Once assigned, the following options are available:
-- Stroke color, changes the `default_color` property of the assigned `Line2D`
-- Stroke width, changing the `width` property of the assigned `Line2D`
+When a `Line2D` is assigned to draw the stroke with, these properties will be kept synchronized with the `ScalableVectorShape2D` properties.
 
-Below that, a standard godot `Assign ...`-field is also available to set the `line`-property directly with and to enable unassignment.
+In case of a `Polygon2D` based stroke, the `stroke_color` will be kept synchronized with the `Polygon2D` color.ß
+
+### Creating new Strokes
+When the selected shape has no stroke, an extra set of buttons is provided:
+- `Add Line2D Stroke`
+- `Add Polygon2D Stroke`
+
+Clicking either will create and assign a new `Line2D` or `Polygon2D` to the selected `ScalableVectorShape2D`:
+
+Below that, a standard godot `Assign ...`-field is also available to set these properties:
+- `line`: a `Line2D` assignment
+- `poly_stroke`: a `Polygon2D` assignment
 
 ## The Collision inspector form
 
@@ -482,9 +517,9 @@ You can then add an `AnimationPlayer` node to your scene, create a new animation
   - `texture:gradient:offsets` (the entire `PackedFloat32Array`)
   - `texture:fill_from`
   - `texture:fill_to`
-- Stroke width, i.e.: the `width` property of the assigned `Line2D`
-- Stroke color, i.e.: the `default_color`  of the assigned `Line2D`
 - Fill color, i.e.: the `color` of the assigned `Polygon2D`
+
+__* Note: the keyframes of stroke properties are set directly on `ScalableVectorShape2D` as of release 2.12__
 
 ![the new key frame buttons in the inspector](./screenshots/animating-in-2.4.0.png)
 
@@ -494,7 +529,7 @@ When the `update_curve_at_runtime` property is checked, every time the curve cha
 
 Duplicating a `ScalableVectorShape2D` will __not__ make a new `Curve2D`, but use a reference. This means line-segments will be calculated multiple times on one and the same curve! Very wasteful.
 
-If however you want to, for instance, animate 100 blades of grass, just use __one__ `DrawableShape2D` and have the 100 `Line2D` node listen to the `path_changed` signal and overwrite their `points` property with the `PackedVector2Array` argument of your listener `func`:
+If however you want to, for instance, animate 100 blades of grass, just use __one__ `ScalableVectorShape2D` and have the 100 `Line2D` node listen to the `path_changed` signal and overwrite their `points` property with the `PackedVector2Array` argument of your listener `func`:
 
 ![path_changed signal](./screenshots/10-path_changed-signal.png)
 
