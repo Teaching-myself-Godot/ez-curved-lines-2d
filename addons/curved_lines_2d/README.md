@@ -4,7 +4,7 @@ Scalable Vector Shapes 2D lets you do 3 things:
 1. Draw seamless vector shapes using a Path Editor inspired by the awesome [Inkscape](https://inkscape.org/) with a new node type: [`ScalableVectorShape2D`](./scalable_vector_shape_2d.gd)[^1]
 2. Animate the shape of the curve using keyframes on a [property-track](https://docs.godotengine.org/en/stable/tutorials/animation/introduction.html#doc-introduction-animation)  in an [`AnimationPlayer`](https://docs.godotengine.org/en/stable/classes/class_animationplayer.html#class-animationplayer)
 3. Import [.svg](https://www.w3.org/TR/SVG/) files as seamless vector shapes in stead of as raster images[^2]
-
+ß
 [^2]: __Important sidenote__: _This plugin only supports a small - yet relevant - subset of the huge [SVG Specification](https://www.w3.org/TR/SVG/struct.html)_
 
 ## Watch the A-Z explainer on Youtube
@@ -74,6 +74,10 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
   - [Don't duplicate `ScalableVectorShape2D`, use the `path_changed` signal in stead](#dont-duplicate-scalablevectorshape2d-use-the-path_changed-signal-in-stead)
   - [Performance impact](#performance-impact)
 - [FAQ's](#faqs)
+  - [The curve of my `ScalableVectorShape2D` won't animate at runtime, what do I do?](#the-curve-of-my-scalablevectorshape2d-wont-animate-at-runtime-what-do-i-do)
+  - [I want to change shapes while debugging my game. Is this even possible?](#i-want-to-change-shapes-while-debugging-my-game-is-this-even-possible)
+  - [When I animate the curve of an imported scene, it animates all the other curves as well](#when-i-animate-the-curve-of-an-imported-scene-it-animates-all-the-other-curves-as-well)
+  - [When I duplicate a `ScalableVectorShape2D` and change its shape, the original `ScalableVectorShape2D` shape also changes](#when-i-duplicate-a-scalablevectorshape2d-and-change-its-shape-the-original-scalablevectorshape2d-shape-also-changes)
   - [Can I draw shapes programmatically?](#can-i-draw-shapes-programmatically)
   - [Should I draw shapes programmatically?](#should-i-draw-shapes-programmatically)
   - [When should I draw shapes programmatically?](#when-should-i-draw-shapes-programmatically)
@@ -544,6 +548,31 @@ Under `Tesselation settings` you can lower `Max Stages` or bump up `Tolerance De
 
 # FAQ's
 
+## The curve of my `ScalableVectorShape2D` won't animate at runtime, what do I do?
+Check the box:
+
+![update curve at runtime](./screenshots/update-curve-at-runtime-in-2.4.0.png)
+
+## I want to change shapes while debugging my game. Is this even possible?
+
+Yes, when you check the box `Update Curve at Runtime` box.
+
+## When I animate the curve of an imported scene, it animates all the other curves as well
+
+This is a common issue: there is _one_ `Curve2D` instance being referenced by all scenes. You fix this by checking On "Local To Scene" for the `Curve2D`:
+
+![local to scene](./screenshots/local_to_scene.png)
+
+
+## When I duplicate a `ScalableVectorShape2D` and change its shape, the original `ScalableVectorShape2D` shape also changes
+
+This is a common issue: there is _one_ `Curve2D` instance being referenced by both nodes. At the moment there is not a quick fix, but you can always follow these steps:
+1. Right click on your copy in the scene tree
+2. Pick "Save branch as Scene"
+3. Make the `Curve2D` "Local to Scene" like in [the previous faq example](#when-i-animate-the-curve-of-an-imported-scene-it-animates-all-the-other-curves-as-well)
+
+
+
 ## Can I draw shapes programmatically?
 
 Yes you can. There are a couple of small things to be aware of:
@@ -594,6 +623,8 @@ Once you're done drawing and do not need the shape to change anymore at runtime 
 - The suggestion to support both `Polygon2D` and collisions was done by [GeminiSquishGames](https://github.com/GeminiSquishGames), who's pointers inspired me to go further
 - The SVG Importer code was adapted from the script hosted on github in the [pixelriot/SVG2Godot](https://github.com/pixelriot/SVG2Godot) repository
 - The code for making cutout shapes was adapted from the great [knife tool plugin](https://github.com/mrkdji/knife-tool/) by @mrkdji
+- The inspiration for using [Geometry2D.offset_polyline](https://docs.godotengine.org/en/stable/classes/class_geometry2d.html#class-geometry2d-method-offset-polyline) for strokes came from @theshaggydev, who recorded [this video](https://www.youtube.com/watch?v=5TW7H7aXhxQ) about it.
+
 
 
 ## And a big thank you goes to to [@MewPurPur](https://github.com/MewPurPur)
