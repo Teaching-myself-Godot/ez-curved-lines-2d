@@ -236,7 +236,7 @@ func _on_batch_insert_gradient_key_frame_button_pressed() -> void:
 
 
 func _on_color_picker_button_toggled(toggled_on: bool) -> void:
-	if not is_instance_valid(scalable_vector_shape_2d.line):
+	if not is_instance_valid(scalable_vector_shape_2d.polygon):
 		return
 	var undo_redo = EditorInterface.get_editor_undo_redo()
 	if toggled_on:

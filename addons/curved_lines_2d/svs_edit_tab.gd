@@ -35,7 +35,7 @@ func _enter_tree() -> void:
 	rect_ry_input = _make_number_input("Corner Radius Y", 0, 0, 500, "")
 	snap_resolution_input = _make_number_input("Snap distance", 1.0, 1.0, 1024.0, "px", 1.0)
 
-	stroke_width_input = _make_number_input("Width", 10.0, 0.0, 100.0, "", 0.01)
+	stroke_width_input = _make_number_input("Width", 10.0, 0.5, 100.0, "px", 0.5)
 	%WidthSliderContainer.add_child(rect_width_input)
 	%HeightSliderContainer.add_child(rect_height_input)
 	%XRadiusSliderContainer.add_child(rect_rx_input)
@@ -52,6 +52,7 @@ func _enter_tree() -> void:
 	stroke_width_input.value = CurvedLines2D._get_default_stroke_width()
 	stroke_width_input.value_changed.connect(_on_stroke_width_input_value_changed)
 	%StrokePickerButton.color = CurvedLines2D._get_default_stroke_color()
+	%UseLine2DCheckButton.button_pressed = CurvedLines2D._using_line_2d_for_stroke()
 	%FillPickerButton.color = CurvedLines2D._get_default_fill_color()
 	%StrokeCheckButton.button_pressed = CurvedLines2D._is_add_stroke_enabled()
 	%FillCheckButton.button_pressed = CurvedLines2D._is_add_fill_enabled()
@@ -314,3 +315,11 @@ func _on_snap_resolution_value_changed(val : float) -> void:
 
 func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVectorShape2D.CollisionObjectType) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_COLLISION_TYPE, obj_type)
+
+
+func _on_use_line_2d_check_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_USE_LINE_2D_FOR_STROKE, toggled_on)
+	if toggled_on:
+		%EndCapForm.show()
+	else:
+		%EndCapForm.hide()

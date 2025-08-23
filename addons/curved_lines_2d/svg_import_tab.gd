@@ -40,10 +40,10 @@ var debug_label_settings : LabelSettings = null
 
 ## Settings
 var collision_object_type := ScalableVectorShape2D.CollisionObjectType.NONE
-var import_collision_polygons_for_all_shapes := false
 var import_as_svs := true
 var lock_shapes := true
 var antialiased_shapes := false
+var import_stroke_as_line_2d := true
 var import_file_dialog : EditorFileDialog = null
 var warning_dialog : AcceptDialog = null
 var undo_redo : EditorUndoRedoManager = null
@@ -663,45 +663,54 @@ func get_paint_order(style : Dictionary) -> String:
 		return "normal"
 
 
-func add_stroke_to_path(new_path : Node2D, style: Dictionary, scene_root : Node,
-			_gradients : Array[Dictionary], _gradient_point_parent : Node2D,
+func add_stroke_to_path(new_path : ScalableVectorShape2D, style: Dictionary, scene_root : Node,
+			gradients : Array[Dictionary], gradient_point_parent : Node2D,
 			_image_texture : ImageTexture):
 	if style.has("stroke") and style["stroke"] != "none":
-		var line := Line2D.new()
-		line.name = "Stroke"
-		line.antialiased = antialiased_shapes
-		_managed_add_child_and_set_owner(new_path, line, scene_root, 'line')
+		var stroke : Node2D = Line2D.new() if import_stroke_as_line_2d else Polygon2D.new()
+		var prop_name := "line" if import_stroke_as_line_2d else "poly_stroke"
+		stroke.name = "Stroke"
+		stroke.antialiased = antialiased_shapes
+		_managed_add_child_and_set_owner(new_path, stroke, scene_root, prop_name)
 		if style["stroke"].begins_with("url"):
-			log_message("⚠️ Unsupported stroke style: " + style["stroke"])
+			if stroke is Line2D:
+				log_message("⚠️ Gradient stroke style not supported by Line2D: " + style["stroke"])
+			else:
+				var href : String = style["stroke"].replace("url(", "").replace(")", "")
+				var svg_gradient = get_gradient_by_href(href, gradients)
+				if svg_gradient.is_empty():
+					log_message("⚠️ Cannot find gradient for href=%s" % href, LogLevel.WARN)
+				else:
+					add_gradient_to_fill(new_path, svg_gradient, stroke, scene_root, gradients, gradient_point_parent)
 		elif style["stroke"].begins_with("rgba"):
 			var parts := _parse_svg_transform_params(style["stroke"].replace("rgba", ""))
-			line.default_color = Color.from_rgba8(parts[0], parts[1], parts[2], parts[3])
+			new_path.stroke_color = Color.from_rgba8(parts[0], parts[1], parts[2], parts[3])
 		elif style["stroke"].begins_with("rgb"):
 			var parts := _parse_svg_transform_params(style["stroke"].replace("rgb", ""))
-			line.default_color = Color.from_rgba8(parts[0], parts[1], parts[2])
+			new_path.stroke_color = Color.from_rgba8(parts[0], parts[1], parts[2])
 		else:
-			line.default_color = Color(style["stroke"])
+			new_path.stroke_color = Color(style["stroke"])
 		if style.has("stroke-width"):
-			line.width = float(style['stroke-width'])
+			new_path.stroke_width = float(style['stroke-width'])
 		if style.has("stroke-opacity"):
-			line.self_modulate.a = float(style["stroke-opacity"])
+			new_path.stroke_color.a = float(style["stroke-opacity"])
 
 		if style.has("stroke-linecap") and style["stroke-linecap"] in  STROKE_CAP_MAP:
-			line.end_cap_mode = STROKE_CAP_MAP[style["stroke-linecap"]]
-			line.begin_cap_mode = STROKE_CAP_MAP[style["stroke-linecap"]]
+			new_path.end_cap_mode = STROKE_CAP_MAP[style["stroke-linecap"]]
+			new_path.begin_cap_mode = STROKE_CAP_MAP[style["stroke-linecap"]]
 		else:
-			line.end_cap_mode = Line2D.LINE_CAP_NONE
-			line.begin_cap_mode = Line2D.LINE_CAP_NONE
+			new_path.end_cap_mode = Line2D.LINE_CAP_NONE
+			new_path.begin_cap_mode = Line2D.LINE_CAP_NONE
 
 		if style.has("stroke-linejoin") and style["stroke-linejoin"] in STROKE_JOINT_MAP:
-			line.joint_mode = STROKE_JOINT_MAP[style["stroke-linejoin"]]
+			new_path.line_joint_mode = STROKE_JOINT_MAP[style["stroke-linejoin"]]
 		else:
-			line.joint_mode = Line2D.LINE_JOINT_SHARP
-
-		if style.has("stroke-miterlimit"):
-			line.sharp_limit = float(style["stroke-miterlimit"])
-		else:
-			line.sharp_limit = 4.0 # svg default
+			new_path.line_joint_mode = Line2D.LINE_JOINT_SHARP
+		if stroke is Line2D:
+			if style.has("stroke-miterlimit"):
+				stroke.sharp_limit = float(style["stroke-miterlimit"])
+			else:
+				stroke.sharp_limit = 4.0 # svg default
 
 
 
@@ -741,8 +750,7 @@ func add_fill_to_path(new_path : ScalableVectorShape2D, style: Dictionary, scene
 func add_collision_to_path(new_path : ScalableVectorShape2D, style : Dictionary, scene_root : Node,
 			_gradients : Array[Dictionary], _gradient_point_parent : Node2D,
 			_image_texture : ImageTexture) -> void:
-	if (collision_object_type != ScalableVectorShape2D.CollisionObjectType.NONE and
-			("fill" in style or import_collision_polygons_for_all_shapes)):
+	if collision_object_type != ScalableVectorShape2D.CollisionObjectType.NONE:
 		match collision_object_type:
 			ScalableVectorShape2D.CollisionObjectType.STATIC_BODY_2D:
 				_managed_add_child_and_set_owner(new_path, StaticBody2D.new(), scene_root, 'collision_object')
@@ -907,11 +915,6 @@ static func parse_attribute_string(raw_attribute_str : String) -> String:
 
 func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVectorShape2D.CollisionObjectType) -> void:
 	collision_object_type = obj_type
-	%ImportCollisionPolygonsForAllShapesCheckBox.visible = obj_type != ScalableVectorShape2D.CollisionObjectType.NONE
-
-
-func _on_import_collision_polygons_for_all_shapes_check_box_toggled(toggled_on: bool) -> void:
-	import_collision_polygons_for_all_shapes = toggled_on
 
 
 func _on_keep_drawable_path_2d_node_check_box_toggled(toggled_on: bool) -> void:
@@ -929,3 +932,7 @@ func _on_antialiased_check_box_toggled(toggled_on: bool) -> void:
 
 func _on_open_file_dialog_button_pressed() -> void:
 	import_file_dialog.popup_file_dialog()
+
+
+func _on_use_line_2d_check_box_toggled(toggled_on: bool) -> void:
+	import_stroke_as_line_2d = toggled_on
