@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 2.12.0 - 2025-0823
+## 2.12.1 - 2025-08-23
 
 ### Added
 - You can now also use Polygon2D for Strokes using the `poly_stroke` property
@@ -16,6 +16,8 @@
   - `line.joint_mode` -> `line_joint_mode`
 - ⚠️ Please note that keyframes for all these properties are now set on `ScalableVectorShape2D` directly in stead of the assigned `Line2D`
 - Fix edge cases where holes resulting from geometry operations are not handled correctly
+- Fix: one `CollisionObject2D` can now be assigned to multiple `ScalableVectorShape2D` without them touching eachother's `CollisionPolygon2D`
+- Updates example "Rat's Return" to use one shared `StaticBody2D` for all the blocks
 
 ## 2.11.5 - 2025-18-08
 
