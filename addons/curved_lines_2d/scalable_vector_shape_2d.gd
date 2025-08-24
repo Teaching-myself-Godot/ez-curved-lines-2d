@@ -322,6 +322,9 @@ var cached_outline : PackedVector2Array = []
 var cached_clipped_polygons : Array[PackedVector2Array] = []
 var cached_poly_strokes : Array[PackedVector2Array] = []
 
+
+var _assigned_collision_polygons : Array[CollisionPolygon2D] = []
+
 # Wire up signals at runtime
 func _ready():
 	if update_curve_at_runtime:
@@ -551,7 +554,7 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 	if is_instance_valid(collision_polygon):
 		collision_polygon.polygon = polygon_points
 	if is_instance_valid(collision_object):
-		var existing = collision_object.get_children().filter(func(c): return c is CollisionPolygon2D)
+		var existing = _assigned_collision_polygons.filter(is_instance_valid)
 		for idx in existing.size():
 			if idx >= collision_polygons.size():
 				existing[idx].hide()
@@ -559,6 +562,7 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 		for polygon_index in collision_polygons.size():
 			if polygon_index >= existing.size():
 				existing.append(_make_new_collision_polygon_2d())
+				_assigned_collision_polygons.append(existing[polygon_index])
 			existing[polygon_index].polygon = collision_polygons[polygon_index]
 			existing[polygon_index].show()
 			existing[polygon_index].disabled = false
@@ -682,7 +686,7 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 	if is_instance_valid(collision_polygon):
 		collision_polygon.polygon = polygon_points
 	if is_instance_valid(collision_object):
-		var existing = collision_object.get_children().filter(func(c): return c is CollisionPolygon2D)
+		var existing = _assigned_collision_polygons.filter(is_instance_valid)
 		for idx in existing.size():
 			if idx >= collision_polygons.size():
 				existing[idx].hide()
@@ -690,6 +694,7 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 		for polygon_index in collision_polygons.size():
 			if polygon_index >= existing.size():
 				existing.append(_make_new_collision_polygon_2d())
+				_assigned_collision_polygons.append(existing[polygon_index])
 			existing[polygon_index].polygon = collision_polygons[polygon_index]
 			existing[polygon_index].show()
 			existing[polygon_index].disabled = false
@@ -709,6 +714,8 @@ func _make_new_collision_polygon_2d() -> CollisionPolygon2D:
 		c_poly.set_owner(collision_object.owner)
 	if Engine.is_editor_hint() and lock_assigned_shapes:
 		c_poly.set_meta("_edit_lock_", true)
+	if collision_object not in get_children():
+		c_poly.global_transform = global_transform
 	return c_poly
 
 
