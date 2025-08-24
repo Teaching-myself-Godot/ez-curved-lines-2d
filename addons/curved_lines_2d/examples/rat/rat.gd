@@ -6,10 +6,13 @@ signal cut_shapes(global_pos : Vector2, curve : Curve2D)
 const SPEED := 500.0
 const JUMP_VELOCITY = -300.0
 
+var speed := 0.0
 var dead := false
 var bumped_into_wall := false
 var target : Node2D = null
 @onready var orig_pos := position
+
+var _cooldown_frames := 0
 
 func _ready() -> void:
 	$AnimationPlayer.play("run")
@@ -28,9 +31,11 @@ func _unhandled_input(event: InputEvent) -> void:
 			$ShapeHintEllipse.visible = not $ShapeHintEllipse.visible
 			$ShapeHintRectangle.visible = not $ShapeHintRectangle.visible
 
-		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		if _cooldown_frames <= 0 and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			var cur_shape : ScalableVectorShape2D = $ShapeHintEllipse if $ShapeHintEllipse.visible else $ShapeHintRectangle
 			place_shape.emit(get_global_mouse_position(), cur_shape.curve)
+			_cooldown_frames = 10
+
 
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 			var cur_shape : ScalableVectorShape2D = $ShapeHintEllipse if $ShapeHintEllipse.visible else $ShapeHintRectangle
@@ -40,18 +45,31 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	if dead:
 		return
+
 	if not is_on_floor():
 		velocity += get_gravity() * delta * 3
-		velocity.x = move_toward(velocity.x, 0.0, SPEED * delta)
+		velocity.x = move_toward(velocity.x, 0.0, speed * delta)
 	else:
-		velocity.x = SPEED if $Pivot.scale.x > 0 else -SPEED
+		velocity.x = speed if $Pivot.scale.x > 0 else -speed
+
+	if speed < SPEED:
+		speed += 25.0
+
 	move_and_slide()
 	if bumped_into_wall:
 		bumped_into_wall = false
+		speed = 0.0
 		$Pivot.scale.x = -$Pivot.scale.x
 	elif is_on_wall() and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 
+	if _cooldown_frames > 0:
+		_cooldown_frames -= 1
+		$ShapeHintEllipse.stroke_color = Color(Color.LIGHT_GRAY, 0.2)
+		$ShapeHintRectangle.stroke_color = Color(Color.LIGHT_GRAY, 0.2)
+	else:
+		$ShapeHintEllipse.stroke_color = Color(0.383, 1.0, 0.0)
+		$ShapeHintRectangle.stroke_color = Color(0.383, 1.0, 0.0)
 
 func _on_wall_detector_body_entered(body: Node2D) -> void:
 	if body is StaticBody2D:

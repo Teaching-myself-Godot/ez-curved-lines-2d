@@ -16,9 +16,8 @@ func _on_rat_place_shape(global_pos: Vector2, curve: Curve2D) -> void:
 	(new_shape.polygon.texture as NoiseTexture2D).noise = FastNoiseLite.new()
 	(new_shape.polygon.texture as NoiseTexture2D).seamless = true
 	new_shape.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
-	new_shape.collision_object = StaticBody2D.new()
+	new_shape.collision_object = $BlockStaticBody
 	new_shape.add_to_group("blocks")
-	new_shape.add_child(new_shape.collision_object)
 	new_shape.add_child(new_shape.polygon)
 	add_child(new_shape)
 
@@ -29,5 +28,8 @@ func _on_rat_cut_shapes(global_pos: Vector2, curve: Curve2D) -> void:
 	new_shape.curve = curve
 	new_shape.position = global_pos
 	add_child(new_shape)
-	for block in get_tree().get_nodes_in_group("blocks"):
-		(block as ScalableVectorShape2D).add_clip_path(new_shape)
+	for block : ScalableVectorShape2D in get_tree().get_nodes_in_group("blocks"):
+		if Rect2(new_shape.position, new_shape.get_bounding_rect().size).intersects(
+			Rect2(block.position, block.get_bounding_rect().size)
+		):
+			block.add_clip_path(new_shape)
