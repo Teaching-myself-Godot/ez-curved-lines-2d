@@ -66,8 +66,8 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 		assign_fill_inspector_form.scalable_vector_shape_2d = object
 		add_custom_control(assign_fill_inspector_form)
 	elif name == "collision_polygon" and (object is ScalableVectorShape2D):
-		if object.collision_polygon == null:
-			return true
+		#if object.collision_polygon == null:
+			#return true
 		var assign_collision_inspector_form = load("res://addons/curved_lines_2d/assign_collision_inspector_form.tscn").instantiate()
 		assign_collision_inspector_form.scalable_vector_shape_2d = object
 		add_custom_control(assign_collision_inspector_form)

@@ -161,13 +161,6 @@ var stroke_width := 10.0:
 
 
 @export_group("Collision")
-## The CollisionPolygon2D controlled by this node's curve property
-## @deprecated: Use [member collision_object] instead.
-@export var collision_polygon: CollisionPolygon2D:
-	set(_poly):
-		collision_polygon = _poly
-		assigned_node_changed.emit()
-
 ## The [CollisionObject2D] containing the [CollisionPolygon2D] node(s) generated
 ## by this shape
 @export var collision_object: CollisionObject2D:
@@ -175,6 +168,14 @@ var stroke_width := 10.0:
 		collision_object = _coll
 		assigned_node_changed.emit()
 
+
+@export_subgroup("Collision Polygon2D*")
+## The CollisionPolygon2D controlled by this node's curve property
+## @deprecated: Use [member collision_object] instead.
+@export var collision_polygon: CollisionPolygon2D:
+	set(_poly):
+		collision_polygon = _poly
+		assigned_node_changed.emit()
 
 @export_group("Navigation")
 @export var navigation_region: NavigationRegion2D:
