@@ -170,7 +170,7 @@ func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_na
 	var parent = current_selection if current_selection is Node else scene_root
 	new_shape.name = node_name
 	if not is_instance_valid(is_cutout_for):
-		new_shape.position = _get_viewport_center() if parent == scene_root else Vector2.ZERO
+		new_shape.position = Vector2.ZERO
 	undo_redo.create_action("Add a %s to the scene " % node_name)
 	undo_redo.add_do_method(parent, 'add_child', new_shape, true)
 	undo_redo.add_do_method(new_shape, 'set_owner', scene_root)
@@ -777,14 +777,15 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 
 	if shape_preview:
 		var points := Array(shape_preview.tessellate())
-		var pos = _get_viewport_center()
 		var stroke_width = (_get_default_stroke_width() * EditorInterface.get_editor_viewport_2d()
 				.get_final_transform().get_scale().x)
 		if current_selection is Node2D:
 			points = points.map(current_selection.to_global)
-			pos = Vector2.ZERO
 			stroke_width *= current_selection.global_scale.x
-		points = points.map(func(p): return p + pos).map(_vp_transform)
+		elif current_selection is Control:
+			points = points.map(func(p): return current_selection.get_global_transform() * p)
+			stroke_width *= current_selection.get_global_transform().get_scale().x
+		points = points.map(_vp_transform)
 		match _get_default_paint_order():
 			PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
 				if _is_add_stroke_enabled():
