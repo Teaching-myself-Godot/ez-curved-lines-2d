@@ -323,8 +323,6 @@ var cached_clipped_polygons : Array[PackedVector2Array] = []
 var cached_poly_strokes : Array[PackedVector2Array] = []
 
 
-var _assigned_collision_polygons : Array[CollisionPolygon2D] = []
-
 # Wire up signals at runtime
 func _ready():
 	if update_curve_at_runtime:
@@ -554,7 +552,7 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 	if is_instance_valid(collision_polygon):
 		collision_polygon.polygon = polygon_points
 	if is_instance_valid(collision_object):
-		var existing = _assigned_collision_polygons.filter(is_instance_valid)
+		var existing = collision_object.get_children().filter(func(ch): return ch is CollisionPolygon2D)
 		for idx in existing.size():
 			if idx >= collision_polygons.size():
 				existing[idx].hide()
@@ -562,7 +560,6 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 		for polygon_index in collision_polygons.size():
 			if polygon_index >= existing.size():
 				existing.append(_make_new_collision_polygon_2d())
-				_assigned_collision_polygons.append(existing[polygon_index])
 			existing[polygon_index].polygon = collision_polygons[polygon_index]
 			existing[polygon_index].show()
 			existing[polygon_index].disabled = false
@@ -686,7 +683,7 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 	if is_instance_valid(collision_polygon):
 		collision_polygon.polygon = polygon_points
 	if is_instance_valid(collision_object):
-		var existing = _assigned_collision_polygons.filter(is_instance_valid)
+		var existing = collision_object.get_children().filter(func(ch): return ch is CollisionPolygon2D)
 		for idx in existing.size():
 			if idx >= collision_polygons.size():
 				existing[idx].hide()
@@ -694,7 +691,6 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 		for polygon_index in collision_polygons.size():
 			if polygon_index >= existing.size():
 				existing.append(_make_new_collision_polygon_2d())
-				_assigned_collision_polygons.append(existing[polygon_index])
 			existing[polygon_index].polygon = collision_polygons[polygon_index]
 			existing[polygon_index].show()
 			existing[polygon_index].disabled = false
