@@ -1,13 +1,15 @@
 # Changelog
 
 
-## 2.12.1 - 2025-08-23
+## 2.12.2 - 2025-08-23
 
 ### Added
 - You can now also use Polygon2D for Strokes using the `poly_stroke` property
 - Collision Objects will now also get `CollisionPolygon2D`s for strokes
 
 ### Changed
+- Reverts hiding of the Collision Polygon property field
+- Fix: position of new shapes is now always Vector2.ZERO
 - In the Stroke Inspector plugin, stroke properties are now edited on `ScalableVectorShape2D` in stead of its assigned `Line2D`:
   - `line.default_color` -> `stroke_color`
   - `line.width` -> `stroke_width`
@@ -16,8 +18,7 @@
   - `line.joint_mode` -> `line_joint_mode`
 - ⚠️ Please note that keyframes for all these properties are now set on `ScalableVectorShape2D` directly in stead of the assigned `Line2D`
 - Fix edge cases where holes resulting from geometry operations are not handled correctly
-- Fix: one `CollisionObject2D` can now be assigned to multiple `ScalableVectorShape2D` without them touching eachother's `CollisionPolygon2D`
-- Updates example "Rat's Return" to use one shared `StaticBody2D` for all the blocks
+
 
 ## 2.11.5 - 2025-18-08
 
