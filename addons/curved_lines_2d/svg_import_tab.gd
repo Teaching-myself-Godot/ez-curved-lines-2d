@@ -121,7 +121,6 @@ func _load_svg(file_path : String) -> void:
 	var svg_root := Node2D.new()
 	svg_root.name = file_path.get_file().replace(".svg", "").to_pascal_case()
 	undo_redo.create_action("Import SVG file as Nodes: %s" % svg_root.name)
-	svg_root.position = _get_viewport_center()
 	svg_root.set_meta(SVG_ROOT_META_NAME, true)
 
 	_managed_add_child_and_set_owner(parent_node, svg_root, scene_root)
