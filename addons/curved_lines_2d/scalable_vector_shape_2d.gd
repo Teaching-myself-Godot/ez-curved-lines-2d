@@ -7,6 +7,11 @@ class_name ScalableVectorShape2D
 ## Emitted when a new set of points was calculated for the [member curve].
 signal path_changed(new_points : PackedVector2Array)
 
+
+## Emitted when all polygons are computed, also provides [member self] in order to keep track of the
+## owning [ScalableVectorShape2D]
+signal polygons_updated(polygons : Array[PackedVector2Array], poly_strokes : Array[PackedVector2Array], myself : ScalableVectorShape2D)
+
 ## Emitted when [member CanvasItem.set_notify_transform] was toggled on upon
 ## every transformation (used internally to handle changes in the position of cutouts)
 signal transform_changed(ref_to_self : ScalableVectorShape2D)
@@ -517,9 +522,10 @@ func curve_changed():
 
 	if clip_paths.is_empty():
 		_update_assigned_nodes(polygon_points)
+		polygons_updated.emit(Array([cached_outline], TYPE_PACKED_VECTOR2_ARRAY, "", null), cached_poly_strokes, self)
 	else:
 		_update_assigned_nodes_with_clips(polygon_points, valid_clip_paths)
-
+		polygons_updated.emit(cached_clipped_polygons, cached_poly_strokes, self)
 
 func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 	var collision_polygons : Array[PackedVector2Array] = []
