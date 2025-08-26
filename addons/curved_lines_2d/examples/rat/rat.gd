@@ -2,13 +2,15 @@ extends CharacterBody2D
 
 signal place_shape(global_pos : Vector2, curve : Curve2D)
 signal cut_shapes(global_pos : Vector2, curve : Curve2D)
+signal has_won()
 
 const SPEED := 500.0
 const JUMP_VELOCITY = -300.0
 
 var dead := false
+var won := false
 var bumped_into_wall := false
-var target : Node2D = null
+var finish : VisibleOnScreenNotifier2D = null
 @onready var orig_pos := position
 
 func _ready() -> void:
@@ -38,7 +40,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if dead:
+	if dead or won:
 		return
 	if not is_on_floor():
 		velocity += get_gravity() * delta * 3
@@ -52,6 +54,15 @@ func _physics_process(delta: float) -> void:
 	elif is_on_wall() and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 
+	if is_instance_valid(finish):
+		if not finish.is_on_screen():
+			$TargetArrow.show()
+			$TargetArrow.look_at(finish.global_position)
+			$TargetArrow/CutoutOfTargetArrow/TheCheese.rotation = -$TargetArrow.rotation
+		else:
+			$TargetArrow.hide()
+		if position.distance_to(finish.global_position) < 150.0:
+			win()
 
 func _on_wall_detector_body_entered(body: Node2D) -> void:
 	if body is StaticBody2D:
@@ -63,10 +74,20 @@ func die() -> void:
 	$AnimationPlayer.play("disappear")
 
 
+func win() -> void:
+	won = true
+	$AnimationPlayer.play("win")
+
+
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
-	if anim_name == "disappear":
+	if anim_name == "disappear" or anim_name == "win":
 		position = orig_pos
 		modulate = Color(1.0, 1.0, 1.0, 1.0)
 		$AnimationPlayer.play("run")
 		dead = false
+		won = false
 		velocity = Vector2.ZERO
+	if anim_name == "win" and is_instance_valid(finish):
+		finish.queue_free()
+		has_won.emit()
+

@@ -1,6 +1,18 @@
 extends Node2D
 
 var collision_polygon_map : Dictionary[ScalableVectorShape2D, Array] = {}
+var TheFinishScene : PackedScene = preload("res://addons/curved_lines_2d/examples/rat/the_finish.tscn")
+
+func _ready() -> void:
+	_set_finish()
+	$Rat.has_won.connect(_set_finish)
+
+
+func _set_finish() -> void:
+	var cheese_spawns := $CheeseSpawns.get_children()
+	var finish = TheFinishScene.instantiate()
+	cheese_spawns[randi() % cheese_spawns.size()].add_child(finish)
+	$Rat.finish = finish
 
 func _on_drop_zone_body_entered(body: Node2D) -> void:
 	if 'die' in body:

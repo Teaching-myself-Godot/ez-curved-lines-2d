@@ -388,6 +388,26 @@ polygon = PackedVector2Array(20.1859, -18.275, 19.9785, -21.1548, 18.987, -23.88
 polygons = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143]]
 metadata/_edit_lock_ = true
 
+[node name="CheeseSpawns" type="Node2D" parent="."]
+
+[node name="Node2D" type="Node2D" parent="CheeseSpawns"]
+position = Vector2(-5693, -2305)
+
+[node name="Node2D2" type="Node2D" parent="CheeseSpawns"]
+position = Vector2(3981, 2056)
+
+[node name="Node2D3" type="Node2D" parent="CheeseSpawns"]
+position = Vector2(-3271, 2056)
+
+[node name="Node2D4" type="Node2D" parent="CheeseSpawns"]
+position = Vector2(5871, 1468)
+
+[node name="Node2D5" type="Node2D" parent="CheeseSpawns"]
+position = Vector2(5794, -2452)
+
+[node name="Node2D6" type="Node2D" parent="CheeseSpawns"]
+position = Vector2(-5595, 1202)
+
 [node name="BlockStaticBody2D" type="StaticBody2D" parent="."]
 unique_name_in_owner = true
 metadata/_edit_lock_ = true
