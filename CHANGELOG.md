@@ -1,11 +1,12 @@
 # Changelog
 
 
-## 2.12.2 - 2025-08-23
+## 2.12.3 - 2025-08-23
 
 ### Added
 - You can now also use Polygon2D for Strokes using the `poly_stroke` property
 - Collision Objects will now also get `CollisionPolygon2D`s for strokes
+- Adds `signal polygons_updated(polygons: Array[PackedVector2Array], poly_strokes: Array[PackedVector2Array], self_ref : ScalableVectorShape2D)`
 
 ### Changed
 - Reverts hiding of the Collision Polygon property field
@@ -18,7 +19,7 @@
   - `line.joint_mode` -> `line_joint_mode`
 - ⚠️ Please note that keyframes for all these properties are now set on `ScalableVectorShape2D` directly in stead of the assigned `Line2D`
 - Fix edge cases where holes resulting from geometry operations are not handled correctly
-
+- Rat's return example uses new signal to allow all blocks sharing the same `StaticBody2D`
 
 ## 2.11.5 - 2025-18-08
 
