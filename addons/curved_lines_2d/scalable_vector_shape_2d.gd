@@ -100,7 +100,7 @@ enum CollisionObjectType {
 		assigned_node_changed.emit()
 
 ## The width of the stroke, also sets the [member Line2D.width] of the [member line]
-@export_range(0.5, 100.0, 0.5, "suffix:px", "or_greater")
+@export_range(0.5, 100.0, 0.5, "suffix:px", "or_greater", "or_less")
 var stroke_width := 10.0:
 	set(_sw):
 		stroke_width = _sw
