@@ -221,8 +221,8 @@ static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Nod
 				csg_polygon.depth = 0.01
 				csg_polygon.name = src_node.polygon.name
 				csg_polygon.polygon = poly
-				csg_polygon.sorting_offset = 0.01
-				csg_polygon.sorting_use_aabb_center = false
+				#csg_polygon.sorting_offset = 0.01
+				#csg_polygon.sorting_use_aabb_center = false
 				csg_polygon.material = StandardMaterial3D.new()
 				(csg_polygon.material as StandardMaterial3D).shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 				(csg_polygon.material as StandardMaterial3D).transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
@@ -237,8 +237,8 @@ static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Nod
 				csg_polygon.position.z = 0.01
 				csg_polygon.name = src_node.line.name
 				csg_polygon.polygon = poly
-				csg_polygon.sorting_offset = 0.01
-				csg_polygon.sorting_use_aabb_center = false
+				#csg_polygon.sorting_offset = 0.01
+				#csg_polygon.sorting_use_aabb_center = false
 				csg_polygon.material = StandardMaterial3D.new()
 				(csg_polygon.material as StandardMaterial3D).shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 				(csg_polygon.material as StandardMaterial3D).transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
