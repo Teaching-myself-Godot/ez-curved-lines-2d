@@ -212,7 +212,7 @@ static func _copy_baked_node(src_node : Node, dst_parent : Node, dst_owner : Nod
 			dst_node.set(prop.name, src_node.get(prop.name))
 
 	dst_node.owner = dst_owner
-	for ch in src_node.get_children():
+	for ch in src_node.get_children().filter(func(ch): return ch != dst_parent):
 		_copy_baked_node(ch, dst_node, dst_owner)
 	return dst_node
 
