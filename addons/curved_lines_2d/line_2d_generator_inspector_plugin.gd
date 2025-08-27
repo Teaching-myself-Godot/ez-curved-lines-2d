@@ -192,7 +192,8 @@ static func _export_3d_scene(svs : ScalableVectorShape2D, filepath : String, dia
 	EditorInterface.get_edited_scene_root().add_child(new_node)
 	new_node.owner = EditorInterface.get_edited_scene_root()
 	var result := _copy_as_3d_node(svs, new_node, EditorInterface.get_edited_scene_root())
-	result.transform = Transform2D.IDENTITY
+	result.transform = Transform3D.IDENTITY
+	result.rotation.z = 2*PI
 	for node in result.get_children():
 		_recursive_set_owner(node, result, EditorInterface.get_edited_scene_root())
 	var scene := PackedScene.new()
@@ -202,7 +203,7 @@ static func _export_3d_scene(svs : ScalableVectorShape2D, filepath : String, dia
 	EditorInterface.open_scene_from_path(filepath)
 
 
-static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Node, recursion_depth := 1) -> Node:
+static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Node, render_depth := 1) -> Node:
 	#if src_node is ScalableVectorShape2D and src_node.get_children().is_empty():
 		#return null
 	var dst_node : Node = (
@@ -212,27 +213,44 @@ static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Nod
 	dst_parent.add_child(dst_node, true)
 
 	if dst_node is Node3D:
-		dst_node.position = Vector3(src_node.position.x, src_node.position.y, recursion_depth * 0.0001)
+		dst_node.position = Vector3(src_node.position.x, src_node.position.y, 0.0)
 		dst_node.scale = Vector3(src_node.scale.x, src_node.scale.y, 1.0)
 		dst_node.rotation = Vector3(0.0, 0.0, src_node.rotation)
 	if src_node is ScalableVectorShape2D:
 		if (src_node as ScalableVectorShape2D).clip_paths.is_empty():
 			if is_instance_valid(src_node.polygon):
-				print("yes")
 				var csg_polygon := CSGPolygon3D.new()
+				csg_polygon.depth = 1.0 + render_depth * 0.01
 				csg_polygon.name = src_node.polygon.name
 				csg_polygon.polygon = src_node.cached_outline
 				csg_polygon.material = StandardMaterial3D.new()
+				(csg_polygon.material as StandardMaterial3D).shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+				(csg_polygon.material as StandardMaterial3D).transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
 				(csg_polygon.material as StandardMaterial3D).albedo_color = (src_node as ScalableVectorShape2D).polygon.color
 				(csg_polygon.material as StandardMaterial3D).albedo_texture = (src_node as ScalableVectorShape2D).polygon.texture
 				dst_node.add_child(csg_polygon, true)
 				csg_polygon.owner = dst_owner
+			if is_instance_valid(src_node.line):
+				render_depth += 1
+				for poly in src_node.cached_poly_strokes:
+					var csg_polygon := CSGPolygon3D.new()
+					csg_polygon.depth = 1.0 + render_depth * 0.01
+					csg_polygon.name = src_node.line.name
+					csg_polygon.polygon = poly
+					csg_polygon.material = StandardMaterial3D.new()
+					(csg_polygon.material as StandardMaterial3D).shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+					(csg_polygon.material as StandardMaterial3D).transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
+					(csg_polygon.material as StandardMaterial3D).albedo_color = (src_node as ScalableVectorShape2D).stroke_color
+					dst_node.add_child(csg_polygon, true)
+					csg_polygon.owner = dst_owner
 		else:
 			print("TODO: multiple polies")
 
 	dst_node.owner = dst_owner
+	dst_node.set_meta("render_depth", render_depth)
 	for ch in src_node.get_children().filter(func(ch): return ch != dst_parent):
-		_copy_as_3d_node(ch, dst_node, dst_owner, recursion_depth + 1)
+		var result := _copy_as_3d_node(ch, dst_node, dst_owner, render_depth)
+		render_depth = result.get_meta("render_depth", 1) + 1
 	return dst_node
 
 
