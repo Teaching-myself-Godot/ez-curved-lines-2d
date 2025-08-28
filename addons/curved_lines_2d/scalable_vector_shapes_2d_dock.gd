@@ -6,7 +6,8 @@ signal set_shape_preview(curve : Curve2D)
 
 const TABS_NAME := [
 	"Scalable Vector Shapes",
-	"Import SVG File"
+	"Import SVG File",
+	"Advanced"
 ]
 
 var warning_dialog : AcceptDialog
@@ -16,14 +17,14 @@ var import_tab : SVGImportTab
 func _enter_tree() -> void:
 	for i in min(TABS_NAME.size(), get_child_count()):
 		set_tab_title(i, TABS_NAME[i])
-	
+
 	edit_tab = %SVSEditTab
 	import_tab = %SVGImportTab
 	warning_dialog = AcceptDialog.new()
 	EditorInterface.get_base_control().add_child(warning_dialog)
 	edit_tab.warning_dialog = warning_dialog
 	import_tab.warning_dialog = warning_dialog
-	
+
 	if not edit_tab.shape_created.is_connected(shape_created.emit):
 		edit_tab.shape_created.connect(shape_created.emit)
 	if not edit_tab.set_shape_preview.is_connected(set_shape_preview.emit):
