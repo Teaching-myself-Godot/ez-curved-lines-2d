@@ -30,6 +30,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 	- [The SVG Importer dock](#the-svg-importer-dock)
 		- [`Line2D` Stroke versus `Polygon2D` Stroke](#line2d-stroke-versus-polygon2d-stroke)
 		- [The import log](#the-import-log)
+- [The Advanced Tab](#the-advanced-tab)
 - [Manipulating shapes](#manipulating-shapes)
 	- [Adding a point to a shape](#adding-a-point-to-a-shape)
 	- [Bending a curve](#bending-a-curve)
@@ -46,7 +47,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 	- [Changing the start- and endpoint of the gradient](#changing-the-start--and-endpoint-of-the-gradient)
 	- [Changing the color stop positions](#changing-the-color-stop-positions)
 	- [Add new color stops](#add-new-color-stops)
-- [The Project Settings in the Scalable Vector Shapes panel](#the-project-settings-in-the-scalable-vector-shapes-panel)
+- [The Scalable Vector Shapes panel](#the-scalable-vector-shapes-panel)
 - [Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes](#ways-to-prevent-over-selecting-scalablevectorshape2d-nodes)
 - [Using the Inspector Form for `ScalableVectorShape2D`](#using-the-inspector-form-for-scalablevectorshape2d)
 	- [Inspector Form](#inspector-form)
@@ -158,6 +159,15 @@ A tooltip highlights the costs and benefits when picking either of these to draw
 On the right side is an import log, which will show warnings of known problems, usually unsupported stuff.
 
 The link it shows is to the issues list on the github repository hosting this plugin. Here you can report any encountered bugs while importing SVG files using this plugin.
+
+# The Advanced Tab
+
+Since release `2.13.0` a tab named 'Advanced' is added to the bottom dock. Currently it only hosts the 'Export Options' section. You can now export any selected node as:
+- A PNG file (see [Export as PNG Button](#export-as-png-button) )
+- A 'Baked' scene (see [Export as 'baked' scene button](#export-as-baked-scene-button))
+- A 3D scene: creates a new 3D scene, in which all the Fills and Strokes in the scene are turned into instances of `CSGPolygon3D`[^6]
+
+[^6]: Coming soon: a 3D Node with an editable outline using a `ScalableVectorShape2D` node
 
 # Manipulating shapes
 
@@ -290,7 +300,7 @@ Double clicking on the gradient line will add a new color stop (the assigned col
 
 ![adding a color stop](./addons/curved_lines_2d/screenshots/add_color_stop.png)
 
-# The Project Settings in the Scalable Vector Shapes panel
+# The Scalable Vector Shapes panel
 
 A couple of settings in the bottom panel are stored across sessions to represent your preferences:
 
