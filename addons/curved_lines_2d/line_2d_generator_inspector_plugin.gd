@@ -144,7 +144,6 @@ static func _show_exported_scene_dialog(export_root_node : Node, callable : Call
 	dialog.add_filter("*.tscn", "Scene")
 	dialog.current_file = export_root_node.name.to_snake_case()
 	dialog.file_mode = EditorFileDialog.FILE_MODE_SAVE_FILE
-	dialog.current_path = export_root_node.name.to_lower()
 	dialog.file_selected.connect(func(path): callable.call(export_root_node, path, dialog))
 	EditorInterface.get_base_control().add_child(dialog)
 	dialog.popup_centered(Vector2i(800, 400))
