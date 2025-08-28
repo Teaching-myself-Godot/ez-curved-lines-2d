@@ -3,7 +3,7 @@
 
 ## 2.13.0 - 2025-08-28
 
-###
+### Added
 - Advanced tab in bottom panel with 3 export buttons usable on any type of selected node: PNG, Baked, 3D Scene
 - Export as 3D scene (all Fills and Strokes are turned into `CSGPolygon2D` instances)
 
