@@ -132,6 +132,7 @@ func _on_convert_to_path_button_pressed(svs : ScalableVectorShape2D, button : Bu
 static func _on_export_png_button_pressed(export_root_node : Node) -> void:
 	var dialog := EditorFileDialog.new()
 	dialog.add_filter("*.png", "PNG image")
+	dialog.current_file = export_root_node.name.to_snake_case()
 	dialog.file_mode = EditorFileDialog.FILE_MODE_SAVE_FILE
 	dialog.file_selected.connect(func(path): _export_png(export_root_node, path, dialog))
 	EditorInterface.get_base_control().add_child(dialog)
@@ -204,7 +205,6 @@ static func _export_3d_scene(export_root_node : Node, filepath : String, dialog 
 
 
 static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Node, render_depth := {'a': 1}) -> Node:
-
 	var dst_node : Node = (
 		Node3D.new() if src_node is Node2D else Node.new()
 	)
