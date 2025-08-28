@@ -129,35 +129,35 @@ func _on_convert_to_path_button_pressed(svs : ScalableVectorShape2D, button : Bu
 	button.hide()
 
 
-func _on_export_png_button_pressed(svs : ScalableVectorShape2D) -> void:
+static func _on_export_png_button_pressed(export_root_node : Node) -> void:
 	var dialog := EditorFileDialog.new()
 	dialog.add_filter("*.png", "PNG image")
 	dialog.file_mode = EditorFileDialog.FILE_MODE_SAVE_FILE
-	dialog.file_selected.connect(func(path): _export_png(svs, path, dialog))
+	dialog.file_selected.connect(func(path): _export_png(export_root_node, path, dialog))
 	EditorInterface.get_base_control().add_child(dialog)
 	dialog.popup_centered(Vector2i(800, 400))
 
 
-func _show_exported_scene_dialog(svs : ScalableVectorShape2D, callable : Callable) -> void:
+static func _show_exported_scene_dialog(export_root_node : Node, callable : Callable) -> void:
 	var dialog := EditorFileDialog.new()
 	dialog.add_filter("*.tscn", "Scene")
-	dialog.current_file = svs.name.to_snake_case()
+	dialog.current_file = export_root_node.name.to_snake_case()
 	dialog.file_mode = EditorFileDialog.FILE_MODE_SAVE_FILE
-	dialog.current_path = svs.name.to_lower()
-	dialog.file_selected.connect(func(path): callable.call(svs, path, dialog))
+	dialog.current_path = export_root_node.name.to_lower()
+	dialog.file_selected.connect(func(path): callable.call(export_root_node, path, dialog))
 	EditorInterface.get_base_control().add_child(dialog)
 	dialog.popup_centered(Vector2i(800, 400))
 
 
-func _export_png(svs : ScalableVectorShape2D, filename : String, dialog : Node) -> void:
+static func _export_png(export_root_node : Node, filename : String, dialog : Node) -> void:
 	dialog.queue_free()
 	var sub_viewport := SubViewport.new()
 	EditorInterface.get_base_control().add_child(sub_viewport)
 	sub_viewport.transparent_bg = true
 	sub_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
-	var copied : ScalableVectorShape2D = svs.duplicate()
+	var copied : Node = export_root_node.duplicate()
 	sub_viewport.add_child(copied)
-	var box = copied.get_bounding_box()
+	var box = copied.get_bounding_box() if copied is ScalableVectorShape2D else [Vector2.ZERO]
 	var child_list := copied.get_children()
 	var min_x = box.map(func(corner): return corner.x).min()
 	var min_y = box.map(func(corner): return corner.y).min()
@@ -186,13 +186,13 @@ func _export_png(svs : ScalableVectorShape2D, filename : String, dialog : Node) 
 	sub_viewport.queue_free()
 
 
-static func _export_3d_scene(svs : ScalableVectorShape2D, filepath : String, dialog : Node) -> void:
+static func _export_3d_scene(export_root_node : Node, filepath : String, dialog : Node) -> void:
 	dialog.queue_free()
 	var new_node := Node3D.new()
-	new_node.name = svs.name
+	new_node.name = export_root_node.name
 	EditorInterface.get_edited_scene_root().add_child(new_node, true)
 	new_node.owner = EditorInterface.get_edited_scene_root()
-	var result := _copy_as_3d_node(svs, new_node, EditorInterface.get_edited_scene_root())
+	var result := _copy_as_3d_node(export_root_node, new_node, EditorInterface.get_edited_scene_root())
 	result.transform = Transform3D.FLIP_Y
 	for node in new_node.get_children():
 		_recursive_set_owner(node, new_node, EditorInterface.get_edited_scene_root())
@@ -221,8 +221,6 @@ static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Nod
 				csg_polygon.depth = 0.01
 				csg_polygon.name = src_node.polygon.name
 				csg_polygon.polygon = poly
-				#csg_polygon.sorting_offset = 0.01
-				#csg_polygon.sorting_use_aabb_center = false
 				csg_polygon.material = StandardMaterial3D.new()
 				(csg_polygon.material as StandardMaterial3D).shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 				(csg_polygon.material as StandardMaterial3D).transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
@@ -235,14 +233,14 @@ static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Nod
 				var csg_polygon := CSGPolygon3D.new()
 				csg_polygon.depth = 0.01
 				csg_polygon.position.z = 0.01
-				csg_polygon.name = src_node.line.name
+				csg_polygon.name = src_node.line.name if is_instance_valid(src_node.line) else src_node.poly_stroke.name
 				csg_polygon.polygon = poly
-				#csg_polygon.sorting_offset = 0.01
-				#csg_polygon.sorting_use_aabb_center = false
 				csg_polygon.material = StandardMaterial3D.new()
 				(csg_polygon.material as StandardMaterial3D).shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 				(csg_polygon.material as StandardMaterial3D).transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
 				(csg_polygon.material as StandardMaterial3D).albedo_color = (src_node as ScalableVectorShape2D).stroke_color
+				if is_instance_valid(src_node.poly_stroke) and src_node.poly_stroke.texture is GradientTexture2D:
+					(csg_polygon.material as StandardMaterial3D).albedo_texture = (src_node as ScalableVectorShape2D).poly_stroke.texture
 				dst_node.add_child(csg_polygon, true)
 				csg_polygon.owner = dst_owner
 
@@ -253,12 +251,12 @@ static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Nod
 
 
 
-static func _export_baked_scene(svs : ScalableVectorShape2D, filepath : String, dialog : Node) -> void:
+static func _export_baked_scene(export_root_node : Node, filepath : String, dialog : Node) -> void:
 	dialog.queue_free()
 	var new_node := Node2D.new()
 	EditorInterface.get_edited_scene_root().add_child(new_node)
 	new_node.owner = EditorInterface.get_edited_scene_root()
-	var result := _copy_baked_node(svs, new_node, EditorInterface.get_edited_scene_root())
+	var result := _copy_baked_node(export_root_node, new_node, EditorInterface.get_edited_scene_root())
 	result.transform = Transform2D.IDENTITY
 	for node in result.get_children():
 		_recursive_set_owner(node, result, EditorInterface.get_edited_scene_root())
