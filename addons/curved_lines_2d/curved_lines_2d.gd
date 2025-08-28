@@ -104,6 +104,12 @@ func _enter_tree():
 		preload("res://addons/curved_lines_2d/scalable_vector_shape_2d.gd"),
 		preload("res://addons/curved_lines_2d/DrawablePath2D.svg")
 	)
+	add_custom_type(
+		"AdaptableVectorShape3D",
+		"Node3D",
+		preload("res://addons/curved_lines_2d/adaptable_vector_shape_3d.gd"),
+		preload("res://addons/curved_lines_2d/AdaptableVectorShape3D.svg")
+	)
 	undo_redo = get_undo_redo()
 	add_control_to_bottom_panel(scalable_vector_shapes_2d_dock as Control, "Scalable Vector Shapes 2D")
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
