@@ -496,7 +496,8 @@ func curve_changed():
 			and not is_instance_valid(collision_polygon)
 			and not is_instance_valid(collision_object)
 			and not is_instance_valid(navigation_region)
-			and not path_changed.has_connections()):
+			and not path_changed.has_connections()
+			and not polygons_updated.has_connections()):
 		# guard against needlessly invoking expensive tessellate operation
 		return
 
