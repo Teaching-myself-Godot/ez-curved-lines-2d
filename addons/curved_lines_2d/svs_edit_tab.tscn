@@ -93,58 +93,6 @@ theme_override_constants/separation = 8
 metadata/_tab_index = 1
 metadata/_edit_vertical_guides_ = [170.0]
 
-[node name="EditorSettingsContainer" type="HBoxContainer" parent="VBoxContainer"]
-layout_mode = 2
-theme_override_constants/separation = 13
-
-[node name="Label" type="Label" parent="VBoxContainer/EditorSettingsContainer"]
-custom_minimum_size = Vector2(120, 0)
-layout_mode = 2
-tooltip_text = "Determines what settings apply to the 2D Editor Viewport."
-mouse_filter = 0
-text = "Editor Settings*"
-
-[node name="EnableEditingCheckbox" type="CheckBox" parent="VBoxContainer/EditorSettingsContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 0
-button_pressed = true
-text = "Enable ScalableVectorShape2D Editing"
-
-[node name="EnableHintsCheckbox" type="CheckBox" parent="VBoxContainer/EditorSettingsContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 0
-button_pressed = true
-text = "Show Edit Hints"
-
-[node name="EnablePointNumbersCheckbox" type="CheckBox" parent="VBoxContainer/EditorSettingsContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 0
-tooltip_text = "When active, when hovering over a point / handle in the curve
-- shows the point number index 
-- shows the point (handle) position"
-button_pressed = true
-text = "Show Point Details*"
-
-[node name="SnapToPixelCheckBox" type="CheckBox" parent="VBoxContainer/EditorSettingsContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 0
-tooltip_text = "When active, points you move will snap to whole numbers:
-- this will use the snapped global_position in the scene
-- .. so if any parent is not snapped to pixel, the local position of this point is also still not snapped"
-text = "Snap to pixel*"
-
-[node name="SnapResolutionInputContainer" type="PanelContainer" parent="VBoxContainer/EditorSettingsContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
-layout_mode = 2
-
 [node name="DrawSettingsContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 
@@ -162,6 +110,7 @@ size_flags_horizontal = 8
 tooltip_text = "- Toggled On: when creating a new shape via this panel, a Fill (Polygon2D) of this color will be automatically added
 - When a new ScalableVectorShape2D is generated via the Scene Tree or the 2D Viewport using add node, a Fill will _not_ be automatically assigned.
 - When generating a Fill via the Inspector button for ScalableVectorShape2D, the color configured here will be automatically picked."
+button_pressed = true
 text = "Fill*"
 alignment = 2
 
@@ -190,7 +139,6 @@ custom_minimum_size = Vector2(42, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 text = "Fill"
-color = Color(1, 1, 1, 1)
 
 [node name="CollisionObjectTypeOptionButton" parent="VBoxContainer/DrawSettingsContainer" instance=ExtResource("2_kh00m")]
 unique_name_in_owner = true
@@ -336,7 +284,6 @@ tooltip_text = "Use a Line2D node to represent the stroke with in stead of a Pol
 - Line2D has sharper caps and line joints at high zoom
 - Line2D can be textured directionally in stead of like a Fill texture
 - Line2D can set different Begin and End Cap Modes where Polygon2D can only pick one"
-button_pressed = true
 text = "Use Line2D*"
 
 [node name="Label2" type="Label" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer"]
@@ -415,6 +362,7 @@ icon = SubResource("AtlasTexture_exygk")
 
 [node name="EndCapForm" type="HBoxContainer" parent="VBoxContainer/StrokeSettingsContainer"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 0
 
@@ -662,10 +610,6 @@ tooltip_text = "This link will open a webpage in your browser: https://youtu.be/
 Right click to copy this link"
 uri = "https://youtu.be/_QOnMRrlIMk?t=126&feature=shared"
 
-[connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/EnableEditingCheckbox" to="." method="_on_enable_editing_checkbox_toggled"]
-[connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/EnableHintsCheckbox" to="." method="_on_enable_hints_checkbox_toggled"]
-[connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/EnablePointNumbersCheckbox" to="." method="_on_enable_point_numbers_checkbox_toggled"]
-[connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/SnapToPixelCheckBox" to="." method="_on_snap_to_pixel_check_box_toggled"]
 [connection signal="toggled" from="VBoxContainer/DrawSettingsContainer/FillCheckButton" to="." method="_on_fill_check_button_toggled"]
 [connection signal="color_changed" from="VBoxContainer/DrawSettingsContainer/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]
 [connection signal="toggled" from="VBoxContainer/DrawSettingsContainer/StrokeCheckButton" to="." method="_on_stroke_check_button_toggled"]
