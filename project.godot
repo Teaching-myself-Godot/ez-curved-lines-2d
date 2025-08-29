@@ -13,19 +13,19 @@ config_version=5
 curved_lines_2d/add_collision_enabled=false
 curved_lines_2d/add_stroke_enabled=true
 curved_lines_2d/add_fill_enabled=true
-curved_lines_2d/stroke_color=Color(1, 1, 1, 1)
-curved_lines_2d/stroke_width=2.0
+curved_lines_2d/stroke_color=Color(0, 0, 0, 1)
+curved_lines_2d/stroke_width=4.0
 curved_lines_2d/line_joint_mode=0
 curved_lines_2d/line_end_cap=0
 curved_lines_2d/line_begin_cap=0
 curved_lines_2d/paint_order=1
-curved_lines_2d/show_point_numbers=false
+curved_lines_2d/show_point_numbers=true
 curved_lines_2d/hints_enabled=true
 curved_lines_2d/snap_to_pixel=true
-curved_lines_2d/snap_resolution=8.0
+curved_lines_2d/snap_resolution=24.0
 curved_lines_2d/editing_enabled=true
-curved_lines_2d/fill_color=Color(1, 0, 0, 1)
-curved_lines_2d/add_collision_type=0
+curved_lines_2d/fill_color=Color(1, 1, 1, 1)
+curved_lines_2d/add_collision_type=1
 curved_lines_2d/use_line_2d_for_stroke=false
 
 [application]
@@ -34,10 +34,6 @@ config/name="EZ Curved Lines 2D"
 run/main_scene="uid://buueak60wkgnf"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://b5yxa1e62b0hb"
-
-[display]
-
-window/size/borderless=true
 
 [editor_plugins]
 
