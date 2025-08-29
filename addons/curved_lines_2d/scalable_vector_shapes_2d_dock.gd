@@ -5,9 +5,10 @@ signal shape_created(curve : Curve2D, scene_root : Node2D, node_name : String)
 signal set_shape_preview(curve : Curve2D)
 
 const TABS_NAME := [
+	"Project Settings",
 	"Scalable Vector Shapes",
 	"Import SVG File",
-	"Advanced"
+	"Advanced Editing"
 ]
 
 var warning_dialog : AcceptDialog
