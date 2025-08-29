@@ -93,6 +93,12 @@ This needs to be flagged On for animated curves to work, but should be used with
 button_pressed = true
 text = "Update Curve at Runtime"
 
+[node name="MakeResourcesLocalToSceneCheckBox" type="CheckBox" parent="VBoxContainer/CurveSettingsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Make Curve Local to Scene"
+
 [node name="HSeparator3" type="HSeparator" parent="VBoxContainer"]
 layout_mode = 2
 
@@ -101,3 +107,4 @@ layout_mode = 2
 [connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/EnablePointNumbersCheckbox" to="." method="_on_enable_point_numbers_checkbox_toggled"]
 [connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/SnapToPixelCheckBox" to="." method="_on_snap_to_pixel_check_box_toggled"]
 [connection signal="toggled" from="VBoxContainer/CurveSettingsContainer/UpdateCurveAtRuntimeCheckbox" to="." method="_on_update_curve_at_runtime_checkbox_toggled"]
+[connection signal="toggled" from="VBoxContainer/CurveSettingsContainer/MakeResourcesLocalToSceneCheckBox" to="." method="_on_make_resources_local_to_scene_check_box_toggled"]
