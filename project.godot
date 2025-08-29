@@ -27,6 +27,7 @@ curved_lines_2d/editing_enabled=true
 curved_lines_2d/fill_color=Color(1, 1, 1, 1)
 curved_lines_2d/add_collision_type=1
 curved_lines_2d/use_line_2d_for_stroke=false
+curved_lines_2d/update_curve_at_runtime=true
 
 [application]
 

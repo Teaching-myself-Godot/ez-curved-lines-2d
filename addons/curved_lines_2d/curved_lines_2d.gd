@@ -21,6 +21,9 @@ const SETTING_NAME_DEFAULT_LINE_JOINT_MODE := "addons/curved_lines_2d/line_joint
 const SETTING_NAME_SNAP_TO_PIXEL := "addons/curved_lines_2d/snap_to_pixel"
 const SETTING_NAME_SNAP_RESOLUTION := "addons/curved_lines_2d/snap_resolution"
 
+const SETTING_NAME_CURVE_UPDATE_CURVE_AT_RUNTIME := "addons/curved_lines_2d/update_curve_at_runtime"
+
+
 const META_NAME_HOVER_POINT_IDX := "_hover_point_idx_"
 const META_NAME_HOVER_CP_IN_IDX := "_hover_cp_in_idx_"
 const META_NAME_HOVER_CP_OUT_IDX := "_hover_cp_out_idx_"
@@ -168,6 +171,8 @@ func _on_shape_created(curve : Curve2D, scene_root : Node, node_name : String) -
 func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_name : String, is_cutout_for : ScalableVectorShape2D = null) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	var parent = current_selection if current_selection is Node else scene_root
+	new_shape.update_curve_at_runtime = _is_setting_update_curve_at_runtime()
+
 	new_shape.name = node_name
 	if not is_instance_valid(is_cutout_for):
 		new_shape.position = Vector2.ZERO
@@ -1069,11 +1074,7 @@ func _set_shape_origin(current_selection : ScalableVectorShape2D, mouse_pos : Ve
 
 
 func _get_curve_backup(curve_in : Curve2D) -> Curve2D:
-	var curve_copy := Curve2D.new()
-	for i in range(curve_in.point_count):
-		curve_copy.add_point(curve_in.get_point_position(i),
-				curve_in.get_point_in(i), curve_in.get_point_out(i))
-	return curve_copy
+	return curve_in.duplicate()
 
 
 func _resize_shape(svs : ScalableVectorShape2D, s : float) -> void:
@@ -1568,6 +1569,12 @@ static func _get_snap_resolution() -> float:
 	if ProjectSettings.has_setting(SETTING_NAME_SNAP_RESOLUTION):
 		return ProjectSettings.get_setting(SETTING_NAME_SNAP_RESOLUTION)
 	return 1.0
+
+
+static func _is_setting_update_curve_at_runtime() -> bool:
+	if ProjectSettings.has_setting(SETTING_NAME_CURVE_UPDATE_CURVE_AT_RUNTIME):
+		return ProjectSettings.get_setting(SETTING_NAME_CURVE_UPDATE_CURVE_AT_RUNTIME)
+	return true
 
 
 func _exit_tree():

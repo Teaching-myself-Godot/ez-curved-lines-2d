@@ -84,6 +84,15 @@ tooltip_text = "These are the default properties that will apply to the `curve :
 mouse_filter = 0
 text = "Curve Settings*"
 
+[node name="UpdateCurveAtRuntimeCheckbox" type="CheckBox" parent="VBoxContainer/CurveSettingsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "When toggled On, shape changes to the curve will also take effect at runtime, not only while editing. 
+
+This needs to be flagged On for animated curves to work, but should be used with care regarding potential performance impact."
+button_pressed = true
+text = "Update Curve at Runtime"
+
 [node name="HSeparator3" type="HSeparator" parent="VBoxContainer"]
 layout_mode = 2
 
@@ -91,3 +100,4 @@ layout_mode = 2
 [connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/EnableHintsCheckbox" to="." method="_on_enable_hints_checkbox_toggled"]
 [connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/EnablePointNumbersCheckbox" to="." method="_on_enable_point_numbers_checkbox_toggled"]
 [connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/SnapToPixelCheckBox" to="." method="_on_snap_to_pixel_check_box_toggled"]
+[connection signal="toggled" from="VBoxContainer/CurveSettingsContainer/UpdateCurveAtRuntimeCheckbox" to="." method="_on_update_curve_at_runtime_checkbox_toggled"]
