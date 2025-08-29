@@ -3,6 +3,7 @@ extends Control
 
 var snap_resolution_input : EditorSpinSlider
 var tolerance_degrees_input : EditorSpinSlider
+var max_stages_input : EditorSpinSlider
 
 func _enter_tree() -> void:
 	%EnableEditingCheckbox.button_pressed = CurvedLines2D._is_editing_enabled()
@@ -24,6 +25,11 @@ func _enter_tree() -> void:
 	if not tolerance_degrees_input.focus_exited.is_connected(ProjectSettings.save):
 		tolerance_degrees_input.focus_exited.connect(ProjectSettings.save)
 
+	max_stages_input = _make_number_input("Max Stages", CurvedLines2D._get_default_max_stages(), 1, 10, "")
+	%MaxStagesInputContainer.add_child(max_stages_input)
+	max_stages_input.value_changed.connect(_on_max_stages_input_changed)
+	if not max_stages_input.focus_exited.is_connected(ProjectSettings.save):
+		max_stages_input.focus_exited.connect(ProjectSettings.save)
 
 
 func _make_number_input(lbl : String, value : float, min_value : float, max_value : float, suffix : String, step := 1.0) -> EditorSpinSlider:
@@ -64,6 +70,10 @@ func _on_snap_resolution_value_changed(val : float) -> void:
 
 func _on_tolerance_degrees_input_changed(val : float) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_CURVE_TOLERANCE_DEGREES, val)
+
+
+func _on_max_stages_input_changed(val : int) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_CURVE_MAX_STAGES, val)
 
 
 func _on_update_curve_at_runtime_checkbox_toggled(toggled_on: bool) -> void:

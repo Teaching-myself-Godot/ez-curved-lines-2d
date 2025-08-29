@@ -24,6 +24,7 @@ const SETTING_NAME_SNAP_RESOLUTION := "addons/curved_lines_2d/snap_resolution"
 const SETTING_NAME_CURVE_UPDATE_CURVE_AT_RUNTIME := "addons/curved_lines_2d/update_curve_at_runtime"
 const SETTING_NAME_CURVE_RESOURCE_LOCAL_TO_SCENE := "addons/curved_lines_2d/make_resources_local_to_scene"
 const SETTING_NAME_CURVE_TOLERANCE_DEGREES := "addons/curved_lines_2d/default_tolerance_degrees"
+const SETTING_NAME_CURVE_MAX_STAGES := "addons/curved_lines_2d/default_max_stages"
 
 const META_NAME_HOVER_POINT_IDX := "_hover_point_idx_"
 const META_NAME_HOVER_CP_IN_IDX := "_hover_cp_in_idx_"
@@ -176,6 +177,7 @@ func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_na
 	new_shape.curve.resource_local_to_scene = _is_making_curve_resources_local_to_scene()
 	new_shape.arc_list.resource_local_to_scene = _is_making_curve_resources_local_to_scene()
 	new_shape.tolerance_degrees = _get_default_tolerance_degrees()
+	new_shape.max_stages = _get_default_max_stages()
 	new_shape.name = node_name
 	if not is_instance_valid(is_cutout_for):
 		new_shape.position = Vector2.ZERO
@@ -1590,6 +1592,12 @@ static func _get_default_tolerance_degrees() -> float:
 	if ProjectSettings.has_setting(SETTING_NAME_CURVE_TOLERANCE_DEGREES):
 		return ProjectSettings.get_setting(SETTING_NAME_CURVE_TOLERANCE_DEGREES)
 	return 4.0
+
+
+static func _get_default_max_stages() -> int:
+	if ProjectSettings.has_setting(SETTING_NAME_CURVE_MAX_STAGES):
+		return ProjectSettings.get_setting(SETTING_NAME_CURVE_MAX_STAGES)
+	return 5
 
 
 func _exit_tree():
