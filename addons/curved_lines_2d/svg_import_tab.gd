@@ -628,6 +628,7 @@ func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform :
 	svs.update_curve_at_runtime = CurvedLines2D._is_setting_update_curve_at_runtime()
 	svs.arc_list.resource_local_to_scene = CurvedLines2D._is_making_curve_resources_local_to_scene()
 	svs.curve.resource_local_to_scene = CurvedLines2D._is_making_curve_resources_local_to_scene()
+	svs.tolerance_degrees = CurvedLines2D._get_default_tolerance_degrees()
 	var gradient_point_parent : Node2D = parent
 	if transform == Transform2D.IDENTITY:
 		_managed_add_child_and_set_owner(parent, svs, scene_root)

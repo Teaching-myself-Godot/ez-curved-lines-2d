@@ -14,7 +14,7 @@ curved_lines_2d/add_collision_enabled=false
 curved_lines_2d/add_stroke_enabled=true
 curved_lines_2d/add_fill_enabled=true
 curved_lines_2d/stroke_color=Color(0, 0, 0, 1)
-curved_lines_2d/stroke_width=4.0
+curved_lines_2d/stroke_width=6.0
 curved_lines_2d/line_joint_mode=0
 curved_lines_2d/line_end_cap=0
 curved_lines_2d/line_begin_cap=0
@@ -29,6 +29,7 @@ curved_lines_2d/add_collision_type=1
 curved_lines_2d/use_line_2d_for_stroke=false
 curved_lines_2d/update_curve_at_runtime=true
 curved_lines_2d/make_resources_local_to_scene=true
+curved_lines_2d/default_tolerance_degrees=4.0
 
 [application]
 

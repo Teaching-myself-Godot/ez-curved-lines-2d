@@ -2,6 +2,7 @@
 extends Control
 
 var snap_resolution_input : EditorSpinSlider
+var tolerance_degrees_input : EditorSpinSlider
 
 func _enter_tree() -> void:
 	%EnableEditingCheckbox.button_pressed = CurvedLines2D._is_editing_enabled()
@@ -10,12 +11,19 @@ func _enter_tree() -> void:
 	%SnapToPixelCheckBox.button_pressed = CurvedLines2D._is_snapped_to_pixel()
 	%UpdateCurveAtRuntimeCheckbox.button_pressed = CurvedLines2D._is_setting_update_curve_at_runtime()
 	%MakeResourcesLocalToSceneCheckBox.button_pressed = CurvedLines2D._is_making_curve_resources_local_to_scene()
-	snap_resolution_input = _make_number_input("Snap distance", 1.0, 1.0, 1024.0, "px", 1.0)
+
+	snap_resolution_input = _make_number_input("Snap distance", CurvedLines2D._get_snap_resolution(), 1.0, 1024.0, "px", 1.0)
 	%SnapResolutionInputContainer.add_child(snap_resolution_input)
-	snap_resolution_input.value = CurvedLines2D._get_snap_resolution()
 	snap_resolution_input.value_changed.connect(_on_snap_resolution_value_changed)
 	if not snap_resolution_input.focus_exited.is_connected(ProjectSettings.save):
 		snap_resolution_input.focus_exited.connect(ProjectSettings.save)
+
+	tolerance_degrees_input = _make_number_input("Tolerance Degrees", CurvedLines2D._get_default_tolerance_degrees(), 0.0, 180.0, "°", 0.5)
+	%ToleranceDegreesInputContainer.add_child(tolerance_degrees_input)
+	tolerance_degrees_input.value_changed.connect(_on_tolerance_degrees_input_changed)
+	if not tolerance_degrees_input.focus_exited.is_connected(ProjectSettings.save):
+		tolerance_degrees_input.focus_exited.connect(ProjectSettings.save)
+
 
 
 func _make_number_input(lbl : String, value : float, min_value : float, max_value : float, suffix : String, step := 1.0) -> EditorSpinSlider:
@@ -52,6 +60,10 @@ func _on_snap_to_pixel_check_box_toggled(toggled_on: bool) -> void:
 
 func _on_snap_resolution_value_changed(val : float) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_SNAP_RESOLUTION, val)
+
+
+func _on_tolerance_degrees_input_changed(val : float) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_CURVE_TOLERANCE_DEGREES, val)
 
 
 func _on_update_curve_at_runtime_checkbox_toggled(toggled_on: bool) -> void:

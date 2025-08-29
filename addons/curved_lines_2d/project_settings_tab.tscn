@@ -99,6 +99,12 @@ layout_mode = 2
 button_pressed = true
 text = "Make Curve Local to Scene"
 
+[node name="ToleranceDegreesInputContainer" type="PanelContainer" parent="VBoxContainer/CurveSettingsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="HSeparator3" type="HSeparator" parent="VBoxContainer"]
 layout_mode = 2
 
