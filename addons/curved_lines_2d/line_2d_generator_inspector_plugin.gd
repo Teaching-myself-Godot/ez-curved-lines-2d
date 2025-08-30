@@ -189,7 +189,7 @@ static func _export_png(export_root_node : Node, filename : String, dialog : Nod
 static func _export_3d_scene(export_root_node : Node, filepath : String, dialog : Node) -> void:
 	dialog.queue_free()
 	var new_node := Node3D.new()
-	new_node.name = export_root_node.name
+	new_node.name = "%sFlipped" % export_root_node.name
 	EditorInterface.get_edited_scene_root().add_child(new_node, true)
 	new_node.owner = EditorInterface.get_edited_scene_root()
 	var result := _copy_as_3d_node(export_root_node, new_node, EditorInterface.get_edited_scene_root())
@@ -213,34 +213,14 @@ static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Nod
 	if dst_node is Node3D:
 		dst_node.transform = src_node.transform
 		dst_node.position.z = render_depth['a'] * 0.01
-	if src_node is ScalableVectorShape2D and (src_node as CanvasItem).is_visible_in_tree():
+	if src_node is ScalableVectorShape2D and src_node.is_visible_in_tree():
+		render_depth['a'] += 1
 		if is_instance_valid(src_node.polygon):
-			render_depth['a'] += 1
-			for poly in ([src_node.cached_outline] if src_node.clip_paths.is_empty() else src_node.cached_clipped_polygons):
-				var csg_polygon := CSGPolygon3D.new()
-				csg_polygon.depth = 0.01
-				csg_polygon.name = src_node.polygon.name
-				csg_polygon.polygon = poly
-				csg_polygon.material = StandardMaterial3D.new()
-				(csg_polygon.material as StandardMaterial3D).shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
-				(csg_polygon.material as StandardMaterial3D).transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
-				(csg_polygon.material as StandardMaterial3D).albedo_color = (src_node as ScalableVectorShape2D).polygon.color
-				(csg_polygon.material as StandardMaterial3D).albedo_texture = (src_node as ScalableVectorShape2D).polygon.texture
+			for csg_polygon in AdaptableVectorShape3D.extract_csg_polygons_from_scalable_vector_shapes(src_node):
 				dst_node.add_child(csg_polygon, true)
 				csg_polygon.owner = dst_owner
 		if (is_instance_valid(src_node.line) or is_instance_valid(src_node.poly_stroke)) and src_node.stroke_width > 0.0:
-			for poly in src_node.cached_poly_strokes:
-				var csg_polygon := CSGPolygon3D.new()
-				csg_polygon.depth = 0.01
-				csg_polygon.position.z = 0.01
-				csg_polygon.name = src_node.line.name if is_instance_valid(src_node.line) else src_node.poly_stroke.name
-				csg_polygon.polygon = poly
-				csg_polygon.material = StandardMaterial3D.new()
-				(csg_polygon.material as StandardMaterial3D).shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
-				(csg_polygon.material as StandardMaterial3D).transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
-				(csg_polygon.material as StandardMaterial3D).albedo_color = (src_node as ScalableVectorShape2D).stroke_color
-				if is_instance_valid(src_node.poly_stroke) and src_node.poly_stroke.texture is GradientTexture2D:
-					(csg_polygon.material as StandardMaterial3D).albedo_texture = (src_node as ScalableVectorShape2D).poly_stroke.texture
+			for csg_polygon in AdaptableVectorShape3D.extract_csg_polygons_from_scalable_vector_shapes(src_node, true, is_instance_valid(src_node.line)):
 				dst_node.add_child(csg_polygon, true)
 				csg_polygon.owner = dst_owner
 
@@ -248,7 +228,6 @@ static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Nod
 	for ch in src_node.get_children().filter(func(ch): return ch != dst_parent):
 		var result := _copy_as_3d_node(ch, dst_node, dst_owner, render_depth)
 	return dst_node
-
 
 
 static func _export_baked_scene(export_root_node : Node, filepath : String, dialog : Node) -> void:
