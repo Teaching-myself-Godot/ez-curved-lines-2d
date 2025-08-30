@@ -8,6 +8,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 8
 script = ExtResource("1_h55kp")
 metadata/_tab_index = 2
 
@@ -36,6 +37,9 @@ text = "'Baked' Scene
 [node name="ExportAs3DSceneButton" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 text = "3D Scene"
+
+[node name="HSeparator" type="HSeparator" parent="."]
+layout_mode = 2
 
 [connection signal="pressed" from="HBoxContainer/ExportAsPNGButton" to="." method="_on_export_as_png_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/ExportAsBakedSceneButton" to="." method="_on_export_as_baked_scene_button_pressed"]

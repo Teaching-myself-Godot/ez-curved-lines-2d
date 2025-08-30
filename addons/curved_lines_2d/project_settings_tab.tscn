@@ -1,0 +1,122 @@
+[gd_scene load_steps=2 format=3 uid="uid://d3j2c8gduqsuu"]
+
+[ext_resource type="Script" uid="uid://xijifdpi2kw" path="res://addons/curved_lines_2d/project_settings_tab.gd" id="1_q4g58"]
+
+[node name="ProjectSettingsTab" type="ScrollContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_q4g58")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+metadata/_tab_index = 2
+
+[node name="EditorSettingsContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 13
+
+[node name="Label" type="Label" parent="VBoxContainer/EditorSettingsContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+tooltip_text = "Determines what settings apply to the 2D Editor Viewport."
+mouse_filter = 0
+text = "Editor Settings*"
+
+[node name="EnableEditingCheckbox" type="CheckBox" parent="VBoxContainer/EditorSettingsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+button_pressed = true
+text = "Enable ScalableVectorShape2D Editing"
+
+[node name="EnableHintsCheckbox" type="CheckBox" parent="VBoxContainer/EditorSettingsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+button_pressed = true
+text = "Show Edit Hints"
+
+[node name="EnablePointNumbersCheckbox" type="CheckBox" parent="VBoxContainer/EditorSettingsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "When active, when hovering over a point / handle in the curve
+- shows the point number index 
+- shows the point (handle) position"
+button_pressed = true
+text = "Show Point Details*"
+
+[node name="SnapToPixelCheckBox" type="CheckBox" parent="VBoxContainer/EditorSettingsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "When active, points you move will snap to whole numbers:
+- this will use the snapped global_position in the scene
+- .. so if any parent is not snapped to pixel, the local position of this point is also still not snapped"
+button_pressed = true
+text = "Snap to pixel*"
+
+[node name="SnapResolutionInputContainer" type="PanelContainer" parent="VBoxContainer/EditorSettingsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="CurveSettingsContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 13
+
+[node name="Label" type="Label" parent="VBoxContainer/CurveSettingsContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+tooltip_text = "These are the default properties that will apply to the `curve : Curve2D`  property of all the shapes created via this bottom dock and shortcuts:
+- Create Shapes Tab
+- Import SVG File Tab
+- Making cutouts using Ctrl+Shift+Click"
+mouse_filter = 0
+text = "Curve Settings*"
+
+[node name="UpdateCurveAtRuntimeCheckbox" type="CheckBox" parent="VBoxContainer/CurveSettingsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "When toggled On, shape changes to the curve will also take effect at runtime, not only while editing. 
+
+This needs to be flagged On for animated curves to work, but should be used with care regarding potential performance impact."
+button_pressed = true
+text = "Update Curve at Runtime"
+
+[node name="MakeResourcesLocalToSceneCheckBox" type="CheckBox" parent="VBoxContainer/CurveSettingsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Make Curve Local to Scene"
+
+[node name="ToleranceDegreesInputContainer" type="PanelContainer" parent="VBoxContainer/CurveSettingsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MaxStagesInputContainer" type="PanelContainer" parent="VBoxContainer/CurveSettingsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator3" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/EnableEditingCheckbox" to="." method="_on_enable_editing_checkbox_toggled"]
+[connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/EnableHintsCheckbox" to="." method="_on_enable_hints_checkbox_toggled"]
+[connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/EnablePointNumbersCheckbox" to="." method="_on_enable_point_numbers_checkbox_toggled"]
+[connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/SnapToPixelCheckBox" to="." method="_on_snap_to_pixel_check_box_toggled"]
+[connection signal="toggled" from="VBoxContainer/CurveSettingsContainer/UpdateCurveAtRuntimeCheckbox" to="." method="_on_update_curve_at_runtime_checkbox_toggled"]
+[connection signal="toggled" from="VBoxContainer/CurveSettingsContainer/MakeResourcesLocalToSceneCheckBox" to="." method="_on_make_resources_local_to_scene_check_box_toggled"]

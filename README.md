@@ -23,13 +23,20 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 - [Table of Contents](#table-of-contents)
 - [Drawing Shapes in the Godot 2D Viewport](#drawing-shapes-in-the-godot-2d-viewport)
 	- [Basic Drawing Explainer on youtube](#basic-drawing-explainer-on-youtube)
-- [Generating a Circle, Ellipse or Rectangle using the bottom panel item](#generating-a-circle-ellipse-or-rectangle-using-the-bottom-panel-item)
+	- [Quick Start](#quick-start)
+- [The Create Shapes Dock](#the-create-shapes-dock)
 	- [Creating Paths based on Bézier curves](#creating-paths-based-on-bézier-curves)
-	- [Creating 'primitive' scapes: Rectangle and Ellipse](#creating-primitive-scapes-rectangle-and-ellipse)
-- [Using the `.svg` importer](#using-the-svg-importer)
-	- [The SVG Importer dock](#the-svg-importer-dock)
-		- [`Line2D` Stroke versus `Polygon2D` Stroke](#line2d-stroke-versus-polygon2d-stroke)
-		- [The import log](#the-import-log)
+	- [Creating 'primitive' shapes: Rectangle and Ellipse](#creating-primitive-shapes-rectangle-and-ellipse)
+	- [Draw Settings](#draw-settings)
+	- [Futher reading](#futher-reading)
+- [The Import SVG File Dock](#the-import-svg-file-dock)
+	- [Watch an explainer on Youtube](#watch-an-explainer-on-youtube)
+	- [Using the Import SVG File Dock](#using-the-import-svg-file-dock)
+	- [`Line2D` Stroke versus `Polygon2D` Stroke](#line2d-stroke-versus-polygon2d-stroke)
+	- [The import log](#the-import-log)
+- [The Project Settings Dock](#the-project-settings-dock)
+	- [Editor Settings (how the 2D Viewport should behave):](#editor-settings-how-the-2d-viewport-should-behave)
+	- [Curve Settings](#curve-settings)
 - [The Advanced Tab](#the-advanced-tab)
 - [Manipulating shapes](#manipulating-shapes)
 	- [Adding a point to a shape](#adding-a-point-to-a-shape)
@@ -47,8 +54,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 	- [Changing the start- and endpoint of the gradient](#changing-the-start--and-endpoint-of-the-gradient)
 	- [Changing the color stop positions](#changing-the-color-stop-positions)
 	- [Add new color stops](#add-new-color-stops)
-- [The Scalable Vector Shapes panel](#the-scalable-vector-shapes-panel)
-- [Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes](#ways-to-prevent-over-selecting-scalablevectorshape2d-nodes)
+	- [Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes](#ways-to-prevent-over-selecting-scalablevectorshape2d-nodes)
 - [Using the Inspector Form for `ScalableVectorShape2D`](#using-the-inspector-form-for-scalablevectorshape2d)
 	- [Inspector Form](#inspector-form)
 		- [Convert to Path button](#convert-to-path-button)
@@ -95,17 +101,17 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 
 [![Explainer basic drawing on youtube](./addons/curved_lines_2d/screenshots/basic-drawing-youtube-thumnail.png)](https://youtu.be/_QOnMRrlIMk?t=126&feature=shared)
 
-After activating this plugin a new bottom panel item appears, called "Scalable Vector Graphics".
+## Quick Start
+After activating this plugin a new bottom panel item appears, called "Scalable Vector Shapes 2D".
 
 There are 2 recommended ways to start drawing:
-1. [Creating a Circle/Ellipse, Rectangle or empty Path using the bottom panel item](#generating-a-circle-ellipse-or-rectangle-using-the-bottom-panel-item)
-2. [Using the `.svg` importer](#using-the-svg-importer)
+1. [Creating a Circle/Ellipse, Rectangle or empty Path using the bottom panel item](#the-create-shapes-dock)
+2. [Using the `.svg` importer](#using-the-import-svg-file-dock)
 
 
-# Generating a Circle, Ellipse or Rectangle using the bottom panel item
+# The Create Shapes Dock
 
-
-The  `Scalable Vector Shapes` bottom panel gives you some basic choices:
+The  `Create Shapes` tab gives you some basic choices:
 
 ![the bottom panel](./addons/curved_lines_2d/screenshots/06-scalable-vector-shapes-panel.png)
 
@@ -116,7 +122,7 @@ Pressing the `Create Empty Path` or one of the `Create Path` buttons will add a 
 ![create ellipse as path](./addons/curved_lines_2d/screenshots/create-ellipse-as-path.png)
 
 
-## Creating 'primitive' scapes: Rectangle and Ellipse
+## Creating 'primitive' shapes: Rectangle and Ellipse
 
 It's probably easier to start out with a basic primitive shape (like you would in Inkscape <3) using the `Create Rectangle` or `Create Ellipse` button. This will expose less features, but will make it a lot easier to manipulate shapes:
 
@@ -126,15 +132,34 @@ Ellipses will only have one handle to change the `size` property with (represent
 
 Rectangles will have a handle for `size` and 2 handles for rounded corners `rx` and `ry` property.
 
-# Using the `.svg` importer
+## Draw Settings
 
+- Enable/Disable Fill (when creating new shapes via this bottom panel)
+- Fill color (when creating new shapes in this bottom panel)
+- Enable/Disable Stroke (when creating new shapes this this bottom panel)
+- Stroke color (when creating new shapes in this bottom panel)
+- Choose a `CollisionObject2D` type (when creating new shapes in this bottom panel, default is no collision object assignment)
+- Paint order: a toggle which represent what comes in front of what (when creating new shapes in the bottom panel)
+- Stroke Settings:
+- Stroke Width (when creating new shapes via this bottom panel)
+- Use `Line2D`: when flagged off, a `Polygon2D` will be used to draw strokes with in stead (see also: [`Line2D Stroke` versus `Polygon2D Stroke`](#line2d-stroke-versus-polygon2d-stroke) )
+- Begin- and End Cap modes
+- Line Joint Mode
+
+
+## Futher reading
+Read more about [manipulating shapes](#manipulating-shapes)
+
+# The Import SVG File Dock
+
+![svg importer dock](./addons/curved_lines_2d/screenshots/svg_importer_dock.png)
+
+## Watch an explainer on Youtube
 
 [![watch explainer on youtube](./addons/curved_lines_2d/screenshots/importing-svg-files-youtube-thumbnail.png)](https://youtu.be/3j_OEfU8qbo?feature=shared)
 
 
-## The SVG Importer dock
-
-![svg importer dock](./addons/curved_lines_2d/screenshots/svg_importer_dock.png)
+## Using the Import SVG File Dock
 
 On the left side of this panel is a form with a couple of options:
 
@@ -144,7 +169,7 @@ On the left side of this panel is a form with a couple of options:
 - Use Line2D for Strokes: when flagged Off a `Polygon2D` is used for strokes in stead of a Line2D
 - Pick a `CollisionObject2D` type to also generate collision polygons when importing the svg file
 
-### `Line2D` Stroke versus `Polygon2D` Stroke
+## `Line2D` Stroke versus `Polygon2D` Stroke
 
 A tooltip highlights the costs and benefits when picking either of these to draw strokes with:
 - A `Polygon2D` stroke can be more neatly clipped than a `Line2D`
@@ -154,11 +179,29 @@ A tooltip highlights the costs and benefits when picking either of these to draw
 - `Line2D` can be textured directionally in stead of like a Fill texture
 - `Line2D` can set different Begin and End Cap Modes where `Polygon2D` can only pick one
 
-### The import log
+## The import log
 
 On the right side is an import log, which will show warnings of known problems, usually unsupported stuff.
 
 The link it shows is to the issues list on the github repository hosting this plugin. Here you can report any encountered bugs while importing SVG files using this plugin.
+
+# The Project Settings Dock
+
+![Project settings dock](./addons/curved_lines_2d/screenshots/project-settings.png)
+
+## Editor Settings (how the 2D Viewport should behave):
+
+- Enable/Disable ScalableVectorShape2D Editing (when checked off, you can edit nodes the normal, built-in, godot-way. You _are_ going to need this)
+- Show/Hide Edit hints
+- Show Point Details (which are the exact _indices_ of each point on the `Curve2D` of this shape, what is it's global position)
+- Snap to Pixel (snaps points and curve handles to whole pixels on the global transform)
+- Snap distance (the snap step / resolution)
+
+## Curve Settings
+
+These settings are applied to the `Curve Settings` of new shapes when added via the bottom panel docks (either SVG importer or via Create Shapes).
+
+For more information on these settings, please refer to the section on [The Curve settings inspector form](#the-curve-settings-inspector-form)
 
 # The Advanced Tab
 
@@ -300,33 +343,7 @@ Double clicking on the gradient line will add a new color stop (the assigned col
 
 ![adding a color stop](./addons/curved_lines_2d/screenshots/add_color_stop.png)
 
-# The Scalable Vector Shapes panel
-
-A couple of settings in the bottom panel are stored across sessions to represent your preferences:
-
-![The Settings Panel](./addons/curved_lines_2d/screenshots/settings_panel.png)
-
-- Editor settings (how the 2D Viewport should behave):
-  - Enable/Disable ScalableVectorShape2D Editing (when checked off, you can edit nodes the normal, built-in, godot-way. You _are_ going to need this)
-  - Show/Hide Edit hints
-  - Show Point Details (which are the exact _indices_ of each point on the `Curve2D` of this shape, what is it's global position)
-  - Snap to Pixel (snaps points and curve handles to whole pixels on the global transform)
-  - Snap distance (the snap step / resolution)
-- Draw Settings:
-  - Enable/Disable Fill (when creating new shapes via this bottom panel)
-  - Fill color (when creating new shapes in this bottom panel)
-  - Enable/Disable Stroke (when creating new shapes this this bottom panel)
-  - Stroke color (when creating new shapes in this bottom panel)
-  - Choose a `CollisionObject2D` type (when creating new shapes in this bottom panel, default is no collision object assignment)
-  - Paint order: a toggle which represent what comes in front of what (when creating new shapes in the bottom panel)
-- Stroke Settings:
-  - Stroke Width (when creating new shapes via this bottom panel)
-  - Use `Line2D`: when flagged off, a `Polygon2D` will be used to draw strokes with in stead (see also: [`Line2D Stroke` versus `Polygon2D Stroke`](#line2d-stroke-versus-polygon2d-stroke) )
-  - Begin- and End Cap modes
-  - Line Joint Mode
-
-
-# Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes
+## Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes
 
 This plugin can sometimes get in the way of the default 2D viewport behavior. Sometimes it is hard _not_ to select a `ScalableVectorShape2D`.
 

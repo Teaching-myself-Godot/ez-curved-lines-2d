@@ -193,7 +193,8 @@ static func _export_3d_scene(export_root_node : Node, filepath : String, dialog 
 	EditorInterface.get_edited_scene_root().add_child(new_node, true)
 	new_node.owner = EditorInterface.get_edited_scene_root()
 	var result := _copy_as_3d_node(export_root_node, new_node, EditorInterface.get_edited_scene_root())
-	result.transform = Transform3D.FLIP_Y
+	if result is Node3D:
+		result.transform = Transform3D.FLIP_Y
 	for node in new_node.get_children():
 		_recursive_set_owner(node, new_node, EditorInterface.get_edited_scene_root())
 	var scene := PackedScene.new()
