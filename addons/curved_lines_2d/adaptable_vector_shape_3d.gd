@@ -40,16 +40,17 @@ func _on_guide_svs_assigned():
 
 
 func _on_guide_svs_polygons_updated(polygons : Array[PackedVector2Array], poly_strokes : Array[PackedVector2Array], _svs : ScalableVectorShape2D):
+	for p in fill_polygons + stroke_polygons:
+		p.hide()
 	for i in polygons.size():
 		if i < fill_polygons.size():
+			fill_polygons[i].show()
 			fill_polygons[i].polygon = polygons[i]
-
-	for p in stroke_polygons:
-		p.hide()
 	for i in poly_strokes.size():
 		if i < stroke_polygons.size():
 			stroke_polygons[i].show()
 			stroke_polygons[i].polygon = poly_strokes[i]
+
 
 func _on_guide_svs_transform_changed(_svs : ScalableVectorShape2D):
 	var stored_z := position.z
