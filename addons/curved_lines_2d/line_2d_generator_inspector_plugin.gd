@@ -189,7 +189,7 @@ static func _export_png(export_root_node : Node, filename : String, dialog : Nod
 static func _export_3d_scene(export_root_node : Node, filepath : String, dialog : Node) -> void:
 	dialog.queue_free()
 	var new_node := Node3D.new()
-	new_node.name = "%sFlipped" % export_root_node.name
+	new_node.name = "%s3D" % export_root_node.name
 	EditorInterface.get_edited_scene_root().add_child(new_node, true)
 	new_node.owner = EditorInterface.get_edited_scene_root()
 	var result := _copy_as_3d_node(export_root_node, new_node, EditorInterface.get_edited_scene_root())
@@ -204,7 +204,7 @@ static func _export_3d_scene(export_root_node : Node, filepath : String, dialog 
 	EditorInterface.open_scene_from_path(filepath)
 
 
-static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Node, render_depth := {'a': 1}) -> Node:
+static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Node, node_depth := 0, render_depth := 0) -> Node:
 	var dst_node : Node = (
 		Node3D.new() if src_node is Node2D else Node.new()
 	)
@@ -212,21 +212,32 @@ static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Nod
 	dst_parent.add_child(dst_node, true)
 	if dst_node is Node3D:
 		dst_node.transform = src_node.transform
-		dst_node.position.z = render_depth['a'] * 0.01
+		dst_node.position.z = (node_depth + render_depth) * 0.02
 	if src_node is ScalableVectorShape2D and src_node.is_visible_in_tree():
-		render_depth['a'] += 1
+		var has_valid_stroke : bool = (
+				is_instance_valid(src_node.line) or is_instance_valid(src_node.poly_stroke)
+		) and src_node.stroke_width > 0.0
 		if is_instance_valid(src_node.polygon):
-			for csg_polygon in AdaptableVectorShape3D.extract_csg_polygons_from_scalable_vector_shapes(src_node):
+			var target_z_index := 0.0
+			if has_valid_stroke and not AdaptableVectorShape3D.is_stroke_in_front_of_fill(src_node):
+				target_z_index = 1
+			for csg_polygon in AdaptableVectorShape3D.extract_csg_polygons_from_scalable_vector_shapes(
+						src_node, false, false, target_z_index):
 				dst_node.add_child(csg_polygon, true)
 				csg_polygon.owner = dst_owner
-		if (is_instance_valid(src_node.line) or is_instance_valid(src_node.poly_stroke)) and src_node.stroke_width > 0.0:
-			for csg_polygon in AdaptableVectorShape3D.extract_csg_polygons_from_scalable_vector_shapes(src_node, true, is_instance_valid(src_node.line)):
+		if has_valid_stroke:
+			for csg_polygon in AdaptableVectorShape3D.extract_csg_polygons_from_scalable_vector_shapes(
+						src_node, true, is_instance_valid(src_node.line),
+						(1 if AdaptableVectorShape3D.is_stroke_in_front_of_fill(src_node) else 0)
+			):
 				dst_node.add_child(csg_polygon, true)
 				csg_polygon.owner = dst_owner
 
 	dst_node.owner = dst_owner
+	render_depth = node_depth
 	for ch in src_node.get_children().filter(func(ch): return ch != dst_parent):
-		var result := _copy_as_3d_node(ch, dst_node, dst_owner, render_depth)
+		render_depth += 1
+		var result := _copy_as_3d_node(ch, dst_node, dst_owner, node_depth + 1, render_depth)
 	return dst_node
 
 

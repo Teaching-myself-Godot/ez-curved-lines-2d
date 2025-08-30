@@ -27,7 +27,10 @@ class_name AdaptableVectorShape3D
 func _on_guide_svs_assigned():
 	if Engine.is_editor_hint():
 		fill_polygons = extract_csg_polygons_from_scalable_vector_shapes(guide_svs)
-		stroke_polygons = extract_csg_polygons_from_scalable_vector_shapes(guide_svs, true, is_instance_valid(guide_svs.line))
+		stroke_polygons = extract_csg_polygons_from_scalable_vector_shapes(guide_svs,
+				true, is_instance_valid(guide_svs.line),
+				(1 if is_stroke_in_front_of_fill(guide_svs) else -1)
+		)
 		for p in fill_polygons + stroke_polygons:
 			add_child(p, true)
 			p.owner = owner
@@ -39,7 +42,8 @@ func _on_guide_svs_assigned():
 	_on_guide_svs_transform_changed(guide_svs)
 
 
-func _on_guide_svs_polygons_updated(polygons : Array[PackedVector2Array], poly_strokes : Array[PackedVector2Array], _svs : ScalableVectorShape2D):
+func _on_guide_svs_polygons_updated(polygons : Array[PackedVector2Array],
+			poly_strokes : Array[PackedVector2Array], _svs : ScalableVectorShape2D):
 	for p in fill_polygons + stroke_polygons:
 		p.hide()
 	for i in polygons.size():
@@ -58,8 +62,24 @@ func _on_guide_svs_transform_changed(_svs : ScalableVectorShape2D):
 	position.z = stored_z
 
 
+static func is_stroke_in_front_of_fill(svs : ScalableVectorShape2D) -> bool:
+	var stroke_node : Node2D = (svs.line if is_instance_valid(svs.line) else svs.poly_stroke)
+	if not is_instance_valid(stroke_node):
+		return false
+	if not is_instance_valid(svs.polygon):
+		return true
+	var fill_found := false
+	for ch in svs.get_children():
+		if ch == svs.polygon:
+			fill_found = true
+		if ch == stroke_node and fill_found:
+			return true
+
+	return false
+
+
 static func extract_csg_polygons_from_scalable_vector_shapes(svs : ScalableVectorShape2D,
-			is_strokes := false, is_line_2d_strokes := false) -> Array[CSGPolygon3D]:
+			is_strokes := false, is_line_2d_strokes := false, z_index := 0.0) -> Array[CSGPolygon3D]:
 	var result : Array[CSGPolygon3D] = []
 	var polygons = (
 		svs.cached_poly_strokes
@@ -69,6 +89,7 @@ static func extract_csg_polygons_from_scalable_vector_shapes(svs : ScalableVecto
 	for poly : PackedVector2Array in polygons:
 		var csg_polygon := CSGPolygon3D.new()
 		csg_polygon.depth = 0.01
+		csg_polygon.position.z = 0.01 * z_index
 		csg_polygon.polygon = poly
 		csg_polygon.material = StandardMaterial3D.new()
 		csg_polygon.material.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
