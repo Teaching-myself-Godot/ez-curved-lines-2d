@@ -194,7 +194,7 @@ static func _export_3d_scene(export_root_node : Node, filepath : String, dialog 
 	new_node.owner = EditorInterface.get_edited_scene_root()
 	var result := _copy_as_3d_node(export_root_node, new_node, EditorInterface.get_edited_scene_root())
 	if result is Node3D:
-		result.transform = Transform3D.FLIP_Y
+		result.rotation_degrees.x = 180.0
 	for node in new_node.get_children():
 		_recursive_set_owner(node, new_node, EditorInterface.get_edited_scene_root())
 	var scene := PackedScene.new()
@@ -212,15 +212,15 @@ static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Nod
 	dst_parent.add_child(dst_node, true)
 	if dst_node is Node3D:
 		dst_node.transform = src_node.transform
-		dst_node.position.z = (node_depth + render_depth) * 0.02
+		dst_node.position.z = -(node_depth + render_depth) * 0.02
 	if src_node is ScalableVectorShape2D and src_node.is_visible_in_tree():
 		var has_valid_stroke : bool = (
 				is_instance_valid(src_node.line) or is_instance_valid(src_node.poly_stroke)
 		) and src_node.stroke_width > 0.0
 		if is_instance_valid(src_node.polygon):
-			var target_z_index := 0.0
+			var target_z_index := 1
 			if has_valid_stroke and not AdaptableVectorShape3D.is_stroke_in_front_of_fill(src_node):
-				target_z_index = 1
+				target_z_index = 0
 			for csg_polygon in AdaptableVectorShape3D.extract_csg_polygons_from_scalable_vector_shapes(
 						src_node, false, false, target_z_index):
 				dst_node.add_child(csg_polygon, true)
@@ -228,7 +228,7 @@ static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Nod
 		if has_valid_stroke:
 			for csg_polygon in AdaptableVectorShape3D.extract_csg_polygons_from_scalable_vector_shapes(
 						src_node, true, is_instance_valid(src_node.line),
-						(1 if AdaptableVectorShape3D.is_stroke_in_front_of_fill(src_node) else 0)
+						(0 if AdaptableVectorShape3D.is_stroke_in_front_of_fill(src_node) else 1)
 			):
 				dst_node.add_child(csg_polygon, true)
 				csg_polygon.owner = dst_owner
