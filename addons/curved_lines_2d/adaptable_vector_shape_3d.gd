@@ -3,18 +3,20 @@ extends Node3D
 
 class_name AdaptableVectorShape3D
 
+const STORED_CURVE_META_NAME := "_stored_curve_data_"
+const STORED_ARC_LIST_META_NAME := "_stored_arc_list_data_"
+const STORED_SHAPE_TYPE_META_NAME := "_stored_shape_type_"
+const STORED_SIZE_META_NAME := "_stored_shape_size_"
+const STORED_OFFSET_META_NAME := "_stored_shape_offset_"
+const STORED_STROKE_WIDTH_META_NAME := "_stored_stroke_width_"
+const STORED_JOINT_MODE_META_NAME := "_stored_joint_mode_"
+const STORED_LINE_CAP_META_NAME := "_stored_line_cap_"
 
 @export var guide_svs : ScalableVectorShape2D:
 	set(svs):
 		if is_instance_valid(guide_svs) and guide_svs != svs:
-			for p in fill_polygons + stroke_polygons:
-				p.queue_free()
-			fill_polygons.clear()
-			stroke_polygons.clear()
 			if guide_svs.polygons_updated.is_connected(_on_guide_svs_polygons_updated):
 				guide_svs.polygons_updated.disconnect(_on_guide_svs_polygons_updated)
-			if guide_svs.transform_changed.is_connected(_on_guide_svs_transform_changed):
-				guide_svs.transform_changed.disconnect(_on_guide_svs_transform_changed)
 		guide_svs = svs
 		if is_instance_valid(guide_svs):
 			_on_guide_svs_assigned()
@@ -23,44 +25,45 @@ class_name AdaptableVectorShape3D
 @export var fill_polygons : Array[CSGPolygon3D] = []
 @export var stroke_polygons : Array[CSGPolygon3D] = []
 
+var _update_locked := false
 
 func _on_guide_svs_assigned():
-	if Engine.is_editor_hint():
-		fill_polygons = extract_csg_polygons_from_scalable_vector_shapes(guide_svs)
-		stroke_polygons = extract_csg_polygons_from_scalable_vector_shapes(guide_svs,
-				true, is_instance_valid(guide_svs.line),
-				(1 if is_stroke_in_front_of_fill(guide_svs) else -1)
-		)
-		for p in fill_polygons + stroke_polygons:
-			add_child(p, true)
-			p.owner = owner
 	guide_svs.update_curve_at_runtime = true
-	guide_svs.set_notify_local_transform(true)
 	guide_svs.polygons_updated.connect(_on_guide_svs_polygons_updated)
-	guide_svs.transform_changed.connect(_on_guide_svs_transform_changed)
 	guide_svs.curve_changed()
-	_on_guide_svs_transform_changed(guide_svs)
 
 
 func _on_guide_svs_polygons_updated(polygons : Array[PackedVector2Array],
 			poly_strokes : Array[PackedVector2Array], _svs : ScalableVectorShape2D):
+
+	if _update_locked:
+		return
+	_update_locked = true
 	for p in fill_polygons + stroke_polygons:
 		p.hide()
+
 	for i in polygons.size():
 		if i < fill_polygons.size():
 			fill_polygons[i].show()
 			fill_polygons[i].polygon = polygons[i]
+		else:
+			var extra_fp := fill_polygons[i - 1].duplicate()
+			extra_fp.polygon = polygons[i]
+			fill_polygons.append(extra_fp)
+			add_child(extra_fp, true)
+			extra_fp.owner = owner
+
 	for i in poly_strokes.size():
 		if i < stroke_polygons.size():
 			stroke_polygons[i].show()
 			stroke_polygons[i].polygon = poly_strokes[i]
-
-
-func _on_guide_svs_transform_changed(_svs : ScalableVectorShape2D):
-	var stored_z := position.z
-	transform = guide_svs.transform
-	position.z = stored_z
-
+		else:
+			var extra_sp := stroke_polygons[i - 1].duplicate()
+			extra_sp.polygon = poly_strokes[i]
+			stroke_polygons.append(extra_sp)
+			add_child(extra_sp, true)
+			extra_sp.owner = owner
+	_update_locked = false
 
 static func is_stroke_in_front_of_fill(svs : ScalableVectorShape2D) -> bool:
 	var stroke_node : Node2D = (svs.line if is_instance_valid(svs.line) else svs.poly_stroke)

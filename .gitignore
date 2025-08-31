@@ -4,6 +4,7 @@ builds/
 /android/
 .editorconfig
 addons/godot-plugin-refresher
+addons/DualEditor
 .vscode
 export_presets.cfg
 /*.svg*
