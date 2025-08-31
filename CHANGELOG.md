@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.13.1
+
+### Added
+- New node type `AdaptableVectorShape3D` of which the shape can be changes via an assigbed `ScalableVectorShape2D`
+- New form `Curve Settings` added under tab `Project Settings`
+
+### Changed
+- Adds tab `Project Settings`
+- Moves `Editor Settings` to tab `Project Settings`
+- Flags property `update_curve_at_runtime` on by default (changeable in `Curve Settings`)
+- Flags property `resource_local_to_scene` on by default (changeable in `Curve Settings`)
+
 
 ## 2.13.0 - 2025-08-28
 

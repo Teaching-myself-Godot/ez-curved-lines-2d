@@ -50,6 +50,8 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
   - [Converting a line segment into an arc-segment](#converting-a-line-segment-into-an-arc-segment)
   - [Editing arc properties](#editing-arc-properties)
   - [Setting the pivot of your shape](#setting-the-pivot-of-your-shape)
+- [Manipulating 2D Shapes in the 3D export](#manipulating-2d-shapes-in-the-3d-export)
+  - [Animating 3D curves](#animating-3d-curves)
 - [Manipulating gradients](#manipulating-gradients)
   - [Changing the start- and endpoint of the gradient](#changing-the-start--and-endpoint-of-the-gradient)
   - [Changing the color stop positions](#changing-the-color-stop-positions)
@@ -317,6 +319,21 @@ Like this:
 
 ![set origin 2](./screenshots/16a-set_origin.png)
 
+# Manipulating 2D Shapes in the 3D export
+
+Using the new `Export to 3D Scene` in the [Advanced Editing Tab](#the-advanced-tab) produces the new `AdaptableVectorShape3D` node, which holds instances of `CSGPolygon3D` with:
+
+![AdaptableVectorShape3D inspector](./screenshots/adaptable-vector-shape-3d.png)
+
+Pressing the button `Add 2D Shape Editor` will instantiate a new `ScalableVectorShape2D` that can be used to edit with. For now I will suffice with a screenshot. I'm hope to record a long explainer about this soon.
+
+This screenshot was made using the [DualEditor](https://github.com/Meta-Ben/DualEditor) plugin by @Meta-Ben, which is _very_ useful for this purpose:
+
+![editing 3d shapes](./screenshots/dualview-preview.png)
+
+## Animating 3D curves
+
+You can also use the `Batch insert` button for curve key frames to animate the 3D shape's curve. Of course the [performace impact](#performance-impact) for this is not negligable.
 
 # Manipulating gradients
 
