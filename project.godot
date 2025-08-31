@@ -21,7 +21,7 @@ curved_lines_2d/line_begin_cap=0
 curved_lines_2d/paint_order=1
 curved_lines_2d/show_point_numbers=true
 curved_lines_2d/hints_enabled=true
-curved_lines_2d/snap_to_pixel=false
+curved_lines_2d/snap_to_pixel=true
 curved_lines_2d/snap_resolution=24.0
 curved_lines_2d/editing_enabled=true
 curved_lines_2d/fill_color=Color(1, 1, 1, 1)
@@ -35,13 +35,13 @@ curved_lines_2d/default_max_stages=5
 [application]
 
 config/name="EZ Curved Lines 2D"
-run/main_scene="uid://64oin48lk7b0"
+run/main_scene="uid://buueak60wkgnf"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://b5yxa1e62b0hb"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/DualEditor/plugin.cfg", "res://addons/curved_lines_2d/plugin.cfg", "res://addons/godot-plugin-refresher/plugin.cfg")
+enabled=PackedStringArray("res://addons/curved_lines_2d/plugin.cfg", "res://addons/godot-plugin-refresher/plugin.cfg")
 
 [rendering]
 
