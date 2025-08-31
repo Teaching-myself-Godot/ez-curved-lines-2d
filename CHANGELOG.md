@@ -3,7 +3,7 @@
 ## 2.13.1
 
 ### Added
-- New node type `AdaptableVectorShape3D` of which the shape can be changes via an assigbed `ScalableVectorShape2D`
+- New node type `AdaptableVectorShape3D` of which the shape can be changed via an assigned `ScalableVectorShape2D`
 - New form `Curve Settings` added under tab `Project Settings`
 
 ### Changed
