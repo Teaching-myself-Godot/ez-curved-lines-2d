@@ -10,7 +10,7 @@ var LineCapEditor = preload("res://addons/curved_lines_2d/line_cap_editor_proper
 var LineJointModeEditor = preload("res://addons/curved_lines_2d/line_joint_editor_property.gd")
 
 func _can_handle(obj) -> bool:
-	return obj is DrawablePath2D or obj is ScalableVectorShape2D
+	return obj is DrawablePath2D or obj is ScalableVectorShape2D or obj is AdaptableVectorShape3D
 
 
 func _parse_begin(object: Object) -> void:
@@ -93,6 +93,13 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 	elif name == "line_joint_mode" and (object is ScalableVectorShape2D):
 		add_property_editor(name, LineJointModeEditor.new())
 		return true
+	elif name == "guide_svs" and object is AdaptableVectorShape3D:
+		if object.has_meta(AdaptableVectorShape3D.STORED_CURVE_META_NAME) and object.guide_svs == null:
+			var button := Button.new()
+			button.text = "Add 2D Shape Editor"
+			add_custom_control(button)
+			button.pressed.connect(func(): _add_guide_svs(object))
+			return true
 	return false
 
 
@@ -204,8 +211,43 @@ static func _export_3d_scene(export_root_node : Node, filepath : String, dialog 
 	EditorInterface.open_scene_from_path(filepath)
 
 
+func _add_guide_svs(avs_3d : AdaptableVectorShape3D) -> void:
+	var guide_svs := ScalableVectorShape2D.new()
+	guide_svs.name = "ShapeEditorScalableVectorShape2D"
+	guide_svs.update_curve_at_runtime = true
+	guide_svs.curve = avs_3d.get_meta(AdaptableVectorShape3D.STORED_CURVE_META_NAME)
+	guide_svs.arc_list = avs_3d.get_meta(AdaptableVectorShape3D.STORED_ARC_LIST_META_NAME)
+	guide_svs.shape_type = avs_3d.get_meta(AdaptableVectorShape3D.STORED_SHAPE_TYPE_META_NAME)
+	guide_svs.size = avs_3d.get_meta(AdaptableVectorShape3D.STORED_SIZE_META_NAME)
+	guide_svs.offset = avs_3d.get_meta(AdaptableVectorShape3D.STORED_OFFSET_META_NAME)
+	guide_svs.stroke_width = avs_3d.get_meta(AdaptableVectorShape3D.STORED_STROKE_WIDTH_META_NAME)
+	guide_svs.begin_cap_mode =  avs_3d.get_meta(AdaptableVectorShape3D.STORED_LINE_CAP_META_NAME)
+	guide_svs.line_joint_mode = avs_3d.get_meta(AdaptableVectorShape3D.STORED_JOINT_MODE_META_NAME)
+	avs_3d.add_child(guide_svs, true)
+	guide_svs.owner = avs_3d.owner
+
+	if not avs_3d.fill_polygons.is_empty():
+		guide_svs.polygon = Polygon2D.new()
+		guide_svs.polygon.name = avs_3d.fill_polygons[0].name
+		guide_svs.add_child(guide_svs.polygon, true)
+		guide_svs.polygon.owner = avs_3d.owner
+		guide_svs.polygon.color = avs_3d.fill_polygons[0].material.albedo_color
+		guide_svs.polygon.texture = avs_3d.fill_polygons[0].material.albedo_texture
+	if not avs_3d.stroke_polygons.is_empty():
+		guide_svs.poly_stroke = Polygon2D.new()
+		guide_svs.poly_stroke.name = avs_3d.stroke_polygons[0].name
+		guide_svs.add_child(guide_svs.poly_stroke, true)
+		guide_svs.poly_stroke.owner = avs_3d.owner
+		guide_svs.stroke_color = avs_3d.stroke_polygons[0].material.albedo_color
+		guide_svs.poly_stroke.texture = avs_3d.stroke_polygons[0].material.albedo_texture
+	avs_3d.guide_svs = guide_svs
+
+
 static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Node, node_depth := 0, render_depth := 0) -> Node:
+	if (src_node is Polygon2D or src_node is Line2D) and src_node.get_child_count() == 0:
+		return null
 	var dst_node : Node = (
+		AdaptableVectorShape3D.new() if src_node is ScalableVectorShape2D else
 		Node3D.new() if src_node is Node2D else Node.new()
 	)
 	dst_node.name = src_node.name
@@ -214,6 +256,15 @@ static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Nod
 		dst_node.transform = src_node.transform
 		dst_node.position.z = -(node_depth + render_depth) * 0.02
 	if src_node is ScalableVectorShape2D and src_node.is_visible_in_tree():
+		dst_node.set_meta(AdaptableVectorShape3D.STORED_CURVE_META_NAME, src_node.curve.duplicate())
+		dst_node.set_meta(AdaptableVectorShape3D.STORED_ARC_LIST_META_NAME, src_node.arc_list.duplicate(true))
+		dst_node.set_meta(AdaptableVectorShape3D.STORED_SHAPE_TYPE_META_NAME, src_node.shape_type)
+		dst_node.set_meta(AdaptableVectorShape3D.STORED_SIZE_META_NAME, src_node.size)
+		dst_node.set_meta(AdaptableVectorShape3D.STORED_OFFSET_META_NAME, src_node.offset)
+		dst_node.set_meta(AdaptableVectorShape3D.STORED_STROKE_WIDTH_META_NAME, src_node.stroke_width)
+		dst_node.set_meta(AdaptableVectorShape3D.STORED_LINE_CAP_META_NAME, src_node.begin_cap_mode)
+		dst_node.set_meta(AdaptableVectorShape3D.STORED_JOINT_MODE_META_NAME, src_node.line_joint_mode)
+
 		var has_valid_stroke : bool = (
 				is_instance_valid(src_node.line) or is_instance_valid(src_node.poly_stroke)
 		) and src_node.stroke_width > 0.0
@@ -224,6 +275,7 @@ static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Nod
 			for csg_polygon in AdaptableVectorShape3D.extract_csg_polygons_from_scalable_vector_shapes(
 						src_node, false, false, target_z_index):
 				dst_node.add_child(csg_polygon, true)
+				dst_node.fill_polygons.append(csg_polygon)
 				csg_polygon.owner = dst_owner
 		if has_valid_stroke:
 			for csg_polygon in AdaptableVectorShape3D.extract_csg_polygons_from_scalable_vector_shapes(
@@ -231,6 +283,7 @@ static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Nod
 						(0 if AdaptableVectorShape3D.is_stroke_in_front_of_fill(src_node) else 1)
 			):
 				dst_node.add_child(csg_polygon, true)
+				dst_node.stroke_polygons.append(csg_polygon)
 				csg_polygon.owner = dst_owner
 
 	dst_node.owner = dst_owner

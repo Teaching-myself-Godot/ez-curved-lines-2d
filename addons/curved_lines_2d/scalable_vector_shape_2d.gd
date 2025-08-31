@@ -523,10 +523,12 @@ func curve_changed():
 
 	if clip_paths.is_empty():
 		_update_assigned_nodes(polygon_points)
-		polygons_updated.emit(Array([cached_outline], TYPE_PACKED_VECTOR2_ARRAY, "", null), cached_poly_strokes, self)
+		polygons_updated.emit(
+			Array([cached_outline] if is_instance_valid(polygon) else [], TYPE_PACKED_VECTOR2_ARRAY, "", null),
+			cached_poly_strokes, self)
 	else:
 		_update_assigned_nodes_with_clips(polygon_points, valid_clip_paths)
-		polygons_updated.emit(cached_clipped_polygons, cached_poly_strokes, self)
+		polygons_updated.emit(cached_clipped_polygons if is_instance_valid(polygon) else Array([], TYPE_PACKED_VECTOR2_ARRAY, "", null), cached_poly_strokes, self)
 
 func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 	var collision_polygons : Array[PackedVector2Array] = []
