@@ -407,6 +407,9 @@ func _on_clip_paths_changed():
 			cp.tree_exited.connect(func(): if is_inside_tree(): _on_assigned_node_changed())
 			if Engine.is_editor_hint() or update_curve_at_runtime:
 				cp.set_notify_local_transform(true)
+				if not cp in get_children():
+					set_notify_local_transform(true)
+					transform_changed.connect(func(_x): curve_changed())
 	_on_assigned_node_changed()
 
 
