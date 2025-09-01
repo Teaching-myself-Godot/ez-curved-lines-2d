@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.13.1
+## 2.13.2
 
 ### Added
 - New node type `AdaptableVectorShape3D` of which the shape can be changed via an assigned `ScalableVectorShape2D`
@@ -11,6 +11,7 @@
 - Moves `Editor Settings` to tab `Project Settings`
 - Flags property `update_curve_at_runtime` on by default (changeable in `Curve Settings`)
 - Flags property `resource_local_to_scene` on by default (changeable in `Curve Settings`)
+- Bugfix: calculate polygons at max once per frame (major performance fix for animations)
 
 
 ## 2.13.0 - 2025-08-28
