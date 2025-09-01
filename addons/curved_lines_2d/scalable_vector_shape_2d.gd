@@ -328,6 +328,7 @@ var cached_outline : PackedVector2Array = []
 var cached_clipped_polygons : Array[PackedVector2Array] = []
 var cached_poly_strokes : Array[PackedVector2Array] = []
 
+var should_update_curve := false
 
 # Wire up signals at runtime
 func _ready():
@@ -396,6 +397,12 @@ func _exit_tree():
 		curve.changed.disconnect(curve_changed)
 	if arc_list.changed.is_connected(curve_changed):
 		arc_list.changed.disconnect(curve_changed)
+
+
+func _process(_delta: float) -> void:
+	if should_update_curve:
+		_update_curve()
+		should_update_curve = false
 
 
 func _on_clip_paths_changed():
@@ -500,12 +507,14 @@ func curve_changed():
 			and not polygons_updated.has_connections()):
 		# guard against needlessly invoking expensive tessellate operation
 		return
+	should_update_curve = true
 
+
+func _update_curve():
 	# recalculate the polygon point for this shape based on curve and arc_list
 	cached_outline.clear()
 	cached_poly_strokes.clear()
 	cached_outline.append_array(self.tessellate())
-
 	# emit updated path to listeners
 	path_changed.emit(cached_outline)
 
