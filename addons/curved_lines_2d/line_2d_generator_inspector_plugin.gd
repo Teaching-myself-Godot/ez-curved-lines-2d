@@ -223,6 +223,8 @@ func _add_guide_svs(avs_3d : AdaptableVectorShape3D) -> void:
 	guide_svs.stroke_width = avs_3d.get_meta(AdaptableVectorShape3D.STORED_STROKE_WIDTH_META_NAME)
 	guide_svs.begin_cap_mode =  avs_3d.get_meta(AdaptableVectorShape3D.STORED_LINE_CAP_META_NAME)
 	guide_svs.line_joint_mode = avs_3d.get_meta(AdaptableVectorShape3D.STORED_JOINT_MODE_META_NAME)
+	guide_svs.rx = avs_3d.get_meta(AdaptableVectorShape3D.STORED_RX_META_NAME)
+	guide_svs.ry = avs_3d.get_meta(AdaptableVectorShape3D.STORED_RY_META_NAME)
 	avs_3d.add_child(guide_svs, true)
 	guide_svs.owner = avs_3d.owner
 
@@ -262,6 +264,8 @@ static func _copy_as_3d_node(src_node : Node, dst_parent : Node, dst_owner : Nod
 		dst_node.set_meta(AdaptableVectorShape3D.STORED_SIZE_META_NAME, src_node.size)
 		dst_node.set_meta(AdaptableVectorShape3D.STORED_OFFSET_META_NAME, src_node.offset)
 		dst_node.set_meta(AdaptableVectorShape3D.STORED_STROKE_WIDTH_META_NAME, src_node.stroke_width)
+		dst_node.set_meta(AdaptableVectorShape3D.STORED_RX_META_NAME, src_node.rx)
+		dst_node.set_meta(AdaptableVectorShape3D.STORED_RY_META_NAME, src_node.ry)
 		dst_node.set_meta(AdaptableVectorShape3D.STORED_LINE_CAP_META_NAME, src_node.begin_cap_mode)
 		dst_node.set_meta(AdaptableVectorShape3D.STORED_JOINT_MODE_META_NAME, src_node.line_joint_mode)
 
