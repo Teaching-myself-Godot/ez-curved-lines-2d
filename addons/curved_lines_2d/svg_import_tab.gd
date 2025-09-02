@@ -614,7 +614,10 @@ func _apply_clip_path_by_href(href : String, svs : ScalableVectorShape2D, scene_
 			clip_path.line.hide()
 		if clip_path.polygon:
 			clip_path.polygon.hide()
-		new_clip_paths.append(clip_path)
+		var applied_clip_path = clip_path.duplicate()
+		new_clip_paths.append(applied_clip_path)
+		_managed_add_child_and_set_owner(svs.get_parent(), applied_clip_path, scene_root)
+
 	log_message("Processing %d clip-paths for %s" % [new_clip_paths.size(), svs.name], LogLevel.DEBUG)
 	svs.clip_paths = new_clip_paths
 	undo_redo.add_do_property(svs, 'clip_paths', new_clip_paths)

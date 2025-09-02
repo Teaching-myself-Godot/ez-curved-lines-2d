@@ -1,12 +1,14 @@
 # Changelog
 
-## 2.13.1
+## 2.13.3
 
 ### Added
 - New node type `AdaptableVectorShape3D` of which the shape can be changed via an assigned `ScalableVectorShape2D`
 - New form `Curve Settings` added under tab `Project Settings`
 
 ### Changed
+- Bugfix: svg importer now positions clip-paths correctly by using the same parent (`<g>`-node) as the clipped shape
+- Bugfix: calculate polygons at max once per frame (major performance fix for animations)
 - Adds tab `Project Settings`
 - Moves `Editor Settings` to tab `Project Settings`
 - Flags property `update_curve_at_runtime` on by default (changeable in `Curve Settings`)
