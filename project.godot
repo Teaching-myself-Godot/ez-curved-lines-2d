@@ -22,10 +22,10 @@ curved_lines_2d/paint_order=1
 curved_lines_2d/show_point_numbers=true
 curved_lines_2d/hints_enabled=true
 curved_lines_2d/snap_to_pixel=true
-curved_lines_2d/snap_resolution=24.0
+curved_lines_2d/snap_resolution=1.0
 curved_lines_2d/editing_enabled=true
 curved_lines_2d/fill_color=Color(1, 1, 1, 1)
-curved_lines_2d/add_collision_type=1
+curved_lines_2d/add_collision_type=0
 curved_lines_2d/use_line_2d_for_stroke=false
 curved_lines_2d/update_curve_at_runtime=true
 curved_lines_2d/make_resources_local_to_scene=true
@@ -41,7 +41,7 @@ config/icon="uid://b5yxa1e62b0hb"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/curved_lines_2d/plugin.cfg", "res://addons/godot-plugin-refresher/plugin.cfg")
+enabled=PackedStringArray("res://addons/DualEditor/plugin.cfg", "res://addons/curved_lines_2d/plugin.cfg", "res://addons/godot-plugin-refresher/plugin.cfg")
 
 [rendering]
 
