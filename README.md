@@ -94,6 +94,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 - [Attributions](#attributions)
 	- [Lots of thanks go out to those who helped me out getting started:](#lots-of-thanks-go-out-to-those-who-helped-me-out-getting-started)
 	- [And a big thank you goes to to @MewPurPur](#and-a-big-thank-you-goes-to-to-mewpurpur)
+	- [Many thanks to @HannesParth/Permotion](#many-thanks-to-hannesparthpermotion)
 	- [And of course everyone who helped test and review the code thus far](#and-of-course-everyone-who-helped-test-and-review-the-code-thus-far)
 - [Reaching out / Contributing](#reaching-out--contributing)
 
@@ -677,6 +678,16 @@ The author of GodSVG for writing a great [SVG Arc command implementation](https:
 - Download from the [GodSVG website](https://www.godsvg.com/)
 - Or try out the [web version](https://www.godsvg.com/editor/)
 - Also on [itch.io](https://mewpurpur.itch.io/godsvg)
+
+
+## Many thanks to @HannesParth/Permotion
+
+As an early adopter Hannes was quick to point out good quality of life improvements like snap to pixel, setting global position exactly and exporting as PNG.
+
+Make sure to try out ["Spring Ball" on Itch](https://permotion.itch.io/spring-ball), a 48h game jam solo project that used ScalableVectorShape2D for all level objects, including a wrapper script to change the block that makes up the majority of the level between cube and triangle shapes:
+
+[![spring ball](./addons/curved_lines_2d/screenshots/spring-ball.png)](https://permotion.itch.io/spring-ball)
+
 
 ## And of course everyone who helped test and review the code thus far
 
