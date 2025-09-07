@@ -414,6 +414,9 @@ func _on_clip_paths_changed():
 			cp.tree_exited.connect(func(): if is_inside_tree(): _on_assigned_node_changed())
 			if Engine.is_editor_hint() or update_curve_at_runtime:
 				cp.set_notify_local_transform(true)
+				if not cp in get_children():
+					set_notify_local_transform(true)
+					transform_changed.connect(func(_x): curve_changed())
 	_on_assigned_node_changed()
 
 
@@ -562,7 +565,10 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 		line.points = polygon_points
 		line.closed = is_curve_closed()
 	if is_instance_valid(poly_stroke):
-		poly_stroke.polygon = Geometry2DUtil.get_polygon_indices(cached_poly_strokes, poly_stroke.polygons)
+		var polygon_indices : Array = []
+		var poly := Geometry2DUtil.get_polygon_indices(cached_poly_strokes, polygon_indices)
+		poly_stroke.polygon = poly
+		poly_stroke.polygons = polygon_indices
 		_update_polygon_texture(poly_stroke, true)
 	if is_instance_valid(polygon):
 		polygon.polygons.clear()
@@ -690,14 +696,20 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 			poly_stroke.hide()
 		else:
 			poly_stroke.show()
-			poly_stroke.polygon = Geometry2DUtil.get_polygon_indices(cached_poly_strokes, poly_stroke.polygons)
+			var polygon_indices : Array = []
+			var poly := Geometry2DUtil.get_polygon_indices(cached_poly_strokes, polygon_indices)
+			poly_stroke.polygon = poly
+			poly_stroke.polygons = polygon_indices
 			_update_polygon_texture(poly_stroke, true)
 	if is_instance_valid(polygon):
 		if cached_clipped_polygons.is_empty():
 			polygon.hide()
 		else:
 			polygon.show()
-			polygon.polygon = Geometry2DUtil.get_polygon_indices(cached_clipped_polygons, polygon.polygons)
+			var polygon_indices : Array = []
+			var poly := Geometry2DUtil.get_polygon_indices(cached_clipped_polygons, polygon_indices)
+			polygon.polygon = poly
+			polygon.polygons = polygon_indices
 			_update_polygon_texture()
 	if is_instance_valid(collision_polygon):
 		collision_polygon.polygon = polygon_points
