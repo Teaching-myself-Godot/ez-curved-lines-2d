@@ -546,7 +546,9 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 	var collision_polygons : Array[PackedVector2Array] = []
 	var navigation_polygons : Array[PackedVector2Array] = []
 	# calculate stroke as polygon and cache it
-	if (is_instance_valid(line) or is_instance_valid(poly_stroke)) and not cached_outline.size() < 2:
+
+	if (is_instance_valid(poly_stroke) or (is_instance_valid(line) and is_instance_valid(collision_object)) or (is_instance_valid(line) and is_instance_valid(navigation_region))) and not cached_outline.size() < 2:
+		print(name, ": calculating polystroke")
 		var cap_mode := Geometry2D.END_JOINED if is_curve_closed() else CAP_MODE_MAP[begin_cap_mode]
 		var result := Geometry2DUtil.calculate_polystroke(cached_outline,
 				stroke_width * 0.5, cap_mode, JOINT_MODE_MAP[line_joint_mode])
@@ -632,7 +634,8 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 	)
 
 	var intersect_results_polystroke : Array[PackedVector2Array] = []
-	if is_instance_valid(line) or is_instance_valid(poly_stroke):
+	if (is_instance_valid(poly_stroke) or (is_instance_valid(line) and is_instance_valid(collision_object)) or (is_instance_valid(line) and is_instance_valid(navigation_region))) and not cached_outline.size() < 2:
+		print(name, ": calculating polystroke")
 		var cutout_result_polylines : Array[PackedVector2Array] = (
 				Geometry2DUtil.calculate_outlines(cutout_results.duplicate())
 					if is_instance_valid(line) or is_instance_valid(poly_stroke) else
