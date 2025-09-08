@@ -2,7 +2,7 @@
 
 ## 2.13.4
 
-## Changed
+### Changed
 - Bugfix: race conditions due to unsafe pass by reference when setting `Polygon2D.polygon` in combination with `Polygon2D.polygons`
 - Performance tweak: no more unnecessary invocations of `Geometry2DUtil.calculate_poly_strokes`
 
