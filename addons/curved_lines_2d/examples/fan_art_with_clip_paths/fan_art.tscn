@@ -45,7 +45,7 @@ arcs = Array[ExtResource("2_i2hyy")]([])
 [sub_resource type="Curve2D" id="Curve2D_7ab47"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, -0.133581, 3.61672, 1.87438, 1.37668, -0.325121, -2.56204, -0.350664, 0.0769, 1.32512, 10.2287, 3.3371, 0.398483, 0.601829, -9.16264, -6.3566, 10.6149, 0.293953, -0.394287, 0, 0, -1.1954, -1.54593)
+"points": PackedVector2Array(0, 0, -0.133581, 3.61672, 1.8011, -2.20657, -0.325121, -2.56204, -0.350664, 0.0769, 1.32512, 10.2287, 3.3371, 0.398483, 0.601829, -9.16264, -6.3566, 10.6149, 0.293953, -0.394287, 0, 0, -1.1954, -1.54593)
 }
 point_count = 4
 
@@ -271,8 +271,8 @@ tracks/9/keys = {
 
 [sub_resource type="Animation" id="Animation_k4eqw"]
 resource_name = "dance"
-length = 0.2
-loop_mode = 2
+length = 0.4
+loop_mode = 1
 step = 0.2
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -460,7 +460,8 @@ polygon = PackedVector2Array(3.889, -2.17783, 4.00033, -2.17221, 4.10846, -2.155
 metadata/_edit_lock_ = true
 
 [node name="RightHand" type="Node2D" parent="FanArt/layer1" node_paths=PackedStringArray("polygon", "line")]
-position = Vector2(63.7614, 155.329)
+position = Vector2(57.9746, 134.821)
+rotation = 2.09829
 script = ExtResource("4_i2hyy")
 polygon = NodePath("Fill")
 stroke_color = Color(0, 0, 0, 1)
@@ -502,7 +503,7 @@ update_curve_at_runtime = true
 arc_list = SubResource("Resource_0hrpn")
 
 [node name="Stroke" type="Line2D" parent="FanArt/layer1/RightArm"]
-points = PackedVector2Array(1.87438, 1.37668, 1.255, 8.27331, 1.2499, 9.2611, 1.32512, 10.2287, -1.39583, 10.6001, -3.7978, 10.7335, -6.3566, 10.6149, -5.94998, 7.44551, -5.25493, 4.79384, -4.38158, 2.63662, -3.44008, 0.950637, -2.54057, -0.287369, -1.79319, -1.10064, -1.51097, -1.35526, -1.30809, -1.51241, -1.2407, -1.55534, -1.21627, -1.56806, -1.19831, -1.575, -1.18702, -1.57621, -1.18263, -1.57174, -1.18536, -1.56163, -1.1954, -1.54593)
+points = PackedVector2Array(1.8011, -2.20657, 1.24355, 7.71343, 1.32512, 10.2287, -1.39583, 10.6001, -3.7978, 10.7335, -6.3566, 10.6149, -5.94998, 7.44551, -5.25493, 4.79384, -4.38158, 2.63662, -3.44008, 0.950637, -2.54057, -0.287369, -1.79319, -1.10064, -1.51097, -1.35526, -1.30809, -1.51241, -1.2407, -1.55534, -1.21627, -1.56806, -1.19831, -1.575, -1.18702, -1.57621, -1.18263, -1.57174, -1.18536, -1.56163, -1.1954, -1.54593)
 width = 3.0
 default_color = Color(0, 0, 0, 1)
 joint_mode = 2
@@ -511,7 +512,7 @@ metadata/_edit_lock_ = true
 
 [node name="Fill" type="Polygon2D" parent="FanArt/layer1/RightArm"]
 color = Color(0.819608, 0.219608, 0.294118, 0.981982)
-polygon = PackedVector2Array(1.87438, 1.37668, 1.255, 8.27331, 1.2499, 9.2611, 1.32512, 10.2287, -1.39583, 10.6001, -3.7978, 10.7335, -6.3566, 10.6149, -5.94998, 7.44551, -5.25493, 4.79384, -4.38158, 2.63662, -3.44008, 0.950637, -2.54057, -0.287369, -1.79319, -1.10064, -1.51097, -1.35526, -1.30809, -1.51241, -1.2407, -1.55534, -1.21627, -1.56806, -1.19831, -1.575, -1.18702, -1.57621, -1.18263, -1.57174, -1.18536, -1.56163, -1.1954, -1.54593)
+polygon = PackedVector2Array(1.8011, -2.20657, 1.24355, 7.71343, 1.32512, 10.2287, -1.39583, 10.6001, -3.7978, 10.7335, -6.3566, 10.6149, -5.94998, 7.44551, -5.25493, 4.79384, -4.38158, 2.63662, -3.44008, 0.950637, -2.54057, -0.287369, -1.79319, -1.10064, -1.51097, -1.35526, -1.30809, -1.51241, -1.2407, -1.55534, -1.21627, -1.56806, -1.19831, -1.575, -1.18702, -1.57621, -1.18263, -1.57174, -1.18536, -1.56163, -1.1954, -1.54593)
 metadata/_edit_lock_ = true
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="FanArt/layer1/RightArm"]
@@ -549,8 +550,8 @@ polygon = PackedVector2Array(-8.5744, -12.482, -6.32422, -12.7296, -5.45365, -12
 metadata/_edit_lock_ = true
 
 [node name="LeftHand" type="Node2D" parent="FanArt/layer1" node_paths=PackedStringArray("polygon", "line")]
-position = Vector2(86.3169, 152.912)
-rotation = -0.279749
+position = Vector2(82.3584, 154.333)
+rotation = 0.015854
 script = ExtResource("4_i2hyy")
 polygon = NodePath("Fill")
 stroke_color = Color(0, 0, 0, 1)

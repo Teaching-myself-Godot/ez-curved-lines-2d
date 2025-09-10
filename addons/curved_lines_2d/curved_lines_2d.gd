@@ -276,13 +276,17 @@ func _add_collision_to_created_shape(new_shape : ScalableVectorShape2D, scene_ro
 
 func _on_selection_changed():
 	var scene_root := EditorInterface.get_edited_scene_root()
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_editing_enabled() and is_instance_valid(scene_root):
 		# inelegant fix to always keep an instance of Node selected, so
 		# _forward_canvas_gui_input will still be called upon losing focus
 		if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
 				and EditorInterface.get_selection().get_selected_nodes().is_empty()):
 			EditorInterface.edit_node(scene_root)
-		var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if current_selection is AnimationPlayer and scene_root is CanvasItem:
+		scalable_vector_shapes_2d_dock.set_selected_animation_player(current_selection)
+	else:
+		scalable_vector_shapes_2d_dock.set_selected_animation_player(null)
 
 	update_overlays()
 

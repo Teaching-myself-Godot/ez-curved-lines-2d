@@ -1,6 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://3r7rlhrwfmfe"]
+[gd_scene load_steps=3 format=3 uid="uid://3r7rlhrwfmfe"]
 
 [ext_resource type="Script" uid="uid://duyq57sg3jn7q" path="res://addons/curved_lines_2d/advanced_tab.gd" id="1_h55kp"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_h55kp"]
+line_spacing = 0.0
+font_size = 14
+font_color = Color(0.73, 0.73, 0.73, 1)
 
 [node name="AdvancedTab" type="VBoxContainer"]
 anchors_preset = 15
@@ -16,7 +21,7 @@ metadata/_tab_index = 2
 layout_mode = 2
 
 [node name="Label" type="Label" parent="HBoxContainer"]
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(147, 0)
 layout_mode = 2
 tooltip_text = "Export options the currently selected node:
 - PNG file (will match rendered size at 100% zoom exactly, scaling up will result in higher definition)
@@ -41,6 +46,34 @@ text = "3D Scene"
 [node name="HSeparator" type="HSeparator" parent="."]
 layout_mode = 2
 
+[node name="HBoxContainer2" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer2"]
+custom_minimum_size = Vector2(147, 0)
+layout_mode = 2
+tooltip_text = "Exports the entire scene as a PNG spritesheet using the selected animation."
+mouse_filter = 0
+text = "Bake Spritesheet*"
+
+[node name="HintLabel" type="Label" parent="HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "- Select an AnimationPlayer -"
+label_settings = SubResource("LabelSettings_h55kp")
+
+[node name="SelectAnimationOptionButton" type="OptionButton" parent="HBoxContainer2"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="CreateSpriteSheetButton" type="Button" parent="HBoxContainer2"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "Create"
+
 [connection signal="pressed" from="HBoxContainer/ExportAsPNGButton" to="." method="_on_export_as_png_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/ExportAsBakedSceneButton" to="." method="_on_export_as_baked_scene_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/ExportAs3DSceneButton" to="." method="_on_export_as_3d_scene_button_pressed"]
+[connection signal="pressed" from="HBoxContainer2/CreateSpriteSheetButton" to="." method="_on_create_sprite_sheet_button_pressed"]
