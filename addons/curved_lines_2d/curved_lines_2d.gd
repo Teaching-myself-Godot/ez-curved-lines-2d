@@ -138,6 +138,7 @@ func _enter_tree():
 		scalable_vector_shapes_2d_dock.edit_tab.rect_created.connect(_on_rect_created)
 	if not scalable_vector_shapes_2d_dock.edit_tab.ellipse_created.is_connected(_on_ellipse_created):
 		scalable_vector_shapes_2d_dock.edit_tab.ellipse_created.connect(_on_ellipse_created)
+	scene_changed.connect(_on_scene_changed)
 
 
 func select_node_reversibly(target_node : Node) -> void:
@@ -285,11 +286,15 @@ func _on_selection_changed():
 			EditorInterface.edit_node(scene_root)
 	if current_selection is AnimationPlayer and scene_root is CanvasItem:
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(current_selection)
-	else:
-		scalable_vector_shapes_2d_dock.set_selected_animation_player(null)
-
 	update_overlays()
 
+
+func _on_scene_changed(scn : Node):
+	var anim_pl = scn.find_child("AnimationPlayer")
+	if anim_pl:
+		scalable_vector_shapes_2d_dock.set_selected_animation_player(anim_pl)
+	else:
+		scalable_vector_shapes_2d_dock.set_selected_animation_player(null)
 
 func _handles(object: Object) -> bool:
 	return object is Node

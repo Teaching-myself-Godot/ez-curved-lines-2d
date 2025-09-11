@@ -3,9 +3,13 @@ extends Control
 
 var _init_hint_label_text := ""
 var _selected_animation_player : AnimationPlayer
+var fps_number_input : EditorSpinSlider
 
 func _enter_tree() -> void:
 	_init_hint_label_text = $%HintLabel.text
+	fps_number_input = _make_number_input("FPS", 60.0, 5.0, 120.0, "fps", 1.0)
+	%FpsInputContainer.add_child(fps_number_input)
+
 
 func _on_export_as_png_button_pressed() -> void:
 	var selected_node := EditorInterface.get_selection().get_selected_nodes().pop_back()
@@ -31,6 +35,7 @@ func set_animation_player(animation_player : AnimationPlayer) -> void:
 		%HintLabel.show()
 		%SelectAnimationOptionButton.hide()
 		%CreateSpriteSheetButton.hide()
+		%FpsInputContainer.hide()
 		return
 
 	_selected_animation_player = animation_player
@@ -40,6 +45,7 @@ func set_animation_player(animation_player : AnimationPlayer) -> void:
 		%SelectAnimationOptionButton.add_item(anim_name)
 	%SelectAnimationOptionButton.show()
 	%CreateSpriteSheetButton.show()
+	%FpsInputContainer.show()
 
 
 func _on_create_sprite_sheet_button_pressed() -> void:
@@ -47,7 +53,7 @@ func _on_create_sprite_sheet_button_pressed() -> void:
 		return
 
 	var anim_name : String = %SelectAnimationOptionButton.get_item_text(%SelectAnimationOptionButton.get_selected_id())
-	var fps := 60.0
+	var fps := fps_number_input.value
 	var interval := 1.0 / fps
 	_selected_animation_player.stop()
 	_selected_animation_player.current_animation = anim_name
@@ -65,5 +71,15 @@ func _on_create_sprite_sheet_button_pressed() -> void:
 		)
 		im.save_png("res://testing_" + str(idx) + ".png")
 		print(box)
-
 	_selected_animation_player.stop()
+
+
+func _make_number_input(lbl : String, value : float, min_value : float, max_value : float, suffix : String, step := 1.0) -> EditorSpinSlider:
+	var x_slider := EditorSpinSlider.new()
+	x_slider.value = value
+	x_slider.min_value = min_value
+	x_slider.max_value = max_value
+	x_slider.suffix = suffix
+	x_slider.label = lbl
+	x_slider.step = step
+	return x_slider

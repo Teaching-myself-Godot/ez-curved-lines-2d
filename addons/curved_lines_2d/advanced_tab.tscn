@@ -21,12 +21,9 @@ metadata/_tab_index = 2
 layout_mode = 2
 
 [node name="Label" type="Label" parent="HBoxContainer"]
-custom_minimum_size = Vector2(147, 0)
+custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
-tooltip_text = "Export options the currently selected node:
-- PNG file (will match rendered size at 100% zoom exactly, scaling up will result in higher definition)
-- 'Baked scene' (creates a new scene, which keeps all the nodes in the hierarchy, but converts ScalableVectorShape2D nodes to bare Node2D - useful for getting rid of this plugin)
-- 3D Scene (creates a new scene wich creates CSGPolygon3D nodes in Depth mode from all the ScalableVectorShape2D)"
+tooltip_text = "Exports the entire scene as a PNG spritesheet, or separate PNG files using the selected animation."
 mouse_filter = 0
 text = "Export Options*"
 
@@ -50,11 +47,11 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Label" type="Label" parent="HBoxContainer2"]
-custom_minimum_size = Vector2(147, 0)
+custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
-tooltip_text = "Exports the entire scene as a PNG spritesheet using the selected animation."
+tooltip_text = "Exports the entire scene as a PNG spritesheet, or separate PNG files using the selected animation."
 mouse_filter = 0
-text = "Bake Spritesheet*"
+text = "Bake Sprite Frames*"
 
 [node name="HintLabel" type="Label" parent="HBoxContainer2"]
 unique_name_in_owner = true
@@ -67,10 +64,17 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
+[node name="FpsInputContainer" type="PanelContainer" parent="HBoxContainer2"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="CreateSpriteSheetButton" type="Button" parent="HBoxContainer2"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+size_flags_horizontal = 8
 text = "Create"
 
 [connection signal="pressed" from="HBoxContainer/ExportAsPNGButton" to="." method="_on_export_as_png_button_pressed"]
