@@ -74,6 +74,8 @@ func _on_animation_file_name_chosen(file_path : String, dialog : EditorFileDialo
 	_selected_animation_player.current_animation = anim_name
 	_selected_animation_player.get_animation(anim_name)
 
+	var boxes : Array[Dictionary] = []
+	var images : Array[Image] = []
 	for idx in range(ceili(_selected_animation_player.current_animation_length / interval)):
 		var pos = idx * interval
 		if pos > _selected_animation_player.current_animation_length:
@@ -83,8 +85,21 @@ func _on_animation_file_name_chosen(file_path : String, dialog : EditorFileDialo
 		var im = await Line2DGeneratorInspectorPlugin._export_image(
 			EditorInterface.get_edited_scene_root(), box
 		)
+		boxes.append(box)
+		images.append(im)
+
+	var min_x = boxes.map(func(box): return box["tl"].x).min()
+	var min_y = boxes.map(func(box): return box["tl"].y).min()
+	var max_x = boxes.map(func(box): return box["br"].x).max()
+	var max_y = boxes.map(func(box): return box["br"].y).max()
+
+	for idx in images.size():
+		var im : Image = Image.create_empty(floori(max_x - min_x), ceili(max_y - min_y), false, images[idx].get_format())
+		for x in images[idx].get_size().x:
+			for y in images[idx].get_size().y:
+				im.set_pixel(boxes[idx]["tl"].x - min_x + x, boxes[idx]["tl"].y - min_y + y, images[idx].get_pixel(x, y))
 		im.save_png(file_path.replacen(".png", "_%d.png" % idx))
-		print(box)
+
 	_selected_animation_player.stop()
 	EditorInterface.get_resource_filesystem().scan()
 
