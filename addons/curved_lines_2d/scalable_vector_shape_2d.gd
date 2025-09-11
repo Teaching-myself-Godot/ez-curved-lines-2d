@@ -634,7 +634,6 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 
 	var intersect_results_polystroke : Array[PackedVector2Array] = []
 	if (is_instance_valid(poly_stroke) or (is_instance_valid(line) and is_instance_valid(collision_object)) or (is_instance_valid(line) and is_instance_valid(navigation_region))) and not cached_outline.size() < 2:
-		print(name, ": calculating polystroke")
 		var cutout_result_polylines : Array[PackedVector2Array] = (
 				Geometry2DUtil.calculate_outlines(cutout_results.duplicate())
 					if is_instance_valid(line) or is_instance_valid(poly_stroke) else
