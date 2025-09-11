@@ -290,11 +290,17 @@ func _on_selection_changed():
 
 
 func _on_scene_changed(scn : Node):
-	var anim_pl = scn.find_child("AnimationPlayer")
-	if anim_pl:
-		scalable_vector_shapes_2d_dock.set_selected_animation_player(anim_pl)
+	if scn:
+		var anim_pl = scn.find_children("AnimationPlayer").filter(
+				func(an): return an.owner == EditorInterface.get_edited_scene_root()
+		).pop_back()
+		if anim_pl is AnimationPlayer:
+			scalable_vector_shapes_2d_dock.set_selected_animation_player(anim_pl)
+		else:
+			scalable_vector_shapes_2d_dock.set_selected_animation_player(null)
 	else:
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(null)
+
 
 func _handles(object: Object) -> bool:
 	return object is Node

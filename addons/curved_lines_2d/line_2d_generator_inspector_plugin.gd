@@ -172,6 +172,8 @@ static func _export_image(export_root_node : Node, stored_box : Dictionary[Strin
 
 	while child_list.size() > 0:
 		var child : Node = child_list.pop_back()
+		if child is Camera2D:
+			child.enabled = false
 		child_list.append_array(child.get_children())
 		if child is ScalableVectorShape2D:
 			var box1 = child.get_bounding_box()
@@ -185,9 +187,10 @@ static func _export_image(export_root_node : Node, stored_box : Dictionary[Strin
 			max_y = max_y if box1[2].y < max_y else box1[2].y
 	sub_viewport.canvas_transform.origin = -Vector2(min_x, min_y)
 	sub_viewport.size = Vector2(max_x, max_y) - Vector2(min_x, min_y)
+	sub_viewport.screen_space_aa = Viewport.SCREEN_SPACE_AA_FXAA
+	sub_viewport.msaa_2d = Viewport.MSAA_8X
 	stored_box["tl"] = Vector2(min_x, min_y)
 	stored_box["br"] = Vector2(max_x, max_y)
-	print(stored_box)
 	await RenderingServer.frame_post_draw
 	var img = sub_viewport.get_texture().get_image()
 	sub_viewport.queue_free()

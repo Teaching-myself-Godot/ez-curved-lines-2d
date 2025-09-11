@@ -41,7 +41,12 @@ func set_animation_player(animation_player : AnimationPlayer) -> void:
 	_selected_animation_player = animation_player
 	%HintLabel.hide()
 	%SelectAnimationOptionButton.clear()
+	%SelectAnimationOptionButton.add_item(" - select animation -")
+	%SelectAnimationOptionButton.select(0)
+	%SelectAnimationOptionButton.set_item_disabled(0, true)
 	for anim_name in animation_player.get_animation_list():
+		if anim_name == "RESET":
+			continue
 		%SelectAnimationOptionButton.add_item(anim_name)
 	%SelectAnimationOptionButton.show()
 	%CreateSpriteSheetButton.show()
@@ -51,7 +56,17 @@ func set_animation_player(animation_player : AnimationPlayer) -> void:
 func _on_create_sprite_sheet_button_pressed() -> void:
 	if not _selected_animation_player is AnimationPlayer:
 		return
+	var dialog := EditorFileDialog.new()
+	dialog.add_filter("*.png", "PNG")
+	dialog.current_file = EditorInterface.get_edited_scene_root().name.to_snake_case()
+	dialog.file_mode = EditorFileDialog.FILE_MODE_SAVE_FILE
+	dialog.file_selected.connect(func(path): _on_animation_file_name_chosen(path, dialog))
+	EditorInterface.get_base_control().add_child(dialog)
+	dialog.popup_centered(Vector2i(800, 400))
 
+
+func _on_animation_file_name_chosen(file_path : String, dialog : EditorFileDialog):
+	dialog.queue_free()
 	var anim_name : String = %SelectAnimationOptionButton.get_item_text(%SelectAnimationOptionButton.get_selected_id())
 	var fps := fps_number_input.value
 	var interval := 1.0 / fps
@@ -63,15 +78,15 @@ func _on_create_sprite_sheet_button_pressed() -> void:
 		var pos = idx * interval
 		if pos > _selected_animation_player.current_animation_length:
 			pos = _selected_animation_player.current_animation_length
-		print(pos)
 		_selected_animation_player.seek(pos, true)
 		var box : Dictionary[String, Vector2] = {}
 		var im = await Line2DGeneratorInspectorPlugin._export_image(
 			EditorInterface.get_edited_scene_root(), box
 		)
-		im.save_png("res://testing_" + str(idx) + ".png")
+		im.save_png(file_path.replacen(".png", "_%d.png" % idx))
 		print(box)
 	_selected_animation_player.stop()
+	EditorInterface.get_resource_filesystem().scan()
 
 
 func _make_number_input(lbl : String, value : float, min_value : float, max_value : float, suffix : String, step := 1.0) -> EditorSpinSlider:

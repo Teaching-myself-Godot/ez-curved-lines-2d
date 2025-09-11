@@ -62,7 +62,9 @@ label_settings = SubResource("LabelSettings_h55kp")
 [node name="SelectAnimationOptionButton" type="OptionButton" parent="HBoxContainer2"]
 unique_name_in_owner = true
 visible = false
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
+selected = 0
 
 [node name="FpsInputContainer" type="PanelContainer" parent="HBoxContainer2"]
 unique_name_in_owner = true
