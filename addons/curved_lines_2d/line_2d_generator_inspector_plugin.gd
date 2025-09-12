@@ -181,10 +181,10 @@ static func _export_image(export_root_node : Node, stored_box : Dictionary[Strin
 			var min_y1 = box1.map(func(corner): return corner.y).min()
 			var max_x1 = box1.map(func(corner): return corner.x).max()
 			var max_y1 = box1.map(func(corner): return corner.y).max()
-			min_x = min_x if min_x1 > min_x else min_x1
-			min_y = min_y if min_y1 > min_y else min_y1
-			max_x = max_x if max_x1 < max_x else max_x1
-			max_y = max_y if box1[2].y < max_y else box1[2].y
+			min_x = floori(min_x if min_x1 > min_x else min_x1)
+			min_y = floori(min_y if min_y1 > min_y else min_y1)
+			max_x = ceili(max_x if max_x1 < max_x else max_x1)
+			max_y = ceili(max_y if max_y1 < max_y else max_y1)
 	sub_viewport.canvas_transform.origin = -Vector2(min_x, min_y)
 	sub_viewport.size = Vector2(max_x, max_y) - Vector2(min_x, min_y)
 	sub_viewport.screen_space_aa = Viewport.SCREEN_SPACE_AA_FXAA

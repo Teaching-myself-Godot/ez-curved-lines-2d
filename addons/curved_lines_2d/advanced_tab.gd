@@ -57,17 +57,21 @@ func _on_create_sprite_sheet_button_pressed() -> void:
 	if not _selected_animation_player is AnimationPlayer:
 		return
 	var dialog := EditorFileDialog.new()
+	var anim_name : String = %SelectAnimationOptionButton.get_item_text(%SelectAnimationOptionButton.get_selected_id())
 	dialog.add_filter("*.png", "PNG")
-	dialog.current_file = EditorInterface.get_edited_scene_root().name.to_snake_case()
+	dialog.current_file = ("%s_%s" % [
+			EditorInterface.get_edited_scene_root().name,
+			anim_name
+	]).to_snake_case()
+
 	dialog.file_mode = EditorFileDialog.FILE_MODE_SAVE_FILE
-	dialog.file_selected.connect(func(path): _on_animation_file_name_chosen(path, dialog))
+	dialog.file_selected.connect(func(path): _on_animation_file_name_chosen(path, anim_name, dialog))
 	EditorInterface.get_base_control().add_child(dialog)
 	dialog.popup_centered(Vector2i(800, 400))
 
 
-func _on_animation_file_name_chosen(file_path : String, dialog : EditorFileDialog):
+func _on_animation_file_name_chosen(file_path : String, anim_name : String, dialog : EditorFileDialog):
 	dialog.queue_free()
-	var anim_name : String = %SelectAnimationOptionButton.get_item_text(%SelectAnimationOptionButton.get_selected_id())
 	var fps := fps_number_input.value
 	var interval := 1.0 / fps
 	_selected_animation_player.stop()
@@ -94,10 +98,10 @@ func _on_animation_file_name_chosen(file_path : String, dialog : EditorFileDialo
 	var max_y = boxes.map(func(box): return box["br"].y).max()
 
 	for idx in images.size():
-		var im : Image = Image.create_empty(floori(max_x - min_x), ceili(max_y - min_y), false, images[idx].get_format())
+		var im : Image = Image.create_empty(ceili(max_x) - floori(min_x), ceili(max_y) - floor(min_y), false, images[idx].get_format())
 		for x in images[idx].get_size().x:
 			for y in images[idx].get_size().y:
-				im.set_pixel(boxes[idx]["tl"].x - min_x + x, boxes[idx]["tl"].y - min_y + y, images[idx].get_pixel(x, y))
+				im.set_pixel(floori(boxes[idx]["tl"].x) - min_x + x, floori(boxes[idx]["tl"].y) - min_y + y, images[idx].get_pixel(x, y))
 		im.save_png(file_path.replacen(".png", "_%d.png" % idx))
 
 	_selected_animation_player.stop()
