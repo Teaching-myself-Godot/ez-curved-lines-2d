@@ -40,3 +40,7 @@ func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 			import_tab.show()
 			return true
 	return false
+
+
+func set_selected_animation_player(animation_player : AnimationPlayer) -> void:
+	%AdvancedTab.set_animation_player(animation_player)

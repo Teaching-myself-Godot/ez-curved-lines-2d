@@ -27,7 +27,7 @@ metadata/_tab_name = "Project Settings"
 unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 1
-metadata/_tab_name = "Scalable Vector Shapes"
+metadata/_tab_name = "Create Shapes"
 
 [node name="SVGImportTab" parent="." instance=ExtResource("2_0fwlu")]
 unique_name_in_owner = true
