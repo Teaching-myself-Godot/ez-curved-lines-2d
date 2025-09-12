@@ -38,6 +38,8 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
   - [Editor Settings (how the 2D Viewport should behave):](#editor-settings-how-the-2d-viewport-should-behave)
   - [Curve Settings](#curve-settings)
 - [The Advanced Tab](#the-advanced-tab)
+  - [Basic export options](#basic-export-options)
+  - [Bake Animations](#bake-animations)
 - [Manipulating shapes](#manipulating-shapes)
   - [Adding a point to a shape](#adding-a-point-to-a-shape)
   - [Bending a curve](#bending-a-curve)
@@ -208,12 +210,19 @@ For more information on these settings, please refer to the section on [The Curv
 
 # The Advanced Tab
 
-Since release `2.13.0` a tab named 'Advanced' is added to the bottom dock. Currently it only hosts the 'Export Options' section. You can now export any selected node as:
-- A PNG file (see [Export as PNG Button](#export-as-png-button) )
+Since release `2.13.0` a tab named 'Advanced' is added to the bottom dock.
+
+![Advanced tab](./screenshots/advanced-tab.png)
+
+## Basic export options
+- PNG file (see [Export as PNG Button](#export-as-png-button) )
 - A 'Baked' scene (see [Export as 'baked' scene button](#export-as-baked-scene-button))
-- A 3D scene: creates a new 3D scene, in which all the Fills and Strokes in the scene are turned into instances of `CSGPolygon3D`[^6]
+- 3D scene: creates a new 3D scene, in which all the Fills and Strokes in the scene are turned into instances of `CSGPolygon3D`[^6]
 
 [^6]: Coming soon: a 3D Node with an editable outline using a `ScalableVectorShape2D` node
+
+## Bake Animations
+Since `2.14.0` you can export your animated scene as sprite frames in one PNG spritesheet or separate PNG files.
 
 # Manipulating shapes
 

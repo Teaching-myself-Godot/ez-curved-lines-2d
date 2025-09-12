@@ -1,5 +1,12 @@
 # Changelog
 
+
+## 2.14.0
+
+### Added
+- Bake Animation as Sprite Frames (under Advanced Editing tab) as a PNG spritesheet, or separate PNG files.
+
+
 ## 2.13.4
 
 ### Changed
