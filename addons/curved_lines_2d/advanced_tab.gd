@@ -36,10 +36,13 @@ func set_animation_player(animation_player : AnimationPlayer) -> void:
 		%SelectAnimationOptionButton.hide()
 		%CreateSpriteSheetButton.hide()
 		%FpsInputContainer.hide()
+		%ExportAsSpritesheetCheckButton.hide()
+		%StatusLabel.hide()
 		return
 
 	_selected_animation_player = animation_player
 	%HintLabel.hide()
+	%StatusLabel.text = ""
 	%SelectAnimationOptionButton.clear()
 	%SelectAnimationOptionButton.add_item(" - select animation -")
 	%SelectAnimationOptionButton.select(0)
@@ -51,6 +54,7 @@ func set_animation_player(animation_player : AnimationPlayer) -> void:
 	%SelectAnimationOptionButton.show()
 	%CreateSpriteSheetButton.show()
 	%FpsInputContainer.show()
+	%ExportAsSpritesheetCheckButton.show()
 
 
 func _on_create_sprite_sheet_button_pressed() -> void:
@@ -80,7 +84,12 @@ func _on_animation_file_name_chosen(file_path : String, anim_name : String, dial
 
 	var boxes : Array[Dictionary] = []
 	var images : Array[Image] = []
-	for idx in range(ceili(_selected_animation_player.current_animation_length / interval)):
+	var frame_count := ceili(_selected_animation_player.current_animation_length / interval)
+	%StatusLabel.show()
+	%StatusLabel.text = "Exporting %d frames" % frame_count
+	%CreateSpriteSheetButton.disabled = true
+	%CreateSpriteSheetButton.text = "Creating..."
+	for idx in range(frame_count):
 		var pos = idx * interval
 		if pos > _selected_animation_player.current_animation_length:
 			pos = _selected_animation_player.current_animation_length
@@ -91,20 +100,39 @@ func _on_animation_file_name_chosen(file_path : String, anim_name : String, dial
 		)
 		boxes.append(box)
 		images.append(im)
+	_selected_animation_player.stop()
 
 	var min_x = boxes.map(func(box): return box["tl"].x).min()
 	var min_y = boxes.map(func(box): return box["tl"].y).min()
 	var max_x = boxes.map(func(box): return box["br"].x).max()
 	var max_y = boxes.map(func(box): return box["br"].y).max()
 
-	for idx in images.size():
-		var im : Image = Image.create_empty(ceili(max_x) - floori(min_x), ceili(max_y) - floor(min_y), false, images[idx].get_format())
-		for x in images[idx].get_size().x:
-			for y in images[idx].get_size().y:
-				im.set_pixel(floori(boxes[idx]["tl"].x) - min_x + x, floori(boxes[idx]["tl"].y) - min_y + y, images[idx].get_pixel(x, y))
-		im.save_png(file_path.replacen(".png", "_%d.png" % idx))
+	if %ExportAsSpritesheetCheckButton.button_pressed:
+		var frame_w := ceili(max_x) - floori(min_x)
+		var im : Image = Image.create_empty(
+			frame_w * images.size(),
+			ceili(max_y) - floor(min_y), false, images[0].get_format())
+		for idx in images.size():
+			for x in images[idx].get_size().x:
+				for y in images[idx].get_size().y:
+					im.set_pixel(
+						(idx * frame_w) + (floori(boxes[idx]["tl"].x) - min_x + x),
+						floori(boxes[idx]["tl"].y) - min_y + y,
+						images[idx].get_pixel(x, y)
+					)
+		im.save_png(file_path)
+	else:
+		for idx in images.size():
+			var im : Image = Image.create_empty(ceili(max_x) - floori(min_x), ceili(max_y) - floor(min_y), false, images[idx].get_format())
+			for x in images[idx].get_size().x:
+				%StatusLabel.text = "Exporting %d/%d frames" % [idx + 1, frame_count]
+				for y in images[idx].get_size().y:
+					im.set_pixel(floori(boxes[idx]["tl"].x) - min_x + x, floori(boxes[idx]["tl"].y) - min_y + y, images[idx].get_pixel(x, y))
+			im.save_png(file_path.replacen(".png", "_%d.png" % idx))
 
-	_selected_animation_player.stop()
+	%StatusLabel.text = "Exported %d frames" % frame_count
+	%CreateSpriteSheetButton.disabled = false
+	%CreateSpriteSheetButton.text = "Create"
 	EditorInterface.get_resource_filesystem().scan()
 
 

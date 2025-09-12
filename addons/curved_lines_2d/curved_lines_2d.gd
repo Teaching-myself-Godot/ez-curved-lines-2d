@@ -274,6 +274,14 @@ func _add_collision_to_created_shape(new_shape : ScalableVectorShape2D, scene_ro
 		undo_redo.add_do_property(new_shape, 'collision_object', collision)
 		undo_redo.add_undo_method(new_shape, 'remove_child', collision)
 
+func _scene_can_export_animations() -> bool:
+	return (EditorInterface.get_edited_scene_root() is CanvasItem and
+		not EditorInterface.get_edited_scene_root().find_children("*", "AnimationPlayer").filter(
+				func(an): return an.owner == EditorInterface.get_edited_scene_root()
+		).is_empty() and
+		not EditorInterface.get_edited_scene_root()
+				.find_children("*", "ScalableVectorShape2D").is_empty()
+	)
 
 func _on_selection_changed():
 	var scene_root := EditorInterface.get_edited_scene_root()
@@ -284,20 +292,17 @@ func _on_selection_changed():
 		if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
 				and EditorInterface.get_selection().get_selected_nodes().is_empty()):
 			EditorInterface.edit_node(scene_root)
-	if current_selection is AnimationPlayer and scene_root is CanvasItem:
+	if current_selection is AnimationPlayer and _scene_can_export_animations():
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(current_selection)
 	update_overlays()
 
 
 func _on_scene_changed(scn : Node):
-	if scn:
-		var anim_pl = scn.find_children("AnimationPlayer").filter(
+	if _scene_can_export_animations():
+		var anim_pl = scn.find_children("*", "AnimationPlayer").filter(
 				func(an): return an.owner == EditorInterface.get_edited_scene_root()
 		).pop_back()
-		if anim_pl is AnimationPlayer:
-			scalable_vector_shapes_2d_dock.set_selected_animation_player(anim_pl)
-		else:
-			scalable_vector_shapes_2d_dock.set_selected_animation_player(null)
+		scalable_vector_shapes_2d_dock.set_selected_animation_player(anim_pl)
 	else:
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(null)
 
