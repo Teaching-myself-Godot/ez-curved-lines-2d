@@ -8,7 +8,8 @@ const TABS_NAME := [
 	"Project Settings",
 	"Create Shapes",
 	"Import SVG File",
-	"Advanced Editing"
+	"Advanced Editing",
+	"Video Explainers"
 ]
 
 var warning_dialog : AcceptDialog

@@ -1,0 +1,62 @@
+[gd_scene load_steps=5 format=3 uid="uid://bhpmwhbdlsp1g"]
+
+[ext_resource type="Script" uid="uid://cxvx3xc5wngfl" path="res://addons/curved_lines_2d/external_video_button.gd" id="1_1kn8h"]
+[ext_resource type="StyleBox" uid="uid://dufypbh4pb3v8" path="res://addons/curved_lines_2d/external_video_button.stylebox" id="1_tia4j"]
+[ext_resource type="Script" uid="uid://c1dbllgwqxjjn" path="res://addons/curved_lines_2d/link_button_with_copy_hint.gd" id="3_c8xqg"]
+[ext_resource type="Texture2D" uid="uid://dsn2lxwf0mvoq" path="res://addons/curved_lines_2d/video_thumbnails/animating_clip_paths.png" id="3_gf0w2"]
+
+[node name="ExternalVideoButton" type="PanelContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(320, 220)
+offset_right = 320.0
+offset_bottom = 220.0
+size_flags_vertical = 0
+tooltip_text = "This link will open a webpage in your browser: https://example.com
+Right click to copy this link"
+mouse_default_cursor_shape = 2
+theme_override_styles/panel = ExtResource("1_tia4j")
+script = ExtResource("1_1kn8h")
+img = ExtResource("3_gf0w2")
+uri = "https://example.com"
+text = "example"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 0
+
+[node name="TextureButton" type="TextureButton" parent="VBoxContainer"]
+unique_name_in_owner = true
+clip_contents = true
+custom_minimum_size = Vector2(320, 180)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+tooltip_text = "This link will open a webpage in your browser: https://example.com
+Right click to copy this link"
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("3_gf0w2")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="LinkButtonWithCopyHint" type="LinkButton" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+tooltip_text = "This link will open a webpage in your browser: https://example.com
+Right click to copy this link"
+text = "example"
+uri = "https://example.com"
+script = ExtResource("3_c8xqg")
+metadata/_custom_type_script = "uid://c1dbllgwqxjjn"
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="gui_input" from="VBoxContainer/TextureButton" to="." method="_on_gui_input"]
+[connection signal="mouse_entered" from="VBoxContainer/TextureButton" to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/TextureButton" to="." method="_on_mouse_exited"]
+[connection signal="mouse_entered" from="VBoxContainer/LinkButtonWithCopyHint" to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/LinkButtonWithCopyHint" to="." method="_on_mouse_exited"]
