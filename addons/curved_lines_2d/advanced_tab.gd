@@ -94,6 +94,7 @@ func _on_animation_file_name_chosen(file_path : String, anim_name : String, dial
 		if pos > _selected_animation_player.current_animation_length:
 			pos = _selected_animation_player.current_animation_length
 		_selected_animation_player.seek(pos, true)
+		_selected_animation_player.pause()
 		var box : Dictionary[String, Vector2] = {}
 		var im = await Line2DGeneratorInspectorPlugin._export_image(
 			EditorInterface.get_edited_scene_root(), box
@@ -125,7 +126,6 @@ func _on_animation_file_name_chosen(file_path : String, anim_name : String, dial
 		for idx in images.size():
 			var im : Image = Image.create_empty(ceili(max_x) - floori(min_x), ceili(max_y) - floor(min_y), false, images[idx].get_format())
 			for x in images[idx].get_size().x:
-				%StatusLabel.text = "Exporting %d/%d frames" % [idx + 1, frame_count]
 				for y in images[idx].get_size().y:
 					im.set_pixel(floori(boxes[idx]["tl"].x) - min_x + x, floori(boxes[idx]["tl"].y) - min_y + y, images[idx].get_pixel(x, y))
 			im.save_png(file_path.replacen(".png", "_%d.png" % idx))
