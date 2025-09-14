@@ -134,6 +134,7 @@ func _load_svg(file_path : String) -> void:
 
 
 	if not import_as_svs:
+		await RenderingServer.frame_post_draw
 		Line2DGeneratorInspectorPlugin._copy_baked_node(svg_root, parent_node, scene_root)
 		parent_node.remove_child(svg_root)
 
