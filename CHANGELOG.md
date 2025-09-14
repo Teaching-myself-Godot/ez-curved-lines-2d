@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 2.14.1
+## 2.14.2
 
 ### Added
 - Bake Animation as Sprite Frames (under Advanced Editing tab) as a PNG spritesheet, or separate PNG files.
@@ -9,6 +9,7 @@
 
 ### Changed
 - Bugfix: pause animation player before snapshotting sprite frame (from 2.14.0)
+- Bugfix: svg importer must await first render frame before baking when not importing as `ScalableVectorShape2D`
 
 ## 2.13.4
 
