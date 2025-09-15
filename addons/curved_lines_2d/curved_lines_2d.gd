@@ -217,6 +217,8 @@ func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_na
 	new_shape.begin_cap_mode = _get_default_begin_cap()
 	new_shape.end_cap_mode = _get_default_end_cap()
 	new_shape.line_joint_mode = _get_default_joint_mode()
+	if not is_instance_valid(is_cutout_for):
+		_set_viewport_pos_to_selection()
 
 
 func _add_fill_to_created_shape(new_shape : ScalableVectorShape2D, scene_root : Node) -> void:
@@ -358,6 +360,14 @@ func _get_viewport_center() -> Vector2:
 	var og := tr.get_origin()
 	var sz := Vector2(EditorInterface.get_editor_viewport_2d().size)
 	return (sz / 2) / tr.get_scale() - og / tr.get_scale()
+
+
+func _set_viewport_pos_to_selection() -> void:
+	EditorInterface.get_editor_viewport_2d().get_parent().grab_focus()
+	var key_ev := InputEventKey.new()
+	key_ev.keycode = KEY_F
+	key_ev.pressed = true
+	Input.parse_input_event(key_ev)
 
 
 func _vp_transform(p : Vector2) -> Vector2:

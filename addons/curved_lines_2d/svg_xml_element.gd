@@ -51,7 +51,6 @@ func find_by_id(id : String) -> SVGXMLElement:
 
 
 func find_child_by_id(id : String, n := self) -> SVGXMLElement:
-	print("searching id=%s in <%s>" % [id, n.name])
 	if "id" in n.attributes and n.attributes["id"] == id:
 		return n
 	for nn in n.children:
