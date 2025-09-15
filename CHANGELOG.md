@@ -1,11 +1,13 @@
 # Changelog
 
 
-## 2.14.2
+## 2.14.3
 
 ### Added
 - Bake Animation as Sprite Frames (under Advanced Editing tab) as a PNG spritesheet, or separate PNG files.
 - Video explainer tab with some youtube links
+- Center 2D viewport around newly created shapes...
+- ...and around newly imported SVG Files
 
 ### Changed
 - Bugfix: pause animation player before snapshotting sprite frame (from 2.14.0)
