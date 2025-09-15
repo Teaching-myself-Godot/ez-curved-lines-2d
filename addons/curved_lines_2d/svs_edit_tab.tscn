@@ -284,6 +284,7 @@ tooltip_text = "Use a Line2D node to represent the stroke with in stead of a Pol
 - Line2D has sharper caps and line joints at high zoom
 - Line2D can be textured directionally in stead of like a Fill texture
 - Line2D can set different Begin and End Cap Modes where Polygon2D can only pick one"
+button_pressed = true
 text = "Use Line2D*"
 
 [node name="Label2" type="Label" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer"]
@@ -362,7 +363,6 @@ icon = SubResource("AtlasTexture_exygk")
 
 [node name="EndCapForm" type="HBoxContainer" parent="VBoxContainer/StrokeSettingsContainer"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 size_flags_horizontal = 0
 
@@ -606,9 +606,9 @@ size_flags_vertical = 3
 
 [node name="LinkButton" parent="VBoxContainer/CenterContainer" instance=ExtResource("2_xxhaf")]
 layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/_QOnMRrlIMk?t=126&feature=shared
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/_QOnMRrlIMk?t=126
 Right click to copy this link"
-uri = "https://youtu.be/_QOnMRrlIMk?t=126&feature=shared"
+uri = "https://youtu.be/_QOnMRrlIMk?t=126"
 
 [connection signal="toggled" from="VBoxContainer/DrawSettingsContainer/FillCheckButton" to="." method="_on_fill_check_button_toggled"]
 [connection signal="color_changed" from="VBoxContainer/DrawSettingsContainer/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]

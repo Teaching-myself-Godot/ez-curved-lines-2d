@@ -139,10 +139,10 @@ horizontal_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/3j_OEfU8qbo?feature=shared
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/5PIVoQcm8QE
 Right click to copy this link"
 text = "Watch an explainer on Youtube"
-uri = "https://youtu.be/3j_OEfU8qbo?feature=shared"
+uri = "https://youtu.be/5PIVoQcm8QE"
 
 [connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/KeepDrawablePath2DNodeCheckBox" to="." method="_on_keep_drawable_path_2d_node_check_box_toggled"]
 [connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/LockShapesCheckBox" to="." method="_on_lock_shapes_check_box_toggled"]
