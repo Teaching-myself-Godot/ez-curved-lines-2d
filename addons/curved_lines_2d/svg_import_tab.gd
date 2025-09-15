@@ -144,8 +144,20 @@ func _load_svg(file_path : String) -> void:
 	link_button.text = "Click here to report issues or improvement requests on github"
 	link_button.uri = "https://github.com/Teaching-myself-Godot/ez-curved-lines-2d/issues"
 	%ImportLogContainer.add_child(link_button)
-	EditorInterface.call_deferred('edit_node', svg_root)
 
+	var selection_target = (
+			svg_root.find_children("*", "ScalableVectorShape2D")
+				.filter(func(n : CanvasItem): return n.is_visible_in_tree()).pop_front()
+	)
+	if not is_instance_valid(selection_target):
+		selection_target = svg_root
+	EditorInterface.call_deferred('edit_node', selection_target)
+	await get_tree().create_timer(0.0167).timeout
+	EditorInterface.get_editor_viewport_2d().get_parent().grab_focus()
+	var key_ev := InputEventKey.new()
+	key_ev.keycode = KEY_F
+	key_ev.pressed = true
+	Input.parse_input_event(key_ev)
 
 func parse_svg_xml_file(xml_parser : XMLParser) -> SVGXMLElement:
 	var svg_xml_node : SVGXMLElement = null
