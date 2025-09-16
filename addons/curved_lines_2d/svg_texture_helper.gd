@@ -1,6 +1,7 @@
 @tool
-class_name SVGTextureHelper
 extends Node
+
+class_name SVGTextureHelper
 
 # Map property names → default values
 const PROPERTY_MAPPINGS: Dictionary = {
@@ -49,20 +50,10 @@ func _ready() -> void:
 		_queue_render()
 
 func _connect_save_signals() -> void:
-	if Engine.is_editor_hint() and EditorInterface:
-		# Connect to the resource saved signal
-		var editor_interface = EditorInterface
-		if editor_interface:
-			# Try multiple approaches to detect scene saves
+	if Engine.is_editor_hint():
+		if get_tree():
+			get_tree().node_configuration_warning_changed.connect(_on_scene_tree_changed)
 
-			# Method 1: Connect to the main screen changed (happens during saves)
-			var main_screen = editor_interface.get_editor_main_screen()
-			if main_screen:
-				main_screen.visibility_changed.connect(_on_editor_visibility_changed)
-
-			# Method 2: Monitor the current scene tree for changes
-			if get_tree():
-				get_tree().node_configuration_warning_changed.connect(_on_scene_tree_changed)
 
 func _on_editor_visibility_changed() -> void:
 	# This is a heuristic that often correlates with save operations
