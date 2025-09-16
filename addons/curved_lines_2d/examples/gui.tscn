@@ -5,13 +5,13 @@
 
 [sub_resource type="Resource" id="Resource_2fobf"]
 script = ExtResource("2_fv747")
-svg_file_path = "uid://cepqussm7geks"
+svg_file_path = "uid://c0tet2m4kvugc"
 render_scale = 0.5
 metadata/_custom_type_script = "uid://yh2davxk4fh7"
 
 [sub_resource type="Resource" id="Resource_tkwla"]
 script = ExtResource("2_fv747")
-svg_file_path = "uid://b5yxa1e62b0hb"
+svg_file_path = "uid://b30xa0q3e1cwc"
 render_scale = 0.5
 metadata/_custom_type_script = "uid://yh2davxk4fh7"
 
