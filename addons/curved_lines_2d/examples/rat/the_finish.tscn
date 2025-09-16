@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bmiq78m8c3ctp"]
+
+[ext_resource type="PackedScene" uid="uid://c0m21g8gf1lro" path="res://addons/curved_lines_2d/examples/rat/the_cheese.tscn" id="1_5twdw"]
+
+[node name="TheFinish" type="VisibleOnScreenNotifier2D"]
+rect = Rect2(-60, -39, 120, 70)
+
+[node name="TheCheese" parent="." instance=ExtResource("1_5twdw")]

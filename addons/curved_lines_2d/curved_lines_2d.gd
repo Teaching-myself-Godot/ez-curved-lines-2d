@@ -8,6 +8,7 @@ const SETTING_NAME_HINTS_ENABLED := "addons/curved_lines_2d/hints_enabled"
 const SETTING_NAME_SHOW_POINT_NUMBERS := "addons/curved_lines_2d/show_point_numbers"
 const SETTING_NAME_STROKE_WIDTH := "addons/curved_lines_2d/stroke_width"
 const SETTING_NAME_STROKE_COLOR := "addons/curved_lines_2d/stroke_color"
+const SETTING_NAME_USE_LINE_2D_FOR_STROKE = "addons/curved_lines_2d/use_line_2d_for_stroke"
 const SETTING_NAME_FILL_COLOR := "addons/curved_lines_2d/fill_color"
 const SETTING_NAME_ADD_STROKE_ENABLED := "addons/curved_lines_2d/add_stroke_enabled"
 const SETTING_NAME_ADD_FILL_ENABLED := "addons/curved_lines_2d/add_fill_enabled"
@@ -21,6 +22,10 @@ const SETTING_NAME_SNAP_TO_PIXEL := "addons/curved_lines_2d/snap_to_pixel"
 const SETTING_NAME_SNAP_RESOLUTION := "addons/curved_lines_2d/snap_resolution"
 
 const SVG_MANAGER := "res://addons/curved_lines_2d/svg_manager.gd"
+const SETTING_NAME_CURVE_UPDATE_CURVE_AT_RUNTIME := "addons/curved_lines_2d/update_curve_at_runtime"
+const SETTING_NAME_CURVE_RESOURCE_LOCAL_TO_SCENE := "addons/curved_lines_2d/make_resources_local_to_scene"
+const SETTING_NAME_CURVE_TOLERANCE_DEGREES := "addons/curved_lines_2d/default_tolerance_degrees"
+const SETTING_NAME_CURVE_MAX_STAGES := "addons/curved_lines_2d/default_max_stages"
 
 const META_NAME_HOVER_POINT_IDX := "_hover_point_idx_"
 const META_NAME_HOVER_CP_IN_IDX := "_hover_cp_in_idx_"
@@ -105,6 +110,12 @@ func _enter_tree():
 		preload("res://addons/curved_lines_2d/scalable_vector_shape_2d.gd"),
 		preload("res://addons/curved_lines_2d/DrawablePath2D.svg")
 	)
+	add_custom_type(
+		"AdaptableVectorShape3D",
+		"Node3D",
+		preload("res://addons/curved_lines_2d/adaptable_vector_shape_3d.gd"),
+		preload("res://addons/curved_lines_2d/AdaptableVectorShape3D.svg")
+	)
 	undo_redo = get_undo_redo()
 	add_control_to_bottom_panel(scalable_vector_shapes_2d_dock as Control, "Scalable Vector Shapes 2D")
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
@@ -128,6 +139,7 @@ func _enter_tree():
 		scalable_vector_shapes_2d_dock.edit_tab.rect_created.connect(_on_rect_created)
 	if not scalable_vector_shapes_2d_dock.edit_tab.ellipse_created.is_connected(_on_ellipse_created):
 		scalable_vector_shapes_2d_dock.edit_tab.ellipse_created.connect(_on_ellipse_created)
+	scene_changed.connect(_on_scene_changed)
 
 	if not ProjectSettings.has_setting("autoload/SVGManager"):
 		add_autoload_singleton("SVGManager", SVG_MANAGER)
@@ -172,9 +184,14 @@ func _on_shape_created(curve : Curve2D, scene_root : Node, node_name : String) -
 func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_name : String, is_cutout_for : ScalableVectorShape2D = null) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	var parent = current_selection if current_selection is Node else scene_root
+	new_shape.update_curve_at_runtime = _is_setting_update_curve_at_runtime()
+	new_shape.curve.resource_local_to_scene = _is_making_curve_resources_local_to_scene()
+	new_shape.arc_list.resource_local_to_scene = _is_making_curve_resources_local_to_scene()
+	new_shape.tolerance_degrees = _get_default_tolerance_degrees()
+	new_shape.max_stages = _get_default_max_stages()
 	new_shape.name = node_name
 	if not is_instance_valid(is_cutout_for):
-		new_shape.position = _get_viewport_center() if parent == scene_root else Vector2.ZERO
+		new_shape.position = Vector2.ZERO
 	undo_redo.create_action("Add a %s to the scene " % node_name)
 	undo_redo.add_do_method(parent, 'add_child', new_shape, true)
 	undo_redo.add_do_method(new_shape, 'set_owner', scene_root)
@@ -199,6 +216,13 @@ func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_na
 	undo_redo.add_do_method(self, 'select_node_reversibly', new_shape)
 	undo_redo.add_undo_method(self, 'select_node_reversibly', parent)
 	undo_redo.commit_action()
+	new_shape.stroke_color = _get_default_stroke_color()
+	new_shape.stroke_width = _get_default_stroke_width()
+	new_shape.begin_cap_mode = _get_default_begin_cap()
+	new_shape.end_cap_mode = _get_default_end_cap()
+	new_shape.line_joint_mode = _get_default_joint_mode()
+	if not is_instance_valid(is_cutout_for):
+		_set_viewport_pos_to_selection()
 
 
 func _add_fill_to_created_shape(new_shape : ScalableVectorShape2D, scene_root : Node) -> void:
@@ -215,19 +239,23 @@ func _add_fill_to_created_shape(new_shape : ScalableVectorShape2D, scene_root : 
 
 func _add_stroke_to_created_shape(new_shape : ScalableVectorShape2D, scene_root : Node) -> void:
 	if _is_add_stroke_enabled():
-		var line := Line2D.new()
-		line.name = "Stroke"
-		line.default_color = _get_default_stroke_color()
-		line.width = _get_default_stroke_width()
-		line.begin_cap_mode = _get_default_begin_cap()
-		line.end_cap_mode = _get_default_end_cap()
-		line.joint_mode = _get_default_joint_mode()
-		line.sharp_limit = 90.0
-		undo_redo.add_do_property(new_shape, 'line', line)
-		undo_redo.add_do_method(new_shape, 'add_child', line, true)
-		undo_redo.add_do_method(line, 'set_owner', scene_root)
-		undo_redo.add_do_reference(line)
-		undo_redo.add_undo_method(new_shape, 'remove_child', line)
+		if _using_line_2d_for_stroke():
+			var line := Line2D.new()
+			line.name = "Stroke"
+			line.sharp_limit = 90.0
+			undo_redo.add_do_property(new_shape, 'line', line)
+			undo_redo.add_do_method(new_shape, 'add_child', line, true)
+			undo_redo.add_do_method(line, 'set_owner', scene_root)
+			undo_redo.add_do_reference(line)
+			undo_redo.add_undo_method(new_shape, 'remove_child', line)
+		else:
+			var poly_stroke := Polygon2D.new()
+			poly_stroke.name = "Stroke"
+			undo_redo.add_do_property(new_shape, 'poly_stroke', poly_stroke)
+			undo_redo.add_do_method(new_shape, 'add_child', poly_stroke, true)
+			undo_redo.add_do_method(poly_stroke, 'set_owner', scene_root)
+			undo_redo.add_do_reference(poly_stroke)
+			undo_redo.add_undo_method(new_shape, 'remove_child', poly_stroke)
 
 
 func _add_collision_to_created_shape(new_shape : ScalableVectorShape2D, scene_root : Node) -> void:
@@ -252,18 +280,37 @@ func _add_collision_to_created_shape(new_shape : ScalableVectorShape2D, scene_ro
 		undo_redo.add_do_property(new_shape, 'collision_object', collision)
 		undo_redo.add_undo_method(new_shape, 'remove_child', collision)
 
+func _scene_can_export_animations() -> bool:
+	return (EditorInterface.get_edited_scene_root() is CanvasItem and
+		not EditorInterface.get_edited_scene_root().find_children("*", "AnimationPlayer").filter(
+				func(an): return an.owner == EditorInterface.get_edited_scene_root()
+		).is_empty() and
+		not EditorInterface.get_edited_scene_root()
+				.find_children("*", "ScalableVectorShape2D").is_empty()
+	)
 
 func _on_selection_changed():
 	var scene_root := EditorInterface.get_edited_scene_root()
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_editing_enabled() and is_instance_valid(scene_root):
 		# inelegant fix to always keep an instance of Node selected, so
 		# _forward_canvas_gui_input will still be called upon losing focus
 		if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
 				and EditorInterface.get_selection().get_selected_nodes().is_empty()):
 			EditorInterface.edit_node(scene_root)
-		var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-
+	if current_selection is AnimationPlayer and _scene_can_export_animations():
+		scalable_vector_shapes_2d_dock.set_selected_animation_player(current_selection)
 	update_overlays()
+
+
+func _on_scene_changed(scn : Node):
+	if _scene_can_export_animations():
+		var anim_pl = scn.find_children("*", "AnimationPlayer").filter(
+				func(an): return an.owner == EditorInterface.get_edited_scene_root()
+		).pop_back()
+		scalable_vector_shapes_2d_dock.set_selected_animation_player(anim_pl)
+	else:
+		scalable_vector_shapes_2d_dock.set_selected_animation_player(null)
 
 
 func _handles(object: Object) -> bool:
@@ -317,6 +364,14 @@ func _get_viewport_center() -> Vector2:
 	var og := tr.get_origin()
 	var sz := Vector2(EditorInterface.get_editor_viewport_2d().size)
 	return (sz / 2) / tr.get_scale() - og / tr.get_scale()
+
+
+func _set_viewport_pos_to_selection() -> void:
+	EditorInterface.get_editor_viewport_2d().get_parent().grab_focus()
+	var key_ev := InputEventKey.new()
+	key_ev.keycode = KEY_F
+	key_ev.pressed = true
+	Input.parse_input_event(key_ev)
 
 
 func _vp_transform(p : Vector2) -> Vector2:
@@ -664,6 +719,8 @@ func _draw_crosshair(viewport_control : Control, p : Vector2, orbit := 2.0, oute
 
 func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2D, only_cutout_hints : bool) -> void:
 	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	var p := _vp_transform(mouse_pos)
 	if _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
 		if svs.has_fine_point(mouse_pos):
@@ -693,9 +750,9 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 		_draw_hint(viewport_control, "- Use mousewheel to resize shape (Shift held)")
 	elif not svs.has_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE):
 		var hint := "- Hold Ctrl to add points to selected shape (or Cmd for mac)
-				- Hold Shift to resize shape with mouswheel"
+				- Hold Shift to resize shape with mousewheel"
 		if only_cutout_hints:
-			hint = "- Hold Shift to resize shape with mouswheel"
+			hint = "- Hold Shift to resize shape with mousewheel"
 		if svs.has_fine_point(mouse_pos):
 			hint += "\n- Hold Ctrl+Shift to %s %s here (or Cmd+Shift for mac)\n" % [
 					OPERATION_NAME_MAP[current_clip_operation]["verb"],
@@ -770,14 +827,15 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 
 	if shape_preview:
 		var points := Array(shape_preview.tessellate())
-		var pos = _get_viewport_center()
 		var stroke_width = (_get_default_stroke_width() * EditorInterface.get_editor_viewport_2d()
 				.get_final_transform().get_scale().x)
 		if current_selection is Node2D:
 			points = points.map(current_selection.to_global)
-			pos = Vector2.ZERO
 			stroke_width *= current_selection.global_scale.x
-		points = points.map(func(p): return p + pos).map(_vp_transform)
+		elif current_selection is Control:
+			points = points.map(func(p): return current_selection.get_global_transform() * p)
+			stroke_width *= current_selection.get_global_transform().get_scale().x
+		points = points.map(_vp_transform)
 		match _get_default_paint_order():
 			PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
 				if _is_add_stroke_enabled():
@@ -872,6 +930,8 @@ func _update_rect_dimensions(svs : ScalableVectorShape2D, mouse_pos : Vector2) -
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Change rect size on " + str(svs))
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS] = [[svs, 'size', svs.size]]
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	svs.size = svs.to_local(mouse_pos) - svs.get_bounding_rect().position
 	undo_redo_transaction[UndoRedoEntry.DO_PROPS] = [[svs, 'size', svs.size]]
 
@@ -882,6 +942,8 @@ func _update_rect_corner_radius(svs : ScalableVectorShape2D, mouse_pos : Vector2
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS] = [
 			[svs, 'rx', svs.rx], [svs, 'ry', svs.ry]
 		]
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	if prop_name == 'rx':
 		svs.rx = svs.to_local(mouse_pos).x - svs.get_bounding_rect().position.x
 		if is_symmetrical:
@@ -925,6 +987,8 @@ func _update_curve_cp_in_position(current_selection : ScalableVectorShape2D, mou
 
 
 func _update_gradient_from_position(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Move gradient from position for %s" % str(svs))
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS].append([svs.polygon.texture, 'fill_from',
@@ -937,6 +1001,8 @@ func _update_gradient_from_position(svs : ScalableVectorShape2D, mouse_pos : Vec
 
 
 func _update_gradient_to_position(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Move gradient from position for %s" % str(svs))
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS].append([svs.polygon.texture, 'fill_to',
@@ -957,6 +1023,8 @@ func _get_gradient_offset(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> f
 
 
 func _update_gradient_stop_color_pos(svs : ScalableVectorShape2D, mouse_pos : Vector2, idx : int) -> void:
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	var new_offset := _get_gradient_offset(svs, mouse_pos)
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Move gradient offset  %d on %s" % [idx, svs])
@@ -1051,11 +1119,7 @@ func _set_shape_origin(current_selection : ScalableVectorShape2D, mouse_pos : Ve
 
 
 func _get_curve_backup(curve_in : Curve2D) -> Curve2D:
-	var curve_copy := Curve2D.new()
-	for i in range(curve_in.point_count):
-		curve_copy.add_point(curve_in.get_point_position(i),
-				curve_in.get_point_in(i), curve_in.get_point_out(i))
-	return curve_copy
+	return curve_in.duplicate()
 
 
 func _resize_shape(svs : ScalableVectorShape2D, s : float) -> void:
@@ -1179,8 +1243,11 @@ func _add_point_on_position(svs : ScalableVectorShape2D, pos : Vector2) -> void:
 
 func _start_cutout_shape(svs : ScalableVectorShape2D, pos : Vector2) -> void:
 	var new_shape = ScalableVectorShape2D.new()
+	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	new_shape.curve = Curve2D.new()
-	new_shape.position = svs.to_local(EditorInterface.get_editor_viewport_2d().get_mouse_position())
+	new_shape.position = svs.to_local(mouse_pos)
 	new_shape.shape_type = current_cutout_shape
 	new_shape.curve.add_point(Vector2.ZERO)
 
@@ -1211,6 +1278,8 @@ func _drag_curve_segment(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> vo
 	if svs.is_arc_start(md_closest_point.before_segment - 1) or md_closest_point.before_segment >= svs.curve.point_count or md_closest_point.before_segment < 1:
 		return
 
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	# Compute control points based on mouse position to align middle of segment curve to it
 	# using the quadratic Bézier control point
 	var idx : int = md_closest_point.before_segment
@@ -1302,11 +1371,15 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 					)
 				return true
 			elif _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
+				if _is_snapped_to_pixel():
+					mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 				if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and
 							current_selection.has_fine_point(mouse_pos)):
 					_start_cutout_shape(current_selection, mouse_pos)
 				return true
 			elif _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed():
+				if _is_snapped_to_pixel():
+					mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 				if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 					_add_point_on_position(current_selection, mouse_pos)
 				return true
@@ -1506,6 +1579,12 @@ static func _is_add_stroke_enabled() -> bool:
 	return true
 
 
+static func _using_line_2d_for_stroke() -> bool:
+	if ProjectSettings.has_setting(SETTING_NAME_USE_LINE_2D_FOR_STROKE):
+		return ProjectSettings.get_setting(SETTING_NAME_USE_LINE_2D_FOR_STROKE)
+	return true
+
+
 static func _is_add_fill_enabled() -> bool:
 	if ProjectSettings.has_setting(SETTING_NAME_ADD_FILL_ENABLED):
 		return ProjectSettings.get_setting(SETTING_NAME_ADD_FILL_ENABLED)
@@ -1535,6 +1614,30 @@ static func _get_snap_resolution() -> float:
 	if ProjectSettings.has_setting(SETTING_NAME_SNAP_RESOLUTION):
 		return ProjectSettings.get_setting(SETTING_NAME_SNAP_RESOLUTION)
 	return 1.0
+
+
+static func _is_setting_update_curve_at_runtime() -> bool:
+	if ProjectSettings.has_setting(SETTING_NAME_CURVE_UPDATE_CURVE_AT_RUNTIME):
+		return ProjectSettings.get_setting(SETTING_NAME_CURVE_UPDATE_CURVE_AT_RUNTIME)
+	return true
+
+
+static func _is_making_curve_resources_local_to_scene() -> bool:
+	if ProjectSettings.has_setting(SETTING_NAME_CURVE_RESOURCE_LOCAL_TO_SCENE):
+		return ProjectSettings.get_setting(SETTING_NAME_CURVE_RESOURCE_LOCAL_TO_SCENE)
+	return true
+
+
+static func _get_default_tolerance_degrees() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_CURVE_TOLERANCE_DEGREES):
+		return ProjectSettings.get_setting(SETTING_NAME_CURVE_TOLERANCE_DEGREES)
+	return 4.0
+
+
+static func _get_default_max_stages() -> int:
+	if ProjectSettings.has_setting(SETTING_NAME_CURVE_MAX_STAGES):
+		return ProjectSettings.get_setting(SETTING_NAME_CURVE_MAX_STAGES)
+	return 5
 
 
 func _exit_tree():

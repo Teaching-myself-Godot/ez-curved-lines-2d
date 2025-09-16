@@ -1,6 +1,92 @@
 # Changelog
 
 
+## 2.14.3
+
+### Added
+- Bake Animation as Sprite Frames (under Advanced Editing tab) as a PNG spritesheet, or separate PNG files.
+- Video explainer tab with some youtube links
+- Center 2D viewport around newly created shapes...
+- ...and around newly imported SVG Files
+
+### Changed
+- Bugfix: pause animation player before snapshotting sprite frame (from 2.14.0)
+- Bugfix: svg importer must await first render frame before baking when not importing as `ScalableVectorShape2D`
+
+## 2.13.4
+
+### Changed
+- Bugfix: race conditions due to unsafe pass by reference when setting `Polygon2D.polygon` in combination with `Polygon2D.polygons`
+- Performance tweak: no more unnecessary invocations of `Geometry2DUtil.calculate_poly_strokes`
+
+
+## 2.13.3
+
+### Added
+- New node type `AdaptableVectorShape3D` of which the shape can be changed via an assigned `ScalableVectorShape2D`
+- New form `Curve Settings` added under tab `Project Settings`
+
+### Changed
+- Bugfix: svg importer now positions clip-paths correctly by using the same parent (`<g>`-node) as the clipped shape
+- Bugfix: calculate polygons at max once per frame (major performance fix for animations)
+- Adds tab `Project Settings`
+- Moves `Editor Settings` to tab `Project Settings`
+- Flags property `update_curve_at_runtime` on by default (changeable in `Curve Settings`)
+- Flags property `resource_local_to_scene` on by default (changeable in `Curve Settings`)
+
+
+## 2.13.0 - 2025-08-28
+
+### Added
+- Advanced tab in bottom panel with 3 export buttons usable on any type of selected node: PNG, Baked, 3D Scene
+- Export as 3D scene (all Fills and Strokes are turned into `CSGPolygon2D` instances)
+
+### Changed
+- Bugfix: removed infinite recursion when exporting a scene root as 'Baked Scene'
+
+
+## 2.12.3 - 2025-08-23
+
+### Added
+- You can now also use Polygon2D for Strokes using the `poly_stroke` property
+- Collision Objects will now also get `CollisionPolygon2D`s for strokes
+- Adds `signal polygons_updated(polygons: Array[PackedVector2Array], poly_strokes: Array[PackedVector2Array], self_ref : ScalableVectorShape2D)`
+
+### Changed
+- Reverts hiding of the Collision Polygon property field
+- Fix: position of new shapes is now always Vector2.ZERO
+- In the Stroke Inspector plugin, stroke properties are now edited on `ScalableVectorShape2D` in stead of its assigned `Line2D`:
+  - `line.default_color` -> `stroke_color`
+  - `line.width` -> `stroke_width`
+  - `line.begin_cap_mode` -> `begin_cap_mode`
+  - `line.end_cap_mode` -> `end_cap_mode`
+  - `line.joint_mode` -> `line_joint_mode`
+- ⚠️ Please note that keyframes for all these properties are now set on `ScalableVectorShape2D` directly in stead of the assigned `Line2D`
+- Fix edge cases where holes resulting from geometry operations are not handled correctly
+- Rat's return example uses new signal to allow all blocks sharing the same `StaticBody2D`
+
+## 2.11.5 - 2025-18-08
+
+### Added
+- Snap to pixel when adding points
+- Snap to pixel when dragging curve edges
+- Snap to pixel when dragging gradient stops
+- Snap to pixel when changing rx/ry and size of primitive shapes
+
+### Changed
+- Export as 'baked' scene now supports cutouts, clips and merged shapes
+- Import SVG as Node2D in stead of ScalableVectorShape2D now works with cutouts, clips and merged shapes
+- Export buttons moved to inspector group `ScalableVectorShape2D > Export Options` to save screen real-estate
+
+## 2.11.3 - 2025-14-08
+
+### Added
+- SVG Importer now supports `<clipPath>`, `<use>` and embedded base64 encoded `<image>` (results may vary)
+
+### Changed
+- Use Pascal case in stead of Camel case to represent imported svg file names
+- Rename dock nodes in order to reference them with unique name
+
 ## 2.11.2 - 2025-10-08
 
 ### Added

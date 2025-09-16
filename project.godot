@@ -11,26 +11,30 @@ config_version=5
 [addons]
 
 curved_lines_2d/add_collision_enabled=false
-curved_lines_2d/add_stroke_enabled=false
+curved_lines_2d/add_stroke_enabled=true
 curved_lines_2d/add_fill_enabled=true
-curved_lines_2d/stroke_color=Color(0.382813, 1, 0, 1)
-curved_lines_2d/stroke_width=2.0
+curved_lines_2d/stroke_color=Color(0, 0, 0, 1)
+curved_lines_2d/stroke_width=10.0
 curved_lines_2d/line_joint_mode=0
 curved_lines_2d/line_end_cap=0
 curved_lines_2d/line_begin_cap=0
-curved_lines_2d/paint_order=2
+curved_lines_2d/paint_order=0
 curved_lines_2d/show_point_numbers=true
 curved_lines_2d/hints_enabled=true
 curved_lines_2d/snap_to_pixel=true
-curved_lines_2d/snap_resolution=8.0
+curved_lines_2d/snap_resolution=1.0
 curved_lines_2d/editing_enabled=true
 curved_lines_2d/fill_color=Color(1, 1, 1, 1)
 curved_lines_2d/add_collision_type=0
+curved_lines_2d/use_line_2d_for_stroke=true
+curved_lines_2d/update_curve_at_runtime=true
+curved_lines_2d/make_resources_local_to_scene=true
+curved_lines_2d/default_tolerance_degrees=4.0
+curved_lines_2d/default_max_stages=5
 
 [application]
 
 config/name="EZ Curved Lines 2D"
-run/main_scene="uid://buueak60wkgnf"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://b5yxa1e62b0hb"
 
@@ -50,8 +54,7 @@ enabled=PackedStringArray("res://addons/curved_lines_2d/plugin.cfg")
 
 [rendering]
 
-renderer/rendering_method="gl_compatibility"
-renderer/rendering_method.mobile="gl_compatibility"
+anti_aliasing/quality/msaa_2d=3
 anti_aliasing/screen_space_roughness_limiter/amount=4.0
 environment/defaults/default_clear_color=Color(0.211765, 0.239216, 0.290196, 1)
 anti_aliasing/quality/screen_space_aa=1

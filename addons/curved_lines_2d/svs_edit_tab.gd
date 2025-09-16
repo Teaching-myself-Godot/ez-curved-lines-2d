@@ -1,7 +1,7 @@
 @tool
 extends Control
 
-class_name ScalableVectorShapeEditTab
+class_name SVSEditTab
 
 signal shape_created(curve : Curve2D, scene_root : Node2D, node_name : String)
 signal rect_created(width : float, height : float, rx : float, ry : float, scene_root : Node2D)
@@ -20,8 +20,6 @@ var rect_ry_input : EditorSpinSlider
 var ellipse_rx_input : EditorSpinSlider
 var ellipse_ry_input : EditorSpinSlider
 
-var snap_resolution_input : EditorSpinSlider
-
 var warning_dialog : AcceptDialog = null
 
 var begin_cap_button_map = {}
@@ -33,9 +31,8 @@ func _enter_tree() -> void:
 	rect_height_input = _make_number_input("Height", 100, 2, 1000, "")
 	rect_rx_input = _make_number_input("Corner Radius X", 0, 0, 500, "")
 	rect_ry_input = _make_number_input("Corner Radius Y", 0, 0, 500, "")
-	snap_resolution_input = _make_number_input("Snap distance", 1.0, 1.0, 1024.0, "px", 1.0)
 
-	stroke_width_input = _make_number_input("Width", 10.0, 0.0, 100.0, "", 0.01)
+	stroke_width_input = _make_number_input("Width", 10.0, 0.5, 100.0, "px", 0.5)
 	%WidthSliderContainer.add_child(rect_width_input)
 	%HeightSliderContainer.add_child(rect_height_input)
 	%XRadiusSliderContainer.add_child(rect_rx_input)
@@ -45,20 +42,14 @@ func _enter_tree() -> void:
 	ellipse_ry_input = _make_number_input("Vertical Radius (RY)", 50, 1, 500, "")
 	%EllipseXRadiusSliderContainer.add_child(ellipse_rx_input)
 	%EllipseYRadiusSliderContainer.add_child(ellipse_ry_input)
-	%EnableEditingCheckbox.button_pressed = CurvedLines2D._is_editing_enabled()
-	%EnableHintsCheckbox.button_pressed = CurvedLines2D._are_hints_enabled()
-	%EnablePointNumbersCheckbox.button_pressed = CurvedLines2D._am_showing_point_numbers()
-	%SnapToPixelCheckBox.button_pressed = CurvedLines2D._is_snapped_to_pixel()
 	stroke_width_input.value = CurvedLines2D._get_default_stroke_width()
 	stroke_width_input.value_changed.connect(_on_stroke_width_input_value_changed)
 	%StrokePickerButton.color = CurvedLines2D._get_default_stroke_color()
+	%UseLine2DCheckButton.button_pressed = CurvedLines2D._using_line_2d_for_stroke()
 	%FillPickerButton.color = CurvedLines2D._get_default_fill_color()
 	%StrokeCheckButton.button_pressed = CurvedLines2D._is_add_stroke_enabled()
 	%FillCheckButton.button_pressed = CurvedLines2D._is_add_fill_enabled()
 	(%CollisionObjectTypeOptionButton as OptionButton).select(CurvedLines2D._add_collision_object_type())
-	%SnapResolutionInputContainer.add_child(snap_resolution_input)
-	snap_resolution_input.value = CurvedLines2D._get_snap_resolution()
-	snap_resolution_input.value_changed.connect(_on_snap_resolution_value_changed)
 
 	begin_cap_button_map[Line2D.LineCapMode.LINE_CAP_NONE] = %BeginNoCapToggleButton
 	begin_cap_button_map[Line2D.LineCapMode.LINE_CAP_BOX] = %BeginBoxCapToggleButton
@@ -80,8 +71,7 @@ func _enter_tree() -> void:
 		%StrokePickerButton.focus_exited.connect(ProjectSettings.save)
 	if not %FillPickerButton.focus_exited.is_connected(ProjectSettings.save):
 		%FillPickerButton.focus_exited.connect(ProjectSettings.save)
-	if not snap_resolution_input.focus_exited.is_connected(ProjectSettings.save):
-		snap_resolution_input.focus_exited.connect(ProjectSettings.save)
+
 	find_children("PaintOrderButton*")[CurvedLines2D._get_default_paint_order()].button_pressed = true
 
 
@@ -174,21 +164,6 @@ func _on_create_empty_shape_button_pressed() -> void:
 	var curve := Curve2D.new()
 	var node_name := "Path"
 	shape_created.emit(curve, scene_root, node_name)
-
-
-func _on_enable_editing_checkbox_toggled(toggled_on: bool) -> void:
-	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_EDITING_ENABLED, toggled_on)
-	ProjectSettings.save()
-
-
-func _on_enable_hints_checkbox_toggled(toggled_on: bool) -> void:
-	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_HINTS_ENABLED, toggled_on)
-	ProjectSettings.save()
-
-
-func _on_enable_point_numbers_checkbox_toggled(toggled_on: bool) -> void:
-	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_SHOW_POINT_NUMBERS, toggled_on)
-	ProjectSettings.save()
 
 
 func _on_stroke_width_input_value_changed(new_value: float) -> void:
@@ -303,14 +278,13 @@ func _on_line_joint_round_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.save()
 
 
-func _on_snap_to_pixel_check_box_toggled(toggled_on: bool) -> void:
-	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_SNAP_TO_PIXEL,
-			toggled_on)
-	ProjectSettings.save()
-
-func _on_snap_resolution_value_changed(val : float) -> void:
-	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_SNAP_RESOLUTION, val)
-
-
 func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVectorShape2D.CollisionObjectType) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_COLLISION_TYPE, obj_type)
+
+
+func _on_use_line_2d_check_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_USE_LINE_2D_FOR_STROKE, toggled_on)
+	if toggled_on:
+		%EndCapForm.show()
+	else:
+		%EndCapForm.hide()

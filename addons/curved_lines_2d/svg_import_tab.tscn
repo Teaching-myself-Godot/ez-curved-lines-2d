@@ -1,10 +1,10 @@
 [gd_scene load_steps=8 format=3 uid="uid://cfeemeccrtef7"]
 
-[ext_resource type="Script" uid="uid://bp5vvj23w57js" path="res://addons/curved_lines_2d/import_svg_file_tab.gd" id="1_fhkel"]
-[ext_resource type="LabelSettings" uid="uid://bspk1rkq1cmhx" path="res://addons/curved_lines_2d/info_label_settings.tres" id="1_x2xey"]
-[ext_resource type="Texture2D" uid="uid://b8ludy6aqsejg" path="res://addons/curved_lines_2d/LockViewport.svg" id="2_38alv"]
-[ext_resource type="PackedScene" uid="uid://cmoxkoulpd7so" path="res://addons/curved_lines_2d/link_button_with_copy_hint.tscn" id="2_fhkel"]
-[ext_resource type="PackedScene" uid="uid://cjbkvx1pj7gq2" path="res://addons/curved_lines_2d/collision_object_type_option_button.tscn" id="3_kpb1b"]
+[ext_resource type="Script" uid="uid://bp5vvj23w57js" path="res://addons/curved_lines_2d/svg_import_tab.gd" id="1_dlf5g"]
+[ext_resource type="Texture2D" uid="uid://b8ludy6aqsejg" path="res://addons/curved_lines_2d/LockViewport.svg" id="2_v8p2q"]
+[ext_resource type="PackedScene" uid="uid://cjbkvx1pj7gq2" path="res://addons/curved_lines_2d/collision_object_type_option_button.tscn" id="3_tqnmm"]
+[ext_resource type="LabelSettings" uid="uid://bspk1rkq1cmhx" path="res://addons/curved_lines_2d/info_label_settings.tres" id="4_4seqe"]
+[ext_resource type="PackedScene" uid="uid://cmoxkoulpd7so" path="res://addons/curved_lines_2d/link_button_with_copy_hint.tscn" id="5_wpk81"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rycm0"]
 content_margin_left = 10.0
@@ -28,14 +28,14 @@ border_width_bottom = 4
 border_color = Color(0.439216, 0.729412, 0.980392, 1)
 border_blend = true
 
-[node name="ImportSVGFileTab" type="HBoxContainer"]
+[node name="SVGImportTab" type="HBoxContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
-script = ExtResource("1_fhkel")
+script = ExtResource("1_dlf5g")
 metadata/_tab_index = 0
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="."]
@@ -78,23 +78,29 @@ tooltip_text = "- Adds a lock to the Line2D, Polygon2D and CollisionPolygon2D as
 - This lock makes sure these nodes are not transformed via the 2D editor"
 button_pressed = true
 text = "Lock imported shapes in editor *"
-icon = ExtResource("2_38alv")
+icon = ExtResource("2_v8p2q")
 
 [node name="AntialiasedCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer"]
 layout_mode = 2
 tooltip_text = "It's probably better to use project settings for this, but checking this on will ensure that the antialised property is checked on for imported Line2D and Polygon2D"
 text = "Flag on antialiased for Polygon2D and Line2D*"
 
-[node name="CollisionObjectTypeOptionButton" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" instance=ExtResource("3_kpb1b")]
-layout_mode = 2
-
-[node name="ImportCollisionPolygonsForAllShapesCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer"]
+[node name="UseLine2DCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
-tooltip_text = "- Checking this on will make sure that shapes with only strokes will still generate a CollisionPolygon2D
-- This can always be done later using the inspector of ScalableVectorShape2D"
-text = "Also import strokes as collision polygon"
+size_flags_horizontal = 0
+tooltip_text = "Use a Line2D node to represent the stroke with in stead of a Polygon2D. Cost/Benefit:
+- A Polygon2D stroke can be more neatly clipped than a Line2D
+- CollisionPolygon2D's match Polygon2D Stroke better
+- A Polygon2D stroke can be textured with gradients like Fills are textured
+- Line2D has sharper caps and line joints at high zoom
+- Line2D can be textured directionally in stead of like a Fill texture
+- Line2D can set different Begin and End Cap Modes where Polygon2D can only pick one"
+button_pressed = true
+text = "Use Line2D for Strokes*"
+
+[node name="CollisionObjectTypeOptionButton" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" instance=ExtResource("3_tqnmm")]
+layout_mode = 2
 
 [node name="OpenFileDialogButton" type="Button" parent="VBoxContainer2/PanelContainer/VBoxContainer2"]
 layout_mode = 2
@@ -126,21 +132,21 @@ theme_override_constants/separation = -5
 layout_mode = 2
 size_flags_vertical = 10
 text = " - Drag/Drop an svg-file here to start import -"
-label_settings = ExtResource("1_x2xey")
+label_settings = ExtResource("4_4seqe")
 horizontal_alignment = 1
 
-[node name="LinkButton2" parent="VBoxContainer/LogScrollContainer/ImportLogContainer" instance=ExtResource("2_fhkel")]
+[node name="LinkButton2" parent="VBoxContainer/LogScrollContainer/ImportLogContainer" instance=ExtResource("5_wpk81")]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/3j_OEfU8qbo?feature=shared
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/5PIVoQcm8QE
 Right click to copy this link"
 text = "Watch an explainer on Youtube"
-uri = "https://youtu.be/3j_OEfU8qbo?feature=shared"
+uri = "https://youtu.be/5PIVoQcm8QE"
 
 [connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/KeepDrawablePath2DNodeCheckBox" to="." method="_on_keep_drawable_path_2d_node_check_box_toggled"]
 [connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/LockShapesCheckBox" to="." method="_on_lock_shapes_check_box_toggled"]
 [connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/AntialiasedCheckBox" to="." method="_on_antialiased_check_box_toggled"]
+[connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/UseLine2DCheckBox" to="." method="_on_use_line_2d_check_box_toggled"]
 [connection signal="type_selected" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
-[connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/ImportCollisionPolygonsForAllShapesCheckBox" to="." method="_on_import_collision_polygons_for_all_shapes_check_box_toggled"]
 [connection signal="pressed" from="VBoxContainer2/PanelContainer/VBoxContainer2/OpenFileDialogButton" to="." method="_on_open_file_dialog_button_pressed"]

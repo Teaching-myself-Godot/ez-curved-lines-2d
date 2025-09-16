@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://c1dbllgwqxjjn" path="res://addons/curved_lines_2d/link_button_with_copy_hint.gd" id="1_e1f1u"]
 
 [node name="LinkButton" type="LinkButton"]
+tooltip_text = "This link will open a webpage in your browser: https://www.youtube.com/watch?v=q_NaZq1zZdY
+Right click to copy this link"
 theme_override_colors/font_color = Color(0.439216, 0.729412, 0.980392, 1)
 text = "Watch the Basic Drawing explainer on Youtube"
 uri = "https://www.youtube.com/watch?v=q_NaZq1zZdY"

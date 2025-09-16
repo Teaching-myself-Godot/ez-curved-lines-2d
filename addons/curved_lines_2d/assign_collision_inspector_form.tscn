@@ -10,9 +10,6 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_wi77q")
 
-[node name="HSeparator" type="HSeparator" parent="."]
-layout_mode = 2
-
 [node name="ButtonContainer2" type="HBoxContainer" parent="."]
 layout_mode = 2
 
@@ -21,14 +18,13 @@ clip_contents = true
 custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "⚠️ Assigning a CollisionPolygon2D directly is deprecated in favour of assigning a CollisionObject2D. Remove this assignment and add a Collision Object in stead. 
- 
-Click the  button to select the CollisionPolygon2D node that is assigned to this shape  in the Scene Tree."
+tooltip_text = "⚠️ Assigning a CollisionPolygon2D directly will at some point be deprecated in favour of assigning a CollisionObject2D: a clipped ScalableVectorShape2D can result in multiple CollisionPolygon2D"
 mouse_filter = 0
 text = "⚠️ CollisionPolygon2D*"
 
 [node name="GotoCollisionButton" type="Button" parent="ButtonContainer2"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 2
 tooltip_text = "Click on this button to select the CollisionPolygon2D node that is assigned to this shape  in the Scene Tree.
@@ -36,4 +32,10 @@ tooltip_text = "Click on this button to select the CollisionPolygon2D node that 
 Use this for advanced features which are already built-in into godot."
 text = "Go To Node"
 
+[node name="CreateCollisionButton" type="Button" parent="ButtonContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Create CollisionPolygon2D"
+
 [connection signal="pressed" from="ButtonContainer2/GotoCollisionButton" to="." method="_on_goto_collision_button_pressed"]
+[connection signal="pressed" from="ButtonContainer2/CreateCollisionButton" to="." method="_on_create_collision_button_pressed"]

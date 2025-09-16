@@ -1,0 +1,98 @@
+[gd_scene load_steps=3 format=3 uid="uid://3r7rlhrwfmfe"]
+
+[ext_resource type="Script" uid="uid://duyq57sg3jn7q" path="res://addons/curved_lines_2d/advanced_tab.gd" id="1_h55kp"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_h55kp"]
+line_spacing = 0.0
+font_size = 14
+font_color = Color(0.73, 0.73, 0.73, 1)
+
+[node name="AdvancedTab" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+script = ExtResource("1_h55kp")
+metadata/_tab_index = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+tooltip_text = "Exports the entire scene as a PNG spritesheet, or separate PNG files using the selected animation."
+mouse_filter = 0
+text = "Export Options*"
+
+[node name="ExportAsPNGButton" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "PNG Image"
+
+[node name="ExportAsBakedSceneButton" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "'Baked' Scene
+"
+
+[node name="ExportAs3DSceneButton" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "3D Scene"
+
+[node name="HSeparator" type="HSeparator" parent="."]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer2"]
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+tooltip_text = "Exports the entire scene as a PNG spritesheet, or separate PNG files using the selected animation."
+mouse_filter = 0
+text = "Bake Sprite Frames*"
+
+[node name="HintLabel" type="Label" parent="HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "- Select a 2D scene with at least an AnimationPlayer and one ScalableVectorShape2D -"
+label_settings = SubResource("LabelSettings_h55kp")
+
+[node name="SelectAnimationOptionButton" type="OptionButton" parent="HBoxContainer2"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+
+[node name="FpsInputContainer" type="PanelContainer" parent="HBoxContainer2"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ExportAsSpritesheetCheckButton" type="CheckButton" parent="HBoxContainer2"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "Export as Spritesheet"
+
+[node name="StatusLabel" type="Label" parent="HBoxContainer2"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="CreateSpriteSheetButton" type="Button" parent="HBoxContainer2"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Create"
+
+[node name="HSeparator2" type="HSeparator" parent="."]
+layout_mode = 2
+
+[connection signal="pressed" from="HBoxContainer/ExportAsPNGButton" to="." method="_on_export_as_png_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/ExportAsBakedSceneButton" to="." method="_on_export_as_baked_scene_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/ExportAs3DSceneButton" to="." method="_on_export_as_3d_scene_button_pressed"]
+[connection signal="pressed" from="HBoxContainer2/CreateSpriteSheetButton" to="." method="_on_create_sprite_sheet_button_pressed"]

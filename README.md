@@ -23,11 +23,23 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 - [Table of Contents](#table-of-contents)
 - [Drawing Shapes in the Godot 2D Viewport](#drawing-shapes-in-the-godot-2d-viewport)
 	- [Basic Drawing Explainer on youtube](#basic-drawing-explainer-on-youtube)
-- [Generating a Circle, Ellipse or Rectangle using the bottom panel item](#generating-a-circle-ellipse-or-rectangle-using-the-bottom-panel-item)
+	- [Quick Start](#quick-start)
+- [The Create Shapes Dock](#the-create-shapes-dock)
 	- [Creating Paths based on Bézier curves](#creating-paths-based-on-bézier-curves)
-	- [Creating 'primitive' scapes: Rectangle and Ellipse](#creating-primitive-scapes-rectangle-and-ellipse)
-- [Using the `.svg` importer](#using-the-svg-importer)
-	- [Known issues explainer on Youtube:](#known-issues-explainer-on-youtube)
+	- [Creating 'primitive' shapes: Rectangle and Ellipse](#creating-primitive-shapes-rectangle-and-ellipse)
+	- [Draw Settings](#draw-settings)
+	- [Futher reading](#futher-reading)
+- [The Import SVG File Dock](#the-import-svg-file-dock)
+	- [Watch an explainer on Youtube](#watch-an-explainer-on-youtube)
+	- [Using the Import SVG File Dock](#using-the-import-svg-file-dock)
+	- [`Line2D` Stroke versus `Polygon2D` Stroke](#line2d-stroke-versus-polygon2d-stroke)
+	- [The import log](#the-import-log)
+- [The Project Settings Dock](#the-project-settings-dock)
+	- [Editor Settings (how the 2D Viewport should behave):](#editor-settings-how-the-2d-viewport-should-behave)
+	- [Curve Settings](#curve-settings)
+- [The Advanced Tab](#the-advanced-tab)
+	- [Basic export options](#basic-export-options)
+	- [Bake Animations](#bake-animations)
 - [Manipulating shapes](#manipulating-shapes)
 	- [Adding a point to a shape](#adding-a-point-to-a-shape)
 	- [Bending a curve](#bending-a-curve)
@@ -40,25 +52,29 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 	- [Converting a line segment into an arc-segment](#converting-a-line-segment-into-an-arc-segment)
 	- [Editing arc properties](#editing-arc-properties)
 	- [Setting the pivot of your shape](#setting-the-pivot-of-your-shape)
+- [Manipulating 2D Shapes in the 3D export](#manipulating-2d-shapes-in-the-3d-export)
+	- [Animating 3D curves](#animating-3d-curves)
 - [Manipulating gradients](#manipulating-gradients)
 	- [Changing the start- and endpoint of the gradient](#changing-the-start--and-endpoint-of-the-gradient)
 	- [Changing the color stop positions](#changing-the-color-stop-positions)
 	- [Add new color stops](#add-new-color-stops)
-- [The Project Settings in the Scalable Vector Shapes panel](#the-project-settings-in-the-scalable-vector-shapes-panel)
-- [Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes](#ways-to-prevent-over-selecting-scalablevectorshape2d-nodes)
+	- [Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes](#ways-to-prevent-over-selecting-scalablevectorshape2d-nodes)
 - [Using the Inspector Form for `ScalableVectorShape2D`](#using-the-inspector-form-for-scalablevectorshape2d)
 	- [Inspector Form](#inspector-form)
 		- [Convert to Path button](#convert-to-path-button)
-		- [Export as PNG button](#export-as-png-button)
-		- [Export as 'baked' scene button](#export-as-baked-scene-button)
 	- [The Fill inspector form](#the-fill-inspector-form)
 	- [The Stroke inspector form](#the-stroke-inspector-form)
+		- [Creating new Strokes](#creating-new-strokes)
 	- [The Collision inspector form](#the-collision-inspector-form)
 	- [The Navigation inspector form](#the-navigation-inspector-form)
 	- [The Curve settings inspector form](#the-curve-settings-inspector-form)
 	- [The Masking Inspector form](#the-masking-inspector-form)
 	- [The Shape type inspector form](#the-shape-type-inspector-form)
 	- [The Editor settings inspector form](#the-editor-settings-inspector-form)
+	- [The Export Options inspector form](#the-export-options-inspector-form)
+		- [Export as PNG button](#export-as-png-button)
+		- [Export as 'baked' scene button](#export-as-baked-scene-button)
+			- [Caveats when 'Baking'](#caveats-when-baking)
 - [More about assigned `Line2D`, `Polygon2D` and `CollisionObject2D`](#more-about-assigned-line2d-polygon2d-and-collisionobject2d)
 	- [Watch the chapter about working with collisions, paint order and the node hierarchy on youtube](#watch-the-chapter-about-working-with-collisions-paint-order-and-the-node-hierarchy-on-youtube)
 - [Animating / Changing shapes at runtime](#animating--changing-shapes-at-runtime)
@@ -69,6 +85,10 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 	- [Don't duplicate `ScalableVectorShape2D`, use the `path_changed` signal in stead](#dont-duplicate-scalablevectorshape2d-use-the-path_changed-signal-in-stead)
 	- [Performance impact](#performance-impact)
 - [FAQ's](#faqs)
+	- [The curve of my `ScalableVectorShape2D` won't animate at runtime, what do I do?](#the-curve-of-my-scalablevectorshape2d-wont-animate-at-runtime-what-do-i-do)
+	- [I want to change shapes while debugging my game. Is this even possible?](#i-want-to-change-shapes-while-debugging-my-game-is-this-even-possible)
+	- [When I animate the curve of an imported scene, it animates all the other curves as well](#when-i-animate-the-curve-of-an-imported-scene-it-animates-all-the-other-curves-as-well)
+	- [When I duplicate a `ScalableVectorShape2D` and change its shape, the original `ScalableVectorShape2D` shape also changes](#when-i-duplicate-a-scalablevectorshape2d-and-change-its-shape-the-original-scalablevectorshape2d-shape-also-changes)
 	- [Can I draw shapes programmatically?](#can-i-draw-shapes-programmatically)
 	- [Should I draw shapes programmatically?](#should-i-draw-shapes-programmatically)
 	- [When should I draw shapes programmatically?](#when-should-i-draw-shapes-programmatically)
@@ -76,6 +96,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 - [Attributions](#attributions)
 	- [Lots of thanks go out to those who helped me out getting started:](#lots-of-thanks-go-out-to-those-who-helped-me-out-getting-started)
 	- [And a big thank you goes to to @MewPurPur](#and-a-big-thank-you-goes-to-to-mewpurpur)
+	- [Many thanks to @HannesParth/Permotion](#many-thanks-to-hannesparthpermotion)
 	- [And of course everyone who helped test and review the code thus far](#and-of-course-everyone-who-helped-test-and-review-the-code-thus-far)
 - [Reaching out / Contributing](#reaching-out--contributing)
 
@@ -85,17 +106,17 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 
 [![Explainer basic drawing on youtube](./addons/curved_lines_2d/screenshots/basic-drawing-youtube-thumnail.png)](https://youtu.be/_QOnMRrlIMk?t=126&feature=shared)
 
-After activating this plugin a new bottom panel item appears, called "Scalable Vector Graphics".
+## Quick Start
+After activating this plugin a new bottom panel item appears, called "Scalable Vector Shapes 2D".
 
 There are 2 recommended ways to start drawing:
-1. [Creating a Circle/Ellipse, Rectangle or empty Path using the bottom panel item](#generating-a-circle-ellipse-or-rectangle-using-the-bottom-panel-item)
-2. [Using the `.svg` importer](#using-the-svg-importer)
+1. [Creating a Circle/Ellipse, Rectangle or empty Path using the bottom panel item](#the-create-shapes-dock)
+2. [Using the `.svg` importer](#using-the-import-svg-file-dock)
 
 
-# Generating a Circle, Ellipse or Rectangle using the bottom panel item
+# The Create Shapes Dock
 
-
-The  `Scalable Vector Shapes` bottom panel gives you some basic choices:
+The  `Create Shapes` tab gives you some basic choices:
 
 ![the bottom panel](./addons/curved_lines_2d/screenshots/06-scalable-vector-shapes-panel.png)
 
@@ -106,7 +127,7 @@ Pressing the `Create Empty Path` or one of the `Create Path` buttons will add a 
 ![create ellipse as path](./addons/curved_lines_2d/screenshots/create-ellipse-as-path.png)
 
 
-## Creating 'primitive' scapes: Rectangle and Ellipse
+## Creating 'primitive' shapes: Rectangle and Ellipse
 
 It's probably easier to start out with a basic primitive shape (like you would in Inkscape <3) using the `Create Rectangle` or `Create Ellipse` button. This will expose less features, but will make it a lot easier to manipulate shapes:
 
@@ -116,29 +137,94 @@ Ellipses will only have one handle to change the `size` property with (represent
 
 Rectangles will have a handle for `size` and 2 handles for rounded corners `rx` and `ry` property.
 
-# Using the `.svg` importer
+## Draw Settings
 
+- Enable/Disable Fill (when creating new shapes via this bottom panel)
+- Fill color (when creating new shapes in this bottom panel)
+- Enable/Disable Stroke (when creating new shapes this this bottom panel)
+- Stroke color (when creating new shapes in this bottom panel)
+- Choose a `CollisionObject2D` type (when creating new shapes in this bottom panel, default is no collision object assignment)
+- Paint order: a toggle which represent what comes in front of what (when creating new shapes in the bottom panel)
+- Stroke Settings:
+- Stroke Width (when creating new shapes via this bottom panel)
+- Use `Line2D`: when flagged off, a `Polygon2D` will be used to draw strokes with in stead (see also: [`Line2D Stroke` versus `Polygon2D Stroke`](#line2d-stroke-versus-polygon2d-stroke) )
+- Begin- and End Cap modes
+- Line Joint Mode
+
+
+## Futher reading
+Read more about [manipulating shapes](#manipulating-shapes)
+
+# The Import SVG File Dock
+
+![svg importer dock](./addons/curved_lines_2d/screenshots/svg_importer_dock.png)
+
+## Watch an explainer on Youtube
 
 [![watch explainer on youtube](./addons/curved_lines_2d/screenshots/importing-svg-files-youtube-thumbnail.png)](https://youtu.be/3j_OEfU8qbo?feature=shared)
 
 
-As mentioned in the introduction, the `.svg` import supports a small - _yet relevant_ - subset of the [W3C specification](https://www.w3.org/TR/SVG/).
+## Using the Import SVG File Dock
 
-That being said, it's still pretty cool and serves my purposes quite well. You can drag any `.svg` resource file into the first tab of the bottom dock to see if it works for you too:
+On the left side of this panel is a form with a couple of options:
 
-![svg importer dock](./addons/curved_lines_2d/screenshots/13-svg-importer-dock.png)
+- Import as ScalableVectorShape2D: check this Off if you want to import the svg file with only built-in godot nodes, without being able to edit/animate the curves in the editor.
+- Lock imported shapes in editor: this simply flags on the lock so that the `Polygon2D`, `Line2D`, etc are not selected on click, but the owning ScalableVectorShape2D is
+- Flag on antialiased on Polygon2D and Line2D: flags on the `antialiased` property of either
+- Use Line2D for Strokes: when flagged Off a `Polygon2D` is used for strokes in stead of a Line2D
+- Pick a `CollisionObject2D` type to also generate collision polygons when importing the svg file
 
-On the left side of this panel is a form with a couple of options you can experiment with. On the right side is an import log, which will show warnings of known problems, usually unsupported stuff:
+## `Line2D` Stroke versus `Polygon2D` Stroke
 
-![svg importer log](./addons/curved_lines_2d/screenshots/14-import-warnings.png)
+A tooltip highlights the costs and benefits when picking either of these to draw strokes with:
+- A `Polygon2D` stroke can be more neatly clipped than a `Line2D`
+- `CollisionPolygon2D`'s match `Polygon2D` Stroke better
+- A `Polygon2D` stroke can be textured with gradients like fills are textured
+- `Line2D` has sharper caps and line joints at high zoom
+- `Line2D` can be textured directionally in stead of like a Fill texture
+- `Line2D` can set different Begin and End Cap Modes where `Polygon2D` can only pick one
 
-As the link in the log suggest, you can report [issues](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d/issues) on github; be sure to check if something is already listed.
+## The import log
 
-Don't let that stop you, though, your future infinite zoomer and key-frame animator will love you for it.
+On the right side is an import log, which will show warnings of known problems, usually unsupported stuff.
 
-## Known issues explainer on Youtube:
+The link it shows is to the issues list on the github repository hosting this plugin. Here you can report any encountered bugs while importing SVG files using this plugin.
 
-[![known issues explainer on youtube](./addons/curved_lines_2d/screenshots/known-issues-youtube-thumbnail.png)](https://www.youtube.com/watch?v=nVCKVRBMnWU)
+# The Project Settings Dock
+
+![Project settings dock](./addons/curved_lines_2d/screenshots/project-settings.png)
+
+## Editor Settings (how the 2D Viewport should behave):
+
+- Enable/Disable ScalableVectorShape2D Editing (when checked off, you can edit nodes the normal, built-in, godot-way. You _are_ going to need this)
+- Show/Hide Edit hints
+- Show Point Details (which are the exact _indices_ of each point on the `Curve2D` of this shape, what is it's global position)
+- Snap to Pixel (snaps points and curve handles to whole pixels on the global transform)
+- Snap distance (the snap step / resolution)
+
+## Curve Settings
+
+These settings are applied to the `Curve Settings` of new shapes when added via the bottom panel docks (either SVG importer or via Create Shapes).
+
+For more information on these settings, please refer to the section on [The Curve settings inspector form](#the-curve-settings-inspector-form)
+
+# The Advanced Tab
+
+Since release `2.13.0` a tab named 'Advanced' is added to the bottom dock.
+
+![Advanced tab](./addons/curved_lines_2d/screenshots/advanced-tab.png)
+
+## Basic export options
+- PNG file (see [Export as PNG Button](#export-as-png-button) )
+- A 'Baked' scene (see [Export as 'baked' scene button](#export-as-baked-scene-button))
+- 3D scene: creates a new 3D scene, in which all the Fills and Strokes in the scene are turned into instances of `CSGPolygon3D`[^6]
+
+[^6]: Coming soon: a 3D Node with an editable outline using a `ScalableVectorShape2D` node
+
+## Bake Animations
+Since `2.14.0` you can export your animated scene as sprite frames in one PNG spritesheet or separate PNG files.
+
+
 
 # Manipulating shapes
 
@@ -245,6 +331,21 @@ Like this:
 
 ![set origin 2](./addons/curved_lines_2d/screenshots/16a-set_origin.png)
 
+# Manipulating 2D Shapes in the 3D export
+
+Using the new `Export to 3D Scene` in the [Advanced Editing Tab](#the-advanced-tab) produces the new `AdaptableVectorShape3D` node, which holds instances of `CSGPolygon3D` with:
+
+![AdaptableVectorShape3D inspector](./addons/curved_lines_2d/screenshots/adaptable-vector-shape-3d.png)
+
+Pressing the button `Add 2D Shape Editor` will instantiate a new `ScalableVectorShape2D` that can be used to edit with. For now I will suffice with a screenshot. I'm hope to record a long explainer about this soon.
+
+This screenshot was made using the [DualEditor](https://github.com/Meta-Ben/DualEditor) plugin by @Meta-Ben, which is _very_ useful for this purpose:
+
+![editing 3d shapes](./addons/curved_lines_2d/screenshots/dualview-preview.png)
+
+## Animating 3D curves
+
+You can also use the `Batch insert` button for curve key frames to animate the 3D shape's curve. Of course the [performace impact](#performance-impact) for this is not negligable.
 
 # Manipulating gradients
 
@@ -271,25 +372,7 @@ Double clicking on the gradient line will add a new color stop (the assigned col
 
 ![adding a color stop](./addons/curved_lines_2d/screenshots/add_color_stop.png)
 
-# The Project Settings in the Scalable Vector Shapes panel
-
-A couple of settings in the bottom panel are stored across sessions to represent your preferences:
-- Editor settings (how the 2D Viewport should behave):
-  - Enable/Disable ScalableVectorShape2D Editing (when checked off, you can edit nodes the normal, built-in, godot-way. You _are_ going to need this)
-  - Show/Hide Edit hints
-  - Show Point Details (which are the exact _indices_ of each point on the `Curve2D` of this shape, what is it's global position)
-  - Snap to Pixel (snaps points and curve handles to whole pixels on the global transform, only when  `shape_type == ShapeType.Path`)
-  - Snap distance (the snap step / resolution)
-- Draw Settings:
-  - Stroke Width
-  - Enable/Disable Fill (when creating new shapes via the bottom panel)
-  - Fill color (when creating new shapes in the bottom panel)
-  - Enable/Disable Stroke (when creating new shapes via the bottom panel)
-  - Stroke color (when creating new shapes in the bottom panel)
-  - Choose a `CollisionObject2D` type (when creating new shapes via the bottom panel, default is no collision object assignment)
-- Paint order: a toggle which represent what comes in front of what (when creating new shapes in the bottom panel)
-
-# Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes
+## Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes
 
 This plugin can sometimes get in the way of the default 2D viewport behavior. Sometimes it is hard _not_ to select a `ScalableVectorShape2D`.
 
@@ -304,16 +387,15 @@ There are 4 ways to get around this:
 
 The following custom forms were added, with extensive tooltips to help explain the actual functions they provide:
 
-- [Convert to Path button](#convert-to-path-button)
-- [Export as PNG button](#export-as-png-button)
 - [Fill](#the-fill-inspector-form) (actually the assigned `Polygon2D`)
-- [Stroke](#the-stroke-inspector-form) (actually the assigned `Line2D`)
+- [Stroke](#the-stroke-inspector-form) (actually the assigned `Line2D` or `Polygon2D`)
 - [Collision](#the-collision-inspector-form) (manages an assigned `CollisionObject2D`)
 - [Navigation](#the-navigation-inspector-form) (manages an assigned `NavigationRegion2D`)
 - [Curve Settings](#the-curve-settings-inspector-form)
 - [Masking](#the-masking-inspector-form)
 - [Shape Type Settings](#the-shape-type-inspector-form)
 - [Editor Settings](#the-editor-settings-inspector-form)
+- [Export Options](#the-export-options-inspector-form)
 
 ![screenshot of the inspector](./addons/curved_lines_2d/screenshots/inspector-in-2.6.png)
 
@@ -323,22 +405,6 @@ The following custom forms were added, with extensive tooltips to help explain t
 ### Convert to Path button
 
 When a primitive shape (basic rectangle or ellipse) is selected, a `Convert to Path`-button is available at the top of the inspector.
-
-### Export as PNG button
-
-With the `Export as PNG`-button you can save any `ScalableVectorShape2D` and its children as a new `.png`-file. Note that nodes which are assigned as Fill or Stroke that are higher up in the hierarchy will be excluded from the exported file.
-
-You _can_ however change the type of any `Node2D` to `ScalableVectorShape2D` temporarily in order to export group of shapes as a PNG file.
-
-### Export as 'baked' scene button
-
-With the `Export as baked scene` button you can generate a new scene (like `Save branch as scene`), with all the `ScalableVectorShape2D`-nodes converted to basic `Node2D`-nodes.
-
-Use this when you are done drawing entirely and do not want to update curves at runtime, or when you want to keep the shapes but drop the dependency of this plugin from your project.
-
-This button is not feature-complete yet[^7]
-
-[^7]: AnimationPlayer will not be included, cutouts are not yet supported for this feature. Alternatively, you can manually unlock any generated polygons and lines and copy+paste them into a new scene.
 
 ## The Fill inspector form
 
@@ -356,15 +422,29 @@ Below that, a standard godot `Assign ...`-field is also available to set the `po
 
 ## The Stroke inspector form
 
-When the selected shape has no stroke, an `Add Stroke` button is provided. Clicking that will create and assign a new `Line2D` to the selected `ScalableVectorShape2D`:
+![screenshot of stroke formm](./addons/curved_lines_2d/screenshots/stroke_inspector.png)
 
-![screenshot of stroke form without stroke](./addons/curved_lines_2d/screenshots/stroke-form-no-stroke.png)
+With this form the following `ScalableVectorShape2D` properties can be edited:
+- `stroke_color`
+- `stroke_width`
+- `begin_cap_mode` (in case of a `Polygon2D`-based stroke, this will also set the end cap)
+- `end_cap_mode`
+- `line_joint_mode`
 
-Once assigned, the following options are available:
-- Stroke color, changes the `default_color` property of the assigned `Line2D`
-- Stroke width, changing the `width` property of the assigned `Line2D`
+When a `Line2D` is assigned to draw the stroke with, these properties will be kept synchronized with the `ScalableVectorShape2D` properties.
 
-Below that, a standard godot `Assign ...`-field is also available to set the `line`-property directly with and to enable unassignment.
+In case of a `Polygon2D` based stroke, the `stroke_color` will be kept synchronized with the `Polygon2D` color.
+
+### Creating new Strokes
+When the selected shape has no stroke, an extra set of buttons is provided:
+- `Add Line2D Stroke`
+- `Add Polygon2D Stroke`
+
+Clicking either will create and assign a new `Line2D` or `Polygon2D` to the selected `ScalableVectorShape2D`:
+
+Below that, a standard godot `Assign ...`-field is also available to set these properties:
+- `line`: a `Line2D` assignment
+- `poly_stroke`: a `Polygon2D` assignment
 
 ## The Collision inspector form
 
@@ -429,6 +509,22 @@ This form exposes 2 settings:
 - Shape Hint Color: the color of the line with which this shape is drawn, when selected
 - Lock Assigned Shapes: when this is checked, added strokes, fills and collision polygons will be locked in the editor, once created.
 
+## The Export Options inspector form
+
+### Export as PNG button
+
+With the `Export as PNG`-button you can save any `ScalableVectorShape2D` and its children as a new `.png`-file. Note that nodes which are assigned as Fill or Stroke that are higher up in the hierarchy will be excluded from the exported file.
+
+You _can_ however change the type of any `Node2D` to `ScalableVectorShape2D` temporarily in order to export group of shapes as a PNG file.
+
+### Export as 'baked' scene button
+
+With the `Export as baked scene` button you can generate a new scene (like `Save branch as scene`), with all the `ScalableVectorShape2D`-nodes converted to basic `Node2D`-nodes.
+
+Use this when you are done drawing entirely and do not want to update curves at runtime, or when you want to keep the shapes but drop the dependency of this plugin from your project.
+
+#### Caveats when 'Baking'
+An exported AnimationPlayer will not support animated curves, track references will, however, remain.
 
 
 # More about assigned `Line2D`, `Polygon2D` and `CollisionObject2D`
@@ -481,9 +577,9 @@ You can then add an `AnimationPlayer` node to your scene, create a new animation
   - `texture:gradient:offsets` (the entire `PackedFloat32Array`)
   - `texture:fill_from`
   - `texture:fill_to`
-- Stroke width, i.e.: the `width` property of the assigned `Line2D`
-- Stroke color, i.e.: the `default_color`  of the assigned `Line2D`
 - Fill color, i.e.: the `color` of the assigned `Polygon2D`
+
+__* Note: the keyframes of stroke properties are set directly on `ScalableVectorShape2D` as of release 2.12__
 
 ![the new key frame buttons in the inspector](./addons/curved_lines_2d/screenshots/animating-in-2.4.0.png)
 
@@ -493,7 +589,7 @@ When the `update_curve_at_runtime` property is checked, every time the curve cha
 
 Duplicating a `ScalableVectorShape2D` will __not__ make a new `Curve2D`, but use a reference. This means line-segments will be calculated multiple times on one and the same curve! Very wasteful.
 
-If however you want to, for instance, animate 100 blades of grass, just use __one__ `DrawableShape2D` and have the 100 `Line2D` node listen to the `path_changed` signal and overwrite their `points` property with the `PackedVector2Array` argument of your listener `func`:
+If however you want to, for instance, animate 100 blades of grass, just use __one__ `ScalableVectorShape2D` and have the 100 `Line2D` node listen to the `path_changed` signal and overwrite their `points` property with the `PackedVector2Array` argument of your listener `func`:
 
 ![path_changed signal](./addons/curved_lines_2d/screenshots/10-path_changed-signal.png)
 
@@ -507,6 +603,31 @@ Animating curve points at runtime does, however, impact performance of your game
 Under `Tesselation settings` you can lower `Max Stages` or bump up `Tolerance Degrees` to reduce curve smoothness and increase performance (and vice-versa)
 
 # FAQ's
+
+## The curve of my `ScalableVectorShape2D` won't animate at runtime, what do I do?
+Check the box:
+
+![update curve at runtime](./addons/curved_lines_2d/screenshots/update-curve-at-runtime-in-2.4.0.png)
+
+## I want to change shapes while debugging my game. Is this even possible?
+
+Yes, when you check the box `Update Curve at Runtime` box.
+
+## When I animate the curve of an imported scene, it animates all the other curves as well
+
+This is a common issue: there is _one_ `Curve2D` instance being referenced by all scenes. You fix this by checking On "Local To Scene" for the `Curve2D`:
+
+![local to scene](./addons/curved_lines_2d/screenshots/local_to_scene.png)
+
+
+## When I duplicate a `ScalableVectorShape2D` and change its shape, the original `ScalableVectorShape2D` shape also changes
+
+This is a common issue: there is _one_ `Curve2D` instance being referenced by both nodes. At the moment there is not a quick fix, but you can always follow these steps:
+1. Right click on your copy in the scene tree
+2. Pick "Save branch as Scene"
+3. Make the `Curve2D` "Local to Scene" like in [the previous faq example](#when-i-animate-the-curve-of-an-imported-scene-it-animates-all-the-other-curves-as-well)
+
+
 
 ## Can I draw shapes programmatically?
 
@@ -558,6 +679,8 @@ Once you're done drawing and do not need the shape to change anymore at runtime 
 - The suggestion to support both `Polygon2D` and collisions was done by [GeminiSquishGames](https://github.com/GeminiSquishGames), who's pointers inspired me to go further
 - The SVG Importer code was adapted from the script hosted on github in the [pixelriot/SVG2Godot](https://github.com/pixelriot/SVG2Godot) repository
 - The code for making cutout shapes was adapted from the great [knife tool plugin](https://github.com/mrkdji/knife-tool/) by @mrkdji
+- The inspiration for using [Geometry2D.offset_polyline](https://docs.godotengine.org/en/stable/classes/class_geometry2d.html#class-geometry2d-method-offset-polyline) for strokes came from @theshaggydev, who recorded [this video](https://www.youtube.com/watch?v=5TW7H7aXhxQ) about it.
+
 
 
 ## And a big thank you goes to to [@MewPurPur](https://github.com/MewPurPur)
@@ -566,6 +689,16 @@ The author of GodSVG for writing a great [SVG Arc command implementation](https:
 - Download from the [GodSVG website](https://www.godsvg.com/)
 - Or try out the [web version](https://www.godsvg.com/editor/)
 - Also on [itch.io](https://mewpurpur.itch.io/godsvg)
+
+
+## Many thanks to @HannesParth/Permotion
+
+As an early adopter Hannes was quick to point out good quality of life improvements like snap to pixel, setting global position exactly and exporting as PNG.
+
+Make sure to try out ["Spring Ball" on Itch](https://permotion.itch.io/spring-ball), a 48h game jam solo project that used ScalableVectorShape2D for all level objects, including a wrapper script to change the block that makes up the majority of the level between cube and triangle shapes:
+
+[![spring ball](./addons/curved_lines_2d/screenshots/spring-ball.png)](https://permotion.itch.io/spring-ball)
+
 
 ## And of course everyone who helped test and review the code thus far
 
