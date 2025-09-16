@@ -5,6 +5,7 @@ extends Node
 # Map property names → default values
 const PROPERTY_MAPPINGS: Dictionary = {
 	"expand_mode": TextureRect.EXPAND_IGNORE_SIZE,
+	"stretch_mode": TextureButton.STRETCH_SCALE,
 	"expand_icon": true,
 	"ignore_texture_size": true
 }
@@ -15,6 +16,8 @@ var render_downscale_factor: float = 10.0
 
 var _parent_control: Control
 var _available_texture_properties: Array[String] = []
+var _is_saving_scene: bool = false
+var _cached_texture: Texture2D  # Store the actual texture to restore after save
 
 func _ready() -> void:
 	# Ensure the parent is a Control node.
@@ -37,9 +40,93 @@ func _ready() -> void:
 	# Change parent texture properties
 	_update_parent_properties()
 
+	# Connect to save signals if in editor
+	if Engine.is_editor_hint():
+		_connect_save_signals()
+
 	# Perform initial render if we have a resource.
 	if svg_resource:
 		_queue_render()
+
+func _connect_save_signals() -> void:
+	if Engine.is_editor_hint() and EditorInterface:
+		# Connect to the resource saved signal
+		var editor_interface = EditorInterface
+		if editor_interface:
+			# Try multiple approaches to detect scene saves
+
+			# Method 1: Connect to the main screen changed (happens during saves)
+			var main_screen = editor_interface.get_editor_main_screen()
+			if main_screen:
+				main_screen.visibility_changed.connect(_on_editor_visibility_changed)
+
+			# Method 2: Monitor the current scene tree for changes
+			if get_tree():
+				get_tree().node_configuration_warning_changed.connect(_on_scene_tree_changed)
+
+func _on_editor_visibility_changed() -> void:
+	# This is a heuristic that often correlates with save operations
+	if Engine.is_editor_hint():
+		_prepare_for_potential_save()
+
+func _on_scene_tree_changed(node: Node) -> void:
+	# Another heuristic for detecting editor operations that might include saving
+	if Engine.is_editor_hint() and is_ancestor_of(node):
+		_prepare_for_potential_save()
+
+# Override the notification method to catch save notifications
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_EDITOR_PRE_SAVE:
+			_prepare_for_save()
+		NOTIFICATION_EDITOR_POST_SAVE:
+			_restore_after_save()
+		# Also catch when the node is about to be saved
+		NOTIFICATION_WM_CLOSE_REQUEST:
+			if Engine.is_editor_hint():
+				_prepare_for_save()
+
+func _prepare_for_potential_save() -> void:
+	# Use a timer to briefly set texture to null, then restore
+	# This catches most save scenarios
+	if _is_saving_scene:
+		return
+
+	_prepare_for_save()
+	# Restore after a brief delay
+	get_tree().create_timer(0.1).timeout.connect(_restore_after_save, CONNECT_ONE_SHOT)
+
+func _prepare_for_save() -> void:
+	if not Engine.is_editor_hint() or not _parent_control or target_property.is_empty():
+		return
+
+	if not _has_property(_parent_control, target_property):
+		return
+
+	_is_saving_scene = true
+
+	# Store the current texture
+	_cached_texture = _parent_control.get(target_property) as Texture2D
+
+	# Set texture to null to prevent it from being saved
+	_parent_control.set(target_property, null)
+
+	print_rich("[color=yellow]SVGTextureHelper: Texture temporarily set to null for saving[/color]")
+
+func _restore_after_save() -> void:
+	if not Engine.is_editor_hint() or not _is_saving_scene:
+		return
+
+	_is_saving_scene = false
+
+	# Restore the cached texture
+	if _parent_control and not target_property.is_empty() and _cached_texture:
+		if _has_property(_parent_control, target_property):
+			_parent_control.set(target_property, _cached_texture)
+			print_rich("[color=green]SVGTextureHelper: Texture restored after save[/color]")
+
+	# Clear the cache
+	_cached_texture = null
 
 func _detect_texture_properties() -> void:
 	_available_texture_properties.clear()
@@ -179,6 +266,11 @@ func _on_resource_changed() -> void:
 
 func _on_texture_updated(new_texture: Texture2D) -> void:
 	if _parent_control and not target_property.is_empty():
+		# Don't update texture if we're in the middle of a save operation
+		if _is_saving_scene:
+			_cached_texture = new_texture  # Update our cache instead
+			return
+
 		# Validate that the property exists before setting it
 		if _has_property(_parent_control, target_property):
 			# Set the new texture on the parent control
@@ -188,6 +280,10 @@ func _on_texture_updated(new_texture: Texture2D) -> void:
 
 ## Called on resize or when the resource changes.
 func _queue_render() -> void:
+	# Don't render during save operations
+	if _is_saving_scene:
+		return
+
 	# Check for valid conditions before requesting a render.
 	if not is_instance_valid(svg_resource) or not is_instance_valid(_parent_control):
 		return
@@ -211,3 +307,11 @@ func _refresh_properties() -> void:
 	if Engine.is_editor_hint():
 		_detect_texture_properties()
 		notify_property_list_changed()
+
+# Manual save preparation - you can call this from editor plugins or scripts
+func manual_prepare_for_save() -> void:
+	_prepare_for_save()
+
+# Manual save restoration - you can call this from editor plugins or scripts
+func manual_restore_after_save() -> void:
+	_restore_after_save()
