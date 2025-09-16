@@ -1,0 +1,46 @@
+@tool
+class_name SVGResource
+extends Resource
+
+## Emitted when the SVG texture has been rendered or re-rendered.
+signal texture_updated(new_texture: Texture2D)
+
+@export_file("*.svg") var svg_file_path: String = "" : set = _set_svg_file_path
+@export var render_scale: float = 1.0 : set = _set_render_scale # I'd recommend rendering at half scale
+
+var texture: Texture2D
+var _svg_string: String # Cache for the file content
+
+func _set_svg_file_path(path: String) -> void:
+	if svg_file_path == path:
+		return
+	svg_file_path = path
+
+	if FileAccess.file_exists(path):
+		var file := FileAccess.open(path, FileAccess.READ)
+		_svg_string = file.get_as_text()
+		file.close()
+	else:
+		_svg_string = ""
+		texture = null
+
+	# Notify that the resource has changed. The helper will trigger a re-render.
+	emit_changed()
+
+func _set_render_scale(scale: float) -> void:
+	if render_scale == scale:
+		return
+	render_scale = scale
+	# Notify that the resource has changed. The helper will trigger a re-render.
+	emit_changed()
+
+## Public getter for the manager to access the SVG data.
+func get_svg_string() -> String:
+	return _svg_string
+
+## Internal method called by the manager upon render completion.
+func _update_texture(new_texture: Texture2D) -> void:
+	texture = new_texture
+	texture_updated.emit(texture)
+	# Notify the editor that this resource has changed, so it updates the inspector.
+	emit_changed()

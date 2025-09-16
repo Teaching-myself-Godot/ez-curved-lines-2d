@@ -1,0 +1,77 @@
+[gd_scene load_steps=6 format=3 uid="uid://0vt4p8wqudyi"]
+
+[ext_resource type="Script" uid="uid://cd2hrik4wvt1o" path="res://addons/curved_lines_2d/svg_texture_helper.gd" id="1_tkwla"]
+[ext_resource type="Script" uid="uid://yh2davxk4fh7" path="res://addons/curved_lines_2d/svg_resource.gd" id="2_fv747"]
+
+[sub_resource type="Resource" id="Resource_2fobf"]
+script = ExtResource("2_fv747")
+svg_file_path = "uid://cepqussm7geks"
+render_scale = 0.5
+metadata/_custom_type_script = "uid://yh2davxk4fh7"
+
+[sub_resource type="Resource" id="Resource_tkwla"]
+script = ExtResource("2_fv747")
+svg_file_path = "uid://b5yxa1e62b0hb"
+render_scale = 0.5
+metadata/_custom_type_script = "uid://yh2davxk4fh7"
+
+[sub_resource type="Resource" id="Resource_fv747"]
+script = ExtResource("2_fv747")
+svg_file_path = "uid://b8ludy6aqsejg"
+render_scale = 1.0
+metadata/_custom_type_script = "uid://yh2davxk4fh7"
+
+[node name="GUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 266.0
+offset_top = 450.0
+offset_right = 381.0
+offset_bottom = 565.0
+expand_mode = 1
+
+[node name="SVGTextureHelper" type="Node" parent="TextureRect"]
+script = ExtResource("1_tkwla")
+svg_resource = SubResource("Resource_2fobf")
+target_property = "texture"
+render_downscale_factor = 15.0
+metadata/_custom_type_script = "uid://cd2hrik4wvt1o"
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 618.0
+offset_top = 451.0
+offset_right = 895.0
+offset_bottom = 574.0
+text = "SVG Icon Button"
+expand_icon = true
+
+[node name="SVGTextureHelper" type="Node" parent="Button"]
+script = ExtResource("1_tkwla")
+svg_resource = SubResource("Resource_tkwla")
+target_property = "icon"
+render_downscale_factor = 10.0
+metadata/_custom_type_script = "uid://cd2hrik4wvt1o"
+
+[node name="TextureButton" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 457.0
+offset_top = 328.0
+offset_right = 538.0
+offset_bottom = 409.0
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="SVGTextureHelper" type="Node" parent="TextureButton"]
+script = ExtResource("1_tkwla")
+svg_resource = SubResource("Resource_fv747")
+target_property = "texture_normal"
+render_downscale_factor = 10.0
+metadata/_custom_type_script = "uid://cd2hrik4wvt1o"
