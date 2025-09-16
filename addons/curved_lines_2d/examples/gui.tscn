@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://0vt4p8wqudyi"]
+[gd_scene load_steps=7 format=3 uid="uid://0vt4p8wqudyi"]
 
 [ext_resource type="Script" uid="uid://cd2hrik4wvt1o" path="res://addons/curved_lines_2d/svg_texture_helper.gd" id="1_tkwla"]
 [ext_resource type="Script" uid="uid://yh2davxk4fh7" path="res://addons/curved_lines_2d/svg_resource.gd" id="2_fv747"]
@@ -18,6 +18,12 @@ metadata/_custom_type_script = "uid://yh2davxk4fh7"
 [sub_resource type="Resource" id="Resource_fv747"]
 script = ExtResource("2_fv747")
 svg_file_path = "uid://b8ludy6aqsejg"
+render_scale = 1.0
+metadata/_custom_type_script = "uid://yh2davxk4fh7"
+
+[sub_resource type="Resource" id="Resource_l4vqo"]
+script = ExtResource("2_fv747")
+svg_file_path = "uid://31qakec1dm6y"
 render_scale = 1.0
 metadata/_custom_type_script = "uid://yh2davxk4fh7"
 
@@ -69,9 +75,16 @@ offset_bottom = 409.0
 ignore_texture_size = true
 stretch_mode = 0
 
-[node name="SVGTextureHelper" type="Node" parent="TextureButton"]
+[node name="SVGTextureHelperForNormal" type="Node" parent="TextureButton"]
 script = ExtResource("1_tkwla")
 svg_resource = SubResource("Resource_fv747")
 target_property = "texture_normal"
+render_downscale_factor = 10.0
+metadata/_custom_type_script = "uid://cd2hrik4wvt1o"
+
+[node name="SVGTextureHelperForHover" type="Node" parent="TextureButton"]
+script = ExtResource("1_tkwla")
+svg_resource = SubResource("Resource_l4vqo")
+target_property = "texture_hover"
 render_downscale_factor = 10.0
 metadata/_custom_type_script = "uid://cd2hrik4wvt1o"
