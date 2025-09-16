@@ -10,7 +10,12 @@ var LineCapEditor = preload("res://addons/curved_lines_2d/line_cap_editor_proper
 var LineJointModeEditor = preload("res://addons/curved_lines_2d/line_joint_editor_property.gd")
 
 func _can_handle(obj) -> bool:
-	return obj is DrawablePath2D or obj is ScalableVectorShape2D or obj is AdaptableVectorShape3D
+	return (
+		obj is DrawablePath2D or
+		obj is ScalableVectorShape2D or
+		obj is AdaptableVectorShape3D or
+		obj is TextureRect
+	)
 
 
 func _parse_begin(object: Object) -> void:
@@ -100,6 +105,18 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 			add_custom_control(button)
 			button.pressed.connect(func(): _add_guide_svs(object))
 			return true
+	elif object is TextureRect:
+		if object.get_children().filter(func(ch): return ch is SVGTextureHelper).size() > 0:
+			if name == "texture":
+				var label := Label.new()
+				label.text = "This texture is being\nmanaged by the \nSVGTextureHelper node"
+				label.label_settings = LabelSettings.new()
+				label.label_settings.font_size = 14
+				label.label_settings.font_color = Color(Color.GRAY, 0.75)
+				add_custom_control(label)
+				return true
+			if name == "expand_mode" or name == "stretch_mode":
+				return true
 	return false
 
 
