@@ -8,9 +8,31 @@ var _render_queue: Dictionary = {}
 var _render_thread: Thread
 var _mutex := Mutex.new()
 var _is_processing := false
+var _is_shutting_down := false
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		_shutdown()
+
+func _shutdown() -> void:
+	_mutex.lock()
+	_is_shutting_down = true
+	_render_queue.clear()
+	_mutex.unlock()
+
+	# Wait for any running thread to complete
+	if _render_thread and _render_thread.is_started():
+		_render_thread.wait_to_finish()
+		_render_thread = null
 
 ## The helper node calls this to request a render.
 func request_render(resource: SVGResource, target_size: Vector2i) -> void:
+	_mutex.lock()
+	if _is_shutting_down:
+		_mutex.unlock()
+		return
+	_mutex.unlock()
+
 	if not resource or resource.get_svg_string().is_empty() or target_size.x <= 0 or target_size.y <= 0:
 		return
 
@@ -22,7 +44,7 @@ func request_render(resource: SVGResource, target_size: Vector2i) -> void:
 
 func _process_queue() -> void:
 	_mutex.lock()
-	if _is_processing or _render_queue.is_empty():
+	if _is_processing or _render_queue.is_empty() or _is_shutting_down:
 		_mutex.unlock()
 		return
 
@@ -63,6 +85,15 @@ func _render_svg_threaded(data: Dictionary) -> void:
 	call_deferred("_on_render_complete", data.resource, image_texture)
 
 func _on_render_complete(resource: SVGResource, new_texture: ImageTexture) -> void:
+	_mutex.lock()
+	if _is_shutting_down:
+		_mutex.unlock()
+		if _render_thread:
+			_render_thread.wait_to_finish()
+			_render_thread = null
+		return
+	_mutex.unlock()
+
 	if resource and new_texture:
 		resource._update_texture(new_texture)
 
