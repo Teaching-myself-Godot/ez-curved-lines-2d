@@ -14,7 +14,9 @@ func _can_handle(obj) -> bool:
 		obj is DrawablePath2D or
 		obj is ScalableVectorShape2D or
 		obj is AdaptableVectorShape3D or
-		obj is TextureRect
+		obj is TextureRect or
+		obj is Button or
+		obj is TextureButton
 	)
 
 
@@ -40,6 +42,13 @@ func _parse_group(object: Object, group: String) -> void:
 		var key_frame_form = load("res://addons/curved_lines_2d/batch_insert_curve_point_key_frames_inspector_form.tscn").instantiate()
 		key_frame_form.scalable_vector_shape_2d = object
 		add_custom_control(key_frame_form)
+	elif group == "Textures" and object is TextureButton:
+		var label := Label.new()
+		label.text = "These textures are being\nmanaged by the \nSVGTextureHelper node"
+		label.label_settings = LabelSettings.new()
+		label.label_settings.font_size = 14
+		label.label_settings.font_color = Color(Color.GRAY, 0.75)
+		add_custom_control(label)
 	elif group == GROUP_NAME_EXPORT_OPTIONS and object is ScalableVectorShape2D:
 		var box := VBoxContainer.new()
 		var export_png_button : Button = Button.new()
@@ -105,15 +114,17 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 			add_custom_control(button)
 			button.pressed.connect(func(): _add_guide_svs(object))
 			return true
-	elif object is TextureRect:
+	elif object is TextureRect or object is Button or object is TextureButton:
 		if object.get_children().filter(func(ch): return ch is SVGTextureHelper).size() > 0:
-			if name == "texture":
+			if name == "texture" or name == "icon":
 				var label := Label.new()
 				label.text = "This texture is being\nmanaged by the \nSVGTextureHelper node"
 				label.label_settings = LabelSettings.new()
 				label.label_settings.font_size = 14
 				label.label_settings.font_color = Color(Color.GRAY, 0.75)
 				add_custom_control(label)
+				return true
+			elif name.begins_with("texture_"):
 				return true
 			if name == "expand_mode" or name == "stretch_mode":
 				return true
