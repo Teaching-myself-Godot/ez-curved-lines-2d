@@ -3,6 +3,9 @@ extends Node
 
 class_name SVGTextureHelper
 
+# May use a class name if clutter is not a concern
+const SVGManager = preload("res://addons/curved_lines_2d/svg_manager.gd")
+
 # Map property names → default values
 const PROPERTY_MAPPINGS: Dictionary = {
 	"expand_mode": TextureRect.EXPAND_IGNORE_SIZE,

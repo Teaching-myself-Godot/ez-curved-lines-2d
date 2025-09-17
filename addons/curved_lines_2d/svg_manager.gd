@@ -1,14 +1,14 @@
-# Autoload script that handles GUI SVGs
+# Staric class that handles GUI SVGs
 @tool
 extends Node
 
 # Cache: "resource_id_width_height_scale" -> Texture2D
-var _texture_cache: Dictionary = {} # Not yet implemented
-var _render_queue: Dictionary = {}
-var _render_thread: Thread
-var _mutex := Mutex.new()
-var _is_processing := false
-var _is_shutting_down := false
+static var _texture_cache: Dictionary = {} # Not yet implemented
+static var _render_queue: Dictionary = {}
+static var _render_thread: Thread
+static var _mutex := Mutex.new()
+static var _is_processing := false
+static var _is_shutting_down := false
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
@@ -26,7 +26,7 @@ func _shutdown() -> void:
 		_render_thread = null
 
 ## The helper node calls this to request a render.
-func request_render(resource: SVGResource, target_size: Vector2i) -> void:
+static func request_render(resource: SVGResource, target_size: Vector2i) -> void:
 	_mutex.lock()
 	if _is_shutting_down:
 		_mutex.unlock()
@@ -40,9 +40,9 @@ func request_render(resource: SVGResource, target_size: Vector2i) -> void:
 	_render_queue[resource] = target_size
 	_mutex.unlock()
 
-	call_deferred("_process_queue")
+	_process_queue.call_deferred()
 
-func _process_queue() -> void:
+static func _process_queue() -> void:
 	_mutex.lock()
 	if _is_processing or _render_queue.is_empty() or _is_shutting_down:
 		_mutex.unlock()
@@ -68,7 +68,7 @@ func _process_queue() -> void:
 	_render_thread = Thread.new()
 	_render_thread.start(_render_svg_threaded.bind(render_data))
 
-func _render_svg_threaded(data: Dictionary) -> void:
+static func _render_svg_threaded(data: Dictionary) -> void:
 	var image := Image.new()
 	var svg_string: String = data.svg_string
 	var target_size: Vector2i = data.size
@@ -78,13 +78,13 @@ func _render_svg_threaded(data: Dictionary) -> void:
 
 	if error != OK:
 		push_error("Failed to render SVG: " + str(error))
-		call_deferred("_on_render_complete", data.resource, null)
+		_on_render_complete.call_deferred(data.resource, null)
 		return
 
 	var image_texture := ImageTexture.create_from_image(image)
-	call_deferred("_on_render_complete", data.resource, image_texture)
+	_on_render_complete.call_deferred(data.resource, image_texture)
 
-func _on_render_complete(resource: SVGResource, new_texture: ImageTexture) -> void:
+static func _on_render_complete(resource: SVGResource, new_texture: ImageTexture) -> void:
 	_mutex.lock()
 	if _is_shutting_down:
 		_mutex.unlock()
@@ -105,4 +105,4 @@ func _on_render_complete(resource: SVGResource, new_texture: ImageTexture) -> vo
 	_is_processing = false
 	_mutex.unlock()
 
-	call_deferred("_process_queue")
+	_process_queue.call_deferred()

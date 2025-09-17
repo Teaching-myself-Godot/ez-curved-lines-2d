@@ -141,9 +141,6 @@ func _enter_tree():
 		scalable_vector_shapes_2d_dock.edit_tab.ellipse_created.connect(_on_ellipse_created)
 	scene_changed.connect(_on_scene_changed)
 
-	if not ProjectSettings.has_setting("autoload/SVGManager"):
-		add_autoload_singleton("SVGManager", SVG_MANAGER)
-
 
 func select_node_reversibly(target_node : Node) -> void:
 	if is_instance_valid(target_node):
@@ -1647,5 +1644,3 @@ func _exit_tree():
 	remove_control_from_bottom_panel(scalable_vector_shapes_2d_dock)
 	scalable_vector_shapes_2d_dock.free()
 	set_global_position_popup_panel.free()
-	if ProjectSettings.has_setting("autoload/SVGManager"):
-		remove_autoload_singleton("SVGManager")
