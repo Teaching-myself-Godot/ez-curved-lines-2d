@@ -1,8 +1,6 @@
 @tool
 extends LinkButton
 
-class_name LinkButtonWithCopyHint
-
 func _set(property: StringName, value: Variant) -> bool:
 	match property:
 		"uri":
