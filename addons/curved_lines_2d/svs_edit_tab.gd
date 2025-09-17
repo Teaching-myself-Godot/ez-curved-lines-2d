@@ -1,8 +1,6 @@
 @tool
 extends Control
 
-class_name SVSEditTab
-
 signal shape_created(curve : Curve2D, scene_root : Node2D, node_name : String)
 signal rect_created(width : float, height : float, rx : float, ry : float, scene_root : Node2D)
 signal ellipse_created(rx : float, ry : float, scene_root : Node2D)

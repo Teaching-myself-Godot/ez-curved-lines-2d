@@ -1,8 +1,6 @@
 @tool
 extends Control
 
-class_name SVGImportTab
-
 # Fraction of a radius for a bezier control point
 const R_TO_CP = 0.5523
 const PLC_EXP = "__PLC_EXP__"
