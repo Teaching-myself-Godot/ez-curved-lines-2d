@@ -1,8 +1,6 @@
 @tool
 extends KeyframeButtonCapableInspectorFormBase
 
-class_name AssignFillInspectorForm
-
 var scalable_vector_shape_2d : ScalableVectorShape2D
 
 

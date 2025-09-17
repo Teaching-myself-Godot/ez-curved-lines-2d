@@ -2,7 +2,7 @@
 extends EditorProperty
 
 # The main control for editing the property.
-var property_control : LineCapToggleButtons
+var property_control : Control
 # An internal value of the property.
 var current_value := Line2D.LINE_CAP_NONE
 # A guard against internal changes when the property is updated.

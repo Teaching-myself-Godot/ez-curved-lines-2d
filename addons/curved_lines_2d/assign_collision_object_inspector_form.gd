@@ -1,8 +1,6 @@
 @tool
 extends Control
 
-class_name AssignCollisionObjectInspectorForm
-
 var scalable_vector_shape_2d : ScalableVectorShape2D
 
 func _enter_tree() -> void:

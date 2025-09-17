@@ -1,8 +1,6 @@
 @tool
 extends Control
 
-class_name AssignStrokeInspectorForm
-
 var scalable_vector_shape_2d : ScalableVectorShape2D
 
 
