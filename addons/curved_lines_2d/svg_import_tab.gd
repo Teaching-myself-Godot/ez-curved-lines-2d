@@ -1,8 +1,6 @@
 @tool
 extends Control
 
-class_name SVGImportTab
-
 # Fraction of a radius for a bezier control point
 const R_TO_CP = 0.5523
 const PLC_EXP = "__PLC_EXP__"
@@ -140,7 +138,7 @@ func _load_svg(file_path : String) -> void:
 
 
 	log_message("Import finished.\n\nThe SVG importer is still incrementally improving (slowly).")
-	var link_button : LinkButtonWithCopyHint = LinkButtonScene.instantiate()
+	var link_button = LinkButtonScene.instantiate()
 	link_button.text = "Click here to report issues or improvement requests on github"
 	link_button.uri = "https://github.com/Teaching-myself-Godot/ez-curved-lines-2d/issues"
 	%ImportLogContainer.add_child(link_button)

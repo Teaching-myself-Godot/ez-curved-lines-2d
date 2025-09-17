@@ -13,8 +13,8 @@ const TABS_NAME := [
 ]
 
 var warning_dialog : AcceptDialog
-var edit_tab : SVSEditTab
-var import_tab : SVGImportTab
+var edit_tab : Control
+var import_tab : Control
 
 func _enter_tree() -> void:
 	for i in min(TABS_NAME.size(), get_child_count()):

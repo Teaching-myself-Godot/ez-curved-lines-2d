@@ -1,8 +1,6 @@
 @tool
 extends Control
 
-class_name LineCapToggleButtons
-
 signal changed(cap : Line2D.LineCapMode)
 
 

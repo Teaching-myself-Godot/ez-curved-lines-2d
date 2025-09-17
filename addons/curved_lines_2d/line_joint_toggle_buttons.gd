@@ -1,8 +1,6 @@
 @tool
 extends Control
 
-class_name LineJointToggleButtons
-
 signal changed(joint_mode : Line2D.LineJointMode)
 
 
