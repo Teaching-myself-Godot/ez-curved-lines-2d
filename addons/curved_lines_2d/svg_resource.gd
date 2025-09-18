@@ -7,22 +7,29 @@ signal texture_updated(new_texture: Texture2D)
 
 @export_file("*.svg") var svg_file_path: String = "" : set = _set_svg_file_path
 @export var render_scale: float = 1.0 : set = _set_render_scale # I'd recommend rendering at half scale
+@export var svg_string := ""
+@export var original_size := Vector2.ZERO
 
 var texture: Texture2D
-var _svg_string: String # Cache for the file content
 
 func _set_svg_file_path(path: String) -> void:
-	if svg_file_path == path:
-		return
-	svg_file_path = path
-
-	if FileAccess.file_exists(path):
-		var file := FileAccess.open(path, FileAccess.READ)
-		_svg_string = file.get_as_text()
-		file.close()
-	else:
-		_svg_string = ""
-		texture = null
+	if Engine.is_editor_hint():
+		if svg_file_path == path:
+			return
+		svg_file_path = path
+		if FileAccess.file_exists(path):
+			var file := FileAccess.open(path, FileAccess.READ)
+			svg_string = file.get_as_text()
+			var image := Image.new()
+			var error := image.load_svg_from_string(svg_string)
+			if error != OK:
+				push_error("Failed to render SVG: " + str(error))
+				return
+			original_size = image.get_size()
+			file.close()
+		else:
+			svg_string = ""
+			texture = null
 
 	# Notify that the resource has changed. The helper will trigger a re-render.
 	emit_changed()
@@ -33,10 +40,6 @@ func _set_render_scale(scale: float) -> void:
 	render_scale = scale
 	# Notify that the resource has changed. The helper will trigger a re-render.
 	emit_changed()
-
-## Public getter for the manager to access the SVG data.
-func get_svg_string() -> String:
-	return _svg_string
 
 ## Internal method called by the manager upon render completion.
 func _update_texture(new_texture: Texture2D) -> void:

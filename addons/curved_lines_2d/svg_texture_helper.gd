@@ -4,8 +4,6 @@ extends Node
 class_name SVGTextureHelper
 
 # May use a class name if clutter is not a concern
-const SVGManager = preload("res://addons/curved_lines_2d/svg_manager.gd")
-
 # Map property names → default values
 const PROPERTY_MAPPINGS: Dictionary = {
 	"expand_mode": TextureRect.EXPAND_IGNORE_SIZE,
@@ -274,6 +272,9 @@ func _on_texture_updated(new_texture: Texture2D) -> void:
 
 ## Called on resize or when the resource changes.
 func _queue_render() -> void:
+	if svg_resource.svg_string.is_empty():
+		_parent_control.set(target_property, null)
+		return
 	# Don't render during save operations
 	if _is_saving_scene:
 		return
@@ -293,8 +294,18 @@ func _queue_render() -> void:
 
 		# Apply the configurable downscale factor.
 		# We ensure the factor is at least 1 to avoid division by zero or upsizing.
-		var final_size = target_size / max(1.0, render_downscale_factor)
-		SVGManager.request_render(svg_resource, final_size)
+		var rescale_factor := (target_size.x / svg_resource.original_size.x) * svg_resource.render_scale
+
+		var image := Image.new()
+		var error := image.load_svg_from_string(svg_resource.svg_string, rescale_factor)
+
+		if error != OK:
+			push_error("Failed to render SVG: " + str(error))
+			return
+
+		var image_texture := ImageTexture.create_from_image(image)
+		_parent_control.set(target_property, image_texture)
+
 
 # Helper function to refresh the property list in the editor
 func _refresh_properties() -> void:
