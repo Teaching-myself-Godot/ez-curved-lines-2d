@@ -127,7 +127,7 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 			elif name.begins_with("texture_"):
 				return true
 			if (
-				name == "expand_mode" or name == "stretch_mode" or
+				name == "expand_mode" or #name == "stretch_mode" or
 				name == "expand_icon" or name == "ignore_texture_size"
 			):
 				return true

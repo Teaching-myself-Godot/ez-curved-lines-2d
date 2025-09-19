@@ -7,7 +7,6 @@ class_name SVGTextureHelper
 # Map property names → default values
 const PROPERTY_MAPPINGS: Dictionary = {
 	"expand_mode": TextureRect.EXPAND_IGNORE_SIZE,
-	"stretch_mode": TextureButton.STRETCH_SCALE,
 	"expand_icon": true,
 	"ignore_texture_size": true
 }
@@ -285,16 +284,22 @@ func _queue_render() -> void:
 
 	if Engine.is_editor_hint() or get_tree():
 		var target_size: Vector2i = _parent_control.size
-
+		var rescale_factor := 1.0
 		# If parent size is invalid or zero, use a minimal 1x1 placeholder.
 		# This prevents rendering a huge texture during initialization in the editor.
 		# The 'resized' signal will trigger a correct render once the size is calculated.
 		if target_size.x <= 0 or target_size.y <= 0:
 			target_size = Vector2i(1, 1)
 
-		# Apply the configurable downscale factor.
-		# We ensure the factor is at least 1 to avoid division by zero or upsizing.
-		var rescale_factor := (target_size.x / svg_resource.original_size.x) * svg_resource.render_scale
+		var stretch_mode : TextureRect.StretchMode = _parent_control.stretch_mode if "stretch_mode" in _parent_control else TextureRect.STRETCH_SCALE
+		if (
+			stretch_mode == TextureRect.StretchMode.STRETCH_KEEP or
+			stretch_mode == TextureRect.StretchMode.STRETCH_TILE or
+			stretch_mode == TextureRect.StretchMode.STRETCH_KEEP_CENTERED
+		):
+			rescale_factor = 1.0
+		else:
+			rescale_factor = (target_size.x / svg_resource.original_size.x) * svg_resource.render_scale
 
 		var image := Image.new()
 		var error := image.load_svg_from_string(svg_resource.svg_string, rescale_factor)
@@ -304,7 +309,14 @@ func _queue_render() -> void:
 			return
 
 		var image_texture := ImageTexture.create_from_image(image)
-		_parent_control.set(target_property, image_texture)
+		if (
+			stretch_mode == TextureRect.StretchMode.STRETCH_KEEP or
+			stretch_mode == TextureRect.StretchMode.STRETCH_TILE or
+			stretch_mode == TextureRect.StretchMode.STRETCH_KEEP_CENTERED
+		):
+			image_texture.set_size_override(svg_resource.original_size)
+		else:
+			_parent_control.set(target_property, image_texture)
 
 
 # Helper function to refresh the property list in the editor
