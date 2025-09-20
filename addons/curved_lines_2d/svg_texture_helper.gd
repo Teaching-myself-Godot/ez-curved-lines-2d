@@ -11,19 +11,16 @@ const PROPERTY_MAPPINGS: Dictionary = {
 	"ignore_texture_size": true
 }
 
-var svg_resource: SVGResource : set = _set_svg_resource
-var target_property: String = "" : set = _set_target_property
-var render_downscale_factor: float = 10.0
+@export var svg_resource := SVGResource.new(): set = _set_svg_resource
+@export var target_property: String = "" : set = _set_target_property
 
-var _parent_control: Control
 var _available_texture_properties: Array[String] = []
 var _is_saving_scene: bool = false
 var _cached_texture: Texture2D  # Store the actual texture to restore after save
 
 func _ready() -> void:
 	# Ensure the parent is a Control node.
-	_parent_control = get_parent() as Control
-	if not _parent_control:
+	if not get_parent() is Control:
 		push_error("SVGTextureHelper must be a child of a Control node.")
 		queue_free()
 		return
@@ -36,7 +33,7 @@ func _ready() -> void:
 		target_property = _available_texture_properties[0]
 
 	# Connect to the parent's resize signal to trigger re-renders.
-	_parent_control.resized.connect(_queue_render)
+	get_parent().resized.connect(_queue_render)
 
 	# Change parent texture properties
 	_update_parent_properties()
@@ -88,19 +85,19 @@ func _prepare_for_potential_save() -> void:
 	get_tree().create_timer(0.1).timeout.connect(_restore_after_save, CONNECT_ONE_SHOT)
 
 func _prepare_for_save() -> void:
-	if not Engine.is_editor_hint() or not _parent_control or target_property.is_empty():
+	if not Engine.is_editor_hint() or not get_parent() or target_property.is_empty():
 		return
 
-	if not _has_property(_parent_control, target_property):
+	if not _has_property(get_parent(), target_property):
 		return
 
 	_is_saving_scene = true
 
 	# Store the current texture
-	_cached_texture = _parent_control.get(target_property) as Texture2D
+	_cached_texture = get_parent().get(target_property) as Texture2D
 
 	# Set texture to null to prevent it from being saved
-	_parent_control.set(target_property, null)
+	get_parent().set(target_property, null)
 
 	print_rich("[color=yellow]SVGTextureHelper: Texture temporarily set to null for saving[/color]")
 
@@ -111,9 +108,9 @@ func _restore_after_save() -> void:
 	_is_saving_scene = false
 
 	# Restore the cached texture
-	if _parent_control and not target_property.is_empty() and _cached_texture:
-		if _has_property(_parent_control, target_property):
-			_parent_control.set(target_property, _cached_texture)
+	if get_parent() and not target_property.is_empty() and _cached_texture:
+		if _has_property(get_parent(), target_property):
+			get_parent().set(target_property, _cached_texture)
 			print_rich("[color=green]SVGTextureHelper: Texture restored after save[/color]")
 
 	# Clear the cache
@@ -122,11 +119,11 @@ func _restore_after_save() -> void:
 func _detect_texture_properties() -> void:
 	_available_texture_properties.clear()
 
-	if not _parent_control:
+	if not get_parent():
 		return
 
 	# Get all properties from the parent control
-	var property_list = _parent_control.get_property_list()
+	var property_list = get_parent().get_property_list()
 
 	for prop_info in property_list:
 		var prop_name: String = prop_info.name
@@ -158,47 +155,9 @@ func _detect_texture_properties() -> void:
 		# Add common texture property names as fallbacks
 		var common_properties = ["texture", "icon", "normal", "pressed"]
 		for prop in common_properties:
-			if _has_property(_parent_control, prop):
+			if _has_property(get_parent(), prop):
 				_available_texture_properties.append(prop)
 
-func _get_property_list() -> Array:
-	var properties = []
-
-	# SVG Resource property
-	properties.append({
-		"name": "svg_resource",
-		"type": TYPE_OBJECT,
-		"hint": PROPERTY_HINT_RESOURCE_TYPE,
-		"hint_string": "SVGResource"
-	})
-
-	# Target property as dropdown if we have detected properties
-	if not _available_texture_properties.is_empty():
-		var hint_string = ",".join(_available_texture_properties)
-		properties.append({
-			"name": "target_property",
-			"type": TYPE_STRING,
-			"hint": PROPERTY_HINT_ENUM,
-			"hint_string": hint_string
-		})
-	else:
-		# Fallback to string input if no properties detected
-		properties.append({
-			"name": "target_property",
-			"type": TYPE_STRING,
-			"hint": PROPERTY_HINT_NONE,
-			"hint_string": ""
-		})
-
-	# Render downscale factor with range
-	properties.append({
-		"name": "render_downscale_factor",
-		"type": TYPE_FLOAT,
-		"hint": PROPERTY_HINT_RANGE,
-		"hint_string": "1.0,20.0,0.1"
-	})
-
-	return properties
 
 func _set_target_property(new_property: String) -> void:
 	if target_property == new_property:
@@ -207,16 +166,16 @@ func _set_target_property(new_property: String) -> void:
 	target_property = new_property
 
 	# Re-apply texture if we have one
-	if svg_resource and svg_resource.texture and _parent_control:
+	if svg_resource and svg_resource.texture and get_parent():
 		_on_texture_updated(svg_resource.texture)
 
 func _update_parent_properties() -> void:
-	if _parent_control == null:
+	if get_parent() == null:
 		return
 
 	for prop in PROPERTY_MAPPINGS.keys():
-		if _has_property(_parent_control, prop):
-			_parent_control.set(prop, PROPERTY_MAPPINGS[prop])
+		if _has_property(get_parent(), prop):
+			get_parent().set(prop, PROPERTY_MAPPINGS[prop])
 
 func _has_property(target: Object, prop_name: StringName) -> bool:
 	for info in target.get_property_list():
@@ -256,34 +215,34 @@ func _on_resource_changed() -> void:
 	_queue_render()
 
 func _on_texture_updated(new_texture: Texture2D) -> void:
-	if _parent_control and not target_property.is_empty():
+	if get_parent() and not target_property.is_empty():
 		# Don't update texture if we're in the middle of a save operation
 		if _is_saving_scene:
 			_cached_texture = new_texture  # Update our cache instead
 			return
 
 		# Validate that the property exists before setting it
-		if _has_property(_parent_control, target_property):
+		if _has_property(get_parent(), target_property):
 			# Set the new texture on the parent control
-			_parent_control.set_deferred(target_property, new_texture)
+			get_parent().set_deferred(target_property, new_texture)
 		else:
-			push_warning("Property '%s' not found on parent node '%s'" % [target_property, _parent_control.name])
+			push_warning("Property '%s' not found on parent node '%s'" % [target_property, get_parent().name])
 
 ## Called on resize or when the resource changes.
 func _queue_render() -> void:
-	if svg_resource.svg_string.is_empty():
-		_parent_control.set(target_property, null)
+	if svg_resource == null or svg_resource.svg_string.is_empty():
+		get_parent().set(target_property, null)
 		return
 	# Don't render during save operations
 	if _is_saving_scene:
 		return
 
 	# Check for valid conditions before requesting a render.
-	if not is_instance_valid(svg_resource) or not is_instance_valid(_parent_control):
+	if not is_instance_valid(svg_resource) or not is_instance_valid(get_parent()):
 		return
 
 	if Engine.is_editor_hint() or get_tree():
-		var target_size: Vector2i = _parent_control.size
+		var target_size: Vector2i = get_parent().size
 		var rescale_factor := 1.0
 		# If parent size is invalid or zero, use a minimal 1x1 placeholder.
 		# This prevents rendering a huge texture during initialization in the editor.
@@ -291,7 +250,7 @@ func _queue_render() -> void:
 		if target_size.x <= 0 or target_size.y <= 0:
 			target_size = Vector2i(1, 1)
 
-		var stretch_mode : TextureRect.StretchMode = _parent_control.stretch_mode if "stretch_mode" in _parent_control else TextureRect.STRETCH_SCALE
+		var stretch_mode : TextureRect.StretchMode = get_parent().stretch_mode if "stretch_mode" in get_parent() else TextureRect.STRETCH_SCALE
 		if (
 			stretch_mode == TextureRect.StretchMode.STRETCH_KEEP or
 			stretch_mode == TextureRect.StretchMode.STRETCH_TILE or
@@ -316,7 +275,7 @@ func _queue_render() -> void:
 		):
 			image_texture.set_size_override(svg_resource.original_size)
 		else:
-			_parent_control.set(target_property, image_texture)
+			get_parent().set(target_property, image_texture)
 
 
 # Helper function to refresh the property list in the editor
