@@ -19,9 +19,9 @@ func _set_svg_file_path(path: String) -> void:
 		svg_file_path = path
 		if FileAccess.file_exists(path):
 			var file := FileAccess.open(path, FileAccess.READ)
-			svg_string = file.get_as_text()
+			svg_string = Marshalls.utf8_to_base64(file.get_as_text())
 			var image := Image.new()
-			var error := image.load_svg_from_string(svg_string)
+			var error := image.load_svg_from_string(Marshalls.base64_to_utf8(svg_string))
 			if error != OK:
 				push_error("Failed to render SVG: " + str(error))
 				return

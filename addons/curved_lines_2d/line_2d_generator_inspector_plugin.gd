@@ -112,12 +112,20 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 				object.get_children().filter(func(ch): return ch is SVGTextureHelper)
 		)
 		if name in svg_texture_helpers.map(func(x): return x.target_property):
-			var label := Label.new()
-			label.text = "This texture is being\nmanaged by the \nSVGTextureHelper node"
-			label.label_settings = LabelSettings.new()
-			label.label_settings.font_size = 14
-			label.label_settings.font_color = Color(Color.GRAY, 0.75)
-			add_custom_control(label)
+			var helper = svg_texture_helpers.filter(func(x): return x.target_property == name).pop_back()
+			var box = VBoxContainer.new()
+			var button := Button.new()
+			button.text = name.replace("texture_", "").to_pascal_case()
+			button.tooltip_text = '''Select a new SVG file as a texture. Remove the SVGTextureHelper
+					child node of this node to set a texture the godot way again.'''
+			button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			button.icon = object.get(name)
+			button.expand_icon = true
+			button.custom_minimum_size.y = 48
+			box.add_spacer(true)
+			box.add_child(button)
+			button.pressed.connect(func(): _on_change_svg_helper_pressed(object, helper, name))
+			add_custom_control(box)
 			return true
 		elif hint_string == "Texture2D":
 			var box = VBoxContainer.new()
@@ -170,6 +178,20 @@ func _on_convert_to_path_button_pressed(svs : ScalableVectorShape2D, button : Bu
 	undo_redo.add_undo_property(svs, 'offset', svs.offset)
 	undo_redo.commit_action()
 	button.hide()
+
+
+func _on_change_svg_helper_pressed(parent_control : Control, helper : SVGTextureHelper, target_property : String):
+	var dialog := EditorFileDialog.new()
+	dialog.add_filter("*.svg", "SVG Image")
+	dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
+	dialog.file_selected.connect(func(path):
+			dialog.queue_free()
+			helper.svg_resource.svg_file_path = path
+			parent_control.notify_property_list_changed()
+	)
+	EditorInterface.get_base_control().add_child(dialog)
+	dialog.popup_centered(Vector2i(800, 400))
+
 
 
 func _on_add_svg_helper_pressed(parent_control : Control, target_property : String, button : Button):

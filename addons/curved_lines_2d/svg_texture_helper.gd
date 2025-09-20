@@ -261,7 +261,7 @@ func _queue_render() -> void:
 			rescale_factor = (target_size.x / svg_resource.original_size.x) * svg_resource.render_scale
 
 		var image := Image.new()
-		var error := image.load_svg_from_string(svg_resource.svg_string, rescale_factor)
+		var error := image.load_svg_from_string(Marshalls.base64_to_utf8(svg_resource.svg_string), rescale_factor)
 
 		if error != OK:
 			push_error("Failed to render SVG: " + str(error))
