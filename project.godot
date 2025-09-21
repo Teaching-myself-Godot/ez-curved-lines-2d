@@ -35,6 +35,7 @@ curved_lines_2d/default_max_stages=5
 [application]
 
 config/name="EZ Curved Lines 2D"
+run/main_scene="uid://0vt4p8wqudyi"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://b5yxa1e62b0hb"
 
@@ -50,7 +51,7 @@ window/size/borderless=true
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/curved_lines_2d/plugin.cfg")
+enabled=PackedStringArray("res://addons/curved_lines_2d/plugin.cfg", "res://addons/godot-plugin-refresher/plugin.cfg")
 
 [rendering]
 
