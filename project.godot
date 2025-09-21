@@ -38,16 +38,6 @@ config/name="EZ Curved Lines 2D"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://b5yxa1e62b0hb"
 
-[autoload]
-
-SVGManager="*res://addons/curved_lines_2d/svg_manager.gd"
-
-[display]
-
-window/size/viewport_width=1080
-window/size/viewport_height=1080
-window/size/borderless=true
-
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/curved_lines_2d/plugin.cfg", "res://addons/godot-plugin-refresher/plugin.cfg")

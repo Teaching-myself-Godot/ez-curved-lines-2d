@@ -21,7 +21,6 @@ const SETTING_NAME_DEFAULT_LINE_JOINT_MODE := "addons/curved_lines_2d/line_joint
 const SETTING_NAME_SNAP_TO_PIXEL := "addons/curved_lines_2d/snap_to_pixel"
 const SETTING_NAME_SNAP_RESOLUTION := "addons/curved_lines_2d/snap_resolution"
 
-const SVG_MANAGER := "res://addons/curved_lines_2d/svg_manager.gd"
 const SETTING_NAME_CURVE_UPDATE_CURVE_AT_RUNTIME := "addons/curved_lines_2d/update_curve_at_runtime"
 const SETTING_NAME_CURVE_RESOURCE_LOCAL_TO_SCENE := "addons/curved_lines_2d/make_resources_local_to_scene"
 const SETTING_NAME_CURVE_TOLERANCE_DEGREES := "addons/curved_lines_2d/default_tolerance_degrees"
@@ -140,9 +139,6 @@ func _enter_tree():
 	if not scalable_vector_shapes_2d_dock.edit_tab.ellipse_created.is_connected(_on_ellipse_created):
 		scalable_vector_shapes_2d_dock.edit_tab.ellipse_created.connect(_on_ellipse_created)
 	scene_changed.connect(_on_scene_changed)
-
-	if not ProjectSettings.has_setting("autoload/SVGManager"):
-		add_autoload_singleton("SVGManager", SVG_MANAGER)
 
 
 func select_node_reversibly(target_node : Node) -> void:
@@ -1647,5 +1643,3 @@ func _exit_tree():
 	remove_control_from_bottom_panel(scalable_vector_shapes_2d_dock)
 	scalable_vector_shapes_2d_dock.free()
 	set_global_position_popup_panel.free()
-	if ProjectSettings.has_setting("autoload/SVGManager"):
-		remove_autoload_singleton("SVGManager")

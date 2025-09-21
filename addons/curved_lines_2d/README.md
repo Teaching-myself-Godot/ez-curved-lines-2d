@@ -84,6 +84,11 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
   - [Add keyframes in an animation player](#add-keyframes-in-an-animation-player)
   - [Don't duplicate `ScalableVectorShape2D`, use the `path_changed` signal in stead](#dont-duplicate-scalablevectorshape2d-use-the-path_changed-signal-in-stead)
   - [Performance impact](#performance-impact)
+- [Autoscaling SVG Textures for GUI Controls](#autoscaling-svg-textures-for-gui-controls)
+  - [Adding Autoscaling SVG Textures via the Inspector](#adding-autoscaling-svg-textures-via-the-inspector)
+    - [Example of Autoscaling GUI](#example-of-autoscaling-gui)
+  - [Removing an Automatically Scaled Texture](#removing-an-automatically-scaled-texture)
+  - [Advanced use of `SVGTextureHelper`](#advanced-use-of-svgtexturehelper)
 - [FAQ's](#faqs)
   - [The curve of my `ScalableVectorShape2D` won't animate at runtime, what do I do?](#the-curve-of-my-scalablevectorshape2d-wont-animate-at-runtime-what-do-i-do)
   - [I want to change shapes while debugging my game. Is this even possible?](#i-want-to-change-shapes-while-debugging-my-game-is-this-even-possible)
@@ -600,6 +605,42 @@ Animating curve points at runtime does, however, impact performance of your game
 
 Under `Tesselation settings` you can lower `Max Stages` or bump up `Tolerance Degrees` to reduce curve smoothness and increase performance (and vice-versa)
 
+
+# Autoscaling SVG Textures for GUI Controls
+
+Release `2.15` makes it easy to add crisp, autoscaling images for your GUI Control nodes using two new classes:
+
+- `SVGTextureHelper`: a `Node` that manages an SVG image resource when it's a direct child of a `TextureRect`, `Button`, or `TextureButton`
+- `SVGTextureResource`: a `Resource` that holds a reference to the svg file and a base64 encoded string of the file's contents, as well as a baseline scale factor (so you can even keep the image crips and sharp at higher zoom levels)
+
+## Adding Autoscaling SVG Textures via the Inspector
+
+These 3 control nodes now have an extra button `Set Scalable SVG Texture` in the inspector to set their texture with:
+
+- `TextureRect`
+- `Button`
+- `TextureButton`
+
+![setting autoscaling svg textures](./screenshots/scaling_textures.png)
+
+Once an SVG file has been chosen as a texture, a `SVGTextureHelper` node is automatically added to manage the automatically scaled image via a `SVGTextureResource`.
+
+A button with the name of the texture property and an icon-preview will then be presented with which you can pick another SVG file source.
+
+### Example of Autoscaling GUI
+
+There is an example scene in the plugin directory: `addons/curved_lines_2d/examples/gui.tscn`.
+
+## Removing an Automatically Scaled Texture
+
+To remove this type of texture again, the `SVGTextureHelper` node needs to be deleted via the scene tree:
+
+![SVGTextureHelper in the scene tree](./screenshots/svg_texture_helper_in_scene_tree.png)
+
+## Advanced use of `SVGTextureHelper`
+
+Any `Control` node's `Texture2D` properties can be managed by a manually added `SVGTextureHelper`. For this you will need to set the `target_property`-field of the `SVGTextureHelper` manually.
+
 # FAQ's
 
 ## The curve of my `ScalableVectorShape2D` won't animate at runtime, what do I do?
@@ -678,7 +719,7 @@ Once you're done drawing and do not need the shape to change anymore at runtime 
 - The SVG Importer code was adapted from the script hosted on github in the [pixelriot/SVG2Godot](https://github.com/pixelriot/SVG2Godot) repository
 - The code for making cutout shapes was adapted from the great [knife tool plugin](https://github.com/mrkdji/knife-tool/) by @mrkdji
 - The inspiration for using [Geometry2D.offset_polyline](https://docs.godotengine.org/en/stable/classes/class_geometry2d.html#class-geometry2d-method-offset-polyline) for strokes came from @theshaggydev, who recorded [this video](https://www.youtube.com/watch?v=5TW7H7aXhxQ) about it.
-
+- Lot's of gratitude to [@kcfresh53](https://github.com/kcfresh) for architecting the auto-scaling control image textures via the `SVGTextureHelper` node and the `SVGTextureResource`
 
 
 ## And a big thank you goes to to [@MewPurPur](https://github.com/MewPurPur)
@@ -695,7 +736,6 @@ As an early adopter Hannes was quick to point out good quality of life improveme
 Make sure to try out ["Spring Ball" on Itch](https://permotion.itch.io/spring-ball), a 48h game jam solo project that used ScalableVectorShape2D for all level objects, including a wrapper script to change the block that makes up the majority of the level between cube and triangle shapes:
 
 [![spring ball](./screenshots/spring-ball.png)](https://permotion.itch.io/spring-ball)
-
 
 
 ## And of course everyone who helped test and review the code thus far

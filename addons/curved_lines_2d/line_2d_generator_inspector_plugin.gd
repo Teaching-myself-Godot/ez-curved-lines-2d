@@ -42,13 +42,6 @@ func _parse_group(object: Object, group: String) -> void:
 		var key_frame_form = load("res://addons/curved_lines_2d/batch_insert_curve_point_key_frames_inspector_form.tscn").instantiate()
 		key_frame_form.scalable_vector_shape_2d = object
 		add_custom_control(key_frame_form)
-	elif group == "Textures" and object is TextureButton:
-		var label := Label.new()
-		label.text = "These textures are being\nmanaged by the \nSVGTextureHelper node"
-		label.label_settings = LabelSettings.new()
-		label.label_settings.font_size = 14
-		label.label_settings.font_color = Color(Color.GRAY, 0.75)
-		add_custom_control(label)
 	elif group == GROUP_NAME_EXPORT_OPTIONS and object is ScalableVectorShape2D:
 		var box := VBoxContainer.new()
 		var export_png_button : Button = Button.new()
@@ -115,22 +108,42 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 			button.pressed.connect(func(): _add_guide_svs(object))
 			return true
 	elif object is TextureRect or object is Button or object is TextureButton:
-		if object.get_children().filter(func(ch): return ch is SVGTextureHelper).size() > 0:
-			if name == "texture" or name == "icon":
-				var label := Label.new()
-				label.text = "This texture is being\nmanaged by the \nSVGTextureHelper node"
-				label.label_settings = LabelSettings.new()
-				label.label_settings.font_size = 14
-				label.label_settings.font_color = Color(Color.GRAY, 0.75)
-				add_custom_control(label)
-				return true
-			elif name.begins_with("texture_"):
-				return true
-			if (
-				name == "expand_mode" or name == "stretch_mode" or
-				name == "expand_icon" or name == "ignore_texture_size"
-			):
-				return true
+		var svg_texture_helpers : Array[Node] = (
+				object.get_children().filter(func(ch): return ch is SVGTextureHelper)
+		)
+		if name in svg_texture_helpers.map(func(x): return x.target_property):
+			var helper = svg_texture_helpers.filter(func(x): return x.target_property == name).pop_back()
+			var box = VBoxContainer.new()
+			var button := Button.new()
+			button.text = name.replace("texture_", "").to_pascal_case()
+			button.tooltip_text = '''Select a new SVG file as a texture. Remove the SVGTextureHelper
+					child node of this node to set a texture the godot way again.'''
+			button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			button.icon = object.get(name)
+			button.expand_icon = true
+			button.custom_minimum_size.y = 48
+			box.add_spacer(true)
+			box.add_child(button)
+			button.pressed.connect(func(): _on_change_svg_helper_pressed(object, helper, name))
+			add_custom_control(box)
+			return true
+		elif hint_string == "Texture2D":
+			var box = VBoxContainer.new()
+			var button := Button.new()
+			button.text = "Set Scalable SVG Texture*"
+			button.tooltip_text = '''Pressing this button will create
+					an SVGTextureHelper child node, which then manages an auto-
+					scaling texture based on an SVG file.'''
+			box.add_spacer(true)
+			box.add_child(button)
+			button.pressed.connect(func(): _on_add_svg_helper_pressed(object, name, button))
+			add_custom_control(box)
+			return false
+		if svg_texture_helpers.size() > 0 and (
+			name == "expand_mode" or #name == "stretch_mode" or
+			name == "expand_icon" or name == "ignore_texture_size"
+		):
+			return true
 	return false
 
 
@@ -164,6 +177,43 @@ func _on_convert_to_path_button_pressed(svs : ScalableVectorShape2D, button : Bu
 	undo_redo.add_undo_property(svs, 'ry', svs.ry)
 	undo_redo.add_undo_property(svs, 'offset', svs.offset)
 	undo_redo.commit_action()
+	button.hide()
+
+
+func _on_change_svg_helper_pressed(parent_control : Control, helper : SVGTextureHelper, target_property : String):
+	var dialog := EditorFileDialog.new()
+	dialog.add_filter("*.svg", "SVG Image")
+	dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
+	dialog.file_selected.connect(func(path):
+			dialog.queue_free()
+			helper.svg_resource.svg_file_path = path
+			parent_control.notify_property_list_changed()
+	)
+	EditorInterface.get_base_control().add_child(dialog)
+	dialog.popup_centered(Vector2i(800, 400))
+
+
+
+func _on_add_svg_helper_pressed(parent_control : Control, target_property : String, button : Button):
+	var dialog := EditorFileDialog.new()
+	dialog.add_filter("*.svg", "SVG Image")
+	dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
+	dialog.file_selected.connect(func(path):
+			dialog.queue_free()
+			_add_svg_helper(path, parent_control, target_property, button))
+	EditorInterface.get_base_control().add_child(dialog)
+	dialog.popup_centered(Vector2i(800, 400))
+
+
+func _add_svg_helper(file_path : String, parent_control : Control, target_property : String, button : Button):
+	var svg_helper := SVGTextureHelper.new()
+	svg_helper.name = "%sSVGTextureHelper" % target_property.to_pascal_case()
+	parent_control.add_child(svg_helper, true)
+	svg_helper.owner = parent_control.owner
+	svg_helper.target_property = target_property
+	svg_helper.svg_resource = SVGResource.new()
+	svg_helper.svg_resource.svg_file_path = file_path
+	parent_control.notify_property_list_changed()
 	button.hide()
 
 
