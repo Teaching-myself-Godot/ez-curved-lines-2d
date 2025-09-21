@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.15.0
+
+### Added
+- Auto-scaling for SVG image icons on GUI controls (`Button`, `TextureButton`, `TextureRect`) using `SVGTextureHelper` (thank you to @kcfresh53)
+
+### Changed
+- Dropped class_names from GUI items in plugin itself to prevent cluttering up developers' `add node` dialog
 
 ## 2.14.3
 
