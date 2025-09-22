@@ -155,7 +155,8 @@ func select_node_reversibly(target_node : Node) -> void:
 
 
 func _on_select_mode_toggled(toggled_on : bool) -> void:
-	if toggled_on and _is_svs_valid(EditorInterface.get_selection().get_selected_nodes().pop_back()):
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if toggled_on and _is_svs_valid(current_selection) and current_selection.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 		uniform_transform_edit_buttons.enable()
 	else:
 		uniform_transform_edit_buttons.hide()
@@ -311,10 +312,7 @@ func _on_selection_changed():
 			EditorInterface.edit_node(scene_root)
 	if current_selection is AnimationPlayer and _scene_can_export_animations():
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(current_selection)
-	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
-		uniform_transform_edit_buttons.enable()
-	else:
-		uniform_transform_edit_buttons.hide()
+	_on_select_mode_toggled(_get_select_mode_button().button_pressed)
 	update_overlays()
 
 
