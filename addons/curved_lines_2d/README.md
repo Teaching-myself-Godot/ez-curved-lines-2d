@@ -667,6 +667,8 @@ You can work around this by using 'Make unique' by right-clicking `Curve setting
 
 ![make unique in inspector](./screenshots/make-unique.png)
 
+When using [arcs](#editing-arc-properties) in a shape the `Arc List` property must also be 'made unique'
+
 Overriding the default duplication behavior of godot can lead to more unforeseen problems. So [a good solution must be well thought through](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d/issues/200#issuecomment-3318594193).
 
 Search reddit on the trials and tribulations of 'Make Unique':
