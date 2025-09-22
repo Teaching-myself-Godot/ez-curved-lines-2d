@@ -662,10 +662,19 @@ This is a common issue: there is _one_ `Curve2D` instance being referenced by al
 
 ## When I duplicate a `ScalableVectorShape2D` and change its shape, the original `ScalableVectorShape2D` shape also changes
 
-This is a common issue: there is _one_ `Curve2D` instance being referenced by both nodes. At the moment there is not a quick fix, but you can always follow these steps:
-1. Right click on your copy in the scene tree
-2. Pick "Save branch as Scene"
-3. Make the `Curve2D` "Local to Scene" like in [the previous faq example](#when-i-animate-the-curve-of-an-imported-scene-it-animates-all-the-other-curves-as-well)
+This is a common issue: there is _one_ `Curve2D` instance being referenced by both nodes.
+
+You can work around this by using 'Make unique' by right-clicking `Curve settings > Curve > Curve2D` in the Inspector of your duplicated shape:
+
+![make unique in inspector](./addons/curved_lines_2d/screenshots/make-unique.png)
+
+When using [arcs](#editing-arc-properties) in a shape the `Arc List` property must also be 'made unique'
+
+Overriding the default duplication behavior of godot can lead to more unforeseen problems. So [a good solution must be well thought through](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d/issues/200#issuecomment-3318594193).
+
+Search reddit on the trials and tribulations of 'Make Unique':
+
+- https://www.reddit.com/r/godot/search/?q=make+unique
 
 
 
