@@ -1,43 +1,62 @@
-[gd_scene load_steps=3 format=3 uid="uid://bm7mr2hj3qfoe"]
+[gd_scene load_steps=8 format=3 uid="uid://bm7mr2hj3qfoe"]
 
 [ext_resource type="Script" uid="uid://brp0qoekngywr" path="res://addons/curved_lines_2d/uniform_transform_edit_buttons.gd" id="1_m5784"]
+[ext_resource type="Texture2D" uid="uid://daemvs3ws7fpk" path="res://addons/curved_lines_2d/DefaultMode.svg" id="2_memvu"]
+[ext_resource type="Texture2D" uid="uid://chojkn0i6ngam" path="res://addons/curved_lines_2d/UniformTranslate.svg" id="2_o8x6h"]
+[ext_resource type="Texture2D" uid="uid://d1uok4qb3xets" path="res://addons/curved_lines_2d/UniformRotate.svg" id="3_lkilg"]
+[ext_resource type="Texture2D" uid="uid://do5uut1a4xvqf" path="res://addons/curved_lines_2d/UniformScale.svg" id="5_n2wtw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o8x6h"]
+bg_color = Color(0.219608, 0.270588, 0.368627, 1)
+border_width_bottom = 2
+border_color = Color(0.411765, 0.611765, 0.909804, 1)
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_qu4vk"]
 
-[node name="UniformTransformEditButtons" type="HBoxContainer"]
-offset_right = 86.0
-offset_bottom = 31.0
+[node name="UniformTransformEditButtons" type="PanelContainer"]
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 92.0
+grow_vertical = 2
 size_flags_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_o8x6h")
 script = ExtResource("1_m5784")
 
-[node name="DefaultEdit" type="Button" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="DefaultEdit" type="Button" parent="HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+tooltip_text = "Edit the nodes normally"
 toggle_mode = true
 button_group = SubResource("ButtonGroup_qu4vk")
-text = "D"
+icon = ExtResource("2_memvu")
 flat = true
 
-[node name="UniformTranslate" type="Button" parent="."]
+[node name="UniformTranslate" type="Button" parent="HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+tooltip_text = "Move all the points without moving the node"
 toggle_mode = true
 button_group = SubResource("ButtonGroup_qu4vk")
-text = "T"
+icon = ExtResource("2_o8x6h")
 flat = true
 
-[node name="UniformRotate" type="Button" parent="."]
+[node name="UniformRotate" type="Button" parent="HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+tooltip_text = "Rotate all the points without rotating the node"
 toggle_mode = true
 button_group = SubResource("ButtonGroup_qu4vk")
-text = "R"
+icon = ExtResource("3_lkilg")
 flat = true
 
-[node name="UniformScale" type="Button" parent="."]
+[node name="UniformScale" type="Button" parent="HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+tooltip_text = "Resize all the points without resizing the node"
 toggle_mode = true
 button_group = SubResource("ButtonGroup_qu4vk")
-text = "S"
+icon = ExtResource("5_n2wtw")
 flat = true
