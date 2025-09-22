@@ -68,6 +68,8 @@ const OPERATION_NAME_MAP := {
 	Geometry2D.OPERATION_UNION: { "verb": "merge with", "noun": "merged shape" }
 }
 
+enum UniformTransformMode { NONE, TRANSLATE, ROTATE, SCALE }
+
 var plugin : Line2DGeneratorInspectorPlugin
 var scalable_vector_shapes_2d_dock
 var select_mode_button : Button
@@ -148,6 +150,8 @@ func _enter_tree():
 	if not _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
 		_get_select_mode_button().toggled.connect(_on_select_mode_toggled)
 	_on_select_mode_toggled(_get_select_mode_button().button_pressed)
+	uniform_transform_edit_buttons.mode_changed.connect(_on_uniform_transform_mode_changed)
+
 
 func select_node_reversibly(target_node : Node) -> void:
 	if is_instance_valid(target_node):
@@ -160,6 +164,10 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 		uniform_transform_edit_buttons.enable()
 	else:
 		uniform_transform_edit_buttons.hide()
+
+
+func _on_uniform_transform_mode_changed(new_mode : UniformTransformMode) -> void:
+	print("TODO, set uniform transform mode: ", new_mode)
 
 
 func _is_ctrl_or_cmd_pressed() -> bool:

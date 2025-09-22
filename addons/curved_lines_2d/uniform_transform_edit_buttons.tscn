@@ -60,3 +60,8 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_qu4vk")
 icon = ExtResource("5_n2wtw")
 flat = true
+
+[connection signal="toggled" from="HBoxContainer/DefaultEdit" to="." method="_on_default_edit_toggled"]
+[connection signal="toggled" from="HBoxContainer/UniformTranslate" to="." method="_on_uniform_translate_toggled"]
+[connection signal="toggled" from="HBoxContainer/UniformRotate" to="." method="_on_uniform_rotate_toggled"]
+[connection signal="toggled" from="HBoxContainer/UniformScale" to="." method="_on_uniform_scale_toggled"]
