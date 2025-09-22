@@ -1,0 +1,43 @@
+[gd_scene load_steps=3 format=3 uid="uid://bm7mr2hj3qfoe"]
+
+[ext_resource type="Script" uid="uid://brp0qoekngywr" path="res://addons/curved_lines_2d/uniform_transform_edit_buttons.gd" id="1_m5784"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_qu4vk"]
+
+[node name="UniformTransformEditButtons" type="HBoxContainer"]
+offset_right = 86.0
+offset_bottom = 31.0
+size_flags_horizontal = 0
+script = ExtResource("1_m5784")
+
+[node name="DefaultEdit" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_qu4vk")
+text = "D"
+flat = true
+
+[node name="UniformTranslate" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_qu4vk")
+text = "T"
+flat = true
+
+[node name="UniformRotate" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_qu4vk")
+text = "R"
+flat = true
+
+[node name="UniformScale" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_qu4vk")
+text = "S"
+flat = true
