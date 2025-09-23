@@ -934,13 +934,15 @@ func get_gradient_handles() -> Dictionary:
 
 
 func translate_points_by(global_vector : Vector2) -> void:
-	var delta := global_vector / global_scale
-
-	curve.set_block_signals(true)
-	for idx in curve.point_count:
-		curve.set_point_position(idx, curve.get_point_position(idx) + delta)
-	curve.set_block_signals(false)
-	curve.emit_changed()
+	var delta := global_vector.rotated(-global_rotation) / global_scale
+	if shape_type == ShapeType.PATH:
+		curve.set_block_signals(true)
+		for idx in curve.point_count:
+			curve.set_point_position(idx, curve.get_point_position(idx) + delta)
+		curve.set_block_signals(false)
+		curve.emit_changed()
+	else:
+		offset += delta
 
 
 func set_global_curve_point_position(global_pos : Vector2, point_idx : int, snapped : bool,

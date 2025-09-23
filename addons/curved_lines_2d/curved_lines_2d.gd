@@ -161,7 +161,7 @@ func select_node_reversibly(target_node : Node) -> void:
 
 func _on_select_mode_toggled(toggled_on : bool) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-	if toggled_on and _is_svs_valid(current_selection) and current_selection.shape_type == ScalableVectorShape2D.ShapeType.PATH:
+	if toggled_on and _is_svs_valid(current_selection):
 		uniform_transform_edit_buttons.enable()
 	else:
 		uniform_transform_edit_buttons.hide()
@@ -710,19 +710,25 @@ func _set_handle_hover(g_mouse_pos : Vector2, svs : ScalableVectorShape2D) -> vo
 
 func _draw_curve(viewport_control : Control, svs : ScalableVectorShape2D,
 		is_selected := true) -> void:
-	if not svs.is_visible_in_tree():
-		return
-	var points = svs.get_poly_points().map(_vp_transform)
 	var color := svs.shape_hint_color if svs.shape_hint_color else Color.LIME_GREEN
 	if not is_selected:
 		color = Color(0.5, 0.5, 0.5, 0.2)
+	_draw_curve_def(viewport_control, svs, color, 1.0, is_selected)
+
+
+func _draw_curve_def(viewport_control : Control, svs : ScalableVectorShape2D, color : Color,
+			width : float, antialiased : bool) -> void:
+	if not svs.is_visible_in_tree():
+		return
+	var points = svs.get_poly_points().map(_vp_transform)
 	var last_p := Vector2.INF
 	for p : Vector2 in points:
 		if last_p != Vector2.INF:
-			viewport_control.draw_line(last_p, p, color, 1.0, is_selected)
+			viewport_control.draw_line(last_p, p, color, width, antialiased)
 		last_p = p
 	if is_instance_valid(svs.line) and svs.line.closed and points.size() > 1:
-		viewport_control.draw_dashed_line(last_p, points[0], color, 1, 5.0, true, true)
+		viewport_control.draw_dashed_line(last_p, points[0], color, width, 5.0, true, antialiased)
+
 
 
 func _draw_crosshair(viewport_control : Control, p : Vector2, orbit := 2.0, outer_orbit := 6.0,
@@ -818,15 +824,24 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 			_draw_hint(viewport_control, hint)
 
 
-func _draw_canvas_for_uniform_translate(viewpor_control : Control, svs : ScalableVectorShape2D) -> void:
+func _draw_canvas_for_uniform_translate(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
+	viewport_control.draw_polyline(svs.get_bounding_box().map(_vp_transform), VIEWPORT_ORANGE, 2.0)
+	_draw_curve_def(viewport_control, svs, svs.shape_hint_color, 0.5, true)
+	for idx in svs.curve.point_count:
+		var p := svs.to_global(svs.curve.get_point_position(idx))
+		_draw_crosshair(viewport_control, _vp_transform(p), 2.0, 4.0, Color.WHITE)
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		_draw_hint(viewport_control, "- Drag to move all points (left mouse button held)")
+	else:
+		_draw_hint(viewport_control, "- Hold left mouse button to start moving all points" +
+				"\n- Press Q to return to normal editing")
+
+
+func _draw_canvas_for_uniform_rotate(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
 	pass
 
 
-func _draw_canvas_for_uniform_rotate(viewpor_control : Control, svs : ScalableVectorShape2D) -> void:
-	pass
-
-
-func _draw_canvas_for_uniform_scale(viewpor_control : Control, svs : ScalableVectorShape2D) -> void:
+func _draw_canvas_for_uniform_scale(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
 	pass
 
 
@@ -1374,18 +1389,21 @@ func _handle_input_for_uniform_translate(event : InputEvent, svs : ScalableVecto
 			_drag_start = mouse_pos
 			if not in_undo_redo_transaction:
 				_start_undo_redo_transaction("Translate curve points for %s" % str(svs))
+		update_overlays()
 		return true
 
-	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		var drag_delta := mouse_pos - _drag_start
-		if _is_snapped_to_pixel():
-			drag_delta = drag_delta.snapped(Vector2.ONE * _get_snap_resolution())
-		if drag_delta.abs() > Vector2.ZERO:
-			_drag_start = mouse_pos
-			undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'translate_points_by', drag_delta])
-			undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'translate_points_by', -drag_delta])
-			svs.translate_points_by(drag_delta)
-		return true
+	if event is InputEventMouseMotion:
+		update_overlays()
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			var drag_delta := mouse_pos - _drag_start
+			if _is_snapped_to_pixel():
+				drag_delta = drag_delta.snapped(Vector2.ONE * _get_snap_resolution())
+			if drag_delta.abs() > Vector2.ZERO:
+				_drag_start = mouse_pos
+				undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'translate_points_by', drag_delta])
+				undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'translate_points_by', -drag_delta])
+				svs.translate_points_by(drag_delta)
+			return true
 
 	return false
 
