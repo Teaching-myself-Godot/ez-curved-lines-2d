@@ -96,6 +96,7 @@ var _locking_vp_horizontal_scrollbar := false
 
 var uniform_transform_edit_buttons : Control
 var _uniform_transform_mode := UniformTransformMode.NONE
+var _drag_start := Vector2.ZERO
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -1367,6 +1368,25 @@ func _get_vp_h_scroll_bar() -> HScrollBar:
 
 
 func _handle_input_for_uniform_translate(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
+	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		if (event as InputEventMouseButton).pressed:
+			_drag_start = mouse_pos
+			if not in_undo_redo_transaction:
+				_start_undo_redo_transaction("Translate curve points for %s" % str(svs))
+		return true
+
+	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		var drag_delta := mouse_pos - _drag_start
+		if _is_snapped_to_pixel():
+			drag_delta = drag_delta.snapped(Vector2.ONE * _get_snap_resolution())
+		if drag_delta.abs() > Vector2.ZERO:
+			_drag_start = mouse_pos
+			undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'translate_points_by', drag_delta])
+			undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'translate_points_by', -drag_delta])
+			svs.translate_points_by(drag_delta)
+		return true
+
 	return false
 
 
@@ -1396,12 +1416,14 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection):
 		if _uniform_transform_mode == UniformTransformMode.TRANSLATE:
+			EditorInterface.get_editor_main_screen().mouse_default_cursor_shape = Control.CURSOR_MOVE
 			return _handle_input_for_uniform_translate(event, current_selection)
 		elif _uniform_transform_mode == UniformTransformMode.SCALE:
 			return _handle_input_for_uniform_scale(event, current_selection)
 		elif _uniform_transform_mode == UniformTransformMode.ROTATE:
 			return _handle_input_for_uniform_rotate(event, current_selection)
-
+		else:
+			EditorInterface.get_editor_main_screen().mouse_default_cursor_shape = Control.CURSOR_ARROW
 
 	if _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
 		var vp_horiz_scrollbar := _get_vp_h_scroll_bar()

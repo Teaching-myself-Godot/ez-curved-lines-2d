@@ -933,6 +933,16 @@ func get_gradient_handles() -> Dictionary:
 	return result
 
 
+func translate_points_by(global_vector : Vector2) -> void:
+	var delta := global_vector / global_scale
+
+	curve.set_block_signals(true)
+	for idx in curve.point_count:
+		curve.set_point_position(idx, curve.get_point_position(idx) + delta)
+	curve.set_block_signals(false)
+	curve.emit_changed()
+
+
 func set_global_curve_point_position(global_pos : Vector2, point_idx : int, snapped : bool,
 			snap : float) -> void:
 	if curve.point_count > point_idx:
