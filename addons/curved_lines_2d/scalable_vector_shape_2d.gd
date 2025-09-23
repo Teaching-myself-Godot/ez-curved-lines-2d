@@ -945,6 +945,31 @@ func translate_points_by(global_vector : Vector2) -> void:
 		offset += delta
 
 
+func rotate_points_by(angle : float, around_center := false) -> void:
+	if shape_type != ShapeType.PATH:
+		return
+	var transform := Transform2D.IDENTITY.rotated(-angle)
+	var rotation_origin := get_bounding_rect().get_center() if around_center else Vector2.ZERO
+	curve.set_block_signals(true)
+	for idx in curve.point_count:
+		var p := curve.get_point_position(idx)
+		var p1 := (p - rotation_origin) * transform + rotation_origin
+		var cp_in_abs := curve.get_point_in(idx) + p
+		var cp_out_abs := curve.get_point_out(idx) + p
+		var cp_in_abs_1 := (cp_in_abs - rotation_origin) * transform + rotation_origin
+		var cp_out_abs_1 := (cp_out_abs - rotation_origin) * transform + rotation_origin
+		curve.set_point_position(idx, p1)
+		curve.set_point_in(idx, cp_in_abs_1 - p1)
+		curve.set_point_out(idx, cp_out_abs_1 - p1)
+	if around_center:
+		cached_outline.clear()
+		var origin_delta := rotation_origin - get_bounding_rect().get_center()
+		translate_points_by(origin_delta)
+	else:
+		curve.set_block_signals(false)
+		curve.emit_changed()
+
+
 func set_global_curve_point_position(global_pos : Vector2, point_idx : int, snapped : bool,
 			snap : float) -> void:
 	if curve.point_count > point_idx:

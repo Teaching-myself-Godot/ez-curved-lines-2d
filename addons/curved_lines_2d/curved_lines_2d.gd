@@ -97,6 +97,7 @@ var _locking_vp_horizontal_scrollbar := false
 var uniform_transform_edit_buttons : Control
 var _uniform_transform_mode := UniformTransformMode.NONE
 var _drag_start := Vector2.ZERO
+var _prev_uniform_rotate_angle := 0.0
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -857,7 +858,22 @@ func _draw_canvas_for_uniform_rotate(viewport_control : Control, svs : ScalableV
 	else:
 		_draw_hint(viewport_control, "- Hold left mouse button to start rotating all points" +
 				"\n- Press Q to return to normal editing")
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		var rotation_origin = (
+				svs.to_global(svs.get_bounding_rect().get_center())
+					if Input.is_key_pressed(KEY_SHIFT) else
+				svs.global_position
+		)
+		var rotation_target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+		if _is_ctrl_or_cmd_pressed():
+			var ang := snapped(rotation_origin.angle_to_point(rotation_target), deg_to_rad(5.0))
+			var dst := rotation_origin.distance_to(rotation_target)
+			rotation_target = rotation_origin + Vector2.RIGHT.rotated(ang) * dst
 
+		viewport_control.draw_line(_vp_transform(rotation_origin),_vp_transform(rotation_target),
+				svs.shape_hint_color, 1, true)
+		if Input.is_key_pressed(KEY_SHIFT):
+			_draw_crosshair(viewport_control, _vp_transform(rotation_origin), 2.0, 4.0, Color.WHITE)
 
 
 func _draw_canvas_for_uniform_scale(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
@@ -1435,16 +1451,31 @@ func _handle_input_for_uniform_rotate(event : InputEvent, svs : ScalableVectorSh
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		if (event as InputEventMouseButton).pressed:
 			_drag_start = mouse_pos
+			_prev_uniform_rotate_angle = 0.0
 			if not in_undo_redo_transaction:
-				_start_undo_redo_transaction("Translate curve points for %s" % str(svs))
+				_start_undo_redo_transaction("Rotate curve points for %s" % str(svs))
 		update_overlays()
 		return true
 
 	if event is InputEventMouseMotion:
 		update_overlays()
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			var drag_delta := mouse_pos - _drag_start
-			print("TODO: rotate around pivot or asdasdasd ", drag_delta)
+			var use_cntr := Input.is_key_pressed(KEY_SHIFT)
+			var rotation_origin = (
+					svs.to_global(svs.get_bounding_rect().get_center())
+						if Input.is_key_pressed(KEY_SHIFT) else
+					svs.global_position
+			)
+			var rotation_target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+			var ang := rotation_origin.angle_to_point(rotation_target) - rotation_origin.angle_to_point(_drag_start)
+			if _is_ctrl_or_cmd_pressed():
+				ang = snappedf(ang, deg_to_rad(5.0))
+			if ang != _prev_uniform_rotate_angle:
+				var drag_delta := ang - _prev_uniform_rotate_angle
+				undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'rotate_points_by', drag_delta, use_cntr])
+				undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'rotate_points_by', -drag_delta, use_cntr])
+				svs.rotate_points_by(drag_delta, use_cntr)
+				_prev_uniform_rotate_angle = ang
 			return true
 	return false
 
