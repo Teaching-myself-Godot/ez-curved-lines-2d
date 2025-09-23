@@ -28,7 +28,7 @@ layout_mode = 2
 [node name="DefaultEdit" type="Button" parent="HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Edit the nodes normally"
+tooltip_text = "Edit the nodes normally (Q)"
 toggle_mode = true
 button_group = SubResource("ButtonGroup_qu4vk")
 icon = ExtResource("2_memvu")
@@ -37,7 +37,7 @@ flat = true
 [node name="UniformTranslate" type="Button" parent="HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Move all the points without moving the node"
+tooltip_text = "Move all the points without moving the node (Z)"
 toggle_mode = true
 button_group = SubResource("ButtonGroup_qu4vk")
 icon = ExtResource("2_o8x6h")
@@ -46,7 +46,7 @@ flat = true
 [node name="UniformRotate" type="Button" parent="HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Rotate all the points without rotating the node"
+tooltip_text = "Rotate all the points without rotating the node (X)"
 toggle_mode = true
 button_group = SubResource("ButtonGroup_qu4vk")
 icon = ExtResource("3_lkilg")
@@ -55,7 +55,7 @@ flat = true
 [node name="UniformScale" type="Button" parent="HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Resize all the points without resizing the node"
+tooltip_text = "Resize all the points without resizing the node (C)"
 toggle_mode = true
 button_group = SubResource("ButtonGroup_qu4vk")
 icon = ExtResource("5_n2wtw")

@@ -27,3 +27,16 @@ func _on_uniform_scale_toggled(toggled_on: bool) -> void:
 	if toggled_on:
 		mode_changed.emit(CurvedLines2D.UniformTransformMode.SCALE)
 
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible:
+		return
+	if event is InputEventKey and (event as InputEventKey).pressed:
+		if (event as InputEventKey).is_command_or_control_pressed():
+			return
+		if (event as InputEventKey).keycode == KEY_Z:
+			%UniformTranslate.button_pressed = true
+		if (event as InputEventKey).keycode == KEY_X:
+			%UniformRotate.button_pressed = true
+		if (event as InputEventKey).keycode == KEY_C:
+			%UniformScale.button_pressed = true

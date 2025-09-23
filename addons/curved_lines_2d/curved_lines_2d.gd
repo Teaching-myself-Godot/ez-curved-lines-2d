@@ -94,8 +94,8 @@ var arc_settings_popup_panel : PopupPanel
 var _vp_horizontal_scrollbar_locked_value := 0.0
 var _locking_vp_horizontal_scrollbar := false
 
-
 var uniform_transform_edit_buttons : Control
+var _uniform_transform_mode := UniformTransformMode.NONE
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -167,7 +167,8 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 
 
 func _on_uniform_transform_mode_changed(new_mode : UniformTransformMode) -> void:
-	print("TODO, set uniform transform mode: ", new_mode)
+	_uniform_transform_mode = new_mode
+	update_overlays()
 
 
 func _is_ctrl_or_cmd_pressed() -> bool:
@@ -816,12 +817,32 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 			_draw_hint(viewport_control, hint)
 
 
+func _draw_canvas_for_uniform_translate(viewpor_control : Control, svs : ScalableVectorShape2D) -> void:
+	pass
+
+
+func _draw_canvas_for_uniform_rotate(viewpor_control : Control, svs : ScalableVectorShape2D) -> void:
+	pass
+
+
+func _draw_canvas_for_uniform_scale(viewpor_control : Control, svs : ScalableVectorShape2D) -> void:
+	pass
+
+
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 	if not _is_editing_enabled():
 		return
 	if not is_instance_valid(EditorInterface.get_edited_scene_root()):
 		return
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if _is_svs_valid(current_selection):
+		if _uniform_transform_mode == UniformTransformMode.TRANSLATE:
+			return _draw_canvas_for_uniform_translate(viewport_control, current_selection)
+		elif _uniform_transform_mode == UniformTransformMode.SCALE:
+			return _draw_canvas_for_uniform_scale(viewport_control, current_selection)
+		elif _uniform_transform_mode == UniformTransformMode.ROTATE:
+			return _draw_canvas_for_uniform_rotate(viewport_control, current_selection)
+
 	var all_valid_svs_nodes := _find_scalable_vector_shape_2d_nodes().filter(_is_svs_valid)
 	for result : ScalableVectorShape2D in all_valid_svs_nodes:
 		if result == current_selection:
@@ -1345,6 +1366,18 @@ func _get_vp_h_scroll_bar() -> HScrollBar:
 	return editor_vp.find_child("*HScrollBar*", true, false)
 
 
+func _handle_input_for_uniform_translate(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
+	return false
+
+
+func _handle_input_for_uniform_scale(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
+	return false
+
+
+func _handle_input_for_uniform_rotate(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
+	return false
+
+
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if (in_undo_redo_transaction and event is InputEventMouseButton
 			and event.button_index == MOUSE_BUTTON_LEFT
@@ -1361,6 +1394,14 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if not is_instance_valid(EditorInterface.get_edited_scene_root()):
 		return false
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if _is_svs_valid(current_selection):
+		if _uniform_transform_mode == UniformTransformMode.TRANSLATE:
+			return _handle_input_for_uniform_translate(event, current_selection)
+		elif _uniform_transform_mode == UniformTransformMode.SCALE:
+			return _handle_input_for_uniform_scale(event, current_selection)
+		elif _uniform_transform_mode == UniformTransformMode.ROTATE:
+			return _handle_input_for_uniform_rotate(event, current_selection)
+
 
 	if _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
 		var vp_horiz_scrollbar := _get_vp_h_scroll_bar()
