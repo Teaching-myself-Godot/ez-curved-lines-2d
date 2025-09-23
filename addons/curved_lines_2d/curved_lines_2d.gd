@@ -824,12 +824,16 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 			_draw_hint(viewport_control, hint)
 
 
-func _draw_canvas_for_uniform_translate(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
+func _draw_outline_for_uniform_transforms(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
 	viewport_control.draw_polyline(svs.get_bounding_box().map(_vp_transform), VIEWPORT_ORANGE, 2.0)
 	_draw_curve_def(viewport_control, svs, svs.shape_hint_color, 0.5, true)
 	for idx in svs.curve.point_count:
 		var p := svs.to_global(svs.curve.get_point_position(idx))
 		_draw_crosshair(viewport_control, _vp_transform(p), 2.0, 4.0, Color.WHITE)
+
+
+func _draw_canvas_for_uniform_translate(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
+	_draw_outline_for_uniform_transforms(viewport_control, svs)
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		_draw_hint(viewport_control, "- Drag to move all points (left mouse button held)")
 	else:
@@ -838,11 +842,26 @@ func _draw_canvas_for_uniform_translate(viewport_control : Control, svs : Scalab
 
 
 func _draw_canvas_for_uniform_rotate(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
-	pass
+	_draw_outline_for_uniform_transforms(viewport_control, svs)
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		var hint_text := "- Drag to rotate all points (left mouse button held)"
+		if _is_ctrl_or_cmd_pressed():
+			hint_text += "\n- Rotating in steps of 5° (Ctrl held)"
+		else:
+			hint_text += "\n- Hold Ctrl to rotate in steps of 5°"
+		if Input.is_key_pressed(KEY_SHIFT):
+			hint_text += "\n- Rotating around the natural center in stead of the pivot (Shift held)"
+		else:
+			hint_text += "\n- Hold Shift to rotate around the natural center in stead of the pivot"
+		_draw_hint(viewport_control, hint_text)
+	else:
+		_draw_hint(viewport_control, "- Hold left mouse button to start rotating all points" +
+				"\n- Press Q to return to normal editing")
+
 
 
 func _draw_canvas_for_uniform_scale(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
-	pass
+	_draw_outline_for_uniform_transforms(viewport_control, svs)
 
 
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
@@ -1404,7 +1423,6 @@ func _handle_input_for_uniform_translate(event : InputEvent, svs : ScalableVecto
 				undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'translate_points_by', -drag_delta])
 				svs.translate_points_by(drag_delta)
 			return true
-
 	return false
 
 
@@ -1413,6 +1431,21 @@ func _handle_input_for_uniform_scale(event : InputEvent, svs : ScalableVectorSha
 
 
 func _handle_input_for_uniform_rotate(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
+	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		if (event as InputEventMouseButton).pressed:
+			_drag_start = mouse_pos
+			if not in_undo_redo_transaction:
+				_start_undo_redo_transaction("Translate curve points for %s" % str(svs))
+		update_overlays()
+		return true
+
+	if event is InputEventMouseMotion:
+		update_overlays()
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			var drag_delta := mouse_pos - _drag_start
+			print("TODO: rotate around pivot or asdasdasd ", drag_delta)
+			return true
 	return false
 
 
@@ -1437,8 +1470,10 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			EditorInterface.get_editor_main_screen().mouse_default_cursor_shape = Control.CURSOR_MOVE
 			return _handle_input_for_uniform_translate(event, current_selection)
 		elif _uniform_transform_mode == UniformTransformMode.SCALE:
+			EditorInterface.get_editor_main_screen().mouse_default_cursor_shape = Control.CURSOR_ARROW
 			return _handle_input_for_uniform_scale(event, current_selection)
 		elif _uniform_transform_mode == UniformTransformMode.ROTATE:
+			EditorInterface.get_editor_main_screen().mouse_default_cursor_shape = Control.CURSOR_CROSS
 			return _handle_input_for_uniform_rotate(event, current_selection)
 		else:
 			EditorInterface.get_editor_main_screen().mouse_default_cursor_shape = Control.CURSOR_ARROW
