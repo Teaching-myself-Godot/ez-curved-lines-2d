@@ -98,6 +98,8 @@ var uniform_transform_edit_buttons : Control
 var _uniform_transform_mode := UniformTransformMode.NONE
 var _drag_start := Vector2.ZERO
 var _prev_uniform_rotate_angle := 0.0
+var _lmb_is_down_inside_viewport := false
+
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -163,7 +165,7 @@ func select_node_reversibly(target_node : Node) -> void:
 func _on_select_mode_toggled(toggled_on : bool) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if toggled_on and _is_svs_valid(current_selection):
-		uniform_transform_edit_buttons.enable()
+		uniform_transform_edit_buttons.enable(current_selection.shape_type)
 	else:
 		uniform_transform_edit_buttons.hide()
 
@@ -844,7 +846,7 @@ func _draw_canvas_for_uniform_translate(viewport_control : Control, svs : Scalab
 
 func _draw_canvas_for_uniform_rotate(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
 	_draw_outline_for_uniform_transforms(viewport_control, svs)
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+	if _lmb_is_down_inside_viewport:
 		var hint_text := "- Drag to rotate all points (left mouse button held)"
 		if _is_ctrl_or_cmd_pressed():
 			hint_text += "\n- Rotating in steps of 5° (Ctrl held)"
@@ -858,7 +860,7 @@ func _draw_canvas_for_uniform_rotate(viewport_control : Control, svs : ScalableV
 	else:
 		_draw_hint(viewport_control, "- Hold left mouse button to start rotating all points" +
 				"\n- Press Q to return to normal editing")
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+	if _lmb_is_down_inside_viewport:
 		var rotation_origin = (
 				svs.to_global(svs.get_bounding_rect().get_center())
 					if Input.is_key_pressed(KEY_SHIFT) else
@@ -878,6 +880,27 @@ func _draw_canvas_for_uniform_rotate(viewport_control : Control, svs : ScalableV
 
 func _draw_canvas_for_uniform_scale(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
 	_draw_outline_for_uniform_transforms(viewport_control, svs)
+	if _lmb_is_down_inside_viewport:
+		var hint_text := "- Drag to scale all points (left mouse button held)"
+		if Input.is_key_pressed(KEY_SHIFT):
+			hint_text += "\n- Scaling out from natural center (Shift held)"
+		else:
+			hint_text += "\n- Hold Shift to scale out from natural center in stead of pivot"
+		_draw_hint(viewport_control, hint_text)
+	else:
+		_draw_hint(viewport_control, "- Hold left mouse button to start scaling all points" +
+				"\n- Press Q to return to normal editing")
+	if _lmb_is_down_inside_viewport:
+		var origin = (
+				svs.to_global(svs.get_bounding_rect().get_center())
+					if Input.is_key_pressed(KEY_SHIFT) else
+				svs.global_position
+		)
+		var target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+		viewport_control.draw_line(_vp_transform(origin),_vp_transform(target),
+				svs.shape_hint_color, 1, true)
+		if Input.is_key_pressed(KEY_SHIFT):
+			_draw_crosshair(viewport_control, _vp_transform(origin), 2.0, 4.0, Color.WHITE)
 
 
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
@@ -886,7 +909,7 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 	if not is_instance_valid(EditorInterface.get_edited_scene_root()):
 		return
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-	if _is_svs_valid(current_selection):
+	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
 		if _uniform_transform_mode == UniformTransformMode.TRANSLATE:
 			return _draw_canvas_for_uniform_translate(viewport_control, current_selection)
 		elif _uniform_transform_mode == UniformTransformMode.SCALE:
@@ -1265,7 +1288,6 @@ func _remove_point_from_curve(current_selection : ScalableVectorShape2D, idx : i
 	for a in redo_arcs:
 		undo_redo.add_undo_reference(a)
 		undo_redo.add_undo_method(current_selection.arc_list, 'add_arc', a)
-
 	undo_redo.commit_action()
 
 
@@ -1443,6 +1465,27 @@ func _handle_input_for_uniform_translate(event : InputEvent, svs : ScalableVecto
 
 
 func _handle_input_for_uniform_scale(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
+	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		if (event as InputEventMouseButton).pressed:
+			_drag_start = mouse_pos
+			if not in_undo_redo_transaction:
+				_start_undo_redo_transaction("Scale curve points for %s" % str(svs))
+		update_overlays()
+		return true
+
+	if event is InputEventMouseMotion:
+		update_overlays()
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			var drag_delta := mouse_pos - _drag_start
+			if _is_snapped_to_pixel():
+				drag_delta = drag_delta.snapped(Vector2.ONE * _get_snap_resolution())
+			if drag_delta.abs() > Vector2.ZERO:
+				undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'scale_points_by', _drag_start, mouse_pos, Input.is_key_pressed(KEY_SHIFT)])
+				undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'scale_points_by', mouse_pos, _drag_start, Input.is_key_pressed(KEY_SHIFT)])
+				svs.scale_points_by(_drag_start, mouse_pos, Input.is_key_pressed(KEY_SHIFT))
+				_drag_start = mouse_pos
+			return true
 	return false
 
 
@@ -1481,6 +1524,8 @@ func _handle_input_for_uniform_rotate(event : InputEvent, svs : ScalableVectorSh
 
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
+	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		_lmb_is_down_inside_viewport = (event as InputEventMouseButton).pressed
 	if (in_undo_redo_transaction and event is InputEventMouseButton
 			and event.button_index == MOUSE_BUTTON_LEFT
 			and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)):
@@ -1496,7 +1541,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if not is_instance_valid(EditorInterface.get_edited_scene_root()):
 		return false
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-	if _is_svs_valid(current_selection):
+	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
 		if _uniform_transform_mode == UniformTransformMode.TRANSLATE:
 			EditorInterface.get_editor_main_screen().mouse_default_cursor_shape = Control.CURSOR_MOVE
 			return _handle_input_for_uniform_translate(event, current_selection)
