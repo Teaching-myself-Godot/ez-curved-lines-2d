@@ -1547,16 +1547,11 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
 		if _uniform_transform_mode == UniformTransformMode.TRANSLATE:
-			EditorInterface.get_editor_main_screen().mouse_default_cursor_shape = Control.CURSOR_MOVE
 			return _handle_input_for_uniform_translate(event, current_selection)
 		elif _uniform_transform_mode == UniformTransformMode.SCALE:
-			EditorInterface.get_editor_main_screen().mouse_default_cursor_shape = Control.CURSOR_ARROW
 			return _handle_input_for_uniform_scale(event, current_selection)
 		elif _uniform_transform_mode == UniformTransformMode.ROTATE:
-			EditorInterface.get_editor_main_screen().mouse_default_cursor_shape = Control.CURSOR_CROSS
 			return _handle_input_for_uniform_rotate(event, current_selection)
-		else:
-			EditorInterface.get_editor_main_screen().mouse_default_cursor_shape = Control.CURSOR_ARROW
 
 	if _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
 		var vp_horiz_scrollbar := _get_vp_h_scroll_bar()
