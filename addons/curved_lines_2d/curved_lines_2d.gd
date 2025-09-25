@@ -489,7 +489,8 @@ func _draw_rect_control_point_handle(viewport_control : Control, svs : ScalableV
 	var prop_name := "rx" if prefix == "in" else "ry"
 	var color := VIEWPORT_ORANGE if is_hovered else Color.WHITE
 	var width := 2 if is_hovered else 1
-	viewport_control.draw_line(_vp_transform(svs.to_global(svs.get_bounding_rect().position)),
+	viewport_control.draw_line(
+			_vp_transform(handle['top_left_pos']),
 			_vp_transform(handle[prefix + '_position']), Color.WEB_GRAY, 1, true)
 	viewport_control.draw_circle(_vp_transform(handle[prefix + '_position']), 5, Color.DIM_GRAY)
 	viewport_control.draw_circle(_vp_transform(handle[prefix + '_position']), 5, color, false, width)
@@ -855,20 +856,21 @@ func _draw_canvas_for_uniform_rotate(viewport_control : Control, svs : ScalableV
 			hint_text += "\n- Rotating in steps of 5° (Ctrl held)"
 		else:
 			hint_text += "\n- Hold Ctrl to rotate in steps of 5°"
-		if Input.is_key_pressed(KEY_SHIFT):
-			hint_text += "\n- Rotating around the natural center in stead of the pivot (Shift held)"
-		else:
-			hint_text += "\n- Hold Shift to rotate around the natural center in stead of the pivot"
+		if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
+			if Input.is_key_pressed(KEY_SHIFT):
+				hint_text += "\n- Rotating around the natural center in stead of the pivot (Shift held)"
+			else:
+				hint_text += "\n- Hold Shift to rotate around the natural center in stead of the pivot"
 		_draw_hint(viewport_control, hint_text)
 	else:
 		_draw_hint(viewport_control, "- Hold left mouse button to start rotating all points" +
 				"\n- Press Q to return to normal editing")
 	if _lmb_is_down_inside_viewport:
-		var rotation_origin = (
-				svs.to_global(svs.get_bounding_rect().get_center())
-					if Input.is_key_pressed(KEY_SHIFT) else
-				svs.global_position
-		)
+		var rotation_origin = svs.global_position
+		if (Input.is_key_pressed(KEY_SHIFT) or
+				svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
+		):
+			rotation_origin = svs.to_global(svs.get_bounding_rect().get_center())
 		var rotation_target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_ctrl_or_cmd_pressed():
 			var ang := snapped(rotation_origin.angle_to_point(rotation_target), deg_to_rad(5.0))
@@ -1048,7 +1050,8 @@ func _update_rect_dimensions(svs : ScalableVectorShape2D, mouse_pos : Vector2) -
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS] = [[svs, 'size', svs.size]]
 	if _is_snapped_to_pixel():
 		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
-	svs.size = svs.to_local(mouse_pos) - svs.get_bounding_rect().position
+	var top_left := (-svs.size * 0.5).rotated(svs.spin) + svs.offset
+	svs.size = ((svs.to_local(mouse_pos)) - top_left).rotated(-svs.spin)
 	undo_redo_transaction[UndoRedoEntry.DO_PROPS] = [[svs, 'size', svs.size]]
 
 
@@ -1060,12 +1063,13 @@ func _update_rect_corner_radius(svs : ScalableVectorShape2D, mouse_pos : Vector2
 		]
 	if _is_snapped_to_pixel():
 		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+	var top_left := (-svs.size * 0.5).rotated(svs.spin) + svs.offset
 	if prop_name == 'rx':
-		svs.rx = svs.to_local(mouse_pos).x - svs.get_bounding_rect().position.x
+		svs.rx = svs.to_local(mouse_pos).rotated(-svs.spin).x - top_left.rotated(-svs.spin).x
 		if is_symmetrical:
 			svs.ry = svs.rx
 	if prop_name == 'ry':
-		svs.ry = svs.to_local(mouse_pos).y - svs.get_bounding_rect().position.y
+		svs.ry = svs.to_local(mouse_pos).rotated(-svs.spin).y - top_left.rotated(-svs.spin).y
 		if is_symmetrical:
 			svs.rx = svs.ry
 
@@ -1503,10 +1507,10 @@ func _handle_input_for_uniform_rotate(event : InputEvent, svs : ScalableVectorSh
 	if event is InputEventMouseMotion:
 		update_overlays()
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			var use_cntr := Input.is_key_pressed(KEY_SHIFT)
+			var use_cntr := Input.is_key_pressed(KEY_SHIFT) or svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
 			var rotation_origin = (
 					svs.to_global(svs.get_bounding_rect().get_center())
-						if Input.is_key_pressed(KEY_SHIFT) else
+						if use_cntr else
 					svs.global_position
 			)
 			var rotation_target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
