@@ -947,26 +947,27 @@ func translate_points_by(global_vector : Vector2) -> void:
 
 
 func scale_points_by(from_global_vector : Vector2, to_global_vector : Vector2, around_center := false) -> void:
-	if shape_type != ShapeType.PATH:
-		return
 	var local_from := to_local(from_global_vector)
 	var local_to := to_local(to_global_vector)
 	var origin := get_bounding_rect().get_center() if around_center else Vector2.ZERO
 	var s := origin.distance_to(local_to) / origin.distance_to(local_from)
-	curve.set_block_signals(true)
-	for idx in curve.point_count:
-		var p := curve.get_point_position(idx)
-		var p1 := (p - origin) * s + origin
-		var cp_in_abs := curve.get_point_in(idx) + p
-		var cp_out_abs := curve.get_point_out(idx) + p
-		var cp_in_abs_1 := (cp_in_abs - origin) * s + origin
-		var cp_out_abs_1 := (cp_out_abs - origin) * s + origin
-		curve.set_point_position(idx, p1)
-		curve.set_point_in(idx, cp_in_abs_1 - p1)
-		curve.set_point_out(idx, cp_out_abs_1 - p1)
+	if shape_type == ShapeType.PATH:
+		curve.set_block_signals(true)
+		for idx in curve.point_count:
+			var p := curve.get_point_position(idx)
+			var p1 := (p - origin) * s + origin
+			var cp_in_abs := curve.get_point_in(idx) + p
+			var cp_out_abs := curve.get_point_out(idx) + p
+			var cp_in_abs_1 := (cp_in_abs - origin) * s + origin
+			var cp_out_abs_1 := (cp_out_abs - origin) * s + origin
+			curve.set_point_position(idx, p1)
+			curve.set_point_in(idx, cp_in_abs_1 - p1)
+			curve.set_point_out(idx, cp_out_abs_1 - p1)
 
-	curve.set_block_signals(false)
-	curve.emit_changed()
+		curve.set_block_signals(false)
+		curve.emit_changed()
+	else:
+		size *= s
 
 
 func rotate_points_by(angle : float, around_center := false) -> void:

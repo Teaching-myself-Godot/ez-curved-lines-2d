@@ -165,7 +165,7 @@ func select_node_reversibly(target_node : Node) -> void:
 func _on_select_mode_toggled(toggled_on : bool) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if toggled_on and _is_svs_valid(current_selection):
-		uniform_transform_edit_buttons.enable(current_selection.shape_type)
+		uniform_transform_edit_buttons.enable()
 	else:
 		uniform_transform_edit_buttons.hide()
 
@@ -833,6 +833,9 @@ func _draw_outline_for_uniform_transforms(viewport_control : Control, svs : Scal
 	for idx in svs.curve.point_count:
 		var p := svs.to_global(svs.curve.get_point_position(idx))
 		_draw_crosshair(viewport_control, _vp_transform(p), 2.0, 4.0, Color.WHITE)
+	_draw_crosshair(viewport_control,
+			_vp_transform(svs.to_global(svs.get_bounding_rect().get_center())),
+			2.0, 4.0, Color.WHITE)
 
 
 func _draw_canvas_for_uniform_translate(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
@@ -871,36 +874,33 @@ func _draw_canvas_for_uniform_rotate(viewport_control : Control, svs : ScalableV
 			var ang := snapped(rotation_origin.angle_to_point(rotation_target), deg_to_rad(5.0))
 			var dst := rotation_origin.distance_to(rotation_target)
 			rotation_target = rotation_origin + Vector2.RIGHT.rotated(ang) * dst
-
 		viewport_control.draw_line(_vp_transform(rotation_origin),_vp_transform(rotation_target),
 				svs.shape_hint_color, 1, true)
-		if Input.is_key_pressed(KEY_SHIFT):
-			_draw_crosshair(viewport_control, _vp_transform(rotation_origin), 2.0, 4.0, Color.WHITE)
 
 
 func _draw_canvas_for_uniform_scale(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
 	_draw_outline_for_uniform_transforms(viewport_control, svs)
 	if _lmb_is_down_inside_viewport:
 		var hint_text := "- Drag to scale all points (left mouse button held)"
-		if Input.is_key_pressed(KEY_SHIFT):
-			hint_text += "\n- Scaling out from natural center (Shift held)"
-		else:
-			hint_text += "\n- Hold Shift to scale out from natural center in stead of pivot"
+		if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
+			if Input.is_key_pressed(KEY_SHIFT):
+				hint_text += "\n- Scaling out from natural center (Shift held)"
+			else:
+				hint_text += "\n- Hold Shift to scale out from natural center in stead of pivot"
 		_draw_hint(viewport_control, hint_text)
 	else:
 		_draw_hint(viewport_control, "- Hold left mouse button to start scaling all points" +
 				"\n- Press Q to return to normal editing")
+
 	if _lmb_is_down_inside_viewport:
-		var origin = (
-				svs.to_global(svs.get_bounding_rect().get_center())
-					if Input.is_key_pressed(KEY_SHIFT) else
-				svs.global_position
-		)
+		var origin = svs.global_position
+		if (Input.is_key_pressed(KEY_SHIFT) or
+				svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
+		):
+			origin = svs.to_global(svs.get_bounding_rect().get_center())
 		var target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		viewport_control.draw_line(_vp_transform(origin),_vp_transform(target),
 				svs.shape_hint_color, 1, true)
-		if Input.is_key_pressed(KEY_SHIFT):
-			_draw_crosshair(viewport_control, _vp_transform(origin), 2.0, 4.0, Color.WHITE)
 
 
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
