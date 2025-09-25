@@ -273,11 +273,13 @@ var stroke_width := 10.0:
 				ry = 0.0
 			dimensions_changed.emit()
 
+## The Ellipse/Rect's center relative to its pivot
 @export var offset : Vector2 = Vector2(0.0, 0.0):
 	set(ofs):
 		offset = ofs
 		dimensions_changed.emit()
 
+## The natural (unscaled) size of the Ellipse/Rect
 @export var size : Vector2 = Vector2(100.0, 100.0):
 	set(sz):
 		if sz.x < 0:
@@ -296,6 +298,13 @@ var stroke_width := 10.0:
 			rx = sz.x * 0.5
 			ry = sz.y * 0.5
 
+## The rotation of the Rect/Ellipse's points relative to its natural center
+@export_range(-180.0, 180.0, 0.1, "radians_as_degrees") var spin := 0.0:
+	set(a):
+		spin = a
+		dimensions_changed.emit()
+
+## The Ellipse's radius / the Rect's rounded corder along the x-axis.
 @export var rx : float = 0.0:
 	set(_rx):
 		rx = _rx if _rx > 0 else 0
@@ -304,6 +313,7 @@ var stroke_width := 10.0:
 				rx = size.x * 0.49
 		dimensions_changed.emit()
 
+## The Ellipse's radius / the Rect's rounded corder along the y-axis.
 @export var ry : float = 0.0:
 	set(_ry):
 		ry = _ry if _ry > 0 else 0
@@ -430,10 +440,10 @@ func _on_dimensions_changed():
 		var width = size.x
 		var height = size.y
 		# curve is passed by reference to trigger changed on existing instance
-		set_rect_points(curve, width, height, rx, ry, offset)
+		set_rect_points(curve, width, height, rx, ry, offset, spin)
 	elif shape_type == ShapeType.ELLIPSE:
 		# curve is passed by reference to trigger changed on existing instance
-		set_ellipse_points(curve, size, offset)
+		set_ellipse_points(curve, size, offset, spin)
 
 
 func _on_assigned_node_changed(_x : Variant = null):
@@ -541,6 +551,7 @@ func _update_curve():
 	else:
 		_update_assigned_nodes_with_clips(polygon_points, valid_clip_paths)
 		polygons_updated.emit(cached_clipped_polygons if is_instance_valid(polygon) else Array([], TYPE_PACKED_VECTOR2_ARRAY, "", null), cached_poly_strokes, self)
+
 
 func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 	var collision_polygons : Array[PackedVector2Array] = []
@@ -864,18 +875,19 @@ func is_curve_closed() -> bool:
 
 func get_curve_handles() -> Array:
 	if shape_type == ShapeType.RECT or shape_type == ShapeType.ELLIPSE:
-		var point_pos := size + get_bounding_rect().position
-		var rx_handle := Vector2(rx, 0)
-		var ry_handle := Vector2(0, ry)
-		var top_left := offset + Vector2(-size.x, -size.y) * 0.5
+		var size_handle_pos := (size * 0.5).rotated(spin) + offset
+		var top_left := (-size * 0.5).rotated(spin) + offset
+		var rx_handle := ((-size * 0.5) + Vector2(rx, 0)).rotated(spin) + offset
+		var ry_handle := ((-size * 0.5) + Vector2(0, ry)).rotated(spin) + offset
 		return [{
-			"point_position": to_global(point_pos),
+			"top_left_pos": to_global(top_left),
+			"point_position": to_global(size_handle_pos),
 			"mirrored": true,
 			"in": rx_handle,
 			"out": ry_handle,
-			"in_position": to_global(top_left + rx_handle),
-			"out_position": to_global(top_left + ry_handle),
-			"is_closed": ""
+			"in_position": to_global(rx_handle),
+			"out_position": to_global(ry_handle),
+			"is_closed": "",
 		}]
 
 
@@ -931,6 +943,68 @@ func get_gradient_handles() -> Dictionary:
 	}
 
 	return result
+
+
+func translate_points_by(global_vector : Vector2) -> void:
+	var delta := global_vector.rotated(-global_rotation) / global_scale
+	if shape_type == ShapeType.PATH:
+		curve.set_block_signals(true)
+		for idx in curve.point_count:
+			curve.set_point_position(idx, curve.get_point_position(idx) + delta)
+		curve.set_block_signals(false)
+		curve.emit_changed()
+	else:
+		offset += delta
+
+
+func scale_points_by(from_global_vector : Vector2, to_global_vector : Vector2, around_center := false) -> void:
+	var local_from := to_local(from_global_vector)
+	var local_to := to_local(to_global_vector)
+	var origin := get_bounding_rect().get_center() if around_center else Vector2.ZERO
+	var s := origin.distance_to(local_to) / origin.distance_to(local_from)
+	if shape_type == ShapeType.PATH:
+		curve.set_block_signals(true)
+		for idx in curve.point_count:
+			var p := curve.get_point_position(idx)
+			var p1 := (p - origin) * s + origin
+			var cp_in_abs := curve.get_point_in(idx) + p
+			var cp_out_abs := curve.get_point_out(idx) + p
+			var cp_in_abs_1 := (cp_in_abs - origin) * s + origin
+			var cp_out_abs_1 := (cp_out_abs - origin) * s + origin
+			curve.set_point_position(idx, p1)
+			curve.set_point_in(idx, cp_in_abs_1 - p1)
+			curve.set_point_out(idx, cp_out_abs_1 - p1)
+
+		curve.set_block_signals(false)
+		curve.emit_changed()
+	else:
+		size *= s
+
+
+func rotate_points_by(angle : float, around_center := false) -> void:
+	if shape_type != ShapeType.PATH:
+		spin += angle
+		return
+	var transform := Transform2D.IDENTITY.rotated(-angle)
+	var rotation_origin := get_bounding_rect().get_center() if around_center else Vector2.ZERO
+	curve.set_block_signals(true)
+	for idx in curve.point_count:
+		var p := curve.get_point_position(idx)
+		var p1 := (p - rotation_origin) * transform + rotation_origin
+		var cp_in_abs := curve.get_point_in(idx) + p
+		var cp_out_abs := curve.get_point_out(idx) + p
+		var cp_in_abs_1 := (cp_in_abs - rotation_origin) * transform + rotation_origin
+		var cp_out_abs_1 := (cp_out_abs - rotation_origin) * transform + rotation_origin
+		curve.set_point_position(idx, p1)
+		curve.set_point_in(idx, cp_in_abs_1 - p1)
+		curve.set_point_out(idx, cp_out_abs_1 - p1)
+	if around_center:
+		cached_outline.clear()
+		var origin_delta := rotation_origin - get_bounding_rect().get_center()
+		translate_points_by(origin_delta)
+	else:
+		curve.set_block_signals(false)
+		curve.emit_changed()
 
 
 func set_global_curve_point_position(global_pos : Vector2, point_idx : int, snapped : bool,
@@ -1092,38 +1166,96 @@ func tessellate_arc_segment(start : Vector2, arc_radius : Vector2, arc_rotation_
 ## [param curve] is passed by reference so the curve's [signal Resource.changed]
 ## signal is emitted.
 static func set_rect_points(curve : Curve2D, width : float, height : float, rx := 0.0, ry := 0.0,
-		offset := Vector2.ZERO) -> void:
+		offset := Vector2.ZERO, rotation := 0.0) -> void:
+	curve.set_block_signals(true)
 	curve.clear_points()
-	var top_left := offset + Vector2(-width, -height) * 0.5
-	var top_right := offset + Vector2(width, -height) * 0.5
-	var bottom_right := offset + Vector2(width, height) * 0.5
-	var bottom_left := offset + Vector2(-width, height) * 0.5
+	var top_left := Vector2(-width, -height) * 0.5
+	var top_right := Vector2(width, -height) * 0.5
+	var bottom_right := Vector2(width, height) * 0.5
+	var bottom_left := Vector2(-width, height) * 0.5
 	if rx == 0 and ry == 0:
-		curve.add_point(top_left)
-		curve.add_point(top_right)
-		curve.add_point(bottom_right)
-		curve.add_point(bottom_left)
-		curve.add_point(top_left)
+		curve.add_point(top_left.rotated(rotation) + offset)
+		curve.add_point(top_right.rotated(rotation) + offset)
+		curve.add_point(bottom_right.rotated(rotation) + offset)
+		curve.add_point(bottom_left.rotated(rotation) + offset)
+		curve.add_point(top_left.rotated(rotation) + offset)
 	else:
-		curve.add_point(top_left + Vector2(width - rx, 0), Vector2.ZERO, Vector2(rx * R_TO_CP, 0))
-		curve.add_point(top_left + Vector2(width, ry), Vector2(0, -ry * R_TO_CP))
-		curve.add_point(top_left + Vector2(width, height - ry), Vector2.ZERO, Vector2(0, ry * R_TO_CP))
-		curve.add_point(top_left + Vector2(width - rx, height), Vector2(rx * R_TO_CP, 0))
-		curve.add_point(top_left + Vector2(rx, height), Vector2.ZERO, Vector2(-rx * R_TO_CP, 0))
-		curve.add_point(top_left + Vector2(0, height - ry), Vector2(0, ry * R_TO_CP))
-		curve.add_point(top_left + Vector2(0, ry), Vector2.ZERO, Vector2(0, -ry *  R_TO_CP))
-		curve.add_point(top_left + Vector2(rx, 0), Vector2(-rx * R_TO_CP, 0))
-		curve.add_point(top_left + Vector2(width - rx, 0), Vector2.ZERO, Vector2(rx * R_TO_CP, 0))
+		curve.add_point(
+			(top_left + Vector2(width - rx, 0)).rotated(rotation) + offset,
+			Vector2.ZERO,
+			Vector2(rx * R_TO_CP, 0).rotated(rotation)
+		)
+		curve.add_point(
+			(top_left + Vector2(width, ry)).rotated(rotation) + offset,
+			Vector2(0, -ry * R_TO_CP).rotated(rotation)
+		)
+		curve.add_point(
+			(top_left + Vector2(width, height - ry)).rotated(rotation) + offset,
+			Vector2.ZERO,
+			Vector2(0, ry * R_TO_CP).rotated(rotation)
+		)
+		curve.add_point(
+			(top_left + Vector2(width - rx, height)).rotated(rotation) + offset,
+			Vector2(rx * R_TO_CP, 0).rotated(rotation)
+		)
+		curve.add_point(
+			(top_left + Vector2(rx, height)).rotated(rotation) + offset,
+			Vector2.ZERO,
+			Vector2(-rx * R_TO_CP, 0).rotated(rotation)
+		)
+		curve.add_point(
+			(top_left + Vector2(0, height - ry)).rotated(rotation) + offset,
+			Vector2(0, ry * R_TO_CP).rotated(rotation)
+		)
+		curve.add_point(
+			(top_left + Vector2(0, ry)).rotated(rotation) + offset,
+			Vector2.ZERO,
+			Vector2(0, -ry *  R_TO_CP).rotated(rotation)
+		)
+		curve.add_point(
+			(top_left + Vector2(rx, 0)).rotated(rotation) + offset,
+			Vector2(-rx * R_TO_CP, 0).rotated(rotation)
+		)
+		curve.add_point(
+			(top_left + Vector2(width - rx, 0)).rotated(rotation) + offset,
+			Vector2.ZERO,
+			Vector2(rx * R_TO_CP, 0).rotated(rotation)
+		)
+
+	curve.set_block_signals(false)
+	curve.changed.emit()
 
 
 ## Convert an existing [Curve2D] instance to an ellipse.
 ## [param curve] is passed by reference so the curve's [signal Resource.changed]
 ## signal is emitted.
-static func set_ellipse_points(curve : Curve2D, size: Vector2, offset := Vector2.ZERO):
+static func set_ellipse_points(curve : Curve2D, size: Vector2, offset := Vector2.ZERO, rotation := 0.0):
+	curve.set_block_signals(true)
 	curve.clear_points()
-	curve.add_point(offset + Vector2(size.x * 0.5, 0), Vector2.ZERO, Vector2(0, size.y * 0.5 * R_TO_CP))
-	curve.add_point(offset + Vector2(0, size.y * 0.5), Vector2(size.x * 0.5 * R_TO_CP, 0), Vector2(-size.x * 0.5 * R_TO_CP, 0))
-	curve.add_point(offset + Vector2(-size.x * 0.5, 0), Vector2(0, size.y * 0.5 * R_TO_CP), Vector2(0, -size.y * 0.5 * R_TO_CP))
-	curve.add_point(offset + Vector2(0, -size.y * 0.5), Vector2(-size.x * 0.5 * R_TO_CP, 0), Vector2(size.x * 0.5 * R_TO_CP, 0))
-	curve.add_point(offset + Vector2(size.x * 0.5, 0), Vector2(0, -size.y * 0.5 * R_TO_CP))
+	curve.add_point(
+		offset + Vector2(size.x * 0.5, 0).rotated(rotation),
+		Vector2.ZERO,
+		Vector2(0, size.y * 0.5 * R_TO_CP).rotated(rotation)
+	)
+	curve.add_point(
+		offset + Vector2(0, size.y * 0.5).rotated(rotation),
+		Vector2(size.x * 0.5 * R_TO_CP, 0).rotated(rotation),
+		Vector2(-size.x * 0.5 * R_TO_CP, 0).rotated(rotation)
+	)
+	curve.add_point(
+		offset + Vector2(-size.x * 0.5, 0).rotated(rotation),
+		Vector2(0, size.y * 0.5 * R_TO_CP).rotated(rotation),
+		Vector2(0, -size.y * 0.5 * R_TO_CP).rotated(rotation)
+	)
+	curve.add_point(
+		offset + Vector2(0, -size.y * 0.5).rotated(rotation),
+		Vector2(-size.x * 0.5 * R_TO_CP, 0).rotated(rotation),
+		Vector2(size.x * 0.5 * R_TO_CP, 0).rotated(rotation)
+	)
+	curve.add_point(
+		offset + Vector2(size.x * 0.5, 0).rotated(rotation),
+		Vector2(0, -size.y * 0.5 * R_TO_CP).rotated(rotation)
+	)
+	curve.set_block_signals(false)
+	curve.changed.emit()
 
