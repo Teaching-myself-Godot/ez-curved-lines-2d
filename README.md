@@ -40,6 +40,16 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 - [The Advanced Tab](#the-advanced-tab)
 	- [Basic export options](#basic-export-options)
 	- [Bake Animations](#bake-animations)
+- [Moving, Rotating and Resizing the Points of a Shape](#moving-rotating-and-resizing-the-points-of-a-shape)
+	- [Moving (Translating) all the points](#moving-translating-all-the-points)
+		- [Translating Ellipses and Rectangles](#translating-ellipses-and-rectangles)
+		- [Translating Paths](#translating-paths)
+	- [Rotating all the Points](#rotating-all-the-points)
+		- [Rotating Ellipses and Rectangles](#rotating-ellipses-and-rectangles)
+		- [Rotating Paths](#rotating-paths)
+	- [Resizing all the Points](#resizing-all-the-points)
+		- [Resizing Ellipses and Rectangles](#resizing-ellipses-and-rectangles)
+		- [Resizing Paths](#resizing-paths)
 - [Manipulating shapes](#manipulating-shapes)
 	- [Adding a point to a shape](#adding-a-point-to-a-shape)
 	- [Bending a curve](#bending-a-curve)
@@ -229,7 +239,73 @@ Since release `2.13.0` a tab named 'Advanced' is added to the bottom dock.
 ## Bake Animations
 Since `2.14.0` you can export your animated scene as sprite frames in one PNG spritesheet or separate PNG files.
 
+# Moving, Rotating and Resizing the Points of a Shape
 
+Release `2.16.0` adds the posibility to do uniform transforms on the points of a shape, as opposed to the entire node.
+
+When a `ScalableVectorShape2D` is selected in `Select Mode (Q)`, the following command buttons are made available:
+
+- `Move all the Points without moving the Node (Z)`
+- `Rotate all the Points without rotating the Node (X)`
+- `Resize all the Points without scaling the Node (C)`
+- `Edit the points normally (Q)`
+
+![uniform transform buttons](./addons/curved_lines_2d/screenshots/uniform_transforms.png)
+
+
+## Moving (Translating) all the points
+
+When moving all the points of a shape, the `Node2D.position` property does not change.
+
+This operation responds to the snap-to-pixel mode of the `Project Settings` tab.
+
+### Translating Ellipses and Rectangles
+
+In the case of the 2 supported primitive shapes, the `offset` property is changed, to represent the translation.
+
+The `offset` property can be used to set keyframes in an `AnimationPlayer` and is so easier to use than the `Batch Update` button for an entire curve.
+
+### Translating Paths
+
+When the `Shape Type Settings > Shape Type` is `Path`, all the points are simply moved, relative to the node position (translating their individual local position).
+
+## Rotating all the Points
+
+When rotating all the points of a shape, the `Node2D.rotation` property does not change.
+
+Just like rotating `Node2D`, holding `Ctrl` allows you to rotate in steps of 5°.
+
+### Rotating Ellipses and Rectangles
+
+In the case of the 2 supported primitive shapes, the `spin` property is changed, to represent the rotation of all the points.
+
+The `spin` property can be used to set keyframes in an `AnimationPlayer` and is so easier to use than the `Batch Update` button for an entire cruve.
+
+### Rotating Paths
+
+When the `Shape Type Settings > Shape Type` is `Path`, all the points can be rotated in 2 ways:
+1. Around the `Node2D`'s pivot
+2. Around their natural center (by holding the `Shift` button - this is not perfect, but comes close enough)
+
+![Uniform Rotate a Path Hole](./addons/curved_lines_2d/screenshots/uniform_rotate_a_path_hole.png)
+
+## Resizing all the Points
+
+When resizing all the points of a shape, the `Node2D.scale` property does not change, this is especially useful when using strokes, because their width will remain the same this way.
+
+This operation responds to the snap-to-pixel mode of the `Project Settings` tab.
+
+### Resizing Ellipses and Rectangles
+
+In the case of the 2 supported primitive shapes, the `size` property is changed, to represent the 'distance' of all the points away from their origin.
+
+The `size` property can be used to set keyframes in an `AnimationPlayer` and is so easier to use than the `Batch Update` button for an entire cruve.
+
+### Resizing Paths
+
+When the `Shape Type Settings > Shape Type` is `Path`, all the points can be resized in 2 ways:
+1. Away from / towards the `Node2D`'s pivot
+2. Away from / towards their natural center (by holding Shift)
 
 # Manipulating shapes
 
@@ -725,7 +801,7 @@ Once you're done drawing and do not need the shape to change anymore at runtime 
 
 ## Lots of thanks go out to those who helped me out getting started:
 - This plugin was first inspired by [Mark Hedberg's blog on rendering curves in Godot](https://www.hedberggames.com/blog/rendering-curves-in-godot).
-- The suggestion to support both `Polygon2D` and collisions was done by [GeminiSquishGames](https://github.com/GeminiSquishGames), who's pointers inspired me to go further
+- The suggestion to support both `Polygon2D` and collisions was done by [GeminiSquishGames](https://github.com/GeminiSquishGames), who's pointers inspired me to go further, like implementing uniform transform tools.
 - The SVG Importer code was adapted from the script hosted on github in the [pixelriot/SVG2Godot](https://github.com/pixelriot/SVG2Godot) repository
 - The code for making cutout shapes was adapted from the great [knife tool plugin](https://github.com/mrkdji/knife-tool/) by @mrkdji
 - The inspiration for using [Geometry2D.offset_polyline](https://docs.godotengine.org/en/stable/classes/class_geometry2d.html#class-geometry2d-method-offset-polyline) for strokes came from @theshaggydev, who recorded [this video](https://www.youtube.com/watch?v=5TW7H7aXhxQ) about it.

@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.16.0
+
+### Added
+- Uniform transformation buttons (move/rotate/scale all points without changing `Node2D.transform`)
+- The `spin` property to represent a Rectangle / Ellipse primitive's local rotation.
+
+### Changed
+- Use `Curve2D.set_block_signals` to update all points at once in `ScalableVectorShape2D.set_ellipse_points`
+- Use `Curve2D.set_block_signals` to update all points at once in `ScalableVectorShape2D.set_rect_points`
+
 ## 2.15.0
 
 ### Added

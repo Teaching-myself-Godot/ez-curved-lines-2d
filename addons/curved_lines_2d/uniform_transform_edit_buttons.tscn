@@ -28,7 +28,7 @@ layout_mode = 2
 [node name="DefaultEdit" type="Button" parent="HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Edit the nodes normally (Q)"
+tooltip_text = "Edit the points normally (Q)"
 toggle_mode = true
 button_group = SubResource("ButtonGroup_qu4vk")
 icon = ExtResource("2_memvu")
