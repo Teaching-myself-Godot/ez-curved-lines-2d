@@ -5,14 +5,14 @@
 ### Added
 - Uniform transformation buttons (move/rotate/scale all points without changing `Node2D.transform`)
 - The `spin` property to represent a Rectangle / Ellipse primitive's local rotation.
-- The `ScalableVectorShape2D.get_center()` method, which returns the barycenter of the tessellated outline curve
+- The `ScalableVectorShape2D.get_center()` method, which returns the center of mass of the tessellated outline curve
 
 ### Changed
 - Use `Curve2D.set_block_signals` to update all points at once in `ScalableVectorShape2D.set_ellipse_points`
 - Use `Curve2D.set_block_signals` to update all points at once in `ScalableVectorShape2D.set_rect_points`
 - Bugfix: collision objects and navigation region are also added when neither fill, nor stroke is assigned
 - Bugfix: collision objects and navigation region are now also owned when created for a ScalableVectorShape2D that is also the scene root.
-- Bugfix: rotate around natural center is now predictable by using barycenter in stead of center of bounding rectangle
+- Bugfix: rotate around natural center is now predictable by using center of mass point in stead of center of bounding rectangle
 
 ## 2.15.0
 
