@@ -35,6 +35,7 @@ curved_lines_2d/default_max_stages=5
 [application]
 
 config/name="EZ Curved Lines 2D"
+run/main_scene="uid://bpjhx0g61ptyq"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://b5yxa1e62b0hb"
 

@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://hr7df18ngxmj"]
+[gd_scene load_steps=7 format=3 uid="uid://hr7df18ngxmj"]
 
 [ext_resource type="PackedScene" uid="uid://bhpmwhbdlsp1g" path="res://addons/curved_lines_2d/external_video_button.tscn" id="1_xhvii"]
 [ext_resource type="Texture2D" uid="uid://be2xpq0unu641" path="res://addons/curved_lines_2d/video_thumbnails/animations_to_sprite_frames.png" id="2_7bvyv"]
 [ext_resource type="Texture2D" uid="uid://blj26cry4ov1b" path="res://addons/curved_lines_2d/video_thumbnails/a_z_explainer.png" id="2_68r4x"]
+[ext_resource type="Texture2D" uid="uid://dl2umd602n020" path="res://addons/curved_lines_2d/video_thumbnails/a_z_deep_dive.png" id="2_p1tlt"]
 [ext_resource type="Texture2D" uid="uid://cybtin0ayniuw" path="res://addons/curved_lines_2d/video_thumbnails/pinball_release_notes.webp" id="3_68r4x"]
 [ext_resource type="Texture2D" uid="uid://bvwovr0nk7psu" path="res://addons/curved_lines_2d/video_thumbnails/importing-svg-files-splash.png" id="4_oh1j2"]
 
@@ -19,13 +20,13 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 20
 
-[node name="ExternalVideoButton3" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
+[node name="ExternalVideoButton5" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
 layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/_QOnMRrlIMk
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/z8Y1e-TehoE
 Right click to copy this link"
-img = ExtResource("2_68r4x")
-uri = "https://youtu.be/_QOnMRrlIMk"
-text = "A-Z Explainer"
+img = ExtResource("2_p1tlt")
+uri = "https://youtu.be/z8Y1e-TehoE"
+text = "A-Z Explainer Deep Dive"
 
 [node name="ExternalVideoButton4" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
 layout_mode = 2
@@ -35,7 +36,7 @@ img = ExtResource("3_68r4x")
 uri = "https://youtu.be/pP0CYEvU2uQ"
 text = "Building a Pinball Case"
 
-[node name="ExternalVideoButton5" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
+[node name="ExternalVideoButton6" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
 layout_mode = 2
 tooltip_text = "This link will open a webpage in your browser: https://youtu.be/5PIVoQcm8QE
 Right click to copy this link"
@@ -57,3 +58,11 @@ Right click to copy this link"
 img = ExtResource("2_7bvyv")
 uri = "https://youtu.be/RrusSXAiCK8"
 text = "Bake Spritesheets and Sprite Frames"
+
+[node name="ExternalVideoButton3" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/_QOnMRrlIMk
+Right click to copy this link"
+img = ExtResource("2_68r4x")
+uri = "https://youtu.be/_QOnMRrlIMk"
+text = "A-Z Explainer"

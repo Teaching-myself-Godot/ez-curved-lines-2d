@@ -606,9 +606,9 @@ size_flags_vertical = 3
 
 [node name="LinkButton" parent="VBoxContainer/CenterContainer" instance=ExtResource("2_xxhaf")]
 layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/_QOnMRrlIMk?t=126
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/gaug5zv57IE
 Right click to copy this link"
-uri = "https://youtu.be/_QOnMRrlIMk?t=126"
+uri = "https://youtu.be/gaug5zv57IE"
 
 [connection signal="toggled" from="VBoxContainer/DrawSettingsContainer/FillCheckButton" to="." method="_on_fill_check_button_toggled"]
 [connection signal="color_changed" from="VBoxContainer/DrawSettingsContainer/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]
