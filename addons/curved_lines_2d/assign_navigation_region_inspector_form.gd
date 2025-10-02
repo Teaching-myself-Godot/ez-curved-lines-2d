@@ -28,7 +28,10 @@ func _on_add_navigation_region_button_pressed() -> void:
 	var undo_redo := EditorInterface.get_editor_undo_redo()
 	undo_redo.create_action("Add NavigationRegion2D to %s " % str(scalable_vector_shape_2d))
 	undo_redo.add_do_method(scalable_vector_shape_2d, 'add_child', new_obj, true)
-	undo_redo.add_do_method(new_obj, 'set_owner', scalable_vector_shape_2d.owner)
+	if scalable_vector_shape_2d == EditorInterface.get_edited_scene_root():
+		undo_redo.add_do_method(new_obj, 'set_owner', scalable_vector_shape_2d)
+	else:
+		undo_redo.add_do_method(new_obj, 'set_owner', scalable_vector_shape_2d.owner)
 	undo_redo.add_do_reference(new_obj)
 	undo_redo.add_do_property(scalable_vector_shape_2d, 'navigation_region', new_obj)
 	undo_redo.add_undo_method(scalable_vector_shape_2d, 'remove_child', new_obj)
