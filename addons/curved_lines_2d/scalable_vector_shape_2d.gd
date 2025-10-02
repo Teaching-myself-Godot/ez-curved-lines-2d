@@ -777,6 +777,22 @@ func _clip_path_to_local(clip_path : ScalableVectorShape2D) -> PackedVector2Arra
 	return self.global_transform.affine_inverse() * pts
 
 
+func get_center() -> Vector2:
+	if not curve:
+		return Vector2.ZERO
+	var points := self.tessellate()
+	var s := Vector2.ZERO
+	var sl := 0.0
+	for i in points.size():
+		var v0 := points[points.size() - 1]
+		var v1 := points[i]
+		var l := ((v1.x - v0.x)**2 + (v1.y - v0.y)**2) ** 0.5
+		s.x += (v0.x + v1.x)/2 * l
+		s.y += (v0.y + v1.y)/2 * l
+		sl += l
+	return Vector2(s.x / sl, s.y / sl)
+
+
 ## Calculate and return the bounding rect in local space
 func get_bounding_rect() -> Rect2:
 	if not curve:
@@ -983,12 +999,11 @@ func scale_points_by(from_global_vector : Vector2, to_global_vector : Vector2, a
 		size *= s
 
 
-func rotate_points_by(angle : float, around_center := false) -> void:
+func rotate_points_by(angle : float, rotation_origin := Vector2.ZERO) -> void:
 	if shape_type != ShapeType.PATH:
 		spin += angle
 		return
 	var transform := Transform2D.IDENTITY.rotated(-angle)
-	var rotation_origin := get_bounding_rect().get_center() if around_center else Vector2.ZERO
 	curve.set_block_signals(true)
 	for idx in curve.point_count:
 		var p := curve.get_point_position(idx)
@@ -1000,13 +1015,8 @@ func rotate_points_by(angle : float, around_center := false) -> void:
 		curve.set_point_position(idx, p1)
 		curve.set_point_in(idx, cp_in_abs_1 - p1)
 		curve.set_point_out(idx, cp_out_abs_1 - p1)
-	if around_center:
-		cached_outline.clear()
-		var origin_delta := rotation_origin - get_bounding_rect().get_center()
-		translate_points_by(origin_delta)
-	else:
-		curve.set_block_signals(false)
-		curve.emit_changed()
+	curve.set_block_signals(false)
+	curve.emit_changed()
 
 
 func set_global_curve_point_position(global_pos : Vector2, point_idx : int, snapped : bool,
