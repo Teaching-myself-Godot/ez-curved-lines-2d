@@ -23,6 +23,7 @@ func _on_svs_assignment_changed() -> void:
 		%CreateCollisionButton.show()
 		%CreateCollisionButton.disabled = false
 
+
 func _on_goto_collision_button_pressed() -> void:
 	if not is_instance_valid(scalable_vector_shape_2d):
 		return
@@ -38,7 +39,10 @@ func _on_create_collision_button_pressed() -> void:
 	var new_poly := CollisionPolygon2D.new()
 	undo_redo.create_action("Add CollisionPolygon2D to %s " % str(scalable_vector_shape_2d))
 	undo_redo.add_do_method(scalable_vector_shape_2d, 'add_child', new_poly, true)
-	undo_redo.add_do_method(new_poly, 'set_owner', scalable_vector_shape_2d.owner)
+	if scalable_vector_shape_2d == EditorInterface.get_edited_scene_root():
+		undo_redo.add_do_method(new_poly, 'set_owner', scalable_vector_shape_2d)
+	else:
+		undo_redo.add_do_method(new_poly, 'set_owner', scalable_vector_shape_2d.owner)
 	undo_redo.add_do_reference(new_poly)
 	undo_redo.add_do_property(scalable_vector_shape_2d, 'collision_polygon', new_poly)
 	undo_redo.add_undo_method(scalable_vector_shape_2d, 'remove_child', new_poly)

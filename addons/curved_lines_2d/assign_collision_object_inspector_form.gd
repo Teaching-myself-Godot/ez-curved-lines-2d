@@ -20,6 +20,7 @@ func _on_svs_assignment_changed() -> void:
 		%CollisionObjectTypeOptionButton.show()
 		%CollisionObjectTypeOptionButton.select(0)
 
+
 func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVectorShape2D.CollisionObjectType) -> void:
 	if not is_instance_valid(scalable_vector_shape_2d):
 		return
@@ -47,7 +48,10 @@ func _assign_collision_object(new_obj : CollisionObject2D) -> void:
 	var undo_redo := EditorInterface.get_editor_undo_redo()
 	undo_redo.create_action("Add %s to %s " % [str(new_obj.name), str(scalable_vector_shape_2d)])
 	undo_redo.add_do_method(scalable_vector_shape_2d, 'add_child', new_obj, true)
-	undo_redo.add_do_method(new_obj, 'set_owner', scalable_vector_shape_2d.owner)
+	if scalable_vector_shape_2d == EditorInterface.get_edited_scene_root():
+		undo_redo.add_do_method(new_obj, 'set_owner', scalable_vector_shape_2d)
+	else:
+		undo_redo.add_do_method(new_obj, 'set_owner', scalable_vector_shape_2d.owner)
 	undo_redo.add_do_reference(new_obj)
 	undo_redo.add_do_property(scalable_vector_shape_2d, 'collision_object', new_obj)
 	undo_redo.add_undo_method(scalable_vector_shape_2d, 'remove_child', new_obj)

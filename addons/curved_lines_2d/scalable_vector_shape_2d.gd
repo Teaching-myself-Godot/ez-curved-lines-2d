@@ -524,7 +524,7 @@ func curve_changed():
 
 
 func _update_curve():
-	# recalculate the polygon point for this shape based on curve and arc_list
+	# recalculate the polygon points for this shape based on curve and arc_list
 	cached_outline.clear()
 	cached_poly_strokes.clear()
 	cached_outline.append_array(self.tessellate())
@@ -568,8 +568,10 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 			collision_polygons.append_array(cached_poly_strokes)
 		if is_instance_valid(navigation_region):
 			navigation_polygons.append_array(cached_poly_strokes)
-	# if there is a fill assigned, also generate collision polygon for the entire outline
-	if is_instance_valid(polygon):
+
+	#  i. if there is a fill assigned, also generate collision polygon for the entire outline
+	# ii. if there is no fill assigned and no stroke assigned, we assume the user _does_ want nav and collision
+	if is_instance_valid(polygon) or (collision_polygons.is_empty() and not is_instance_valid(polygon)):
 		collision_polygons.append(polygon_points)
 		navigation_polygons.append(polygon_points)
 
@@ -672,12 +674,12 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 	var collision_polygons : Array[PackedVector2Array] = []
 	if is_instance_valid(collision_object):
 		collision_polygons.append_array(cached_poly_strokes)
-	if is_instance_valid(polygon):
+	if is_instance_valid(polygon) or (collision_polygons.is_empty() and not is_instance_valid(polygon)):
 		collision_polygons.append_array(cached_clipped_polygons)
 	var navigation_polygons : Array[PackedVector2Array] = []
 	if is_instance_valid(navigation_region):
 		navigation_polygons.append_array(cached_poly_strokes)
-	if is_instance_valid(polygon):
+	if is_instance_valid(polygon) or (navigation_polygons.is_empty() and not is_instance_valid(polygon)):
 		navigation_polygons.append_array(cached_clipped_polygons)
 
 	if is_instance_valid(line):
