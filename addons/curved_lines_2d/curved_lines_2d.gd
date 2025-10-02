@@ -98,6 +98,7 @@ var uniform_transform_edit_buttons : Control
 var _uniform_transform_mode := UniformTransformMode.NONE
 var _drag_start := Vector2.ZERO
 var _prev_uniform_rotate_angle := 0.0
+var _stored_natural_center := Vector2.ZERO
 var _lmb_is_down_inside_viewport := false
 
 
@@ -834,9 +835,14 @@ func _draw_outline_for_uniform_transforms(viewport_control : Control, svs : Scal
 	for idx in svs.curve.point_count:
 		var p := svs.to_global(svs.curve.get_point_position(idx))
 		_draw_crosshair(viewport_control, _vp_transform(p), 2.0, 4.0, Color.WHITE)
-	_draw_crosshair(viewport_control,
-			_vp_transform(svs.to_global(svs.get_bounding_rect().get_center())),
-			2.0, 4.0, Color.WHITE)
+	var natural_center := svs.to_global(svs.get_center())
+	if (_uniform_transform_mode == UniformTransformMode.ROTATE
+				and _lmb_is_down_inside_viewport
+				and Input.is_key_pressed(KEY_SHIFT)
+	):
+		natural_center = _stored_natural_center
+
+	_draw_crosshair(viewport_control, _vp_transform(natural_center), 2.0, 4.0, Color.WHITE)
 
 
 func _draw_canvas_for_uniform_translate(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
@@ -870,7 +876,7 @@ func _draw_canvas_for_uniform_rotate(viewport_control : Control, svs : ScalableV
 		if (Input.is_key_pressed(KEY_SHIFT) or
 				svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
 		):
-			rotation_origin = svs.to_global(svs.get_bounding_rect().get_center())
+			rotation_origin = _stored_natural_center
 		var rotation_target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_ctrl_or_cmd_pressed():
 			var ang := snapped(rotation_origin.angle_to_point(rotation_target), deg_to_rad(5.0))
@@ -899,7 +905,7 @@ func _draw_canvas_for_uniform_scale(viewport_control : Control, svs : ScalableVe
 		if (Input.is_key_pressed(KEY_SHIFT) or
 				svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
 		):
-			origin = svs.to_global(svs.get_bounding_rect().get_center())
+			origin = svs.to_global(svs.get_center())
 		var target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		viewport_control.draw_line(_vp_transform(origin),_vp_transform(target),
 				svs.shape_hint_color, 1, true)
@@ -1499,6 +1505,7 @@ func _handle_input_for_uniform_rotate(event : InputEvent, svs : ScalableVectorSh
 		if (event as InputEventMouseButton).pressed:
 			_drag_start = mouse_pos
 			_prev_uniform_rotate_angle = 0.0
+			_stored_natural_center = svs.to_global(svs.get_center())
 			if not in_undo_redo_transaction:
 				_start_undo_redo_transaction("Rotate curve points for %s" % str(svs))
 		update_overlays()
@@ -1509,7 +1516,7 @@ func _handle_input_for_uniform_rotate(event : InputEvent, svs : ScalableVectorSh
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			var use_cntr := Input.is_key_pressed(KEY_SHIFT) or svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
 			var rotation_origin = (
-					svs.to_global(svs.get_bounding_rect().get_center())
+					_stored_natural_center
 						if use_cntr else
 					svs.global_position
 			)
@@ -1519,9 +1526,15 @@ func _handle_input_for_uniform_rotate(event : InputEvent, svs : ScalableVectorSh
 				ang = snappedf(ang, deg_to_rad(5.0))
 			if ang != _prev_uniform_rotate_angle:
 				var drag_delta := ang - _prev_uniform_rotate_angle
-				undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'rotate_points_by', drag_delta, use_cntr])
-				undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'rotate_points_by', -drag_delta, use_cntr])
-				svs.rotate_points_by(drag_delta, use_cntr)
+				if use_cntr:
+					undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'rotate_points_by', drag_delta, svs.to_local(rotation_origin)])
+					undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'rotate_points_by', -drag_delta, svs.to_local(rotation_origin)])
+					svs.rotate_points_by(drag_delta, svs.to_local(rotation_origin))
+				else:
+					undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'rotate_points_by', drag_delta])
+					undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'rotate_points_by', -drag_delta])
+					svs.rotate_points_by(drag_delta)
+
 				_prev_uniform_rotate_angle = ang
 			return true
 	return false
