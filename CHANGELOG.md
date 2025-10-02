@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.16.0
+## 2.16.1
 
 ### Added
 - Uniform transformation buttons (move/rotate/scale all points without changing `Node2D.transform`)
@@ -9,6 +9,8 @@
 ### Changed
 - Use `Curve2D.set_block_signals` to update all points at once in `ScalableVectorShape2D.set_ellipse_points`
 - Use `Curve2D.set_block_signals` to update all points at once in `ScalableVectorShape2D.set_rect_points`
+- Bugfix: collision objects and navigation region are also added when neither fill, nor stroke is assigned
+- Bugfix: collision objects and navigation region are now also owned when created for a ScalableVectorShape2D that is also the scene root.
 
 ## 2.15.0
 
