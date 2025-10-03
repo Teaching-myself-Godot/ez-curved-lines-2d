@@ -778,19 +778,9 @@ func _clip_path_to_local(clip_path : ScalableVectorShape2D) -> PackedVector2Arra
 
 
 func get_center() -> Vector2:
-	if not curve:
-		return Vector2.ZERO
-	var points := self.tessellate()
-	var s := Vector2.ZERO
-	var sl := 0.0
-	for i in points.size():
-		var v0 := points[points.size() - 1]
-		var v1 := points[i]
-		var l := ((v1.x - v0.x)**2 + (v1.y - v0.y)**2) ** 0.5
-		s.x += (v0.x + v1.x)/2 * l
-		s.y += (v0.y + v1.y)/2 * l
-		sl += l
-	return Vector2(s.x / sl, s.y / sl)
+	if shape_type != ShapeType.PATH:
+		return offset
+	return get_bounding_rect().get_center()
 
 
 ## Calculate and return the bounding rect in local space
@@ -838,7 +828,7 @@ func clipped_polygon_has_point(global_pos : Vector2) -> bool:
 
 
 func set_position_to_center() -> void:
-	var c = get_bounding_rect().get_center()
+	var c = get_center()
 	position += c
 	for i in range(curve.get_point_count()):
 		curve.set_point_position(i, curve.get_point_position(i) - c)
@@ -978,7 +968,7 @@ func translate_points_by(global_vector : Vector2) -> void:
 func scale_points_by(from_global_vector : Vector2, to_global_vector : Vector2, around_center := false) -> void:
 	var local_from := to_local(from_global_vector)
 	var local_to := to_local(to_global_vector)
-	var origin := get_bounding_rect().get_center() if around_center else Vector2.ZERO
+	var origin := get_center() if around_center else Vector2.ZERO
 	var s := origin.distance_to(local_to) / origin.distance_to(local_from)
 	if shape_type == ShapeType.PATH:
 		curve.set_block_signals(true)
