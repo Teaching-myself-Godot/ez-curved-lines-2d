@@ -50,6 +50,9 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
   - [Resizing all the Points](#resizing-all-the-points)
     - [Resizing Ellipses and Rectangles](#resizing-ellipses-and-rectangles)
     - [Resizing Paths](#resizing-paths)
+  - [Flipping your shapes](#flipping-your-shapes)
+    - [Flipping primitive shapes](#flipping-primitive-shapes)
+    - [Flipping paths](#flipping-paths)
 - [Manipulating shapes](#manipulating-shapes)
   - [Adding a point to a shape](#adding-a-point-to-a-shape)
   - [Bending a curve](#bending-a-curve)
@@ -306,6 +309,21 @@ The `size` property can be used to set keyframes in an `AnimationPlayer` and is 
 When the `Shape Type Settings > Shape Type` is `Path`, all the points can be resized in 2 ways:
 1. Away from / towards the `Node2D`'s pivot
 2. Away from / towards their natural center (by holding Shift)
+
+
+## Flipping your shapes
+
+Release `2.17.0` adds vertical and horizontal flip buttons. This allows you to flip your shape without changing the `Node2D.scale` property of your `ScalableVectorShape2D`.
+
+### Flipping primitive shapes
+
+Flipping primitive shapes (shape type is ellipse, or rectangle) simply reverses the rotation of points around their pivot by negating the value of the `spin` property.
+
+### Flipping paths
+
+Flipping paths multiplies the position of each point by negative-x for horizontal flipping, or negative-y for vertical flipping. The in- and out- control points are also flipped, effectively flipping the bézier curves.
+
+Arcs are flipped by toggling negating the `sweep` flag of each listed arc.
 
 # Manipulating shapes
 

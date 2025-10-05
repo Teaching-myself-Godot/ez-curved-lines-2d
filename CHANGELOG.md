@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.17.0
+
+### Added
+- Flip buttons for your `ScalableVectorShape2D`'s path / primitives next to the uniform transform buttons
+
 ## 2.16.3
 
 ### Added
