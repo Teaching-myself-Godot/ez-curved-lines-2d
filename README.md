@@ -11,14 +11,14 @@ Scalable Vector Shapes 2D lets you do 3 things:
 
 In this 10 minute video I explain how to use all the features of Scalable Vector Shapes 2D in short succession:
 
-[![link to the explainer](./addons/curved_lines_2d/screenshots/a-z-explainer-youtube-thumbnail.png)](https://youtu.be/_QOnMRrlIMk?feature=shared)
+[![link to the explainer](./addons/curved_lines_2d/video_thumbnails/a_z_deep_dive.png)](https://youtu.be/z8Y1e-TehoE)
 
 [^1]: Looking for EZ Curved Lines 2D? The renamed plugin deprecates the old [`DrawablePath2D`](./addons/curved_lines_2d/drawable_path_2d.gd) custom node in favor of `ScalableVectorShape2D`. A Conversion button is provided: [converter button](./addons/curved_lines_2d/screenshots/00-converter.png). The reason is that [`ScalableVectorShape2D`](./addons/curved_lines_2d/scalable_vector_shape_2d.gd) inherits directly from `Node2D` giving much more control to the plugin over how you can draw.
 
 
 # Table of Contents
 
-- [Scalable Vector Shapes 2D plugin for Godot 4.4](#scalable-vector-shapes-2d-plugin-for-godot-44)
+- [Scalable Vector Shapes 2D plugin for Godot 4](#scalable-vector-shapes-2d-plugin-for-godot-4)
 	- [Watch the A-Z explainer on Youtube](#watch-the-a-z-explainer-on-youtube)
 - [Table of Contents](#table-of-contents)
 - [Drawing Shapes in the Godot 2D Viewport](#drawing-shapes-in-the-godot-2d-viewport)
@@ -119,7 +119,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 
 ## Basic Drawing Explainer on youtube
 
-[![Explainer basic drawing on youtube](./addons/curved_lines_2d/screenshots/basic-drawing-youtube-thumnail.png)](https://youtu.be/_QOnMRrlIMk?t=126&feature=shared)
+[![Explainer basic drawing on youtube](./addons/curved_lines_2d/screenshots/basic-drawing-youtube-thumnail.png)](https://youtu.be/gaug5zv57IE)
 
 ## Quick Start
 After activating this plugin a new bottom panel item appears, called "Scalable Vector Shapes 2D".
@@ -176,7 +176,7 @@ Read more about [manipulating shapes](#manipulating-shapes)
 
 ## Watch an explainer on Youtube
 
-[![watch explainer on youtube](./addons/curved_lines_2d/screenshots/importing-svg-files-youtube-thumbnail.png)](https://youtu.be/3j_OEfU8qbo?feature=shared)
+[![watch explainer on youtube](./addons/curved_lines_2d/video_thumbnails/importing-svg-files-splash.png)](https://youtu.be/5PIVoQcm8QE)
 
 
 ## Using the Import SVG File Dock
@@ -311,7 +311,7 @@ When the `Shape Type Settings > Shape Type` is `Path`, all the points can be res
 
 The hints in the 2D viewport should have you covered, but this section lists all the operations available to you. You can also watch the chapter on sculpting paths on youtube:
 
-[![sculpting paths on youtube](./addons/curved_lines_2d/screenshots/sculpting-paths-on-youtube.png)](https://youtu.be/_QOnMRrlIMk?t=295&feature=shared)
+[![sculpting paths on youtube](./addons/curved_lines_2d/screenshots/sculpting-paths-on-youtube.png)](https://www.youtube.com/watch?v=z8Y1e-TehoE&t=710s)
 
 
 ## Adding a point to a shape
@@ -616,7 +616,7 @@ Using the `Add ...` buttons in the inspector simply adds a new node as a child t
 
 This video gives more context on how `Line2D`, `Polygon2D` and `CollisionPolygon2D` are _assigned_ to the `ScalableVectorShape2D`:
 
-[![working with collisions, paint order and the node hierarchy on youtube](./addons/curved_lines_2d/screenshots/more-on-node-hierarchy.png)](https://youtu.be/_QOnMRrlIMk?t=371&feature=shared)
+[![working with collisions, paint order and the node hierarchy on youtube](./addons/curved_lines_2d/screenshots/more-on-node-hierarchy.png)](https://www.youtube.com/watch?v=z8Y1e-TehoE&t=1453s)
 
 
 # Animating / Changing shapes at runtime
