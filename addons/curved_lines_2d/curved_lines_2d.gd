@@ -156,6 +156,8 @@ func _enter_tree():
 		_get_select_mode_button().toggled.connect(_on_select_mode_toggled)
 	_on_select_mode_toggled(_get_select_mode_button().button_pressed)
 	uniform_transform_edit_buttons.mode_changed.connect(_on_uniform_transform_mode_changed)
+	uniform_transform_edit_buttons.flip_horizontal.connect(_flip_svs_horizontal)
+	uniform_transform_edit_buttons.flip_vertical.connect(_flip_svs_vertical)
 
 
 func select_node_reversibly(target_node : Node) -> void:
@@ -1472,6 +1474,25 @@ func _handle_input_for_uniform_translate(event : InputEvent, svs : ScalableVecto
 				svs.translate_points_by(drag_delta)
 			return true
 	return false
+
+
+func _flip_svs_horizontal():
+	var svs := EditorInterface.get_selection().get_selected_nodes().pop_front()
+	if svs is ScalableVectorShape2D:
+		undo_redo.create_action("Flip %s horizontally" % str(svs))
+		undo_redo.add_do_method(svs, 'flip_points')
+		undo_redo.add_undo_method(svs, 'flip_points')
+		undo_redo.commit_action()
+
+
+func _flip_svs_vertical():
+	var svs := EditorInterface.get_selection().get_selected_nodes().pop_front()
+	if svs is ScalableVectorShape2D:
+		undo_redo.create_action("Flip %s vertically" % str(svs))
+		undo_redo.add_do_method(svs, 'flip_points', Vector2(1, -1))
+		undo_redo.add_undo_method(svs, 'flip_points', Vector2(1, -1))
+		undo_redo.commit_action()
+
 
 
 func _handle_input_for_uniform_scale(event : InputEvent, svs : ScalableVectorShape2D) -> bool:

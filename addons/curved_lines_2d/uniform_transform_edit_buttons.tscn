@@ -1,10 +1,12 @@
-[gd_scene load_steps=8 format=3 uid="uid://bm7mr2hj3qfoe"]
+[gd_scene load_steps=10 format=3 uid="uid://bm7mr2hj3qfoe"]
 
 [ext_resource type="Script" uid="uid://brp0qoekngywr" path="res://addons/curved_lines_2d/uniform_transform_edit_buttons.gd" id="1_m5784"]
 [ext_resource type="Texture2D" uid="uid://daemvs3ws7fpk" path="res://addons/curved_lines_2d/DefaultMode.svg" id="2_memvu"]
 [ext_resource type="Texture2D" uid="uid://chojkn0i6ngam" path="res://addons/curved_lines_2d/UniformTranslate.svg" id="2_o8x6h"]
 [ext_resource type="Texture2D" uid="uid://d1uok4qb3xets" path="res://addons/curved_lines_2d/UniformRotate.svg" id="3_lkilg"]
 [ext_resource type="Texture2D" uid="uid://do5uut1a4xvqf" path="res://addons/curved_lines_2d/UniformScale.svg" id="5_n2wtw"]
+[ext_resource type="Texture2D" uid="uid://dvrgy7r2fvcxk" path="res://addons/curved_lines_2d/FlipHorizontal.svg" id="6_ocv7d"]
+[ext_resource type="Texture2D" uid="uid://ly2rtvkn6ush" path="res://addons/curved_lines_2d/FlipVertical.svg" id="7_30kgp"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o8x6h"]
 bg_color = Color(0.219608, 0.270588, 0.368627, 1)
@@ -13,19 +15,20 @@ border_color = Color(0.411765, 0.611765, 0.909804, 1)
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_qu4vk"]
 
-[node name="UniformTransformEditButtons" type="PanelContainer"]
-anchors_preset = 9
-anchor_bottom = 1.0
-offset_right = 92.0
-grow_vertical = 2
-size_flags_horizontal = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_o8x6h")
+[node name="UniformTransformEditButtons" type="HBoxContainer"]
+offset_right = 144.0
+offset_bottom = 646.0
 script = ExtResource("1_m5784")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_o8x6h")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
 layout_mode = 2
 
-[node name="DefaultEdit" type="Button" parent="HBoxContainer"]
+[node name="DefaultEdit" type="Button" parent="PanelContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Edit the points normally (Q)"
@@ -34,7 +37,7 @@ button_group = SubResource("ButtonGroup_qu4vk")
 icon = ExtResource("2_memvu")
 flat = true
 
-[node name="UniformTranslate" type="Button" parent="HBoxContainer"]
+[node name="UniformTranslate" type="Button" parent="PanelContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Move all the points without moving the node (Z)"
@@ -43,7 +46,7 @@ button_group = SubResource("ButtonGroup_qu4vk")
 icon = ExtResource("2_o8x6h")
 flat = true
 
-[node name="UniformRotate" type="Button" parent="HBoxContainer"]
+[node name="UniformRotate" type="Button" parent="PanelContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Rotate all the points without rotating the node (X)"
@@ -52,7 +55,7 @@ button_group = SubResource("ButtonGroup_qu4vk")
 icon = ExtResource("3_lkilg")
 flat = true
 
-[node name="UniformScale" type="Button" parent="HBoxContainer"]
+[node name="UniformScale" type="Button" parent="PanelContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Resize all the points without resizing the node (C)"
@@ -61,7 +64,26 @@ button_group = SubResource("ButtonGroup_qu4vk")
 icon = ExtResource("5_n2wtw")
 flat = true
 
-[connection signal="toggled" from="HBoxContainer/DefaultEdit" to="." method="_on_default_edit_toggled"]
-[connection signal="toggled" from="HBoxContainer/UniformTranslate" to="." method="_on_uniform_translate_toggled"]
-[connection signal="toggled" from="HBoxContainer/UniformRotate" to="." method="_on_uniform_rotate_toggled"]
-[connection signal="toggled" from="HBoxContainer/UniformScale" to="." method="_on_uniform_scale_toggled"]
+[node name="VSeparator" type="VSeparator" parent="."]
+layout_mode = 2
+
+[node name="FlipHorizontal" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Flip Shape Horizontally"
+icon = ExtResource("6_ocv7d")
+flat = true
+
+[node name="FlipVertical" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Flip Shape Vertically"
+icon = ExtResource("7_30kgp")
+flat = true
+
+[connection signal="toggled" from="PanelContainer/HBoxContainer/DefaultEdit" to="." method="_on_default_edit_toggled"]
+[connection signal="toggled" from="PanelContainer/HBoxContainer/UniformTranslate" to="." method="_on_uniform_translate_toggled"]
+[connection signal="toggled" from="PanelContainer/HBoxContainer/UniformRotate" to="." method="_on_uniform_rotate_toggled"]
+[connection signal="toggled" from="PanelContainer/HBoxContainer/UniformScale" to="." method="_on_uniform_scale_toggled"]
+[connection signal="pressed" from="FlipHorizontal" to="." method="_on_flip_horizontal_pressed"]
+[connection signal="pressed" from="FlipVertical" to="." method="_on_flip_vertical_pressed"]
