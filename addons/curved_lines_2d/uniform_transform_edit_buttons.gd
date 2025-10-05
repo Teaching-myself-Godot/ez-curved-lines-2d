@@ -2,6 +2,9 @@
 extends Control
 
 signal mode_changed(mode : CurvedLines2D.UniformTransformMode)
+signal flip_horizontal()
+signal flip_vertical()
+
 
 func enable() -> void:
 	show()
@@ -40,3 +43,11 @@ func _unhandled_input(event: InputEvent) -> void:
 			%UniformRotate.button_pressed = true
 		if (event as InputEventKey).keycode == KEY_C:
 			%UniformScale.button_pressed = true
+
+
+func _on_flip_horizontal_pressed() -> void:
+	flip_horizontal.emit()
+
+
+func _on_flip_vertical_pressed() -> void:
+	flip_vertical.emit()

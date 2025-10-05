@@ -953,6 +953,24 @@ func get_gradient_handles() -> Dictionary:
 	return result
 
 
+func flip_points(flip_dir := Vector2(-1, 1)) -> void:
+	if shape_type == ShapeType.PATH:
+		curve.set_block_signals(true)
+		arc_list.set_block_signals(true)
+		for i in curve.point_count:
+			curve.set_point_position(i, curve.get_point_position(i) * flip_dir)
+			curve.set_point_in(i, curve.get_point_in(i) * flip_dir)
+			curve.set_point_out(i, curve.get_point_out(i) * flip_dir)
+		for i in arc_list.arcs.size():
+			arc_list.arcs[i].sweep_flag = not arc_list.arcs[i].sweep_flag
+		arc_list.set_block_signals(false)
+		curve.set_block_signals(false)
+		curve.emit_changed()
+		arc_list.emit_changed()
+	else:
+		spin = -spin
+
+
 func translate_points_by(global_vector : Vector2) -> void:
 	var delta := global_vector.rotated(-global_rotation) / global_scale
 	if shape_type == ShapeType.PATH:
