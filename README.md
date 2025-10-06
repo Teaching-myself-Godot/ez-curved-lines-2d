@@ -81,6 +81,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 	- [The Collision inspector form](#the-collision-inspector-form)
 	- [The Navigation inspector form](#the-navigation-inspector-form)
 	- [The Curve settings inspector form](#the-curve-settings-inspector-form)
+		- [The new Glue Map property](#the-new-glue-map-property)
 	- [The Masking Inspector form](#the-masking-inspector-form)
 	- [The Shape type inspector form](#the-shape-type-inspector-form)
 	- [The Editor settings inspector form](#the-editor-settings-inspector-form)
@@ -578,6 +579,12 @@ The curve settings inspector form provides the following options
 - The `max_stages` property which influences smoothness (and performance!) of curve drawing; a higher value means smoother lines
 - The `tolerance_degrees` property, which also influences smoothness (and performance) of curve drawing: a lower value adds a smoother curve, especially for very subtle bends
 - The `arc_list` property: a container for the metadata-objects describing elliptical arc segments of the curve (implemented via `ScalableArc2D` and `ScalableArcList` resource-classes).
+- The `glue_map` property: with this dictionary you can control the position of any `Node2D` in the scene with the a point position in the `curve`.
+
+### The new Glue Map property
+
+![The new glue map](./addons/curved_lines_2d/screenshots/glue_map.png)
+
 
 
 ## The Masking Inspector form

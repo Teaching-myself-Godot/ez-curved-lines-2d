@@ -225,8 +225,20 @@ var stroke_width := 10.0:
 		arc_list = _arc_list if _arc_list != null else ScalableArcList.new()
 		assigned_node_changed.emit()
 
-@export_group("Masking")
 
+## You can assign a [class Node2D] to a point in the curve (by point index) in order to control
+## that [class Node2D]'s [member Node2D.position]: it's global position will be set exactly to the
+## curve point's global position
+@export var glue_map : Dictionary[int, Node2D] = {}:
+	set(_map):
+		glue_map = _map
+		for p_idx in glue_map.keys():
+			if p_idx < 0 or p_idx >= curve.point_count:
+				printerr("Warning: point index key for glue_map not present in curve: ", p_idx)
+		assigned_node_changed.emit()
+
+
+@export_group("Masking")
 ## Holds the list of shapes used to make cutouts out of this shape, or
 ## clippings of this shape when their [member use_interect_when_clipping]
 ## is flagged on
@@ -374,8 +386,13 @@ func _enter_tree():
 	# ensure forward compatibility by assigning the default arc_list
 	if arc_list == null:
 		arc_list = ScalableArcList.new()
+	# ensure forward compatibility by assigning an empty array to clip_paths
 	if clip_paths == null:
 		clip_paths = []
+	# ensure forward compatibility by assigning an empty dict to glue_map
+	if glue_map == null:
+		glue_map = {}
+
 	if Engine.is_editor_hint():
 		if not curve.changed.is_connected(curve_changed):
 			curve.changed.connect(curve_changed)
@@ -530,6 +547,11 @@ func _update_curve():
 	cached_outline.append_array(self.tessellate())
 	# emit updated path to listeners
 	path_changed.emit(cached_outline)
+
+	for p_idx in glue_map.keys():
+		if p_idx > -1 and p_idx < curve.point_count and is_instance_valid(glue_map[p_idx]):
+			glue_map[p_idx].global_position = to_global(curve.get_point_position(p_idx))
+
 
 	var polygon_points := cached_outline.duplicate()
 	# Fixes cases start- and end-node are so close to each other that
