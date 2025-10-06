@@ -1,9 +1,10 @@
 # Changelog
 
-## 2.17.0
+## 2.17.1
 
 ### Added
 - Flip buttons for your `ScalableVectorShape2D`'s path / primitives next to the uniform transform buttons
+- Use the new `ScalableVectorShape2D.glue_map` to assign a `Node2D` to a point in the `curve`.
 
 ## 2.16.3
 

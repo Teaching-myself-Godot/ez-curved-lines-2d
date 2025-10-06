@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://hr7df18ngxmj"]
+[gd_scene load_steps=8 format=3 uid="uid://hr7df18ngxmj"]
 
 [ext_resource type="PackedScene" uid="uid://bhpmwhbdlsp1g" path="res://addons/curved_lines_2d/external_video_button.tscn" id="1_xhvii"]
 [ext_resource type="Texture2D" uid="uid://be2xpq0unu641" path="res://addons/curved_lines_2d/video_thumbnails/animations_to_sprite_frames.png" id="2_7bvyv"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dl2umd602n020" path="res://addons/curved_lines_2d/video_thumbnails/a_z_deep_dive.png" id="2_p1tlt"]
 [ext_resource type="Texture2D" uid="uid://cybtin0ayniuw" path="res://addons/curved_lines_2d/video_thumbnails/pinball_release_notes.webp" id="3_68r4x"]
 [ext_resource type="Texture2D" uid="uid://bvwovr0nk7psu" path="res://addons/curved_lines_2d/video_thumbnails/importing-svg-files-splash.png" id="4_oh1j2"]
+[ext_resource type="Texture2D" uid="uid://cab1fy78sc831" path="res://addons/curved_lines_2d/video_thumbnails/gluing.png" id="6_5flco"]
 
 [node name="VideoExplainerTab" type="ScrollContainer"]
 anchors_preset = 15
@@ -58,6 +59,14 @@ Right click to copy this link"
 img = ExtResource("2_7bvyv")
 uri = "https://youtu.be/RrusSXAiCK8"
 text = "Bake Spritesheets and Sprite Frames"
+
+[node name="ExternalVideoButton7" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/OBNPTFZA2Q0
+Right click to copy this link"
+img = ExtResource("6_5flco")
+uri = "https://youtu.be/OBNPTFZA2Q0"
+text = "Gluing a Node2D to a Point"
 
 [node name="ExternalVideoButton3" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
 layout_mode = 2
