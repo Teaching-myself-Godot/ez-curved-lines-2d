@@ -96,8 +96,8 @@ func _on_animation_file_name_chosen(file_path : String, anim_name : String, dial
 		_selected_animation_player.seek(pos, true)
 		_selected_animation_player.pause()
 		var box : Dictionary[String, Vector2] = {}
-		var im = await Line2DGeneratorInspectorPlugin._export_image(
-			EditorInterface.get_edited_scene_root(), box
+		var im = await SVSSceneExporter.export_image(
+			EditorInterface.get_edited_scene_root(), box, EditorInterface.get_base_control()
 		)
 		boxes.append(box)
 		images.append(im)
