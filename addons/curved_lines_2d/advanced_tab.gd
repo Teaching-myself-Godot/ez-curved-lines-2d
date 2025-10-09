@@ -29,6 +29,7 @@ func _on_export_as_3d_scene_button_pressed() -> void:
 		selected_node, Line2DGeneratorInspectorPlugin._export_3d_scene
 	)
 
+
 func set_animation_player(animation_player : AnimationPlayer) -> void:
 	if not animation_player is AnimationPlayer:
 		%HintLabel.text = _init_hint_label_text
@@ -77,60 +78,30 @@ func _on_create_sprite_sheet_button_pressed() -> void:
 func _on_animation_file_name_chosen(file_path : String, anim_name : String, dialog : EditorFileDialog):
 	dialog.queue_free()
 	var fps := fps_number_input.value
-	var interval := 1.0 / fps
-	_selected_animation_player.stop()
-	_selected_animation_player.current_animation = anim_name
-	_selected_animation_player.get_animation(anim_name)
-
-	var boxes : Array[Dictionary] = []
-	var images : Array[Image] = []
-	var frame_count := ceili(_selected_animation_player.current_animation_length / interval)
 	%StatusLabel.show()
-	%StatusLabel.text = "Exporting %d frames" % frame_count
 	%CreateSpriteSheetButton.disabled = true
 	%CreateSpriteSheetButton.text = "Creating..."
-	for idx in range(frame_count):
-		var pos = idx * interval
-		if pos > _selected_animation_player.current_animation_length:
-			pos = _selected_animation_player.current_animation_length
-		_selected_animation_player.seek(pos, true)
-		_selected_animation_player.pause()
-		var box : Dictionary[String, Vector2] = {}
-		var im = await SVSSceneExporter.export_image(
-			EditorInterface.get_edited_scene_root(), box, EditorInterface.get_base_control()
-		)
-		boxes.append(box)
-		images.append(im)
-	_selected_animation_player.stop()
 
-	var min_x = boxes.map(func(box): return box["tl"].x).min()
-	var min_y = boxes.map(func(box): return box["tl"].y).min()
-	var max_x = boxes.map(func(box): return box["br"].x).max()
-	var max_y = boxes.map(func(box): return box["br"].y).max()
+	var sprite_frames := await SVSSceneExporter.export_sprite_frames(
+			EditorInterface.get_edited_scene_root(), _selected_animation_player, anim_name, fps,
+			EditorInterface.get_base_control(), func(status_msg : String): %StatusLabel.text = status_msg
+	)
 
 	if %ExportAsSpritesheetCheckButton.button_pressed:
-		var frame_w := ceili(max_x) - floori(min_x)
 		var im : Image = Image.create_empty(
-			frame_w * images.size(),
-			ceili(max_y) - floor(min_y), false, images[0].get_format())
-		for idx in images.size():
-			for x in images[idx].get_size().x:
-				for y in images[idx].get_size().y:
-					im.set_pixel(
-						(idx * frame_w) + (floori(boxes[idx]["tl"].x) - min_x + x),
-						floori(boxes[idx]["tl"].y) - min_y + y,
-						images[idx].get_pixel(x, y)
-					)
+			sprite_frames[0].get_size().x * sprite_frames.size(),
+			sprite_frames[0].get_size().y, false, sprite_frames[0].get_format())
+		for idx in sprite_frames.size():
+			im.blit_rect(sprite_frames[idx],
+					Rect2i(Vector2i.ZERO, sprite_frames[idx].get_size()),
+					Vector2i(sprite_frames[0].get_size().x * idx, 0)
+			)
 		im.save_png(file_path)
 	else:
-		for idx in images.size():
-			var im : Image = Image.create_empty(ceili(max_x) - floori(min_x), ceili(max_y) - floor(min_y), false, images[idx].get_format())
-			for x in images[idx].get_size().x:
-				for y in images[idx].get_size().y:
-					im.set_pixel(floori(boxes[idx]["tl"].x) - min_x + x, floori(boxes[idx]["tl"].y) - min_y + y, images[idx].get_pixel(x, y))
-			im.save_png(file_path.replacen(".png", "_%d.png" % idx))
+		for idx in sprite_frames.size():
+			sprite_frames[idx].save_png(file_path.replacen(".png", "_%d.png" % idx))
 
-	%StatusLabel.text = "Exported %d frames" % frame_count
+	%StatusLabel.text = "Exported %d frames" % sprite_frames.size()
 	%CreateSpriteSheetButton.disabled = false
 	%CreateSpriteSheetButton.text = "Create"
 	EditorInterface.get_resource_filesystem().scan()
