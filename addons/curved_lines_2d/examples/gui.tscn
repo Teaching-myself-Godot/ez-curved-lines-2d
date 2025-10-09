@@ -1,9 +1,15 @@
-[gd_scene load_steps=8 format=3 uid="uid://0vt4p8wqudyi"]
+[gd_scene load_steps=7 format=3 uid="uid://0vt4p8wqudyi"]
 
 [ext_resource type="Script" uid="uid://cd2hrik4wvt1o" path="res://addons/curved_lines_2d/svg_texture_helper.gd" id="1_tkwla"]
-[ext_resource type="Resource" uid="uid://xhpo6t4itr15" path="res://addons/curved_lines_2d/examples/change_gui_textures_programmatically/icon1.tres" id="2_2fobf"]
 [ext_resource type="Script" uid="uid://yh2davxk4fh7" path="res://addons/curved_lines_2d/svg_resource.gd" id="2_fv747"]
-[ext_resource type="Resource" uid="uid://btcgsk7cgluq7" path="res://addons/curved_lines_2d/examples/change_gui_textures_programmatically/icon2.tres" id="3_l4vqo"]
+
+[sub_resource type="Resource" id="Resource_2fobf"]
+script = ExtResource("2_fv747")
+svg_file_path = "res://addons/curved_lines_2d/tests/01-godot-icon.svg"
+render_scale = 1.0
+svg_string = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4Ij4KICAgIDxyZWN0IHdpZHRoPSIxMjQiIGhlaWdodD0iMTI0IiB4PSIyIiB5PSIyIiBmaWxsPSIjMzYzZDUyIiBzdHJva2U9IiMyMTI1MzIiIHN0cm9rZS13aWR0aD0iNCIKICAgICAgICByeD0iMTQiIC8+CiAgICA8ZyBmaWxsPSIjZmZmIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMi4zMjIgMTIuMzIyKXNjYWxlKC4xMDEpIj4KICAgICAgICA8cGF0aCBkPSJNMTA1IDY3M3YzM3E0MDcgMzU0IDgxNCAwdi0zM3oiIC8+CiAgICAgICAgPHBhdGggZmlsbD0iIzQ3OGNiZiIKICAgICAgICAgICAgZD0ibTEwNSA2NzMgMTUyIDE0cTEyIDEgMTUgMTRsNCA2NyAxMzIgMTAgOC02MXEyLTExIDE1LTE1aDE2MnExMyA0IDE1IDE1bDggNjEgMTMyLTEwIDQtNjdxMy0xMyAxNS0xNGwxNTItMTRWNDI3cTMwLTM5IDU2LTgxLTM1LTU5LTgzLTEwOC00MyAyMC04MiA0Ny00MC0zNy04OC02NCA3LTUxIDgtMTAyLTU5LTI4LTEyMy00Mi0yNiA0My00NiA4OS00OS03LTk4IDAtMjAtNDYtNDYtODktNjQgMTQtMTIzIDQyIDEgNTEgOCAxMDItNDggMjctODggNjQtMzktMjctODItNDctNDggNDktODMgMTA4IDI2IDQyIDU2IDgxem0wIDMzdjM5YzAgMjc2IDgxMyAyNzYgODE0IDB2LTM5bC0xMzQgMTItNSA2OXEtMiAxMC0xNCAxM2wtMTYyIDExcS0xMiAwLTE2LTExbC0xMC02NUg0NDZsLTEwIDY1cS00IDExLTE2IDExbC0xNjItMTFxLTEyLTMtMTQtMTNsLTUtNjl6IiAvPgogICAgICAgIDxwYXRoIGQ9Ik00ODMgNjAwYzAgMzQgNTggMzQgNTggMHYtODZjMC0zNC01OC0zNC01OCAweiIgLz4KICAgICAgICA8Y2lyY2xlIGN4PSI3MjUiIGN5PSI1MjYiIHI9IjkwIiAvPgogICAgICAgIDxjaXJjbGUgY3g9IjI5OSIgY3k9IjUyNiIgcj0iOTAiIC8+CiAgICA8L2c+CiAgICA8ZyBmaWxsPSIjNDE0MDQyIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMi4zMjIgMTIuMzIyKXNjYWxlKC4xMDEpIj4KICAgICAgICA8Y2lyY2xlIGN4PSIzMDciIGN5PSI1MzIiIHI9IjYwIiAvPgogICAgICAgIDxjaXJjbGUgY3g9IjcxNyIgY3k9IjUzMiIgcj0iNjAiIC8+CiAgICA8L2c+Cjwvc3ZnPg=="
+original_size = Vector2(128, 128)
+metadata/_custom_type_script = "uid://yh2davxk4fh7"
 
 [sub_resource type="Resource" id="Resource_tkwla"]
 script = ExtResource("2_fv747")
@@ -35,23 +41,15 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Helper2" type="Node" parent="."]
-unique_name_in_owner = true
-script = ExtResource("1_tkwla")
-svg_resource = ExtResource("2_2fobf")
-target_property = "texture"
-metadata/_custom_type_script = "uid://cd2hrik4wvt1o"
-
 [node name="TextureRect" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(180, 130)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Helper1" type="Node" parent="TextureRect"]
-unique_name_in_owner = true
+[node name="SVGTextureHelper" type="Node" parent="TextureRect"]
 script = ExtResource("1_tkwla")
-svg_resource = ExtResource("3_l4vqo")
+svg_resource = SubResource("Resource_2fobf")
 target_property = "texture"
 metadata/_custom_type_script = "uid://cd2hrik4wvt1o"
 
