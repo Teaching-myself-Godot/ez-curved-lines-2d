@@ -1,10 +1,14 @@
 # Changelog
 
-## 2.17.1
+## 2.17.2
 
 ### Added
 - Flip buttons for your `ScalableVectorShape2D`'s path / primitives next to the uniform transform buttons
 - Use the new `ScalableVectorShape2D.glue_map` to assign a `Node2D` to a point in the `curve`.
+
+### Changed
+- Moved logic for image export to helper class `SVSSceneExporter.export_image`
+- Moved logic for animation sprite frames export to `SVSSceneExporter.export_sprite_frames`
 
 ## 2.16.3
 
