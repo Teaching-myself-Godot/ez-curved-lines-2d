@@ -35,7 +35,7 @@ curved_lines_2d/default_max_stages=5
 [application]
 
 config/name="EZ Curved Lines 2D"
-run/main_scene="uid://bpjhx0g61ptyq"
+run/main_scene="uid://c7cfqopy0hlbx"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://b5yxa1e62b0hb"
 
@@ -47,5 +47,6 @@ enabled=PackedStringArray("res://addons/curved_lines_2d/plugin.cfg", "res://addo
 
 anti_aliasing/quality/msaa_2d=3
 anti_aliasing/screen_space_roughness_limiter/amount=4.0
+anti_aliasing/screen_space_roughness_limiter/limit=1.0
 environment/defaults/default_clear_color=Color(0.211765, 0.239216, 0.290196, 1)
 anti_aliasing/quality/screen_space_aa=1
