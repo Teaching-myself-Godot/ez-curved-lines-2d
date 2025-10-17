@@ -1,8 +1,9 @@
 # Changelog
 
-## 2.17.2
+## 2.17.3
 
 ### Added
+- Links to Vlog: Let's make an actual game (in the Video Explainers tab)
 - Flip buttons for your `ScalableVectorShape2D`'s path / primitives next to the uniform transform buttons
 - Use the new `ScalableVectorShape2D.glue_map` to assign a `Node2D` to a point in the `curve`.
 
