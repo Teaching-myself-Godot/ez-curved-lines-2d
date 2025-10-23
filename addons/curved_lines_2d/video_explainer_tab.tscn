@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://hr7df18ngxmj"]
+[gd_scene load_steps=15 format=3 uid="uid://hr7df18ngxmj"]
 
 [ext_resource type="PackedScene" uid="uid://bhpmwhbdlsp1g" path="res://addons/curved_lines_2d/external_video_button.tscn" id="1_xhvii"]
 [ext_resource type="Texture2D" uid="uid://be2xpq0unu641" path="res://addons/curved_lines_2d/video_thumbnails/animations_to_sprite_frames.png" id="2_7bvyv"]
@@ -11,6 +11,9 @@
 [ext_resource type="Texture2D" uid="uid://5s2evk1r7bqp" path="res://addons/curved_lines_2d/video_thumbnails/part-1-splash.png" id="9_cq1f0"]
 [ext_resource type="Texture2D" uid="uid://1enoovrlhmsa" path="res://addons/curved_lines_2d/video_thumbnails/Part3-dry-blocks.excalidraw.png" id="10_cq1f0"]
 [ext_resource type="Texture2D" uid="uid://halxp0f2djrh" path="res://addons/curved_lines_2d/video_thumbnails/PART II_ L-Block.excalidraw.png" id="10_h2vt0"]
+[ext_resource type="Texture2D" uid="uid://cxsrvw2a54ruj" path="res://addons/curved_lines_2d/video_thumbnails/part-4.png" id="12_db0v2"]
+[ext_resource type="Texture2D" uid="uid://b2ng5fl3msmw1" path="res://addons/curved_lines_2d/video_thumbnails/part-5.png" id="13_bmv75"]
+[ext_resource type="Texture2D" uid="uid://bp4v8equ22ba8" path="res://addons/curved_lines_2d/video_thumbnails/part-6.png" id="14_7txnu"]
 
 [node name="VideoExplainerTab" type="ScrollContainer"]
 anchors_preset = 15
@@ -119,3 +122,27 @@ Right click to copy this link"
 img = ExtResource("10_cq1f0")
 uri = "https://youtu.be/dUj-WXZ5cTs?si=nfNsd22mhDOLeIHU"
 text = "PART III: Dry Blocks"
+
+[node name="ExternalVideoButton9" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("1_xhvii")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/5wuou-lYvXg
+Right click to copy this link"
+img = ExtResource("12_db0v2")
+uri = "https://youtu.be/5wuou-lYvXg"
+text = "PART IV: The TetrisBlock class explained"
+
+[node name="ExternalVideoButton10" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("1_xhvii")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/TVwkV0O6g3s
+Right click to copy this link"
+img = ExtResource("13_bmv75")
+uri = "https://youtu.be/TVwkV0O6g3s"
+text = "PART V: Stacking Tetris Blocks"
+
+[node name="ExternalVideoButton11" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("1_xhvii")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/BTXETHYJekQ
+Right click to copy this link"
+img = ExtResource("14_7txnu")
+uri = "https://youtu.be/BTXETHYJekQ"
+text = "PART VI: Controlling the Tetris Blocks"
