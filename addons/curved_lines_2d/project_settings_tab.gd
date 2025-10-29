@@ -31,6 +31,7 @@ func _enter_tree() -> void:
 	if not max_stages_input.focus_exited.is_connected(ProjectSettings.save):
 		max_stages_input.focus_exited.connect(ProjectSettings.save)
 
+	%AddAntialiasedLine2DCheckbox.button_pressed = CurvedLines2D._use_antialiased_line_2d()
 
 func _make_number_input(lbl : String, value : float, min_value : float, max_value : float, suffix : String, step := 1.0) -> EditorSpinSlider:
 	var x_slider := EditorSpinSlider.new()
@@ -85,3 +86,8 @@ func _on_make_resources_local_to_scene_check_box_toggled(toggled_on: bool) -> vo
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_CURVE_RESOURCE_LOCAL_TO_SCENE, toggled_on)
 	ProjectSettings.save()
 
+
+
+func _on_add_antialiased_line_2d_checkbox_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ANTIALIASED_LINE_2D, toggled_on)
+	ProjectSettings.save()

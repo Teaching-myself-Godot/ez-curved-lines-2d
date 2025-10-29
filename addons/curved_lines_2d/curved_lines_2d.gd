@@ -26,6 +26,8 @@ const SETTING_NAME_CURVE_RESOURCE_LOCAL_TO_SCENE := "addons/curved_lines_2d/make
 const SETTING_NAME_CURVE_TOLERANCE_DEGREES := "addons/curved_lines_2d/default_tolerance_degrees"
 const SETTING_NAME_CURVE_MAX_STAGES := "addons/curved_lines_2d/default_max_stages"
 
+const SETTING_NAME_ANTIALIASED_LINE_2D := "addons/curved_lines_2d/antialiased_line_2d"
+
 const META_NAME_HOVER_POINT_IDX := "_hover_point_idx_"
 const META_NAME_HOVER_CP_IN_IDX := "_hover_cp_in_idx_"
 const META_NAME_HOVER_CP_OUT_IDX := "_hover_cp_out_idx_"
@@ -271,6 +273,11 @@ func _add_stroke_to_created_shape(new_shape : ScalableVectorShape2D, scene_root 
 			var line := Line2D.new()
 			line.name = "Stroke"
 			line.sharp_limit = 90.0
+			if CurvedLines2D._use_antialiased_line_2d():
+				line.texture = load("res://addons/curved_lines_2d/LumAlpha8.tex")
+				line.texture_mode = Line2D.LINE_TEXTURE_TILE
+				line.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+
 			undo_redo.add_do_property(new_shape, 'line', line)
 			undo_redo.add_do_method(new_shape, 'add_child', line, true)
 			undo_redo.add_do_method(line, 'set_owner', scene_root)
@@ -1872,6 +1879,12 @@ static func _is_making_curve_resources_local_to_scene() -> bool:
 	if ProjectSettings.has_setting(SETTING_NAME_CURVE_RESOURCE_LOCAL_TO_SCENE):
 		return ProjectSettings.get_setting(SETTING_NAME_CURVE_RESOURCE_LOCAL_TO_SCENE)
 	return true
+
+
+static func _use_antialiased_line_2d() -> bool:
+	if ProjectSettings.has_setting(SETTING_NAME_ANTIALIASED_LINE_2D):
+		return ProjectSettings.get_setting(SETTING_NAME_ANTIALIASED_LINE_2D)
+	return false
 
 
 static func _get_default_tolerance_degrees() -> float:

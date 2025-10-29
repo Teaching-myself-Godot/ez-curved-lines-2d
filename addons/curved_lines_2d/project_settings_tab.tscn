@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://d3j2c8gduqsuu"]
+[gd_scene load_steps=3 format=3 uid="uid://d3j2c8gduqsuu"]
 
 [ext_resource type="Script" uid="uid://xijifdpi2kw" path="res://addons/curved_lines_2d/project_settings_tab.gd" id="1_q4g58"]
+[ext_resource type="PackedScene" uid="uid://cmoxkoulpd7so" path="res://addons/curved_lines_2d/link_button_with_copy_hint.tscn" id="2_mgx58"]
 
 [node name="ProjectSettingsTab" type="ScrollContainer"]
 anchors_preset = 15
@@ -58,7 +59,6 @@ size_flags_horizontal = 0
 tooltip_text = "When active, points you move will snap to whole numbers:
 - this will use the snapped global_position in the scene
 - .. so if any parent is not snapped to pixel, the local position of this point is also still not snapped"
-button_pressed = true
 text = "Snap to pixel*"
 
 [node name="SnapResolutionInputContainer" type="PanelContainer" parent="VBoxContainer/EditorSettingsContainer"]
@@ -114,9 +114,36 @@ size_flags_horizontal = 3
 [node name="HSeparator3" type="HSeparator" parent="VBoxContainer"]
 layout_mode = 2
 
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 13
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+mouse_filter = 0
+text = "Extra's"
+
+[node name="AddAntialiasedLine2DCheckbox" type="CheckBox" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Add Line2D antialiasing texture for Compatibility mode"
+
+[node name="LinkButton" parent="VBoxContainer/HBoxContainer" instance=ExtResource("2_mgx58")]
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "This link will open a webpage in your browser: https://godotengine.org/asset-library/asset/3103
+Right click to copy this link"
+text = "Inspired by Calinou's Antialiased Line2D plugin"
+uri = "https://godotengine.org/asset-library/asset/3103"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
 [connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/EnableEditingCheckbox" to="." method="_on_enable_editing_checkbox_toggled"]
 [connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/EnableHintsCheckbox" to="." method="_on_enable_hints_checkbox_toggled"]
 [connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/EnablePointNumbersCheckbox" to="." method="_on_enable_point_numbers_checkbox_toggled"]
 [connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/SnapToPixelCheckBox" to="." method="_on_snap_to_pixel_check_box_toggled"]
 [connection signal="toggled" from="VBoxContainer/CurveSettingsContainer/UpdateCurveAtRuntimeCheckbox" to="." method="_on_update_curve_at_runtime_checkbox_toggled"]
 [connection signal="toggled" from="VBoxContainer/CurveSettingsContainer/MakeResourcesLocalToSceneCheckBox" to="." method="_on_make_resources_local_to_scene_check_box_toggled"]
+[connection signal="toggled" from="VBoxContainer/HBoxContainer/AddAntialiasedLine2DCheckbox" to="." method="_on_add_antialiased_line_2d_checkbox_toggled"]
