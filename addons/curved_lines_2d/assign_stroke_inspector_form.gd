@@ -68,6 +68,11 @@ func _on_create_stroke_button_pressed():
 	line_2d.end_cap_mode = scalable_vector_shape_2d.end_cap_mode
 	line_2d.joint_mode = scalable_vector_shape_2d.line_joint_mode
 	line_2d.sharp_limit = 90.0
+	if CurvedLines2D._use_antialiased_line_2d():
+		line_2d.texture = load("res://addons/curved_lines_2d/LumAlpha8.tex")
+		line_2d.texture_mode = Line2D.LINE_TEXTURE_TILE
+		line_2d.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+
 	undo_redo.create_action("Add Line2D to %s " % str(scalable_vector_shape_2d))
 	undo_redo.add_do_method(scalable_vector_shape_2d, 'add_child', line_2d, true)
 	undo_redo.add_do_method(line_2d, 'set_owner', root)
@@ -76,6 +81,7 @@ func _on_create_stroke_button_pressed():
 	undo_redo.add_undo_method(scalable_vector_shape_2d, 'remove_child', line_2d)
 	undo_redo.add_undo_property(scalable_vector_shape_2d, 'line', null)
 	undo_redo.commit_action()
+
 
 
 func _on_create_poly_stroke_button_pressed() -> void:

@@ -31,6 +31,7 @@ curved_lines_2d/update_curve_at_runtime=true
 curved_lines_2d/make_resources_local_to_scene=true
 curved_lines_2d/default_tolerance_degrees=4.0
 curved_lines_2d/default_max_stages=5
+curved_lines_2d/antialiased_line_2d=true
 
 [application]
 
@@ -45,7 +46,8 @@ enabled=PackedStringArray("res://addons/curved_lines_2d/plugin.cfg", "res://addo
 
 [rendering]
 
-anti_aliasing/quality/msaa_2d=3
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
 anti_aliasing/screen_space_roughness_limiter/amount=4.0
 anti_aliasing/screen_space_roughness_limiter/limit=1.0
 environment/defaults/default_clear_color=Color(0.211765, 0.239216, 0.290196, 1)
