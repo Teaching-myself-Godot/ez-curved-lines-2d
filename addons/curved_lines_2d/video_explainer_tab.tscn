@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://hr7df18ngxmj"]
+[gd_scene load_steps=16 format=3 uid="uid://hr7df18ngxmj"]
 
 [ext_resource type="PackedScene" uid="uid://bhpmwhbdlsp1g" path="res://addons/curved_lines_2d/external_video_button.tscn" id="1_xhvii"]
 [ext_resource type="Texture2D" uid="uid://be2xpq0unu641" path="res://addons/curved_lines_2d/video_thumbnails/animations_to_sprite_frames.png" id="2_7bvyv"]
@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://cxsrvw2a54ruj" path="res://addons/curved_lines_2d/video_thumbnails/part-4.png" id="12_db0v2"]
 [ext_resource type="Texture2D" uid="uid://b2ng5fl3msmw1" path="res://addons/curved_lines_2d/video_thumbnails/part-5.png" id="13_bmv75"]
 [ext_resource type="Texture2D" uid="uid://bp4v8equ22ba8" path="res://addons/curved_lines_2d/video_thumbnails/part-6.png" id="14_7txnu"]
+[ext_resource type="Texture2D" uid="uid://bvubevn3e1ax2" path="res://addons/curved_lines_2d/video_thumbnails/part-7.png" id="15_dx0lu"]
 
 [node name="VideoExplainerTab" type="ScrollContainer"]
 anchors_preset = 15
@@ -146,3 +147,11 @@ Right click to copy this link"
 img = ExtResource("14_7txnu")
 uri = "https://youtu.be/BTXETHYJekQ"
 text = "PART VI: Controlling the Tetris Blocks"
+
+[node name="ExternalVideoButton12" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("1_xhvii")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/f64dPSI9dk4?si=MtHxeHGKJZDP4Eio
+Right click to copy this link"
+img = ExtResource("15_dx0lu")
+uri = "https://youtu.be/f64dPSI9dk4?si=MtHxeHGKJZDP4Eio"
+text = "PART VII: Clearing Rows of Blocks"

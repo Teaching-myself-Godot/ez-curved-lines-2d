@@ -1,9 +1,11 @@
 # Changelog
 
-## 2.18.0
+## 2.18.1
 
 ### Added
 - Automatically set an antialiasing texture for Line2D, adding Compatibility support, inspired by Calinou's Antialiased Line2D plugin (in the Scalable Vector Shapes 2D bottom dock under the Project Settings tab).
+- Also set antialiasing texture for Line2D via SVG imported when checked On in the Project Settings tab
+- Added link to Part VII of "Let's make an actual game"
 
 ## 2.17.4
 
