@@ -728,6 +728,10 @@ func add_stroke_to_path(new_path : ScalableVectorShape2D, style: Dictionary, sce
 				stroke.sharp_limit = float(style["stroke-miterlimit"])
 			else:
 				stroke.sharp_limit = 4.0 # svg default
+			if CurvedLines2D._use_antialiased_line_2d():
+				stroke.texture = load("res://addons/curved_lines_2d/LumAlpha8.tex")
+				stroke.texture_mode = Line2D.LINE_TEXTURE_TILE
+				stroke.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 
 
 
