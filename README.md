@@ -874,10 +874,7 @@ Make sure to try out ["Spring Ball" on Itch](https://permotion.itch.io/spring-ba
 
 # Reaching out / Contributing
 If you have feedback on this project, feel free to post an [issue](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d/issues) on github, or to:
-- Ask a question on [reddit](https://www.reddit.com/r/ScalableVectorShape2D)
 - Follow my channel on youtube: [@zucht2.bsky.social](https://www.youtube.com/@zucht2.bsky.social)
-- Contact me on bluesky: [@zucht2.bsky.social](https://bsky.app/profile/zucht2.bsky.social).
-- Try my free to play games on itch.io: [@renevanderark.itch.io](https://renevanderark.itch.io)
 
 If you'd like to improve on the code yourself, ideally use a fork and make a pull request.
 
