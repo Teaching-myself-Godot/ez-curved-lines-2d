@@ -94,64 +94,64 @@ theme_override_constants/separation = 20
 
 [node name="ExternalVideoButton5" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("1_xhvii")]
 layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://www.youtube.com/playlist?list=PL5lf_BvgORcgwRRybxX_y9ieoaos8FsOZ
+tooltip_text = "This link will open a webpage in your browser: https://codeberg.org/renevanderark/tatra-vlog/raw/branch/master/final-videos/prologue-roadmap.mp4
 Right click to copy this link"
 img = ExtResource("8_shotc")
-uri = "https://www.youtube.com/playlist?list=PL5lf_BvgORcgwRRybxX_y9ieoaos8FsOZ"
+uri = "https://codeberg.org/renevanderark/tatra-vlog/raw/branch/master/final-videos/prologue-roadmap.mp4"
 text = "Vlog: Let's make an actual game"
 
 [node name="ExternalVideoButton6" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("1_xhvii")]
 layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/rGWdkxsr8SA?si=ZpgiNufHWKn9nrpl
+tooltip_text = "This link will open a webpage in your browser: https://codeberg.org/renevanderark/tatra-vlog/raw/branch/master/final-videos/part-one.mp4
 Right click to copy this link"
 img = ExtResource("9_cq1f0")
-uri = "https://youtu.be/rGWdkxsr8SA?si=ZpgiNufHWKn9nrpl"
+uri = "https://codeberg.org/renevanderark/tatra-vlog/raw/branch/master/final-videos/part-one.mp4"
 text = "Part I: The Responsive Viewport"
 
 [node name="ExternalVideoButton7" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("1_xhvii")]
 layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/Z1g47_HfuZk?si=AJP0NHQ2Qrijg_ib
+tooltip_text = "This link will open a webpage in your browser: https://codeberg.org/renevanderark/tatra-vlog/raw/branch/master/final-videos/part-two.mp4
 Right click to copy this link"
 img = ExtResource("10_h2vt0")
-uri = "https://youtu.be/Z1g47_HfuZk?si=AJP0NHQ2Qrijg_ib"
+uri = "https://codeberg.org/renevanderark/tatra-vlog/raw/branch/master/final-videos/part-two.mp4"
 text = "PART II: L-BLOCK!!!"
 
 [node name="ExternalVideoButton8" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("1_xhvii")]
 layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/dUj-WXZ5cTs?si=nfNsd22mhDOLeIHU
+tooltip_text = "This link will open a webpage in your browser: https://codeberg.org/renevanderark/tatra-vlog/raw/branch/master/final-videos/part-three.mp4
 Right click to copy this link"
 img = ExtResource("10_cq1f0")
-uri = "https://youtu.be/dUj-WXZ5cTs?si=nfNsd22mhDOLeIHU"
+uri = "https://codeberg.org/renevanderark/tatra-vlog/raw/branch/master/final-videos/part-three.mp4"
 text = "PART III: Dry Blocks"
 
 [node name="ExternalVideoButton9" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("1_xhvii")]
 layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/5wuou-lYvXg
+tooltip_text = "This link will open a webpage in your browser: https://codeberg.org/renevanderark/tatra-vlog/raw/branch/master/final-videos/part-four.mp4
 Right click to copy this link"
 img = ExtResource("12_db0v2")
-uri = "https://youtu.be/5wuou-lYvXg"
+uri = "https://codeberg.org/renevanderark/tatra-vlog/raw/branch/master/final-videos/part-four.mp4"
 text = "PART IV: The TetrisBlock class explained"
 
 [node name="ExternalVideoButton10" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("1_xhvii")]
 layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/TVwkV0O6g3s
+tooltip_text = "This link will open a webpage in your browser: https://codeberg.org/renevanderark/tatra-vlog/raw/branch/master/final-videos/part-five.mp4
 Right click to copy this link"
 img = ExtResource("13_bmv75")
-uri = "https://youtu.be/TVwkV0O6g3s"
+uri = "https://codeberg.org/renevanderark/tatra-vlog/raw/branch/master/final-videos/part-five.mp4"
 text = "PART V: Stacking Tetris Blocks"
 
 [node name="ExternalVideoButton11" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("1_xhvii")]
 layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/BTXETHYJekQ
+tooltip_text = "This link will open a webpage in your browser: https://codeberg.org/renevanderark/tatra-vlog/raw/branch/master/final-videos/part-six.mp4
 Right click to copy this link"
 img = ExtResource("14_7txnu")
-uri = "https://youtu.be/BTXETHYJekQ"
+uri = "https://codeberg.org/renevanderark/tatra-vlog/raw/branch/master/final-videos/part-six.mp4"
 text = "PART VI: Controlling the Tetris Blocks"
 
 [node name="ExternalVideoButton12" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("1_xhvii")]
 layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/f64dPSI9dk4?si=MtHxeHGKJZDP4Eio
+tooltip_text = "This link will open a webpage in your browser: https://codeberg.org/renevanderark/tatra-vlog/raw/branch/master/final-videos/part-seven.mp4
 Right click to copy this link"
 img = ExtResource("15_dx0lu")
-uri = "https://youtu.be/f64dPSI9dk4?si=MtHxeHGKJZDP4Eio"
+uri = "https://codeberg.org/renevanderark/tatra-vlog/raw/branch/master/final-videos/part-seven.mp4"
 text = "PART VII: Clearing Rows of Blocks"
