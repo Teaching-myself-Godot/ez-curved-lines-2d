@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.18.2
+
+### Added
+
+- Added a "Play Tatra!" tab with links to online game and codeberg repository
+
+### Changed
+
+- Fixes `translate()` operation in the SVG importer when taking only one parameter for the x-axis
+- Fixed the dead links to the Tatra Vlog (Let's make an actual game) videos
+
+
 ## 2.18.1
 
 ### Added
