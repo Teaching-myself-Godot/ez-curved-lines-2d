@@ -9,7 +9,8 @@ const TABS_NAME := [
 	"Create Shapes",
 	"Import SVG File",
 	"Advanced Editing",
-	"Video Explainers"
+	"Video Explainers",
+	"Play Tatra!"
 ]
 
 var warning_dialog : AcceptDialog

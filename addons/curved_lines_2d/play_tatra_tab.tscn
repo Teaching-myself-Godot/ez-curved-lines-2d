@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=3 uid="uid://r23wu41l5ng5"]
+
+[ext_resource type="PackedScene" uid="uid://bhpmwhbdlsp1g" path="res://addons/curved_lines_2d/external_video_button.tscn" id="1_xmmam"]
+[ext_resource type="Texture2D" uid="uid://bp5h8cgmsys0a" path="res://addons/curved_lines_2d/video_thumbnails/tatra.png" id="2_b7w2k"]
+[ext_resource type="Texture2D" uid="uid://dacelkfuv24fv" path="res://addons/curved_lines_2d/video_thumbnails/codeberg_icon.svg" id="3_eberd"]
+
+[node name="PlayTatraTab" type="CenterContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+metadata/_tab_index = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="ExternalVideoButton" parent="HBoxContainer" instance=ExtResource("1_xmmam")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://renevanderark.codeberg.page/tatra/
+Right click to copy this link"
+img = ExtResource("2_b7w2k")
+uri = "https://renevanderark.codeberg.page/tatra/"
+text = "Play Tatra Online!"
+
+[node name="ExternalVideoButton2" parent="HBoxContainer" instance=ExtResource("1_xmmam")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://codeberg.org/renevanderark/tatra#this-is-tatra
+Right click to copy this link"
+img = ExtResource("3_eberd")
+uri = "https://codeberg.org/renevanderark/tatra#this-is-tatra"
+text = "Clone the project from Codeberg!"
