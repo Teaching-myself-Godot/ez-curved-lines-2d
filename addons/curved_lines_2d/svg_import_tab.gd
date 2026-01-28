@@ -887,7 +887,7 @@ func process_svg_transform(svg_transform_attr : String) -> Transform2D:
 			if transform_split.size() >= 2:
 				transform = transform.translated(Vector2(transform_split[0], transform_split[1]))
 			else:
-				transform = transform.translated(Vector2(transform_split[0], transform_split[0]))
+				transform = transform.translated(Vector2(transform_split[0], 0))
 		elif svg_transform.begins_with("scale"):
 			svg_transform = svg_transform.replace("scale", "")
 			var transform_split = _parse_svg_transform_params(svg_transform)
