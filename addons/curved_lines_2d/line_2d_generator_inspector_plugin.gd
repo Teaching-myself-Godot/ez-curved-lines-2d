@@ -209,7 +209,7 @@ func _add_svg_helper(file_path : String, parent_control : Control, target_proper
 	var svg_helper := SVGTextureHelper.new()
 	svg_helper.name = "%sSVGTextureHelper" % target_property.to_pascal_case()
 	parent_control.add_child(svg_helper, true)
-	svg_helper.owner = parent_control.owner
+	svg_helper.owner = parent_control.owner if parent_control.owner else parent_control
 	svg_helper.target_property = target_property
 	svg_helper.svg_resource = SVGResource.new()
 	svg_helper.svg_resource.svg_file_path = file_path
