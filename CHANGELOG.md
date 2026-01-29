@@ -4,7 +4,7 @@
 
 ### Changed
 
-- Fixed: when a GUI `Control` adds a scalable SVG texture via the inspector button, while being scene root, it becomes the owner of the `SVGTextureHelper` node
+- Fixed bug: when a GUI `Control` adds a scalable SVG texture via the inspector button, while being scene root, it becomes the owner of the `SVGTextureHelper` node
 
 ## 2.18.2
 
