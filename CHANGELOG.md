@@ -1,29 +1,22 @@
 # Changelog
 
-## 2.18.3
-
-### Changed
-
-- Fixed bug: when a GUI `Control` adds a scalable SVG texture via the inspector button, while being scene root, it becomes the owner of the `SVGTextureHelper` node
-
-## 2.18.2
+## 2.18.4
 
 ### Added
 
+- Automatically set an antialiasing texture for Line2D, adding Compatibility support, inspired by Calinou's Antialiased Line2D plugin (in the Scalable Vector Shapes 2D bottom dock under the Project Settings tab).
+- Also set antialiasing texture for Line2D via SVG imported when checked On in the Project Settings tab
+- Added link to Part VII of "Let's make an actual game"
 - Added a "Play Tatra!" tab with links to online game and codeberg repository
 
 ### Changed
 
 - Fixes `translate()` operation in the SVG importer when taking only one parameter for the x-axis
 - Fixed the dead links to the Tatra Vlog (Let's make an actual game) videos
-
-
-## 2.18.1
+- Fixed bug: when a GUI `Control` adds a scalable SVG texture via the inspector button, while being scene root, it becomes the owner of the `SVGTextureHelper` node
+- Fixes `Curve > Batch Insert Keyframes` Inspector-button for 4.6-stable
 
 ### Added
-- Automatically set an antialiasing texture for Line2D, adding Compatibility support, inspired by Calinou's Antialiased Line2D plugin (in the Scalable Vector Shapes 2D bottom dock under the Project Settings tab).
-- Also set antialiasing texture for Line2D via SVG imported when checked On in the Project Settings tab
-- Added link to Part VII of "Let's make an actual game"
 
 ## 2.17.4
 
