@@ -9,6 +9,11 @@ var animation_postion_spinbox : SpinBox
 
 func _initialize_keyframe_capabilities():
 	animation_player_editor = EditorInterface.get_base_control().find_child("*AnimationPlayerEditor*", true, false)
+	if not is_instance_valid(animation_player_editor):
+		# Fallback locator for Godot 4.6-stable (and later?)
+		var editor_bottom_panel = EditorInterface.get_base_control().find_child("*EditorBottomPanel*", true, false)
+		animation_player_editor = editor_bottom_panel.find_child("Animation", true, false)
+
 	if is_instance_valid(animation_player_editor):
 		animation_under_edit_button = animation_player_editor.find_child("*OptionButton*", true, false)
 		animation_postion_spinbox = animation_player_editor.find_child("*SpinBox*", true, false)
