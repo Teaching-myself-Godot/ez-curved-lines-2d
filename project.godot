@@ -24,7 +24,7 @@ curved_lines_2d/hints_enabled=true
 curved_lines_2d/snap_to_pixel=false
 curved_lines_2d/snap_resolution=16.0
 curved_lines_2d/editing_enabled=true
-curved_lines_2d/fill_color=Color(0, 0.453125, 0.113281, 1)
+curved_lines_2d/fill_color=Color(0.0705882, 0.988235, 0.301961, 1)
 curved_lines_2d/add_collision_type=0
 curved_lines_2d/use_line_2d_for_stroke=true
 curved_lines_2d/update_curve_at_runtime=true
@@ -46,8 +46,7 @@ enabled=PackedStringArray("res://addons/curved_lines_2d/plugin.cfg", "res://addo
 
 [rendering]
 
-renderer/rendering_method="gl_compatibility"
-renderer/rendering_method.mobile="gl_compatibility"
+anti_aliasing/quality/msaa_2d=3
 anti_aliasing/screen_space_roughness_limiter/amount=4.0
 anti_aliasing/screen_space_roughness_limiter/limit=1.0
 environment/defaults/default_clear_color=Color(0.211765, 0.239216, 0.290196, 1)

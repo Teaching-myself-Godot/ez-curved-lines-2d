@@ -104,6 +104,7 @@ var _stored_natural_center := Vector2.ZERO
 var _lmb_is_down_inside_viewport := false
 
 var merge_node_toggle_button : Button
+var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -160,7 +161,7 @@ func _enter_tree():
 	merge_node_toggle_button.icon = load("res://addons/curved_lines_2d/MergeChain.svg")
 	merge_node_toggle_button.toggle_mode = true
 	merge_node_toggle_button.flat = true
-
+	merge_node_toggle_button.toggled.connect(_on_merge_node_toggle_button_toggled)
 	canvas_editor_buttons_container.add_child(merge_node_toggle_button)
 
 	if not _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
@@ -174,6 +175,16 @@ func _enter_tree():
 func select_node_reversibly(target_node : Node) -> void:
 	if is_instance_valid(target_node):
 		EditorInterface.edit_node(target_node)
+
+
+func _on_merge_node_toggle_button_toggled(toggled_on : bool) -> void:
+	_merge_box_rect.size = Vector2.ZERO
+	if not toggled_on:
+		return
+	var scene_root := EditorInterface.get_edited_scene_root()
+	if is_instance_valid(scene_root):
+		EditorInterface.edit_node(scene_root)
+	update_overlays()
 
 
 func _on_select_mode_toggled(toggled_on : bool) -> void:
@@ -934,6 +945,11 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		return
 	if not is_instance_valid(EditorInterface.get_edited_scene_root()):
 		return
+	if merge_node_toggle_button.button_pressed:
+		_draw_hint(viewport_control, "Drag box around a point of 2 or more ScalableVectorShape2D to merge them")
+		viewport_control.draw_rect(_merge_box_rect, Color.LIME, false, 1)
+		return
+
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
 		if _uniform_transform_mode == UniformTransformMode.TRANSLATE:
@@ -1577,7 +1593,24 @@ func _handle_input_for_uniform_rotate(event : InputEvent, svs : ScalableVectorSh
 	return false
 
 
+func _handle_draw_merge_box_input(event) -> bool:
+	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		if event.is_pressed():
+			_merge_box_rect.position = _vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position())
+		else:
+			merge_node_toggle_button.button_pressed = false
+			return true
+	if event is InputEventMouseMotion:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			_merge_box_rect.size = _vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position()) - _merge_box_rect.position
+		update_overlays()
+	return true
+
+
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
+	if merge_node_toggle_button.button_pressed:
+		return _handle_draw_merge_box_input(event)
+
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		_lmb_is_down_inside_viewport = (event as InputEventMouseButton).pressed
 	if (in_undo_redo_transaction and event is InputEventMouseButton
