@@ -103,6 +103,7 @@ var _prev_uniform_rotate_angle := 0.0
 var _stored_natural_center := Vector2.ZERO
 var _lmb_is_down_inside_viewport := false
 
+var merge_node_toggle_button : Button
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -154,6 +155,14 @@ func _enter_tree():
 	uniform_transform_edit_buttons = load("res://addons/curved_lines_2d/uniform_transform_edit_buttons.tscn").instantiate()
 	var canvas_editor_buttons_container = EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*").find_child("*HFlowContainer*", true, false)
 	canvas_editor_buttons_container.add_child(uniform_transform_edit_buttons)
+	merge_node_toggle_button = Button.new()
+	merge_node_toggle_button.tooltip_text = "Merge vertices (M)"
+	merge_node_toggle_button.icon = load("res://addons/curved_lines_2d/MergeChain.svg")
+	merge_node_toggle_button.toggle_mode = true
+	merge_node_toggle_button.flat = true
+
+	canvas_editor_buttons_container.add_child(merge_node_toggle_button)
+
 	if not _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
 		_get_select_mode_button().toggled.connect(_on_select_mode_toggled)
 	_on_select_mode_toggled(_get_select_mode_button().button_pressed)
@@ -1904,6 +1913,7 @@ func _exit_tree():
 		_get_select_mode_button().toggled.disconnect(_on_select_mode_toggled)
 
 	uniform_transform_edit_buttons.queue_free()
+	merge_node_toggle_button.queue_free()
 	remove_inspector_plugin(plugin)
 	remove_custom_type("DrawablePath2D")
 	remove_custom_type("ScalableVectorShape2D")
