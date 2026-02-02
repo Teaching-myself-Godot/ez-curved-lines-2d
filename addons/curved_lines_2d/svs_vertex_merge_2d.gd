@@ -34,6 +34,8 @@ func _set_vertex_owners(new_lst : Dictionary[ScalableVectorShape2D, int]):
 		if not svs.transform_changed.is_connected(_on_svs_transform_changed):
 			svs.set_notify_local_transform(true)
 			svs.transform_changed.connect(_on_svs_transform_changed)
+	if vertex_map.size() > 0:
+		_align_vertices(vertex_map.keys()[0])
 
 
 func _on_svs_transform_changed(svs : ScalableVectorShape2D):
