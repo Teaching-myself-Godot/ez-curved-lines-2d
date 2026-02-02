@@ -14,6 +14,14 @@ func _enter_tree() -> void:
 	set_meta("_edit_lock_", true)
 
 
+func _exit_tree() -> void:
+	for svs : ScalableVectorShape2D in vertex_map.keys().filter(is_instance_valid):
+		if svs.polygons_updated.is_connected(_on_svs_curve_changed):
+			svs.polygons_updated.disconnect(_on_svs_curve_changed)
+		if svs.transform_changed.is_connected(_on_svs_transform_changed):
+			svs.transform_changed.disconnect(_on_svs_transform_changed)
+
+
 func _set_vertex_owners(new_lst : Dictionary[ScalableVectorShape2D, int]):
 	for svs : ScalableVectorShape2D in vertex_map.keys().filter(is_instance_valid):
 		if svs.polygons_updated.is_connected(_on_svs_curve_changed):

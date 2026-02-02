@@ -31,7 +31,7 @@ curved_lines_2d/update_curve_at_runtime=true
 curved_lines_2d/make_resources_local_to_scene=true
 curved_lines_2d/default_tolerance_degrees=4.0
 curved_lines_2d/default_max_stages=5
-curved_lines_2d/antialiased_line_2d=false
+curved_lines_2d/antialiased_line_2d=true
 
 [application]
 
