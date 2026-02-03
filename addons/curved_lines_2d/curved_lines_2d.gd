@@ -541,10 +541,6 @@ func _draw_hint(viewport_control : Control, txt : String, force_draw := false) -
 		return
 	if not _are_hints_enabled() and not force_draw:
 		return
-	_force_draw_hint(viewport_control, txt)
-
-
-func _force_draw_hint(viewport_control : Control, txt : String):
 	var txt_pos := (_vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position())
 		+ Vector2(15, 8))
 	var lines := txt.split("\n")
@@ -943,15 +939,40 @@ func _draw_canvas_for_uniform_scale(viewport_control : Control, svs : ScalableVe
 				svs.shape_hint_color, 1, true)
 
 
+func _handle_draw_vertex_merge_box(viewport_control: Control) -> void:
+	if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		_draw_hint(viewport_control, "Drag box around a point of 2 or more ScalableVectorShape2D to merge them")
+
+	viewport_control.draw_rect(_merge_box_rect, Color.LIME, false, 1)
+	var vertex_map : Dictionary[ScalableVectorShape2D, int] = {}
+	for svs : ScalableVectorShape2D in EditorInterface.get_edited_scene_root().find_children("*", "ScalableVectorShape2D"):
+		var point_was_found_inside_rect := false
+		for idx in svs.curve.point_count:
+			var p := svs.to_global(svs.curve.get_point_position(idx))
+			var p_inside_rect := _merge_box_rect.abs().has_point(_vp_transform(p))
+			if p_inside_rect and not point_was_found_inside_rect:
+				vertex_map[svs] = idx
+				point_was_found_inside_rect = true
+			_draw_crosshair(viewport_control, _vp_transform(p), 2.0, 4.0, VIEWPORT_ORANGE, 1)
+
+	for svs : ScalableVectorShape2D in vertex_map.keys():
+		_draw_crosshair(viewport_control, _vp_transform(
+			svs.to_global(svs.curve.get_point_position(vertex_map[svs]))
+		), 2.0, 5.0, Color.WHITE, 2)
+
+	if vertex_map.size() > 1:
+		var entries = ""
+		for k in vertex_map.keys():
+			entries += "\n - " + k.name
+		_draw_hint(viewport_control, "\nMerge points of:%s" % entries)
+
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 	if not _is_editing_enabled():
 		return
 	if not is_instance_valid(EditorInterface.get_edited_scene_root()):
 		return
 	if merge_node_toggle_button.button_pressed:
-		_draw_hint(viewport_control, "Drag box around a point of 2 or more ScalableVectorShape2D to merge them")
-		viewport_control.draw_rect(_merge_box_rect, Color.LIME, false, 1)
-		return
+		return _handle_draw_vertex_merge_box(viewport_control)
 
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
