@@ -541,7 +541,10 @@ func _draw_hint(viewport_control : Control, txt : String, force_draw := false) -
 		return
 	if not _are_hints_enabled() and not force_draw:
 		return
+	_force_draw_hint(viewport_control, txt)
 
+
+func _force_draw_hint(viewport_control : Control, txt : String):
 	var txt_pos := (_vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position())
 		+ Vector2(15, 8))
 	var lines := txt.split("\n")
@@ -1599,6 +1602,7 @@ func _handle_draw_merge_box_input(event) -> bool:
 			_merge_box_rect.position = _vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position())
 		else:
 			merge_node_toggle_button.button_pressed = false
+			update_overlays()
 			return true
 	if event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):

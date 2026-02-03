@@ -12,23 +12,28 @@ var _closed_shapes : Dictionary[ScalableVectorShape2D, bool] = {}
 
 func _enter_tree() -> void:
 	set_meta("_edit_lock_", true)
+	_connect_signals()
 
 
 func _exit_tree() -> void:
-	for svs : ScalableVectorShape2D in vertex_map.keys().filter(is_instance_valid):
-		if svs.polygons_updated.is_connected(_on_svs_curve_changed):
-			svs.polygons_updated.disconnect(_on_svs_curve_changed)
-		if svs.transform_changed.is_connected(_on_svs_transform_changed):
-			svs.transform_changed.disconnect(_on_svs_transform_changed)
+	_disconnect_signals()
 
 
 func _set_vertex_owners(new_lst : Dictionary[ScalableVectorShape2D, int]):
+	_disconnect_signals()
+	vertex_map = new_lst
+	_connect_signals()
+
+
+func _disconnect_signals() -> void:
 	for svs : ScalableVectorShape2D in vertex_map.keys().filter(is_instance_valid):
 		if svs.polygons_updated.is_connected(_on_svs_curve_changed):
 			svs.polygons_updated.disconnect(_on_svs_curve_changed)
 		if svs.transform_changed.is_connected(_on_svs_transform_changed):
 			svs.transform_changed.disconnect(_on_svs_transform_changed)
-	vertex_map = new_lst
+
+
+func _connect_signals():
 	for svs : ScalableVectorShape2D  in vertex_map.keys().filter(is_instance_valid):
 		_vertex_counts[svs] = svs.curve.point_count
 		_closed_shapes[svs] = svs.is_curve_closed()
