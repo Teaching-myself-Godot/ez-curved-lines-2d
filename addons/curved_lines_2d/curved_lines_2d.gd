@@ -191,8 +191,12 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if toggled_on and _is_svs_valid(current_selection):
 		uniform_transform_edit_buttons.enable()
+	elif toggled_on:
+		merge_node_toggle_button.show()
 	else:
 		uniform_transform_edit_buttons.hide()
+		merge_node_toggle_button.hide()
+		merge_node_toggle_button.button_pressed = false
 
 
 func _on_uniform_transform_mode_changed(new_mode : UniformTransformMode) -> void:
@@ -1635,6 +1639,14 @@ func _handle_draw_merge_box_input(event) -> bool:
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if merge_node_toggle_button.button_pressed:
 		return _handle_draw_merge_box_input(event)
+
+	if (
+		event is InputEventKey and
+		(event as InputEventKey).pressed and
+		(event as InputEventKey).keycode == KEY_M and
+		_get_select_mode_button().button_pressed
+	):
+		merge_node_toggle_button.button_pressed = true
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		_lmb_is_down_inside_viewport = (event as InputEventMouseButton).pressed
