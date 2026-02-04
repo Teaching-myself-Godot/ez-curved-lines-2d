@@ -103,6 +103,8 @@ var _prev_uniform_rotate_angle := 0.0
 var _stored_natural_center := Vector2.ZERO
 var _lmb_is_down_inside_viewport := false
 
+var merge_node_toggle_button : Button
+var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -154,6 +156,14 @@ func _enter_tree():
 	uniform_transform_edit_buttons = load("res://addons/curved_lines_2d/uniform_transform_edit_buttons.tscn").instantiate()
 	var canvas_editor_buttons_container = EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*").find_child("*HFlowContainer*", true, false)
 	canvas_editor_buttons_container.add_child(uniform_transform_edit_buttons)
+	merge_node_toggle_button = Button.new()
+	merge_node_toggle_button.tooltip_text = "Merge vertices (M)"
+	merge_node_toggle_button.icon = load("res://addons/curved_lines_2d/MergeChain.svg")
+	merge_node_toggle_button.toggle_mode = true
+	merge_node_toggle_button.flat = true
+	merge_node_toggle_button.toggled.connect(_on_merge_node_toggle_button_toggled)
+	canvas_editor_buttons_container.add_child(merge_node_toggle_button)
+
 	if not _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
 		_get_select_mode_button().toggled.connect(_on_select_mode_toggled)
 	_on_select_mode_toggled(_get_select_mode_button().button_pressed)
@@ -167,12 +177,28 @@ func select_node_reversibly(target_node : Node) -> void:
 		EditorInterface.edit_node(target_node)
 
 
+func _on_merge_node_toggle_button_toggled(toggled_on : bool) -> void:
+	_merge_box_rect.size = Vector2.ZERO
+	if not toggled_on:
+		return
+	var scene_root := EditorInterface.get_edited_scene_root()
+	if is_instance_valid(scene_root):
+		EditorInterface.edit_node(scene_root)
+	update_overlays()
+
+
 func _on_select_mode_toggled(toggled_on : bool) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if toggled_on and _is_svs_valid(current_selection):
 		uniform_transform_edit_buttons.enable()
+		merge_node_toggle_button.show()
+	elif toggled_on:
+		uniform_transform_edit_buttons.hide()
+		merge_node_toggle_button.show()
 	else:
 		uniform_transform_edit_buttons.hide()
+		merge_node_toggle_button.hide()
+		merge_node_toggle_button.button_pressed = false
 
 
 func _on_uniform_transform_mode_changed(new_mode : UniformTransformMode) -> void:
@@ -253,6 +279,27 @@ func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_na
 	new_shape.line_joint_mode = _get_default_joint_mode()
 	if not is_instance_valid(is_cutout_for):
 		_set_viewport_pos_to_selection()
+
+
+func _create_svs_vertex_merge_2d() -> void:
+	var vertex_map := _find_merge_vertices()
+	if vertex_map.size() < 2:
+		return
+	var new_vertex_merge := SVSVertexMerge2D.new()
+	new_vertex_merge.name = "SVSVertexMerge2D"
+	var scene_root := EditorInterface.get_edited_scene_root()
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	var parent = current_selection if current_selection is Node else scene_root
+	undo_redo.create_action("Add SVSVertexMerge2D")
+	undo_redo.add_do_method(parent, 'add_child', new_vertex_merge, true)
+	undo_redo.add_do_method(new_vertex_merge, 'set_owner', scene_root)
+	undo_redo.add_do_property(new_vertex_merge, "vertex_map", vertex_map)
+	undo_redo.add_undo_property(new_vertex_merge, "vertex_map", {})
+	undo_redo.add_undo_method(new_vertex_merge, 'set_owner', null)
+	undo_redo.add_undo_method(parent, 'remove_child', new_vertex_merge)
+	for svs in vertex_map.keys():
+		undo_redo.add_undo_property(svs, "curve", svs.curve.duplicate())
+	undo_redo.commit_action()
 
 
 func _add_fill_to_created_shape(new_shape : ScalableVectorShape2D, scene_root : Node) -> void:
@@ -521,7 +568,6 @@ func _draw_hint(viewport_control : Control, txt : String, force_draw := false) -
 		return
 	if not _are_hints_enabled() and not force_draw:
 		return
-
 	var txt_pos := (_vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position())
 		+ Vector2(15, 8))
 	var lines := txt.split("\n")
@@ -920,11 +966,54 @@ func _draw_canvas_for_uniform_scale(viewport_control : Control, svs : ScalableVe
 				svs.shape_hint_color, 1, true)
 
 
+func _find_merge_vertices() -> Dictionary[ScalableVectorShape2D, int]:
+	var vertex_map : Dictionary[ScalableVectorShape2D, int] = {}
+	for svs : ScalableVectorShape2D in EditorInterface.get_edited_scene_root().find_children("*", "ScalableVectorShape2D"):
+		var point_was_found_inside_rect := false
+		for idx in svs.curve.point_count:
+			var p := svs.to_global(svs.curve.get_point_position(idx))
+			var p_inside_rect := _merge_box_rect.abs().has_point(_vp_transform(p))
+			if p_inside_rect and not point_was_found_inside_rect:
+				vertex_map[svs] = idx
+				point_was_found_inside_rect = true
+
+	return vertex_map
+
+
+func _handle_draw_vertex_merge_box(viewport_control: Control) -> void:
+	if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		_draw_hint(viewport_control, "Drag box around a point of 2 or more ScalableVectorShape2D to merge them")
+
+	viewport_control.draw_rect(_merge_box_rect, Color.LIME, false, 1)
+	for svs : ScalableVectorShape2D in EditorInterface.get_edited_scene_root().find_children("*", "ScalableVectorShape2D"):
+		for idx in svs.curve.point_count:
+			_draw_crosshair(
+				viewport_control,
+				_vp_transform(svs.to_global(svs.curve.get_point_position(idx))),
+				2.0, 4.0, VIEWPORT_ORANGE, 1
+			)
+
+	var vertex_map := _find_merge_vertices()
+	for svs : ScalableVectorShape2D in vertex_map.keys():
+		_draw_crosshair(viewport_control, _vp_transform(
+			svs.to_global(svs.curve.get_point_position(vertex_map[svs]))
+		), 2.0, 5.0, Color.WHITE, 2)
+
+	if vertex_map.size() > 1:
+		var entries = ""
+		for k in vertex_map.keys():
+			entries += "\n - " + k.name
+		_draw_hint(viewport_control, "\nMerge points of:%s" % entries)
+
+
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 	if not _is_editing_enabled():
 		return
 	if not is_instance_valid(EditorInterface.get_edited_scene_root()):
 		return
+	if merge_node_toggle_button.button_pressed:
+		return _handle_draw_vertex_merge_box(viewport_control)
+
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
 		if _uniform_transform_mode == UniformTransformMode.TRANSLATE:
@@ -949,12 +1038,9 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 						_draw_add_point_hint(viewport_control, result, false)
 				else:
 						_draw_add_point_hint(viewport_control, result, true)
-
-
 		elif result.has_meta(META_NAME_SELECT_HINT):
 			viewport_control.draw_polyline(result.get_bounding_box().map(_vp_transform),
 					Color.WEB_GRAY, 1.0)
-
 		if not(result.line or result.collision_polygon or result.polygon):
 			_draw_curve(viewport_control, result, false)
 
@@ -1568,7 +1654,34 @@ func _handle_input_for_uniform_rotate(event : InputEvent, svs : ScalableVectorSh
 	return false
 
 
+func _handle_draw_merge_box_input(event) -> bool:
+	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		if event.is_pressed():
+			_merge_box_rect.position = _vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position())
+		else:
+			_create_svs_vertex_merge_2d()
+			merge_node_toggle_button.button_pressed = false
+			update_overlays()
+			return true
+	if event is InputEventMouseMotion:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			_merge_box_rect.size = _vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position()) - _merge_box_rect.position
+		update_overlays()
+	return true
+
+
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
+	if merge_node_toggle_button.button_pressed:
+		return _handle_draw_merge_box_input(event)
+
+	if (
+		event is InputEventKey and
+		(event as InputEventKey).pressed and
+		(event as InputEventKey).keycode == KEY_M and
+		_get_select_mode_button().button_pressed
+	):
+		merge_node_toggle_button.button_pressed = true
+
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		_lmb_is_down_inside_viewport = (event as InputEventMouseButton).pressed
 	if (in_undo_redo_transaction and event is InputEventMouseButton
@@ -1904,6 +2017,7 @@ func _exit_tree():
 		_get_select_mode_button().toggled.disconnect(_on_select_mode_toggled)
 
 	uniform_transform_edit_buttons.queue_free()
+	merge_node_toggle_button.queue_free()
 	remove_inspector_plugin(plugin)
 	remove_custom_type("DrawablePath2D")
 	remove_custom_type("ScalableVectorShape2D")

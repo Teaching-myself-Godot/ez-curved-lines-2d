@@ -66,13 +66,14 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 	- [Converting a line segment into an arc-segment](#converting-a-line-segment-into-an-arc-segment)
 	- [Editing arc properties](#editing-arc-properties)
 	- [Setting the pivot of your shape](#setting-the-pivot-of-your-shape)
+	- [Sticking two or more shapes together by vertex merge](#sticking-two-or-more-shapes-together-by-vertex-merge)
 - [Manipulating 2D Shapes in the 3D export](#manipulating-2d-shapes-in-the-3d-export)
 	- [Animating 3D curves](#animating-3d-curves)
 - [Manipulating gradients](#manipulating-gradients)
 	- [Changing the start- and endpoint of the gradient](#changing-the-start--and-endpoint-of-the-gradient)
 	- [Changing the color stop positions](#changing-the-color-stop-positions)
 	- [Add new color stops](#add-new-color-stops)
-	- [Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes](#ways-to-prevent-over-selecting-scalablevectorshape2d-nodes)
+- [Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes](#ways-to-prevent-over-selecting-scalablevectorshape2d-nodes)
 - [Using the Inspector Form for `ScalableVectorShape2D`](#using-the-inspector-form-for-scalablevectorshape2d)
 	- [Inspector Form](#inspector-form)
 		- [Convert to Path button](#convert-to-path-button)
@@ -82,7 +83,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 	- [The Collision inspector form](#the-collision-inspector-form)
 	- [The Navigation inspector form](#the-navigation-inspector-form)
 	- [The Curve settings inspector form](#the-curve-settings-inspector-form)
-		- [The new Glue Map property](#the-new-glue-map-property)
+		- [The Glue Map property](#the-glue-map-property)
 	- [The Masking Inspector form](#the-masking-inspector-form)
 	- [The Shape type inspector form](#the-shape-type-inspector-form)
 	- [The Editor settings inspector form](#the-editor-settings-inspector-form)
@@ -445,6 +446,21 @@ Like this:
 
 ![set origin 2](./addons/curved_lines_2d/screenshots/16a-set_origin.png)
 
+## Sticking two or more shapes together by vertex merge
+
+Press 'M' while editing, or by pressing the chainlink button to 'Merge Vertices'.
+
+![merge mode button](./addons/curved_lines_2d/screenshots/merge_mode_button.png)
+
+This allows you to link one point of 2 or more shapes together, so they will now always have the same global position.
+
+![merge 2 points](./addons/curved_lines_2d/screenshots/merge_2_points.png)
+
+This action create a new instance of the `SVSVertexMerge2D` node. Delete this node to break the link between points.
+
+![merge 2 points](./addons/curved_lines_2d/screenshots/svs_vertex_merge_2d_node.png)
+
+
 # Manipulating 2D Shapes in the 3D export
 
 Using the new `Export to 3D Scene` in the [Advanced Editing Tab](#the-advanced-tab) produces the new `AdaptableVectorShape3D` node, which holds instances of `CSGPolygon3D` with:
@@ -486,7 +502,11 @@ Double clicking on the gradient line will add a new color stop (the assigned col
 
 ![adding a color stop](./addons/curved_lines_2d/screenshots/add_color_stop.png)
 
-## Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes
+
+
+
+
+# Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes
 
 This plugin can sometimes get in the way of the default 2D viewport behavior. Sometimes it is hard _not_ to select a `ScalableVectorShape2D`.
 
@@ -594,7 +614,9 @@ The curve settings inspector form provides the following options
 - The `arc_list` property: a container for the metadata-objects describing elliptical arc segments of the curve (implemented via `ScalableArc2D` and `ScalableArcList` resource-classes).
 - The `glue_map` property: with this dictionary you can control the position of any `Node2D` in the scene with the a point position in the `curve`.
 
-### The new Glue Map property
+### The Glue Map property
+
+With the property `glue_map : Dictionary[int, Node2D]` you can control the position of any `Node2D` in the scene with the a point position in the `curve`.
 
 ![The new glue map](./addons/curved_lines_2d/screenshots/glue_map.png)
 
