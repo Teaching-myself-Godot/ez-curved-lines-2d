@@ -193,6 +193,7 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 		uniform_transform_edit_buttons.enable()
 		merge_node_toggle_button.show()
 	elif toggled_on:
+		uniform_transform_edit_buttons.hide()
 		merge_node_toggle_button.show()
 	else:
 		uniform_transform_edit_buttons.hide()
@@ -984,7 +985,6 @@ func _handle_draw_vertex_merge_box(viewport_control: Control) -> void:
 		_draw_hint(viewport_control, "Drag box around a point of 2 or more ScalableVectorShape2D to merge them")
 
 	viewport_control.draw_rect(_merge_box_rect, Color.LIME, false, 1)
-	var vertex_map := _find_merge_vertices()
 	for svs : ScalableVectorShape2D in EditorInterface.get_edited_scene_root().find_children("*", "ScalableVectorShape2D"):
 		for idx in svs.curve.point_count:
 			_draw_crosshair(
@@ -993,6 +993,7 @@ func _handle_draw_vertex_merge_box(viewport_control: Control) -> void:
 				2.0, 4.0, VIEWPORT_ORANGE, 1
 			)
 
+	var vertex_map := _find_merge_vertices()
 	for svs : ScalableVectorShape2D in vertex_map.keys():
 		_draw_crosshair(viewport_control, _vp_transform(
 			svs.to_global(svs.curve.get_point_position(vertex_map[svs]))
@@ -1003,6 +1004,7 @@ func _handle_draw_vertex_merge_box(viewport_control: Control) -> void:
 		for k in vertex_map.keys():
 			entries += "\n - " + k.name
 		_draw_hint(viewport_control, "\nMerge points of:%s" % entries)
+
 
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 	if not _is_editing_enabled():
@@ -1036,12 +1038,9 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 						_draw_add_point_hint(viewport_control, result, false)
 				else:
 						_draw_add_point_hint(viewport_control, result, true)
-
-
 		elif result.has_meta(META_NAME_SELECT_HINT):
 			viewport_control.draw_polyline(result.get_bounding_box().map(_vp_transform),
 					Color.WEB_GRAY, 1.0)
-
 		if not(result.line or result.collision_polygon or result.polygon):
 			_draw_curve(viewport_control, result, false)
 
