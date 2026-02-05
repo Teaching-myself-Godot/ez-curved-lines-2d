@@ -1,5 +1,12 @@
 # Changelog
 
+
+## 2.19.0
+
+### Added
+
+- Ability to 'merge' a point of 2 or more `ScalableVectorShape2D` nodes using a new `SVSVertexMerge2D` node
+
 ## 2.18.4
 
 ### Added

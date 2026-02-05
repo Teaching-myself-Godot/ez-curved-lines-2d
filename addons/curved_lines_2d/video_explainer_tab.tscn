@@ -2,13 +2,13 @@
 
 [ext_resource type="PackedScene" uid="uid://bhpmwhbdlsp1g" path="res://addons/curved_lines_2d/external_video_button.tscn" id="1_xhvii"]
 [ext_resource type="Texture2D" uid="uid://be2xpq0unu641" path="res://addons/curved_lines_2d/video_thumbnails/animations_to_sprite_frames.png" id="2_7bvyv"]
-[ext_resource type="Texture2D" uid="uid://blj26cry4ov1b" path="res://addons/curved_lines_2d/video_thumbnails/a_z_explainer.png" id="2_68r4x"]
 [ext_resource type="Texture2D" uid="uid://dl2umd602n020" path="res://addons/curved_lines_2d/video_thumbnails/a_z_deep_dive.png" id="2_p1tlt"]
 [ext_resource type="Texture2D" uid="uid://cybtin0ayniuw" path="res://addons/curved_lines_2d/video_thumbnails/pinball_release_notes.webp" id="3_68r4x"]
 [ext_resource type="Texture2D" uid="uid://b3plsn7lvo8au" path="res://addons/curved_lines_2d/video_thumbnails/animating_curves.png" id="3_xvhpr"]
 [ext_resource type="Texture2D" uid="uid://bvwovr0nk7psu" path="res://addons/curved_lines_2d/video_thumbnails/importing-svg-files-splash.png" id="4_oh1j2"]
 [ext_resource type="Texture2D" uid="uid://cab1fy78sc831" path="res://addons/curved_lines_2d/video_thumbnails/gluing.png" id="6_5flco"]
 [ext_resource type="Texture2D" uid="uid://bfuq8en4jvopi" path="res://addons/curved_lines_2d/video_thumbnails/roadmap-splash.png" id="8_shotc"]
+[ext_resource type="Texture2D" uid="uid://bpdkxmo43c2eo" path="res://addons/curved_lines_2d/video_thumbnails/merging_vertices.png" id="8_xvhpr"]
 [ext_resource type="Texture2D" uid="uid://5s2evk1r7bqp" path="res://addons/curved_lines_2d/video_thumbnails/part-1-splash.png" id="9_cq1f0"]
 [ext_resource type="Texture2D" uid="uid://1enoovrlhmsa" path="res://addons/curved_lines_2d/video_thumbnails/Part3-dry-blocks.excalidraw.png" id="10_cq1f0"]
 [ext_resource type="Texture2D" uid="uid://halxp0f2djrh" path="res://addons/curved_lines_2d/video_thumbnails/PART II_ L-Block.excalidraw.png" id="10_h2vt0"]
@@ -42,13 +42,13 @@ img = ExtResource("2_p1tlt")
 uri = "https://youtu.be/z8Y1e-TehoE"
 text = "A-Z Explainer Deep Dive"
 
-[node name="ExternalVideoButton8" parent="VBoxContainer/HBoxContainer" instance=ExtResource("1_xhvii")]
+[node name="ExternalVideoButton6" parent="VBoxContainer/HBoxContainer" instance=ExtResource("1_xhvii")]
 layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/p_QI5lKM44A
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/5PIVoQcm8QE
 Right click to copy this link"
-img = ExtResource("3_xvhpr")
-uri = "https://youtu.be/p_QI5lKM44A"
-text = "Animating Curves"
+img = ExtResource("4_oh1j2")
+uri = "https://youtu.be/5PIVoQcm8QE"
+text = "Importing SVG Files"
 
 [node name="ExternalVideoButton4" parent="VBoxContainer/HBoxContainer" instance=ExtResource("1_xhvii")]
 layout_mode = 2
@@ -58,13 +58,21 @@ img = ExtResource("3_68r4x")
 uri = "https://youtu.be/pP0CYEvU2uQ"
 text = "Building a Pinball Case"
 
-[node name="ExternalVideoButton6" parent="VBoxContainer/HBoxContainer" instance=ExtResource("1_xhvii")]
+[node name="ExternalVideoButton8" parent="VBoxContainer/HBoxContainer" instance=ExtResource("1_xhvii")]
 layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/5PIVoQcm8QE
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/p_QI5lKM44A
 Right click to copy this link"
-img = ExtResource("4_oh1j2")
-uri = "https://youtu.be/5PIVoQcm8QE"
-text = "Importing SVG Files"
+img = ExtResource("3_xvhpr")
+uri = "https://youtu.be/p_QI5lKM44A"
+text = "Animating Curves"
+
+[node name="ExternalVideoButton3" parent="VBoxContainer/HBoxContainer" instance=ExtResource("1_xhvii")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/dUSJZ7WAIto
+Right click to copy this link"
+img = ExtResource("8_xvhpr")
+uri = "https://youtu.be/dUSJZ7WAIto"
+text = "Merging Vertices"
 
 [node name="ExternalVideoButton2" parent="VBoxContainer/HBoxContainer" instance=ExtResource("1_xhvii")]
 layout_mode = 2
@@ -88,14 +96,6 @@ Right click to copy this link"
 img = ExtResource("6_5flco")
 uri = "https://youtu.be/OBNPTFZA2Q0"
 text = "Gluing a Node2D to a Point"
-
-[node name="ExternalVideoButton3" parent="VBoxContainer/HBoxContainer" instance=ExtResource("1_xhvii")]
-layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/_QOnMRrlIMk
-Right click to copy this link"
-img = ExtResource("2_68r4x")
-uri = "https://youtu.be/_QOnMRrlIMk"
-text = "A-Z Explainer"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
