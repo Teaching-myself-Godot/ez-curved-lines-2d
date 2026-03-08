@@ -1,11 +1,12 @@
 # Changelog
 
 
-## 2.19.0
+## 2.19.1
 
 ### Added
 
 - Ability to 'merge' a point of 2 or more `ScalableVectorShape2D` nodes using a new `SVSVertexMerge2D` node
+- Link to video about adding 2D MSAA anti aliasing to Compatibility Mode
 
 ## 2.18.4
 
