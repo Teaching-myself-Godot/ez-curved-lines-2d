@@ -1,9 +1,10 @@
-[gd_scene load_steps=18 format=3 uid="uid://hr7df18ngxmj"]
+[gd_scene load_steps=19 format=3 uid="uid://hr7df18ngxmj"]
 
 [ext_resource type="PackedScene" uid="uid://bhpmwhbdlsp1g" path="res://addons/curved_lines_2d/external_video_button.tscn" id="1_xhvii"]
 [ext_resource type="Texture2D" uid="uid://be2xpq0unu641" path="res://addons/curved_lines_2d/video_thumbnails/animations_to_sprite_frames.png" id="2_7bvyv"]
 [ext_resource type="Texture2D" uid="uid://dl2umd602n020" path="res://addons/curved_lines_2d/video_thumbnails/a_z_deep_dive.png" id="2_p1tlt"]
 [ext_resource type="Texture2D" uid="uid://cybtin0ayniuw" path="res://addons/curved_lines_2d/video_thumbnails/pinball_release_notes.webp" id="3_68r4x"]
+[ext_resource type="Texture2D" uid="uid://ca207yddnm1qr" path="res://addons/curved_lines_2d/video_thumbnails/my_little_pony.png" id="3_mc1gr"]
 [ext_resource type="Texture2D" uid="uid://c8up2an21ixt4" path="res://addons/curved_lines_2d/video_thumbnails/msaa.png" id="3_vmvt3"]
 [ext_resource type="Texture2D" uid="uid://b3plsn7lvo8au" path="res://addons/curved_lines_2d/video_thumbnails/animating_curves.png" id="3_xvhpr"]
 [ext_resource type="Texture2D" uid="uid://bvwovr0nk7psu" path="res://addons/curved_lines_2d/video_thumbnails/importing-svg-files-splash.png" id="4_oh1j2"]
@@ -43,13 +44,13 @@ img = ExtResource("2_p1tlt")
 uri = "https://youtu.be/z8Y1e-TehoE"
 text = "A-Z Explainer Deep Dive"
 
-[node name="ExternalVideoButton9" parent="VBoxContainer/HBoxContainer" instance=ExtResource("1_xhvii")]
+[node name="ExternalVideoButton10" parent="VBoxContainer/HBoxContainer" instance=ExtResource("1_xhvii")]
 layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/X85A-XVUIHU
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/I2yh2y9mGRA
 Right click to copy this link"
-img = ExtResource("3_vmvt3")
-uri = "https://youtu.be/X85A-XVUIHU"
-text = "Add Anti Aliasing to your Webgame"
+img = ExtResource("3_mc1gr")
+uri = "https://youtu.be/I2yh2y9mGRA"
+text = "How to draw a My Little Pony"
 
 [node name="ExternalVideoButton6" parent="VBoxContainer/HBoxContainer" instance=ExtResource("1_xhvii")]
 layout_mode = 2
@@ -89,6 +90,14 @@ tooltip_text = "This link will open a webpage in your browser: https://youtu.be/
 Right click to copy this link"
 uri = "https://youtu.be/rT5FTg60GiY"
 text = "Animating SVG Clip-Paths"
+
+[node name="ExternalVideoButton9" parent="VBoxContainer/HBoxContainer" instance=ExtResource("1_xhvii")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/X85A-XVUIHU
+Right click to copy this link"
+img = ExtResource("3_vmvt3")
+uri = "https://youtu.be/X85A-XVUIHU"
+text = "Add Anti Aliasing to your Webgame"
 
 [node name="ExternalVideoButton" parent="VBoxContainer/HBoxContainer" instance=ExtResource("1_xhvii")]
 layout_mode = 2

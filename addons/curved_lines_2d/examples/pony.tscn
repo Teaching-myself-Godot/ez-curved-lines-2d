@@ -1,0 +1,3560 @@
+[gd_scene load_steps=108 format=3 uid="uid://gmlmhdf0cxl8"]
+
+[ext_resource type="Script" uid="uid://de3jpss66xjfh" path="res://addons/curved_lines_2d/scalable_vector_shape_2d.gd" id="1_inuwg"]
+[ext_resource type="Script" uid="uid://dlbv4pit17dnu" path="res://addons/curved_lines_2d/scalable_arc.gd" id="2_trrx4"]
+[ext_resource type="Script" uid="uid://dl1t88tthmwts" path="res://addons/curved_lines_2d/scalable_arc_list.gd" id="3_gghv2"]
+[ext_resource type="Script" uid="uid://dn747ucen5o8b" path="res://addons/curved_lines_2d/svs_vertex_merge_2d.gd" id="4_p8hpb"]
+
+[sub_resource type="GDScript" id="GDScript_6k4l8"]
+script/source = "extends Node2D
+
+
+func _on_reset_pose_button_pressed() -> void:
+	$AnimationPlayer.play(\"RESET\")
+
+
+
+func _on_stagger_button_pressed() -> void:
+	$AnimationPlayer.play(\"stagger\")
+
+
+func _on_close_mouth_button_pressed() -> void:
+	$AnimationPlayer.play(\"close_mouth\")
+
+
+func _on_blink_button_pressed() -> void:
+	$AnimationPlayer.play(\"blink\")
+
+
+func _on_open_mouth_button_pressed() -> void:
+	$AnimationPlayer.play(\"open_mouth\")
+"
+
+[sub_resource type="Curve2D" id="Curve2D_gghv2"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 24.4414, -13.026, -52.9414, -33.224, 0, 0, 0, 0, 59.6188, -40.9053, 0, 0, -30.3618, 36.3833, 99.2969, -5.36705, 33.4447, 88.8218, 0, 0, -73.4447, 7.17824, -24.4414, 13.026, 0, 0, -52.9414, -33.224)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_p8hpb"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_nndv2"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 19.1353, 25.9584, 21.7024, -14.457, 5.16881, -20.5032, -15.8126, 8.11737, 27.3494, 78.1857, 7.29735, 6.45433, 2.21308, -23.9175, -6.96468, 83.7015, 9.24532, 35.92, 0, 0, -12.75, -3.25)
+}
+point_count = 4
+
+[sub_resource type="Resource" id="Resource_nndv2"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve" id="Curve_d7gkk"]
+_data = [Vector2(0, 0.123596), 0.0, 0.0, 0, 0, Vector2(0.28, 1), 0.0, 0.0, 0, 0, Vector2(0.725, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_gy81n"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 25.3488, 3.06196, -5.87953, -24.608, -15.798, 8.43912, 27.1715, 73.4236, 16.202, 8.43912, -5.33333, -8, -20.8285, 73.4236, 0, 0, 0, 0, -8.5396, 10.7729)
+}
+point_count = 4
+
+[sub_resource type="Resource" id="Resource_ipurh"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve" id="Curve_1ve1q"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="Curve2D" id="Curve2D_inuwg"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 27.19, -1.95666, 0, 0, -18.1389, 15.7369, 22.9566, 90.574, 2.17223, 24.3741, 0, 0, -8.89595, 81.5466, 0, 0, 0, 0, -12.75, -3.25)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_trrx4"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 24.5672, 10.8046, 0, 0, -15.798, 8.43912, 27.1715, 73.4236, 16.202, 8.43912, -5.33333, -8, -20.8285, 73.4236, 0, 0, 0, 0, -8.53989, 10.7727)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_2jd1f"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -41.9709, -47.2013, 13.6271, -11.8026, 44.9163, -7.65238, 0, 0, -110.77, -73.1318, 0, 0, 0, 0, -101.872, -51.5176, 0, 0, 0, 0, -101.466, -27.786, 0, 0, 25.2829, -11.3116, -89.5158, -9.09912, -30.5652, -33.7253, 0, 0, -8, 27, 0, 0, 0, 0, -1.55304, 15.4331, 0, 0, 0, 0, 3.31161, 6.70516, 0, 0, 0, 0, 13.6271, -11.8026)
+}
+point_count = 9
+
+[sub_resource type="Resource" id="Resource_gtrm0"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Gradient" id="Gradient_hytqm"]
+colors = PackedColorArray(1, 0.0234375, 0, 1, 1, 0.961853, 0.0234375, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_d1cq6"]
+gradient = SubResource("Gradient_hytqm")
+width = 124
+height = 101
+fill_from = Vector2(0.181493, 0.51364)
+fill_to = Vector2(0.703132, 0.375778)
+
+[sub_resource type="Curve2D" id="Curve2D_7tj20"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -25.2576, -26.2332, -1.55305, 15.4331, 34.2419, -12.5172, 0, 0, -101.466, -27.786)
+}
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_t2jyf"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_r5ynq"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -8.78005, -32.4297, 0.816067, 0.639946, 36.6793, -14.0018, 0, 0, -101.872, -51.5175)
+}
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_fwayd"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_1ve1q"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -5.10262, -46.7849, 0, 0, 0, 0, 40.5973, -22.6226, 0, 0, 0, 0, 25.2388, 3.93773, 0, 0, 0, 0, -17.3993, -27.9891, 0, 0, 0, 0, -5.10262, -46.7849)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_2jd1f"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_gtrm0"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -12.1017, 44.0403, 88.8385, -45.7059, 27.9212, 6.53257, -12.282, -3.06843, 30.681, 7.93027, 9.04167, 10.2389, 0, 0, -15.9463, -14.3899, 0, 33.138, 0, -33.138, -24.4827, -55.8203, -33.138, 0, 33.138, 0, 39.0523, -109.591, 7.91847, -34.4402, 0, 0, 88.8385, -45.7059)
+}
+point_count = 6
+
+[sub_resource type="Resource" id="Resource_hytqm"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_hytqm"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -54.3072, -35.3798, 0, 0, 8.45951, 48.8759, -14.1477, -85.0489, 0, 0, 0, 0, 27.5123, -9.66228, 27.7082, -43.0843, -3.16883, -65.735, -42.9545, 80.1351, 24.1836, 24.5039, 0, 0, -54.3072, -35.3798)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_d1cq6"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Gradient" id="Gradient_7tj20"]
+colors = PackedColorArray(1, 0.960784, 0.0235294, 1, 1, 0.027451, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_t2jyf"]
+gradient = SubResource("Gradient_7tj20")
+width = 81
+height = 165
+fill_from = Vector2(0.129879, -0.242988)
+fill_to = Vector2(1.01504, 1.18403)
+
+[sub_resource type="Curve2D" id="Curve2D_d1cq6"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 9.76573, 4.79903, 75.6559, 25.4058, -4.45378, -6.94, 0, 0, 96.6769, 41.2414, 13.3526, -21.6545, -13.3526, 21.6545, 112.022, 103.484, -6.08649, -23.5575, 6.08649, 23.5575, 69.1889, 189.13, -7.61893, 4.68524, 4.013, -2.19511, 114.557, 223.877, 2.3475, 4.97448, 0, 0, 119.302, 214.678, 0, 0, 0, 0, 114.691, 189.598, 0, 0, 5.03558, 11.6036, 130.665, 211.435, 15.9385, -1.40125, -15.9385, 1.40125, 105.657, 232.528, 6.30141, 2.28281, -6.30141, -2.28281, 64.0548, 222.042, 1.46579, 20.8485, -1.46579, -20.8485, 35.5347, 188.212, 2.78104, 21.8464, -2.78104, -21.8464, 85.5029, 87.3347, 17.4208, -8.62385, 0, 0, 54.5043, 60.459, 0, 0, -30.0897, -18.2423, 35.6321, 74.1644, 19.1169, -14.0631, -19.1169, 14.0631, -30.5683, 59.9526, -26.7269, -49.1511, 4.5521, 12.7226, -26.9482, 162.09, 0, 0, 0, 0, -39.7099, 193.86, 0, 0, -45.1943, -34.9456, -49.7804, 210.682, -14.9535, 28.0719, 0, 0, -88.2476, 84.1675, -18.2539, 15.6165, 12.4751, -11.6711, -64.859, 56.5772, -68.2705, -31.85, 0, 0, 75.6559, 25.4058)
+}
+point_count = 21
+
+[sub_resource type="Resource" id="Resource_7tj20"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Gradient" id="Gradient_t2jyf"]
+colors = PackedColorArray(1, 0.0235294, 0, 1, 1, 0.960784, 0.0235294, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_r5ynq"]
+gradient = SubResource("Gradient_t2jyf")
+width = 226
+height = 217
+fill_from = Vector2(0.868072, 1.00284)
+fill_to = Vector2(0.366104, 0.0372316)
+
+[sub_resource type="Curve2D" id="Curve2D_fwayd"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 17.5101, -17.1831, -9.61644, -5.25069, -37.3112, -2.74139, 0, 0, 72.6156, -26.9133)
+}
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_rr8qp"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_t2jyf"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -19.9432, -8.15901, 0, 0, 0, 0, -25.0773, 24.753)
+}
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_r5ynq"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_rr8qp"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 26.0753, -19.4745, -1.11281, -0.872726, -36.8714, 0.142624, 0, 0, 93.3073, -30.2989)
+}
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_ej6pp"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve" id="Curve_r5ynq"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.39726, 1), 0.0, 0.0, 0, 0, Vector2(0.625571, 0.426966), 0.0, 0.0, 0, 0, Vector2(0.821918, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_bjmri"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0.162262, 52.5931, 7.86132, -40.8235, -30.8461, -40.5656, 0, 0, 46.3285, 85.6911)
+}
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_w157y"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_ryeyi"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -14.8045, 47.4401, 7.65607, -7.64099, -37.951, -47.2524, 0, 0, 32.8052, 129.641)
+}
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_qpkqr"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_ej6pp"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 13.2965, 10.3081, 0, 5.69317, 0, -5.69317, 0, 0, 24.0747, 0, 13.2965, 0, -13.2965, -10.3081, 0, -5.69317, 0, 5.69317, 0, 0, -24.0747, 0, -13.2965, 0, 0, 10.3081, 0)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_ayt5m"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_ayt5m"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0.99209, -0.0567052, -0.0906372, 0.273613, -1.68842, -1.73415, 0, 0, 4.57506, 2.69504, 0, 0, 0, 0, 18.9873, 11.8766)
+}
+point_count = 3
+
+[sub_resource type="Resource" id="Resource_inuwg"]
+script = ExtResource("2_trrx4")
+start_point = 1
+radius = Vector2(20, 20)
+rotation_deg = 0.0
+sweep_flag = false
+large_arc_flag = false
+
+[sub_resource type="Resource" id="Resource_wlod0"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([SubResource("Resource_inuwg")])
+
+[sub_resource type="Curve" id="Curve_ef0ch"]
+_data = [Vector2(0.0349206, 0.700969), 0.0, 0.0, 0, 0, Vector2(1, 0.245536), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_wlod0"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 15.506, 12.4081, 0, 6.85302, 0, -6.85302, 0, 0, 28.0754, 0, 15.506, 0, -15.506, -12.4081, 0, -6.85302, 0, 6.85302, 0, 0, -28.0754, 0, -15.506, 0, 0, 12.4081, 0)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_ef0ch"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Gradient" id="Gradient_ycisl"]
+offsets = PackedFloat32Array(0.311863, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_48nhp"]
+gradient = SubResource("Gradient_ycisl")
+width = 24
+height = 56
+fill = 1
+fill_from = Vector2(1.10846, 0.827872)
+fill_to = Vector2(-0.0453812, -0.141333)
+
+[sub_resource type="Curve2D" id="Curve2D_p0i0j"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 13.8075, 12, 0, 6.6276, 0, -6.6276, 0, 0, 25, 0, 13.8075, 0, -13.8075, -12, 0, -6.6276, 0, 6.6276, 0, 0, -25, 0, -13.8075, 0, 0, 12, 0)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_s3xq1"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_lkcyw"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 6.6276, 8, 0, 4.4184, 0, -4.4184, 0, 0, 12, 0, 6.6276, 0, -6.6276, -8, 0, -4.4184, 0, 4.4184, 0, 0, -12, 0, -6.6276, 0, 0, 8, 0)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_ye2us"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_48nhp"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 1.14246, 0.89263, 0, 0.493, 0, -0.493, 0, 0, 2.06855, 0, 1.14246, 0, -1.14246, -0.89263, 0, -0.493, 0, 0.493, 0, 0, -2.06855, 0, -1.14246, 0, 0, 0.89263, 0)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_13sh3"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve" id="Curve_inuwg"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.628571, 0.452806), 1.60714, 1.60714, 0, 0, Vector2(0.834921, 1), 0.0, 0.0, 0, 0, Vector2(0.92381, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_ycisl"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 2.54356, 0.664536, 0, 0, 0, 0, -8.80157, -18.014, 0, 0, 0, 0, -13.745, 9.15728)
+}
+point_count = 3
+
+[sub_resource type="Resource" id="Resource_48nhp"]
+script = ExtResource("2_trrx4")
+start_point = 1
+radius = Vector2(20, 20)
+rotation_deg = 0.0
+sweep_flag = false
+large_arc_flag = false
+
+[sub_resource type="Resource" id="Resource_p0i0j"]
+script = ExtResource("2_trrx4")
+start_point = 0
+radius = Vector2(20, 20)
+rotation_deg = 0.0
+sweep_flag = true
+large_arc_flag = false
+
+[sub_resource type="Resource" id="Resource_lkcyw"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([SubResource("Resource_48nhp"), SubResource("Resource_p0i0j")])
+
+[sub_resource type="Curve" id="Curve_ye2us"]
+_data = [Vector2(0, 0.568878), 0.0, 0.0, 0, 0, Vector2(0.539683, 0.676658), 0.0, 0.0, 0, 0, Vector2(0.968254, 0.991709), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_ef0ch"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 6.13687, -3.51773, -15.597, -6.92982, 0.423523, 5.78717, 20.6588, 25.7082, 11.829, -1.05778, -11.829, 1.05778, 5.65263, 43.6499, 0, 0, 0, 0, -11.0152, 25.8978)
+}
+point_count = 4
+
+[sub_resource type="Resource" id="Resource_ycisl"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve" id="Curve_48nhp"]
+_data = [Vector2(0, 0.0216837), 0.0, 0.0, 0, 0, Vector2(0.52381, 1), 0.0, 0.0, 0, 0, Vector2(0.698413, 1), 0.0, -2.61161, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_s3xq1"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -0.977737, 18.8678, 21.446, 0.794495, 9.55051, -0.934471, -9.55051, 0.934471, 0, 28.4301, 2.13377, 16.4391, 0, 0, -19.412, 11.5617, -5.547, 7.10938, 5.547, -7.10938, -14.2871, -9.32756, -6.6368, 1.44151, 6.6368, -1.44151, 4.63549, -25.614, 0.977737, -18.8678, 0, 0, 21.446, 0.794495)
+}
+point_count = 6
+
+[sub_resource type="Resource" id="Resource_ala13"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_ye2us"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -0.0906372, 0.273613, 0, 0, 0, 0, 14.1008, 9.53712)
+}
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_bjmri"]
+script = ExtResource("2_trrx4")
+start_point = 0
+radius = Vector2(20, 20)
+rotation_deg = 0.0
+sweep_flag = true
+large_arc_flag = false
+
+[sub_resource type="Resource" id="Resource_lno47"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([SubResource("Resource_bjmri")])
+
+[sub_resource type="Curve2D" id="Curve2D_13sh3"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 13.3232, 17.774, 0, 9.81658, 0, -9.81658, 0, 0, 24.1231, 0, 13.3232, 0, -13.3232, -17.774, 0, -9.81658, 0, 9.81658, 0, 0, -24.1231, 0, -13.3232, 0, 0, 17.774, 0)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_xhpvu"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Gradient" id="Gradient_bjmri"]
+offsets = PackedFloat32Array(0.356469, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_lno47"]
+gradient = SubResource("Gradient_bjmri")
+width = 35
+height = 48
+fill = 1
+fill_from = Vector2(0.79337, 0.735999)
+fill_to = Vector2(-0.0216875, 0.0835365)
+
+[sub_resource type="Curve2D" id="Curve2D_78whv"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 12.4997, 15.6026, 0, 8.61732, 0, -8.61732, 0, 0, 22.6322, 0, 12.4997, 0, -12.4997, -15.6026, 0, -8.61732, 0, 8.61732, 0, 0, -22.6322, 0, -12.4997, 0, 0, 15.6026, 0)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_y8bhp"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_w157y"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 6.6276, 8, 0, 4.4184, 0, -4.4184, 0, 0, 12, 0, 6.6276, 0, -6.6276, -8, 0, -4.4184, 0, 4.4184, 0, 0, -12, 0, -6.6276, 0, 0, 8, 0)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_7717w"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_ala13"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 1.1046, 2, 0, 1.1046, 0, -1.1046, 0, 0, 2, 0, 1.1046, 0, -1.1046, -2, 0, -1.1046, 0, 1.1046, 0, 0, -2, 0, -1.1046, 0, 0, 2, 0)
+}
+point_count = 5
+
+[sub_resource type="Curve" id="Curve_ryeyi"]
+_data = [Vector2(0.403175, 0), 0.0, 0.0, 0, 0, Vector2(0.803175, 1), 0.0492753, 0.0492753, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve2D" id="Curve2D_xhpvu"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -21.8442, -20.3022, -0.216156, 0.27977, -18.1455, 11.1495, 7.08963, 2.87126, -3.74375, -64.5483, -2.46992, -20.4351, 0, 0, 26.0354, -13.4283)
+}
+point_count = 3
+
+[sub_resource type="Resource" id="Resource_78whv"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve" id="Curve_y8bhp"]
+_data = [Vector2(0, 0.121174), 0.0, 0.0, 0, 0, Vector2(0.28254, 1), 0.0, 0.0, 0, 0, Vector2(0.75873, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.096301), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_7717w"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -7.8454, -7.75524, 0.0507202, -0.158768, -3.70908, 11.0626, 0, 0, -6.15376, -28.3856)
+}
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_ryeyi"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve" id="Curve_qpkqr"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.453968, 1), 0.0, 0.0, 0, 0, Vector2(0.669841, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_p8hpb"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -0.140676, 25.4729, 27.19, -1.95666, 0, 0, -11.0904, 3.76456, 21.3743, 73.1478, 7.12278, 15.1901, 0, 0, -10.7541, 70.2118, 9.24532, 35.92, 0, 0, -12.75, -3.25)
+}
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_p8hpb"]
+_data = [Vector2(0, 0.123596), 0.0, 0.0, 0, 0, Vector2(0.28, 1), 0.0, 0.0, 0, 0, Vector2(0.725, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_6svqr"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 19.1051, 0.926422, -5.87953, -24.608, -15.798, 8.43912, 27.1715, 73.4236, 16.202, 8.43912, -5.33333, -8, -20.8285, 73.4236, 0, 0, 0, 0, -12.7553, -4.14976)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_ipurh"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 24.5918, 4.49943, 14.2393, -32.027, -11.5791, 13.3461, 27.781, 73.18, 11.1599, 8.89924, -3.20073, -29.4281, -4.78858, 85.3084, 0, 0, 0, 0, -12.0539, 10.9409)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_d7gkk"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 25.3487, 3.06203, -5.87953, -24.608, -15.798, 8.43912, 27.1715, 73.4236, 16.202, 8.43912, -5.33333, -8, -20.8285, 73.4236, 0, 0, 0, 0, -8.5396, 10.7729)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_lno47"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -13.0486, -3.19907, -0.0625, 0.125, 0.259254, 2.81481, -0.259254, -2.81481, -14.963, -11.4444, -5.34492, -4.39352, 0.469902, -5.09722, -6.0625, -15.125, -2.76389, -3.3912, 2.76389, 3.3912, 3.22221, -18.5185, 6.39583, -10.4954, 0, 0, -0.0625, 0.125)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_hc35e"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_y6oqb"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 1.03448, -0.310345, -3, -4, -0.758621, -0.275862, 0.758621, 0.275862, 0, -1.55172, -0.344833, -0.896553, 0.344833, 0.896553, 2.17242, -0.896551, 0.206902, -0.517242, -0.206902, 0.517242, 0.93103, 1.13793, 0.689659, -0.241379, -0.689659, 0.241379, 0.482758, 4.75862, 0.55172, 0.413794, -0.55172, -0.413794, -2.24138, 2.24138, 0.620689, 0.793104, -0.620689, -0.793104, -4.62069, 1.89655, -0.275856, 0.689655, 0.275856, -0.689655, -3.31035, -0.344828, -1.03448, 0.310345, 0, 0, -3, -4)
+}
+point_count = 9
+
+[sub_resource type="Resource" id="Resource_g8ae8"]
+resource_local_to_scene = true
+script = ExtResource("3_gghv2")
+arcs = Array[ExtResource("2_trrx4")]([])
+
+[sub_resource type="Animation" id="Animation_mbs44"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body/Neck/Head/Mouth:curve:point_2/position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-13.745, 9.15728)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Body/Neck/Head/EyeFront:curve:point_0/position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(21.446, 0.794495)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Body/Neck/Head/EyeFront:curve:point_0/out")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-0.977737, 18.8678)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Body/Neck/Head/EyeFront:curve:point_1/position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 28.4301)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Body/Neck/Head/EyeFront:curve:point_1/in")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(9.55051, -0.934471)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Body/Neck/Head/EyeFront:curve:point_1/out")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-9.55051, 0.934471)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Body/Neck/Head/EyeFront:curve:point_2/position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-19.412, 11.5617)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Body/Neck/Head/EyeFront:curve:point_2/in")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2.13377, 16.4391)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Body/Neck/Head/EyeFront:curve:point_2/out")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Body/Neck/Head/EyeFront:curve:point_3/position")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-14.2871, -9.32756)]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("Body/Neck/Head/EyeFront:curve:point_3/in")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-5.547, 7.10938)]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("Body/Neck/Head/EyeFront:curve:point_3/out")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(5.547, -7.10938)]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("Body/Neck/Head/EyeFront:curve:point_4/position")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(4.63549, -25.614)]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("Body/Neck/Head/EyeFront:curve:point_4/in")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-6.6368, 1.44151)]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("Body/Neck/Head/EyeFront:curve:point_4/out")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(6.6368, -1.44151)]
+}
+tracks/15/type = "value"
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/path = NodePath("Body/Neck/Head/EyeFront:curve:point_5/position")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(21.446, 0.794495)]
+}
+tracks/16/type = "value"
+tracks/16/imported = false
+tracks/16/enabled = true
+tracks/16/path = NodePath("Body/Neck/Head/EyeFront:curve:point_5/in")
+tracks/16/interp = 1
+tracks/16/loop_wrap = true
+tracks/16/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0.977737, -18.8678)]
+}
+tracks/17/type = "value"
+tracks/17/imported = false
+tracks/17/enabled = true
+tracks/17/path = NodePath("Body/BackFrontLeg/LowerLeg:position")
+tracks/17/interp = 1
+tracks/17/loop_wrap = true
+tracks/17/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2.25, 73.5)]
+}
+tracks/18/type = "value"
+tracks/18/imported = false
+tracks/18/enabled = true
+tracks/18/path = NodePath("Body/BackFrontLeg/LowerLeg:rotation")
+tracks/18/interp = 1
+tracks/18/loop_wrap = true
+tracks/18/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.132747]
+}
+tracks/19/type = "value"
+tracks/19/imported = false
+tracks/19/enabled = true
+tracks/19/path = NodePath("Body/BackFrontLeg:position")
+tracks/19/interp = 1
+tracks/19/loop_wrap = true
+tracks/19/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-60, -2)]
+}
+tracks/20/type = "value"
+tracks/20/imported = false
+tracks/20/enabled = true
+tracks/20/path = NodePath("Body/BackFrontLeg:rotation")
+tracks/20/interp = 1
+tracks/20/loop_wrap = true
+tracks/20/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.138036]
+}
+tracks/21/type = "value"
+tracks/21/imported = false
+tracks/21/enabled = true
+tracks/21/path = NodePath("Body/FrontFrontLeg/LowerLeg:position")
+tracks/21/interp = 1
+tracks/21/loop_wrap = true
+tracks/21/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2.25, 73.5)]
+}
+tracks/22/type = "value"
+tracks/22/imported = false
+tracks/22/enabled = true
+tracks/22/path = NodePath("Body/FrontFrontLeg/LowerLeg:rotation")
+tracks/22/interp = 1
+tracks/22/loop_wrap = true
+tracks/22/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.0668674]
+}
+tracks/23/type = "value"
+tracks/23/imported = false
+tracks/23/enabled = true
+tracks/23/path = NodePath("Body/FrontFrontLeg:position")
+tracks/23/interp = 1
+tracks/23/loop_wrap = true
+tracks/23/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(40, -4)]
+}
+tracks/24/type = "value"
+tracks/24/imported = false
+tracks/24/enabled = true
+tracks/24/path = NodePath("Body/FrontFrontLeg:rotation")
+tracks/24/interp = 1
+tracks/24/loop_wrap = true
+tracks/24/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.0792349]
+}
+tracks/25/type = "value"
+tracks/25/imported = false
+tracks/25/enabled = true
+tracks/25/path = NodePath("Body/Neck/Head/Ear:position")
+tracks/25/interp = 1
+tracks/25/loop_wrap = true
+tracks/25/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(3.42202, -63.7032)]
+}
+tracks/26/type = "value"
+tracks/26/imported = false
+tracks/26/enabled = true
+tracks/26/path = NodePath("Body/Neck/Head/Ear:rotation")
+tracks/26/interp = 1
+tracks/26/loop_wrap = true
+tracks/26/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.436805]
+}
+tracks/27/type = "value"
+tracks/27/imported = false
+tracks/27/enabled = true
+tracks/27/path = NodePath("Body/Neck/Head/EyeFront/Iris/Pupil/PupilShine2:position")
+tracks/27/interp = 1
+tracks/27/loop_wrap = true
+tracks/27/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(6.48325, 4.35518)]
+}
+tracks/28/type = "value"
+tracks/28/imported = false
+tracks/28/enabled = true
+tracks/28/path = NodePath("Body/Neck/Head/EyeFront/Iris/Pupil/PupilShine2:rotation")
+tracks/28/interp = 1
+tracks/28/loop_wrap = true
+tracks/28/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/29/type = "value"
+tracks/29/imported = false
+tracks/29/enabled = true
+tracks/29/path = NodePath("Body/Neck/Head/EyeFront/Iris/Pupil/PupilShine:position")
+tracks/29/interp = 1
+tracks/29/loop_wrap = true
+tracks/29/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-1.03037, -9.94677)]
+}
+tracks/30/type = "value"
+tracks/30/imported = false
+tracks/30/enabled = true
+tracks/30/path = NodePath("Body/Neck/Head/EyeFront/Iris/Pupil/PupilShine:rotation")
+tracks/30/interp = 1
+tracks/30/loop_wrap = true
+tracks/30/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.236561]
+}
+tracks/31/type = "value"
+tracks/31/imported = false
+tracks/31/enabled = true
+tracks/31/path = NodePath("Body/Neck/Head/EyeFront/Iris/Pupil:position")
+tracks/31/interp = 1
+tracks/31/loop_wrap = true
+tracks/31/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-3.08707, -0.685577)]
+}
+tracks/32/type = "value"
+tracks/32/imported = false
+tracks/32/enabled = true
+tracks/32/path = NodePath("Body/Neck/Head/EyeFront/Iris/Pupil:rotation")
+tracks/32/interp = 1
+tracks/32/loop_wrap = true
+tracks/32/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/33/type = "value"
+tracks/33/imported = false
+tracks/33/enabled = true
+tracks/33/path = NodePath("Body/Neck/Head/EyeFront/Iris:position")
+tracks/33/interp = 1
+tracks/33/loop_wrap = true
+tracks/33/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-5.45288, 5.5916)]
+}
+tracks/34/type = "value"
+tracks/34/imported = false
+tracks/34/enabled = true
+tracks/34/path = NodePath("Body/Neck/Head/EyeFront/Iris:rotation")
+tracks/34/interp = 1
+tracks/34/loop_wrap = true
+tracks/34/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/35/type = "value"
+tracks/35/imported = false
+tracks/35/enabled = true
+tracks/35/path = NodePath("Body/Neck/Head/EyeFront/Lash:position")
+tracks/35/interp = 1
+tracks/35/loop_wrap = true
+tracks/35/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-14.2871, -9.32756)]
+}
+tracks/36/type = "value"
+tracks/36/imported = false
+tracks/36/enabled = true
+tracks/36/path = NodePath("Body/Neck/Head/EyeFront/Lash:rotation")
+tracks/36/interp = 1
+tracks/36/loop_wrap = true
+tracks/36/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [2.24227]
+}
+tracks/37/type = "value"
+tracks/37/imported = false
+tracks/37/enabled = true
+tracks/37/path = NodePath("Body/Neck/Head/EyeFront:position")
+tracks/37/interp = 1
+tracks/37/loop_wrap = true
+tracks/37/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(32.107, -44.2939)]
+}
+tracks/38/type = "value"
+tracks/38/imported = false
+tracks/38/enabled = true
+tracks/38/path = NodePath("Body/Neck/Head/EyeFront:rotation")
+tracks/38/interp = 1
+tracks/38/loop_wrap = true
+tracks/38/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/39/type = "value"
+tracks/39/imported = false
+tracks/39/enabled = true
+tracks/39/path = NodePath("Body/Neck/Head/Eye/Iris/Pupil/PupilShine2:position")
+tracks/39/interp = 1
+tracks/39/loop_wrap = true
+tracks/39/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1.24684, 7.96526)]
+}
+tracks/40/type = "value"
+tracks/40/imported = false
+tracks/40/enabled = true
+tracks/40/path = NodePath("Body/Neck/Head/Eye/Iris/Pupil/PupilShine2:rotation")
+tracks/40/interp = 1
+tracks/40/loop_wrap = true
+tracks/40/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/41/type = "value"
+tracks/41/imported = false
+tracks/41/enabled = true
+tracks/41/path = NodePath("Body/Neck/Head/Eye/Iris/Pupil:position")
+tracks/41/interp = 1
+tracks/41/loop_wrap = true
+tracks/41/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-1.09432, 3.43547)]
+}
+tracks/42/type = "value"
+tracks/42/imported = false
+tracks/42/enabled = true
+tracks/42/path = NodePath("Body/Neck/Head/Eye/Iris/Pupil:rotation")
+tracks/42/interp = 1
+tracks/42/loop_wrap = true
+tracks/42/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/43/type = "value"
+tracks/43/imported = false
+tracks/43/enabled = true
+tracks/43/path = NodePath("Body/Neck/Head/Eye/Iris:position")
+tracks/43/interp = 1
+tracks/43/loop_wrap = true
+tracks/43/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-5.11155, -3.27573)]
+}
+tracks/44/type = "value"
+tracks/44/imported = false
+tracks/44/enabled = true
+tracks/44/path = NodePath("Body/Neck/Head/Eye/Iris:rotation")
+tracks/44/interp = 1
+tracks/44/loop_wrap = true
+tracks/44/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/45/type = "value"
+tracks/45/imported = false
+tracks/45/enabled = true
+tracks/45/path = NodePath("Body/Neck/Head/Eye/Lash:position")
+tracks/45/interp = 1
+tracks/45/loop_wrap = true
+tracks/45/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1.52588e-05, -24.0747)]
+}
+tracks/46/type = "value"
+tracks/46/imported = false
+tracks/46/enabled = true
+tracks/46/path = NodePath("Body/Neck/Head/Eye/Lash:rotation")
+tracks/46/interp = 1
+tracks/46/loop_wrap = true
+tracks/46/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.456177]
+}
+tracks/47/type = "value"
+tracks/47/imported = false
+tracks/47/enabled = true
+tracks/47/path = NodePath("Body/Neck/Head/Eye:position")
+tracks/47/interp = 1
+tracks/47/loop_wrap = true
+tracks/47/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(86.1287, -46.8739)]
+}
+tracks/48/type = "value"
+tracks/48/imported = false
+tracks/48/enabled = true
+tracks/48/path = NodePath("Body/Neck/Head/Eye:rotation")
+tracks/48/interp = 1
+tracks/48/loop_wrap = true
+tracks/48/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0577994]
+}
+tracks/49/type = "value"
+tracks/49/imported = false
+tracks/49/enabled = true
+tracks/49/path = NodePath("Body/Neck/Head/Hair:position")
+tracks/49/interp = 1
+tracks/49/loop_wrap = true
+tracks/49/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(28.6955, -149.617)]
+}
+tracks/50/type = "value"
+tracks/50/imported = false
+tracks/50/enabled = true
+tracks/50/path = NodePath("Body/Neck/Head/Hair:rotation")
+tracks/50/interp = 1
+tracks/50/loop_wrap = true
+tracks/50/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.068965]
+}
+tracks/51/type = "value"
+tracks/51/imported = false
+tracks/51/enabled = true
+tracks/51/path = NodePath("Body/Neck/Head:position")
+tracks/51/interp = 1
+tracks/51/loop_wrap = true
+tracks/51/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(10.257, -31.7704)]
+}
+tracks/52/type = "value"
+tracks/52/imported = false
+tracks/52/enabled = true
+tracks/52/path = NodePath("Body/Neck/Head:rotation")
+tracks/52/interp = 1
+tracks/52/loop_wrap = true
+tracks/52/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0398988]
+}
+tracks/53/type = "value"
+tracks/53/imported = false
+tracks/53/enabled = true
+tracks/53/path = NodePath("Body/Neck:position")
+tracks/53/interp = 1
+tracks/53/loop_wrap = true
+tracks/53/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(74.5, -11.5)]
+}
+tracks/54/type = "value"
+tracks/54/imported = false
+tracks/54/enabled = true
+tracks/54/path = NodePath("Body/Neck:rotation")
+tracks/54/interp = 1
+tracks/54/loop_wrap = true
+tracks/54/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0876902]
+}
+tracks/55/type = "value"
+tracks/55/imported = false
+tracks/55/enabled = true
+tracks/55/path = NodePath("Body/Tail:position")
+tracks/55/interp = 1
+tracks/55/loop_wrap = true
+tracks/55/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-53, -16)]
+}
+tracks/56/type = "value"
+tracks/56/imported = false
+tracks/56/enabled = true
+tracks/56/path = NodePath("Body/Tail:rotation")
+tracks/56/interp = 1
+tracks/56/loop_wrap = true
+tracks/56/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.951901]
+}
+tracks/57/type = "value"
+tracks/57/imported = false
+tracks/57/enabled = true
+tracks/57/path = NodePath("Body/FrontBackLeg/LowerLeg:position")
+tracks/57/interp = 1
+tracks/57/loop_wrap = true
+tracks/57/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2.25, 73.5)]
+}
+tracks/58/type = "value"
+tracks/58/imported = false
+tracks/58/enabled = true
+tracks/58/path = NodePath("Body/FrontBackLeg/LowerLeg:rotation")
+tracks/58/interp = 1
+tracks/58/loop_wrap = true
+tracks/58/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.275205]
+}
+tracks/59/type = "value"
+tracks/59/imported = false
+tracks/59/enabled = true
+tracks/59/path = NodePath("Body/FrontBackLeg:position")
+tracks/59/interp = 1
+tracks/59/loop_wrap = true
+tracks/59/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(40, -3.8147e-06)]
+}
+tracks/60/type = "value"
+tracks/60/imported = false
+tracks/60/enabled = true
+tracks/60/path = NodePath("Body/FrontBackLeg:rotation")
+tracks/60/interp = 1
+tracks/60/loop_wrap = true
+tracks/60/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.469617]
+}
+tracks/61/type = "value"
+tracks/61/imported = false
+tracks/61/enabled = true
+tracks/61/path = NodePath("Body/BackBackLeg/LowerLeg:position")
+tracks/61/interp = 1
+tracks/61/loop_wrap = true
+tracks/61/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2.25, 73.5)]
+}
+tracks/62/type = "value"
+tracks/62/imported = false
+tracks/62/enabled = true
+tracks/62/path = NodePath("Body/BackBackLeg/LowerLeg:rotation")
+tracks/62/interp = 1
+tracks/62/loop_wrap = true
+tracks/62/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0643497]
+}
+tracks/63/type = "value"
+tracks/63/imported = false
+tracks/63/enabled = true
+tracks/63/path = NodePath("Body/BackBackLeg:position")
+tracks/63/interp = 1
+tracks/63/loop_wrap = true
+tracks/63/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-54, -4)]
+}
+tracks/64/type = "value"
+tracks/64/imported = false
+tracks/64/enabled = true
+tracks/64/path = NodePath("Body/BackBackLeg:rotation")
+tracks/64/interp = 1
+tracks/64/loop_wrap = true
+tracks/64/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.0282668]
+}
+tracks/65/type = "value"
+tracks/65/imported = false
+tracks/65/enabled = true
+tracks/65/path = NodePath("Body:position")
+tracks/65/interp = 1
+tracks/65/loop_wrap = true
+tracks/65/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/66/type = "value"
+tracks/66/imported = false
+tracks/66/enabled = true
+tracks/66/path = NodePath("Body:rotation")
+tracks/66/interp = 1
+tracks/66/loop_wrap = true
+tracks/66/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_6k4l8"]
+resource_name = "blink"
+length = 0.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body/Neck/Head/EyeFront:curve:point_0/position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(21.446, 0.794495), Vector2(20.4251, -2.68896), Vector2(20.4251, -2.68896), Vector2(21.446, 0.794495)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Body/Neck/Head/EyeFront:curve:point_0/out")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-0.977737, 18.8678), Vector2(0.057373, 1.75699), Vector2(0.057373, 1.75699), Vector2(-0.977737, 18.8678)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Body/Neck/Head/EyeFront:curve:point_1/position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 28.4301), Vector2(3.85795, -6.97078), Vector2(3.85795, -6.97078), Vector2(0, 28.4301)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Body/Neck/Head/EyeFront:curve:point_1/in")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(9.55051, -0.934471), Vector2(8.95242, 0.363831), Vector2(8.95242, 0.363831), Vector2(9.55051, -0.934471)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Body/Neck/Head/EyeFront:curve:point_1/out")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-9.55051, 0.934471), Vector2(-8.95242, -0.363831), Vector2(-8.95242, -0.363831), Vector2(-9.55051, 0.934471)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Body/Neck/Head/EyeFront:curve:point_2/position")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-19.412, 11.5617), Vector2(-16.5947, -4.4091), Vector2(-16.5947, -4.4091), Vector2(-19.412, 11.5617)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Body/Neck/Head/EyeFront:curve:point_2/in")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(2.13377, 16.4391), Vector2(0, 0), Vector2(0, 0), Vector2(2.13377, 16.4391)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Body/Neck/Head/EyeFront:curve:point_2/out")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Body/Neck/Head/EyeFront:curve:point_3/position")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-14.2871, -9.32756), Vector2(-16.33, -4.42479), Vector2(-16.33, -4.42479), Vector2(-14.2871, -9.32756)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Body/Neck/Head/EyeFront:curve:point_3/in")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-5.547, 7.10938), Vector2(0, 0), Vector2(0, 0), Vector2(-5.547, 7.10938)]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("Body/Neck/Head/EyeFront:curve:point_3/out")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(5.547, -7.10938), Vector2(1.11481, -1.14967), Vector2(1.11481, -1.14967), Vector2(5.547, -7.10938)]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("Body/Neck/Head/EyeFront:curve:point_4/position")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(4.63549, -25.614), Vector2(4.39856, -8.22367), Vector2(4.39856, -8.22367), Vector2(4.63549, -25.614)]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("Body/Neck/Head/EyeFront:curve:point_4/in")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-6.6368, 1.44151), Vector2(-6.94746, -0.453003), Vector2(-6.94746, -0.453003), Vector2(-6.6368, 1.44151)]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("Body/Neck/Head/EyeFront:curve:point_4/out")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(6.6368, -1.44151), Vector2(6.94746, 0.453003), Vector2(6.94746, 0.453003), Vector2(6.6368, -1.44151)]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("Body/Neck/Head/EyeFront:curve:point_5/position")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(21.446, 0.794495), Vector2(20.4251, -2.68896), Vector2(20.4251, -2.68896), Vector2(21.446, 0.794495)]
+}
+tracks/15/type = "value"
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/path = NodePath("Body/Neck/Head/EyeFront:curve:point_5/in")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0.977737, -18.8678), Vector2(-0.311813, -3.74073), Vector2(-0.311813, -3.74073), Vector2(0.977737, -18.8678)]
+}
+
+[sub_resource type="Animation" id="Animation_fdul0"]
+resource_name = "close_mouth"
+length = 0.1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body/Neck/Head/Mouth:curve:point_2/position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-13.745, 9.15728), Vector2(2.44629, 0.755123)]
+}
+
+[sub_resource type="Animation" id="Animation_7nlme"]
+resource_name = "open_mouth"
+length = 0.1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body/Neck/Head/Mouth:curve:point_2/position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(2.44629, 0.755123), Vector2(-13.745, 9.15728)]
+}
+
+[sub_resource type="Animation" id="Animation_xtm0y"]
+resource_name = "stagger"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body/BackFrontLeg/LowerLeg:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2.25, 73.5)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Body/BackFrontLeg/LowerLeg:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.132747]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Body/BackFrontLeg:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-60, -2)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Body/BackFrontLeg:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.138036, 0.604681, 0.806003]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Body/FrontFrontLeg/LowerLeg:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2.25, 73.5)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Body/FrontFrontLeg/LowerLeg:rotation")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.0668674, 0.612558]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Body/FrontFrontLeg:position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(40, -4)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Body/FrontFrontLeg:rotation")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.0792349, -0.264371]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Body/Neck/Head/Ear:position")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(3.42202, -63.7032)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Body/Neck/Head/Ear:rotation")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.436805]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("Body/Neck/Head/EyeFront/Iris/Pupil/PupilShine2:position")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(6.48325, 4.35518)]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("Body/Neck/Head/EyeFront/Iris/Pupil/PupilShine2:rotation")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("Body/Neck/Head/EyeFront/Iris/Pupil/PupilShine:position")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-1.03037, -9.94677)]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("Body/Neck/Head/EyeFront/Iris/Pupil/PupilShine:rotation")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.236561]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("Body/Neck/Head/EyeFront/Iris/Pupil:position")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-3.08707, -0.685577)]
+}
+tracks/15/type = "value"
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/path = NodePath("Body/Neck/Head/EyeFront/Iris/Pupil:rotation")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/16/type = "value"
+tracks/16/imported = false
+tracks/16/enabled = true
+tracks/16/path = NodePath("Body/Neck/Head/EyeFront/Iris:position")
+tracks/16/interp = 1
+tracks/16/loop_wrap = true
+tracks/16/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-5.45288, 5.5916)]
+}
+tracks/17/type = "value"
+tracks/17/imported = false
+tracks/17/enabled = true
+tracks/17/path = NodePath("Body/Neck/Head/EyeFront/Iris:rotation")
+tracks/17/interp = 1
+tracks/17/loop_wrap = true
+tracks/17/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/18/type = "value"
+tracks/18/imported = false
+tracks/18/enabled = true
+tracks/18/path = NodePath("Body/Neck/Head/EyeFront/Lash:position")
+tracks/18/interp = 1
+tracks/18/loop_wrap = true
+tracks/18/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-14.2871, -9.32756)]
+}
+tracks/19/type = "value"
+tracks/19/imported = false
+tracks/19/enabled = true
+tracks/19/path = NodePath("Body/Neck/Head/EyeFront/Lash:rotation")
+tracks/19/interp = 1
+tracks/19/loop_wrap = true
+tracks/19/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [2.24227]
+}
+tracks/20/type = "value"
+tracks/20/imported = false
+tracks/20/enabled = true
+tracks/20/path = NodePath("Body/Neck/Head/EyeFront:position")
+tracks/20/interp = 1
+tracks/20/loop_wrap = true
+tracks/20/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(32.107, -44.2939)]
+}
+tracks/21/type = "value"
+tracks/21/imported = false
+tracks/21/enabled = true
+tracks/21/path = NodePath("Body/Neck/Head/EyeFront:rotation")
+tracks/21/interp = 1
+tracks/21/loop_wrap = true
+tracks/21/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/22/type = "value"
+tracks/22/imported = false
+tracks/22/enabled = true
+tracks/22/path = NodePath("Body/Neck/Head/Eye/Iris/Pupil/PupilShine2:position")
+tracks/22/interp = 1
+tracks/22/loop_wrap = true
+tracks/22/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1.24684, 7.96526)]
+}
+tracks/23/type = "value"
+tracks/23/imported = false
+tracks/23/enabled = true
+tracks/23/path = NodePath("Body/Neck/Head/Eye/Iris/Pupil/PupilShine2:rotation")
+tracks/23/interp = 1
+tracks/23/loop_wrap = true
+tracks/23/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/24/type = "value"
+tracks/24/imported = false
+tracks/24/enabled = true
+tracks/24/path = NodePath("Body/Neck/Head/Eye/Iris/Pupil:position")
+tracks/24/interp = 1
+tracks/24/loop_wrap = true
+tracks/24/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-1.09432, 3.43547)]
+}
+tracks/25/type = "value"
+tracks/25/imported = false
+tracks/25/enabled = true
+tracks/25/path = NodePath("Body/Neck/Head/Eye/Iris/Pupil:rotation")
+tracks/25/interp = 1
+tracks/25/loop_wrap = true
+tracks/25/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/26/type = "value"
+tracks/26/imported = false
+tracks/26/enabled = true
+tracks/26/path = NodePath("Body/Neck/Head/Eye/Iris:position")
+tracks/26/interp = 1
+tracks/26/loop_wrap = true
+tracks/26/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-5.11155, -3.27573)]
+}
+tracks/27/type = "value"
+tracks/27/imported = false
+tracks/27/enabled = true
+tracks/27/path = NodePath("Body/Neck/Head/Eye/Iris:rotation")
+tracks/27/interp = 1
+tracks/27/loop_wrap = true
+tracks/27/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/28/type = "value"
+tracks/28/imported = false
+tracks/28/enabled = true
+tracks/28/path = NodePath("Body/Neck/Head/Eye/Lash:position")
+tracks/28/interp = 1
+tracks/28/loop_wrap = true
+tracks/28/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1.52588e-05, -24.0747)]
+}
+tracks/29/type = "value"
+tracks/29/imported = false
+tracks/29/enabled = true
+tracks/29/path = NodePath("Body/Neck/Head/Eye/Lash:rotation")
+tracks/29/interp = 1
+tracks/29/loop_wrap = true
+tracks/29/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.456177]
+}
+tracks/30/type = "value"
+tracks/30/imported = false
+tracks/30/enabled = true
+tracks/30/path = NodePath("Body/Neck/Head/Eye:position")
+tracks/30/interp = 1
+tracks/30/loop_wrap = true
+tracks/30/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(86.1287, -46.8739)]
+}
+tracks/31/type = "value"
+tracks/31/imported = false
+tracks/31/enabled = true
+tracks/31/path = NodePath("Body/Neck/Head/Eye:rotation")
+tracks/31/interp = 1
+tracks/31/loop_wrap = true
+tracks/31/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0577994]
+}
+tracks/32/type = "value"
+tracks/32/imported = false
+tracks/32/enabled = true
+tracks/32/path = NodePath("Body/Neck/Head/Hair:position")
+tracks/32/interp = 1
+tracks/32/loop_wrap = true
+tracks/32/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(28.6955, -149.617)]
+}
+tracks/33/type = "value"
+tracks/33/imported = false
+tracks/33/enabled = true
+tracks/33/path = NodePath("Body/Neck/Head/Hair:rotation")
+tracks/33/interp = 1
+tracks/33/loop_wrap = true
+tracks/33/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.068965]
+}
+tracks/34/type = "value"
+tracks/34/imported = false
+tracks/34/enabled = true
+tracks/34/path = NodePath("Body/Neck/Head:position")
+tracks/34/interp = 1
+tracks/34/loop_wrap = true
+tracks/34/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(10.257, -31.7704)]
+}
+tracks/35/type = "value"
+tracks/35/imported = false
+tracks/35/enabled = true
+tracks/35/path = NodePath("Body/Neck/Head:rotation")
+tracks/35/interp = 1
+tracks/35/loop_wrap = true
+tracks/35/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0398988, 0.289577, 0.24501]
+}
+tracks/36/type = "value"
+tracks/36/imported = false
+tracks/36/enabled = true
+tracks/36/path = NodePath("Body/Neck:position")
+tracks/36/interp = 1
+tracks/36/loop_wrap = true
+tracks/36/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(74.5, -11.5)]
+}
+tracks/37/type = "value"
+tracks/37/imported = false
+tracks/37/enabled = true
+tracks/37/path = NodePath("Body/Neck:rotation")
+tracks/37/interp = 1
+tracks/37/loop_wrap = true
+tracks/37/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0876902]
+}
+tracks/38/type = "value"
+tracks/38/imported = false
+tracks/38/enabled = true
+tracks/38/path = NodePath("Body/Tail:position")
+tracks/38/interp = 1
+tracks/38/loop_wrap = true
+tracks/38/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-53, -16)]
+}
+tracks/39/type = "value"
+tracks/39/imported = false
+tracks/39/enabled = true
+tracks/39/path = NodePath("Body/Tail:rotation")
+tracks/39/interp = 1
+tracks/39/loop_wrap = true
+tracks/39/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.951901, -0.698623]
+}
+tracks/40/type = "value"
+tracks/40/imported = false
+tracks/40/enabled = true
+tracks/40/path = NodePath("Body/FrontBackLeg/LowerLeg:position")
+tracks/40/interp = 1
+tracks/40/loop_wrap = true
+tracks/40/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2.25, 73.5)]
+}
+tracks/41/type = "value"
+tracks/41/imported = false
+tracks/41/enabled = true
+tracks/41/path = NodePath("Body/FrontBackLeg/LowerLeg:rotation")
+tracks/41/interp = 1
+tracks/41/loop_wrap = true
+tracks/41/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.275205, 0.195533]
+}
+tracks/42/type = "value"
+tracks/42/imported = false
+tracks/42/enabled = true
+tracks/42/path = NodePath("Body/FrontBackLeg:position")
+tracks/42/interp = 1
+tracks/42/loop_wrap = true
+tracks/42/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(40, -3.8147e-06)]
+}
+tracks/43/type = "value"
+tracks/43/imported = false
+tracks/43/enabled = true
+tracks/43/path = NodePath("Body/FrontBackLeg:rotation")
+tracks/43/interp = 1
+tracks/43/loop_wrap = true
+tracks/43/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [-0.469617, -0.779233, -0.975267]
+}
+tracks/44/type = "value"
+tracks/44/imported = false
+tracks/44/enabled = true
+tracks/44/path = NodePath("Body/BackBackLeg/LowerLeg:position")
+tracks/44/interp = 1
+tracks/44/loop_wrap = true
+tracks/44/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(2.25, 73.5), Vector2(2.20336, 74.2264)]
+}
+tracks/45/type = "value"
+tracks/45/imported = false
+tracks/45/enabled = true
+tracks/45/path = NodePath("Body/BackBackLeg/LowerLeg:rotation")
+tracks/45/interp = 1
+tracks/45/loop_wrap = true
+tracks/45/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0643497, 0.452207, 0.295327]
+}
+tracks/46/type = "value"
+tracks/46/imported = false
+tracks/46/enabled = true
+tracks/46/path = NodePath("Body/BackBackLeg:position")
+tracks/46/interp = 1
+tracks/46/loop_wrap = true
+tracks/46/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-54, -4)]
+}
+tracks/47/type = "value"
+tracks/47/imported = false
+tracks/47/enabled = true
+tracks/47/path = NodePath("Body/BackBackLeg:rotation")
+tracks/47/interp = 1
+tracks/47/loop_wrap = true
+tracks/47/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [-0.0282668, 0.0831692, -0.0478]
+}
+tracks/48/type = "value"
+tracks/48/imported = false
+tracks/48/enabled = true
+tracks/48/path = NodePath("Body:position")
+tracks/48/interp = 1
+tracks/48/loop_wrap = true
+tracks/48/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(-1, -28), Vector2(-1, -41)]
+}
+tracks/49/type = "value"
+tracks/49/imported = false
+tracks/49/enabled = true
+tracks/49/path = NodePath("Body:rotation")
+tracks/49/interp = 1
+tracks/49/loop_wrap = true
+tracks/49/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, -0.480274, -0.633399]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xtm0y"]
+_data = {
+&"RESET": SubResource("Animation_mbs44"),
+&"blink": SubResource("Animation_6k4l8"),
+&"close_mouth": SubResource("Animation_fdul0"),
+&"open_mouth": SubResource("Animation_7nlme"),
+&"stagger": SubResource("Animation_xtm0y")
+}
+
+[node name="Pony" type="Node2D"]
+script = SubResource("GDScript_6k4l8")
+metadata/_edit_horizontal_guides_ = [153.0]
+metadata/_edit_lock_ = true
+
+[node name="Body" type="Node2D" parent="." node_paths=PackedStringArray("polygon", "line")]
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.427548, 0.209066, 0.760482, 1)
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_gghv2")
+update_curve_at_runtime = true
+tolerance_degrees = 2.0
+arc_list = SubResource("Resource_p8hpb")
+
+[node name="BackBackLeg" type="Node2D" parent="Body" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(-54, -4)
+rotation = -0.0282668
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.427548, 0.209066, 0.760482, 1)
+line_joint_mode = 2
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_nndv2")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_nndv2")
+offset = Vector2(-1, 43.3333)
+
+[node name="Stroke" type="Line2D" parent="Body/BackBackLeg"]
+points = PackedVector2Array(21.7024, -14.457, 24.976, -9.36402, 27.651, -3.86431, 29.7721, 1.9749, 31.3843, 8.08636, 33.2611, 20.8571, 33.6399, 33.91, 31.3386, 58.7109, 27.3494, 78.1857, 16.3431, 83.3797, 11.4674, 85.2, 6.99914, 86.408, 4.9152, 86.7603, 2.93001, 86.933, 1.04256, 86.9172, -0.748183, 86.7041, -2.44325, 86.2848, -4.04367, 85.6505, -4.80871, 85.25, -5.55047, 84.7924, -6.96468, 83.7015, -5.56044, 44.7267, -7.63446, 22.1265, -12.75, -3.25)
+width_curve = SubResource("Curve_d7gkk")
+default_color = Color(0.427548, 0.209066, 0.760482, 1)
+joint_mode = 2
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="LowerLeg" type="Node2D" parent="Body/BackBackLeg" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(2.25, 73.5)
+rotation = 0.0643497
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.427548, 0.209066, 0.760482, 1)
+line_joint_mode = 2
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_gy81n")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_ipurh")
+
+[node name="Stroke" type="Line2D" parent="Body/BackBackLeg/LowerLeg"]
+points = PackedVector2Array(25.3488, 3.06196, 24.0553, 29.0148, 24.4063, 52.0481, 25.4051, 63.3351, 27.1715, 73.4236, 21.2378, 76.1927, 15.2851, 78.1706, 9.31353, 79.3574, 3.323, 79.7529, -2.68647, 79.3574, -8.71488, 78.1706, -14.7622, 76.1927, -20.8285, 73.4236, -21.0618, 73.0148, -21.2625, 72.54, -21.4314, 72.0015, -21.5694, 71.4016, -21.7567, 70.027, -21.8317, 68.4347, -21.6749, 64.6712, -21.1584, 60.2594, -16.684, 39.0982, -8.5396, 10.7729)
+width_curve = SubResource("Curve_1ve1q")
+default_color = Color(0.427548, 0.209066, 0.760482, 1)
+joint_mode = 2
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/BackBackLeg/LowerLeg"]
+color = Color(0.558594, 0.606873, 1, 1)
+polygon = PackedVector2Array(25.3488, 3.06196, 24.0553, 29.0148, 24.4063, 52.0481, 25.4051, 63.3351, 27.1715, 73.4236, 21.2378, 76.1927, 15.2851, 78.1706, 9.31353, 79.3574, 3.323, 79.7529, -2.68647, 79.3574, -8.71488, 78.1706, -14.7622, 76.1927, -20.8285, 73.4236, -21.0618, 73.0148, -21.2625, 72.54, -21.4314, 72.0015, -21.5694, 71.4016, -21.7567, 70.027, -21.8317, 68.4347, -21.6749, 64.6712, -21.1584, 60.2594, -16.684, 39.0982, -8.5396, 10.7729)
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/BackBackLeg"]
+color = Color(0.558594, 0.606873, 1, 1)
+polygon = PackedVector2Array(21.7024, -14.457, 24.976, -9.36402, 27.651, -3.86431, 29.7721, 1.9749, 31.3843, 8.08636, 33.2611, 20.8571, 33.6399, 33.91, 31.3386, 58.7109, 27.3494, 78.1857, 16.3431, 83.3797, 11.4674, 85.2, 6.99914, 86.408, 4.9152, 86.7603, 2.93001, 86.933, 1.04256, 86.9172, -0.748183, 86.7041, -2.44325, 86.2848, -4.04367, 85.6505, -4.80871, 85.25, -5.55047, 84.7924, -6.96468, 83.7015, -5.56044, 44.7267, -7.63446, 22.1265, -12.75, -3.25)
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D" type="Node2D" parent="Body/BackBackLeg" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(-6.96468, 83.7015)
+rotation = -0.522935
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 2,
+NodePath("../LowerLeg"): 3
+}
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D2" type="Node2D" parent="Body/BackBackLeg" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(27.3494, 78.1857)
+rotation = -0.522935
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 1,
+NodePath("../LowerLeg"): 0
+}
+metadata/_edit_lock_ = true
+
+[node name="FrontBackLeg" type="Node2D" parent="Body" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(40, -3.8147e-06)
+rotation = -0.469617
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.427548, 0.209066, 0.760482, 1)
+line_joint_mode = 2
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_inuwg")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_nndv2")
+offset = Vector2(-1, 43.3333)
+
+[node name="Stroke" type="Line2D" parent="Body/FrontBackLeg"]
+points = PackedVector2Array(27.19, -1.95666, 22.9566, 90.574, 16.4692, 95.704, 13.4676, 97.6733, 10.6328, 99.2301, 7.96882, 100.363, 6.7022, 100.767, 5.47981, 101.06, 4.30218, 101.242, 3.16979, 101.31, 2.08317, 101.264, 1.04282, 101.102, 0.0492504, 100.822, -0.897038, 100.424, -1.79553, 99.9045, -2.64573, 99.2636, -3.44712, 98.4994, -4.19919, 97.6106, -4.90144, 96.5956, -5.55336, 95.453, -6.70418, 92.7793, -7.6476, 89.578, -8.37954, 85.8376, -8.89595, 81.5466, -12.75, -3.25)
+width_curve = SubResource("Curve_d7gkk")
+default_color = Color(0.427548, 0.209066, 0.760482, 1)
+joint_mode = 2
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="LowerLeg" type="Node2D" parent="Body/FrontBackLeg" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(2.25, 73.5)
+rotation = 0.275205
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.427548, 0.209066, 0.760482, 1)
+line_joint_mode = 2
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_trrx4")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_ipurh")
+
+[node name="Stroke" type="Line2D" parent="Body/FrontBackLeg/LowerLeg"]
+points = PackedVector2Array(24.5672, 10.8046, 27.1715, 73.4236, 21.2378, 76.1927, 15.2851, 78.1706, 9.31353, 79.3574, 3.323, 79.7529, -2.68647, 79.3574, -8.71488, 78.1706, -14.7622, 76.1927, -20.8285, 73.4236, -21.0618, 73.0148, -21.2625, 72.54, -21.4314, 72.0015, -21.5694, 71.4016, -21.7567, 70.027, -21.8317, 68.4347, -21.6749, 64.6712, -21.1584, 60.2594, -16.6842, 39.0982, -8.53989, 10.7727)
+width_curve = SubResource("Curve_1ve1q")
+default_color = Color(0.427548, 0.209066, 0.760482, 1)
+joint_mode = 2
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/FrontBackLeg/LowerLeg"]
+color = Color(0.558594, 0.606873, 1, 1)
+polygon = PackedVector2Array(24.5672, 10.8046, 27.1715, 73.4236, 21.2378, 76.1927, 15.2851, 78.1706, 9.31353, 79.3574, 3.323, 79.7529, -2.68647, 79.3574, -8.71488, 78.1706, -14.7622, 76.1927, -20.8285, 73.4236, -21.0618, 73.0148, -21.2625, 72.54, -21.4314, 72.0015, -21.5694, 71.4016, -21.7567, 70.027, -21.8317, 68.4347, -21.6749, 64.6712, -21.1584, 60.2594, -16.6842, 39.0982, -8.53989, 10.7727)
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/FrontBackLeg"]
+color = Color(0.558594, 0.606873, 1, 1)
+polygon = PackedVector2Array(27.19, -1.95666, 22.9566, 90.574, 16.4692, 95.704, 13.4676, 97.6733, 10.6328, 99.2301, 7.96882, 100.363, 6.7022, 100.767, 5.47981, 101.06, 4.30218, 101.242, 3.16979, 101.31, 2.08317, 101.264, 1.04282, 101.102, 0.0492504, 100.822, -0.897038, 100.424, -1.79553, 99.9045, -2.64573, 99.2636, -3.44712, 98.4994, -4.19919, 97.6106, -4.90144, 96.5956, -5.55336, 95.453, -6.70418, 92.7793, -7.6476, 89.578, -8.37954, 85.8376, -8.89595, 81.5466, -12.75, -3.25)
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D" type="Node2D" parent="Body/FrontBackLeg" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(22.9566, 90.574)
+rotation = 0.665231
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 1,
+NodePath("../LowerLeg"): 0
+}
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D2" type="Node2D" parent="Body/FrontBackLeg" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(-8.89595, 81.5466)
+rotation = 0.665231
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 2,
+NodePath("../LowerLeg"): 3
+}
+metadata/_edit_lock_ = true
+
+[node name="Tail" type="Node2D" parent="Body" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(-53, -16)
+rotation = -0.951901
+scale = Vector2(1.03201, 0.842576)
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.58, 0, 0.212667, 1)
+line_joint_mode = 2
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_2jd1f")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_gtrm0")
+metadata/_hover_point_idx_ = 4
+metadata/_hover_closest_point_on_curve_ = Object(Object,"script":Resource("res://addons/curved_lines_2d/closest_point_on_curve_meta.gd"),"before_segment":5,"point_position":Vector2(-60.43, 67.1905),"local_point_position":Vector2(-86.8231, -10.1369))
+
+
+[node name="Stroke" type="Line2D" parent="Body/Tail"]
+points = PackedVector2Array(13.6271, -11.8026, -1.92606, -28.3036, -17.2001, -42.3745, -32.334, -53.968, -47.4669, -63.0373, -55.0765, -66.6107, -62.7379, -69.5354, -70.4686, -71.8055, -78.286, -73.4151, -86.2075, -74.3585, -94.2504, -74.6296, -102.432, -74.2227, -110.77, -73.1318, -101.872, -51.5176, -101.466, -27.786, -89.5158, -9.09912, -84.7696, -10.9283, -80.0079, -12.1789, -75.2238, -12.8582, -70.411, -12.9733, -65.5626, -12.5317, -60.6722, -11.5405, -55.7331, -10.0069, -50.7388, -7.9384, -45.6825, -5.34207, -40.5577, -2.22523, -30.0761, 5.54096, -19.2412, 15.3021, -8, 27, -1.55304, 15.4331, 3.31161, 6.70516)
+closed = true
+default_color = Color(0.58, 0, 0.212667, 1)
+joint_mode = 2
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/Tail"]
+texture = SubResource("GradientTexture2D_d1cq6")
+texture_offset = Vector2(110.77, 74.6296)
+polygon = PackedVector2Array(13.6271, -11.8026, -1.92606, -28.3036, -17.2001, -42.3745, -32.334, -53.968, -47.4669, -63.0373, -55.0765, -66.6107, -62.7379, -69.5354, -70.4686, -71.8055, -78.286, -73.4151, -86.2075, -74.3585, -94.2504, -74.6296, -102.432, -74.2227, -110.77, -73.1318, -101.872, -51.5176, -101.466, -27.786, -89.5158, -9.09912, -84.7696, -10.9283, -80.0079, -12.1789, -75.2238, -12.8582, -70.411, -12.9733, -65.5626, -12.5317, -60.6722, -11.5405, -55.7331, -10.0069, -50.7388, -7.9384, -45.6825, -5.34207, -40.5577, -2.22523, -30.0761, 5.54096, -19.2412, 15.3021, -8, 27, -1.55304, 15.4331, 3.31161, 6.70516)
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D" type="Node2D" parent="Body/Tail" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(13.6271, -11.8025)
+rotation = 0.901859
+scale = Vector2(1.08689, 1.0799)
+skew = -0.201318
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath("../.."): 0,
+NodePath(".."): 0
+}
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D2" type="Node2D" parent="Body/Tail" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(-101.872, -51.5176)
+rotation = 1.14354
+scale = Vector2(1.13894, 1.02486)
+skew = -0.171998
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 2,
+NodePath("../Path"): 1
+}
+metadata/_edit_lock_ = true
+
+[node name="Path2" type="Node2D" parent="Body/Tail" node_paths=PackedStringArray("line")]
+script = ExtResource("1_inuwg")
+stroke_color = Color(0.58, 0, 0.212667, 1)
+stroke_width = 2.0
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_7tj20")
+update_curve_at_runtime = true
+tolerance_degrees = 2.0
+arc_list = SubResource("Resource_t2jyf")
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Tail/Path2"]
+points = PackedVector2Array(-1.55305, 15.4331, -11.6934, 5.53083, -17.2183, 0.630596, -23.0047, -4.14725, -29.0214, -8.73636, -35.237, -13.0704, -41.6205, -17.083, -48.1404, -20.7078, -54.7657, -23.8786, -58.108, -25.2729, -61.4649, -26.5289, -64.8326, -27.6381, -68.207, -28.5924, -71.5843, -29.3834, -74.9607, -30.0028, -78.332, -30.4423, -81.6946, -30.6936, -85.0445, -30.7485, -88.3777, -30.5987, -91.6903, -30.2358, -94.9785, -29.6516, -98.2384, -28.8378, -99.8565, -28.3421, -101.466, -27.786)
+width = 2.0
+default_color = Color(0.58, 0, 0.212667, 1)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Path" type="Node2D" parent="Body/Tail" node_paths=PackedStringArray("line")]
+script = ExtResource("1_inuwg")
+stroke_color = Color(0.58, 0, 0.212667, 1)
+stroke_width = 2.0
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_r5ynq")
+update_curve_at_runtime = true
+tolerance_degrees = 2.0
+arc_list = SubResource("Resource_fwayd")
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Tail/Path"]
+points = PackedVector2Array(0.816067, 0.639946, 0.36928, -0.880961, -0.146897, -2.40265, -0.730885, -3.924, -1.3811, -5.44388, -2.87392, -8.47478, -4.61272, -11.4864, -6.58486, -14.4696, -8.77771, -17.4156, -11.1786, -20.3154, -13.775, -23.1599, -16.5542, -25.9403, -19.5035, -28.6474, -22.6104, -31.2724, -25.8622, -33.8062, -29.2463, -36.2399, -32.75, -38.5645, -36.3607, -40.7711, -40.0658, -42.8506, -43.8526, -44.7941, -47.7085, -46.5925, -51.6209, -48.237, -55.5771, -49.7185, -59.5645, -51.0281, -63.5705, -52.1567, -67.5824, -53.0955, -71.5876, -53.8353, -75.5735, -54.3674, -79.5274, -54.6826, -83.4367, -54.7719, -87.2888, -54.6265, -91.071, -54.2374, -92.9319, -53.9486, -94.7707, -53.5955, -96.5856, -53.1769, -98.3752, -52.6918, -100.138, -52.1391, -101.872, -51.5175)
+width = 2.0
+default_color = Color(0.58, 0, 0.212667, 1)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D3" type="Node2D" parent="Body/Tail" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(-101.466, -27.786)
+rotation = 1.00185
+scale = Vector2(1.10906, 1.05712)
+skew = -0.195706
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 3,
+NodePath("../Path2"): 1
+}
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D4" type="Node2D" parent="Body/Tail" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(-1.55304, 15.4331)
+rotation = 1.00185
+scale = Vector2(1.10906, 1.05712)
+skew = -0.195706
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 6,
+NodePath("../Path2"): 0
+}
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body"]
+points = PackedVector2Array(-52.9414, -33.224, -51.7496, -33.8212, -50.4681, -34.3921, -49.1002, -34.9371, -47.6495, -35.4569, -44.5133, -36.4227, -41.0875, -37.2939, -33.4777, -38.7699, -25.0426, -39.9195, -6.5858, -41.3787, 12.5042, -41.9494, 59.6188, -40.9053, 99.2969, -5.36705, 96.225, -1.87789, 92.7209, 1.74545, 88.8128, 5.46957, 84.529, 9.26107, 74.9469, 16.9126, 64.2003, 24.4329, 52.5148, 31.5548, 46.3906, 34.8827, 40.1162, 38.0109, 33.72, 40.9059, 27.2301, 43.5342, 20.6748, 45.8626, 14.0822, 47.8575, 7.48057, 49.4856, 0.89814, 50.7135, -5.63691, 51.5078, -8.87785, 51.7319, -12.0964, 51.8351, -15.2889, 51.8132, -18.452, 51.662, -21.5821, 51.3773, -24.6756, 50.955, -27.7291, 50.3909, -30.739, 49.6809, -33.7018, 48.8207, -36.614, 47.8061, -39.472, 46.6331, -42.2723, 45.2974, -45.0114, 43.7948, -47.6857, 42.1212, -50.2918, 40.2724, -52.8261, 38.2442, -55.2851, 36.0325, -57.6652, 33.633, -59.963, 31.0417, -62.1749, 28.2542, -64.2973, 25.2666, -66.3268, 22.0745, -68.2598, 18.6737, -70.0928, 15.0602, -71.8223, 11.2298, -73.4447, 7.17824, -73.5662, 5.97648, -73.647, 4.56595, -73.6781, 2.69717, -73.6122, 0.431249, -73.4018, -2.17069, -72.9997, -5.04752, -72.3586, -8.13813, -71.9335, -9.7445, -71.431, -11.3814, -70.845, -13.0412, -70.1696, -14.7162, -69.399, -16.3988, -68.5272, -18.0813, -67.5482, -19.7562, -66.4563, -21.4158, -65.2453, -23.0524, -63.9096, -24.6584, -62.443, -26.2262, -60.8398, -27.7481, -59.0939, -29.2164, -57.1995, -30.6236, -55.1506, -31.962)
+closed = true
+default_color = Color(0.427548, 0.209066, 0.760482, 1)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Neck" type="Node2D" parent="Body" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(74.5, -11.5)
+rotation = 0.0876902
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.427548, 0.209066, 0.760482, 1)
+line_joint_mode = 2
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_1ve1q")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_2jd1f")
+
+[node name="Stroke" type="Line2D" parent="Body/Neck"]
+points = PackedVector2Array(-5.10262, -46.7849, 40.5973, -22.6226, 25.2388, 3.93773, -17.3993, -27.9891)
+closed = true
+default_color = Color(0.427548, 0.209066, 0.760482, 1)
+joint_mode = 2
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck"]
+color = Color(0.558594, 0.606873, 1, 1)
+polygon = PackedVector2Array(-5.10262, -46.7849, 40.5973, -22.6226, 25.2388, 3.93773, -17.3993, -27.9891)
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D" type="Node2D" parent="Body/Neck" node_paths=PackedStringArray("vertex_map")]
+visible = false
+position = Vector2(-17.3993, -27.989)
+rotation = -0.210176
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath("../.."): 1,
+NodePath(".."): 3
+}
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D2" type="Node2D" parent="Body/Neck" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(25.2387, 3.93773)
+rotation = -0.210176
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath("../.."): 2,
+NodePath(".."): 2
+}
+metadata/_edit_lock_ = true
+
+[node name="Head" type="Node2D" parent="Body/Neck" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(10.257, -31.7704)
+rotation = 0.0398988
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.427451, 0.207843, 0.760784, 1)
+line = NodePath("BackHair/Stroke2")
+curve = SubResource("Curve2D_gtrm0")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_hytqm")
+rx = 60.0
+ry = 60.0
+
+[node name="BackHair" type="Node2D" parent="Body/Neck/Head" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(120.07, -44.4362)
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.580392, 0, 0.211765, 1)
+stroke_width = 4.0
+line_joint_mode = 2
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_hytqm")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_d1cq6")
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/BackHair"]
+points = PackedVector2Array(-54.3072, -35.3798, -14.1477, -85.0489, -9.92882, -67.7769, -4.06947, -52.6502, 2.75134, -39.7174, 9.85462, -29.0271, 16.5614, -20.6279, 22.1925, -14.5683, 27.5123, -9.66228, 2.66948, 19.0798, -42.9545, 80.1351, -40.7503, 6.91599, -40.9231, -5.39432, -41.5963, -10.97, -42.7765, -16.237, -44.5508, -21.2533, -47.006, -26.0771, -50.2292, -30.7666)
+closed = true
+width = 4.0
+default_color = Color(0.580392, 0, 0.211765, 1)
+joint_mode = 2
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck/Head/BackHair"]
+texture = SubResource("GradientTexture2D_t2jyf")
+texture_offset = Vector2(54.3072, 85.0489)
+polygon = PackedVector2Array(-54.3072, -35.3798, -14.1477, -85.0489, -9.92882, -67.7769, -4.06947, -52.6502, 2.75134, -39.7174, 9.85462, -29.0271, 16.5614, -20.6279, 22.1925, -14.5683, 27.5123, -9.66228, 2.66948, 19.0798, -42.9545, 80.1351, -40.7503, 6.91599, -40.9231, -5.39432, -41.5963, -10.97, -42.7765, -16.237, -44.5508, -21.2533, -47.006, -26.0771, -50.2292, -30.7666)
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D" type="Node2D" parent="Body/Neck/Head/BackHair" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(-42.9545, 80.1351)
+rotation = -0.0876902
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 3,
+NodePath("../../Hair"): 10
+}
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D2" type="Node2D" parent="Body/Neck/Head/BackHair" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(-14.1477, -85.0489)
+rotation = -0.0876902
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 1,
+NodePath("../../Hair"): 0
+}
+metadata/_edit_lock_ = true
+
+[node name="Stroke2" type="Line2D" parent="Body/Neck/Head/BackHair"]
+position = Vector2(-120.07, 44.4362)
+points = PackedVector2Array(88.8385, -45.7059, 84.0102, -30.4889, 78.5724, -17.8271, 75.6112, -12.4352, 72.481, -7.65898, 69.1765, -3.49081, 65.6921, 0.0770115, 62.0223, 3.05218, 58.1616, 5.4424, 54.1045, 7.25534, 49.8456, 8.49871, 45.3792, 9.1802, 40.7, 9.30749, 35.8025, 8.88829, 30.681, 7.93027, 19.4855, 4.58809, 6.15223, -0.540889, -6.57349, -7.01434, -11.8506, -10.617, -14.0676, -12.4856, -15.9463, -14.3899, -16.3131, -14.8109, -17.2801, -16.2034, -18.6473, -18.7612, -20.2145, -22.6784, -21.7817, -28.1489, -23.1489, -35.3667, -24.1159, -44.5259, -24.4827, -55.8203, -24.1332, -61.8851, -23.1119, -67.645, -21.4591, -73.0879, -19.2154, -78.2021, -16.4213, -82.9755, -13.1174, -87.3963, -9.34409, -91.4526, -5.14195, -95.1324, -0.551472, -98.4239, 4.38683, -101.315, 9.63245, -103.794, 15.1449, -105.849, 20.8836, -107.468, 26.808, -108.64, 32.8778, -109.351, 39.0523, -109.591, 45.1594, -109.252, 51.0306, -108.259, 56.6308, -106.647, 61.925, -104.452, 66.8783, -101.711, 71.4554, -98.4583, 75.6216, -94.7306, 79.3416, -90.5635, 82.5805, -85.9929, 85.3032, -81.0544, 87.4747, -75.784, 89.06, -70.2174, 90.0241, -64.3905, 90.3319, -58.3391, 89.9484, -52.0989)
+closed = true
+default_color = Color(0.427451, 0.207843, 0.760784, 1)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck/Head"]
+color = Color(0.556863, 0.603922, 1, 1)
+polygon = PackedVector2Array(88.8385, -45.7059, 84.0102, -30.4889, 78.5724, -17.8271, 75.6112, -12.4352, 72.481, -7.65898, 69.1765, -3.49081, 65.6921, 0.0770115, 62.0223, 3.05218, 58.1616, 5.4424, 54.1045, 7.25534, 49.8456, 8.49871, 45.3792, 9.1802, 40.7, 9.30749, 35.8025, 8.88829, 30.681, 7.93027, 19.4855, 4.58809, 6.15223, -0.540889, -6.57349, -7.01434, -11.8506, -10.617, -14.0676, -12.4856, -15.9463, -14.3899, -16.3131, -14.8109, -17.2801, -16.2034, -18.6473, -18.7612, -20.2145, -22.6784, -21.7817, -28.1489, -23.1489, -35.3667, -24.1159, -44.5259, -24.4827, -55.8203, -24.1332, -61.8851, -23.1119, -67.645, -21.4591, -73.0879, -19.2154, -78.2021, -16.4213, -82.9755, -13.1174, -87.3963, -9.34409, -91.4526, -5.14195, -95.1324, -0.551472, -98.4239, 4.38683, -101.315, 9.63245, -103.794, 15.1449, -105.849, 20.8836, -107.468, 26.808, -108.64, 32.8778, -109.351, 39.0523, -109.591, 45.1594, -109.252, 51.0306, -108.259, 56.6308, -106.647, 61.925, -104.452, 66.8783, -101.711, 71.4554, -98.4583, 75.6216, -94.7306, 79.3416, -90.5635, 82.5805, -85.9929, 85.3032, -81.0544, 87.4747, -75.784, 89.06, -70.2174, 90.0241, -64.3905, 90.3319, -58.3391, 89.9484, -52.0989)
+metadata/_edit_lock_ = true
+
+[node name="Hair" type="Node2D" parent="Body/Neck/Head" node_paths=PackedStringArray("polygon", "line")]
+z_index = 1
+position = Vector2(28.6955, -149.617)
+rotation = -0.068965
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.580392, 0, 0.211765, 1)
+stroke_width = 5.0
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_d1cq6")
+update_curve_at_runtime = true
+tolerance_degrees = 1.0
+arc_list = SubResource("Resource_7tj20")
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck/Head/Hair"]
+texture = SubResource("GradientTexture2D_r5ynq")
+texture_offset = Vector2(95.0759, -15.1402)
+polygon = PackedVector2Array(75.6559, 25.4058, 79.1803, 27.1794, 82.434, 28.9288, 83.9617, 29.8073, 85.4243, 30.6954, 86.8229, 31.5981, 88.1584, 32.5207, 88.8027, 32.9911, 89.4316, 33.4685, 90.0451, 33.9534, 90.6434, 34.4465, 91.2267, 34.9485, 91.7949, 35.46, 92.3482, 35.9817, 92.8867, 36.5141, 93.4106, 37.0581, 93.92, 37.6142, 94.4149, 38.183, 94.8955, 38.7653, 95.3619, 39.3616, 95.8142, 39.9726, 96.2525, 40.599, 96.6769, 41.2414, 97.8839, 43.0277, 99.2373, 45.1298, 100.952, 47.9216, 102.925, 51.316, 105.053, 55.2257, 106.142, 57.3465, 107.231, 59.5635, 108.307, 61.8657, 109.357, 64.2423, 110.367, 66.6823, 111.326, 69.1748, 112.219, 71.709, 113.035, 74.2739, 113.409, 75.5645, 113.759, 76.8587, 114.083, 78.1551, 114.38, 79.4524, 114.647, 80.7492, 114.883, 82.0442, 115.088, 83.3359, 115.257, 84.6231, 115.392, 85.9043, 115.489, 87.1783, 115.547, 88.4435, 115.564, 89.6988, 115.54, 90.9427, 115.471, 92.1738, 115.357, 93.3908, 115.196, 94.5923, 114.987, 95.777, 114.727, 96.9435, 114.415, 98.0904, 114.05, 99.2164, 113.63, 100.32, 113.153, 101.4, 112.617, 102.455, 112.022, 103.484, 109.274, 107.756, 106.098, 112.415, 90.9967, 133.888, 87.0891, 139.703, 83.3158, 145.593, 79.7703, 151.506, 78.1122, 154.454, 76.5461, 157.388, 75.0838, 160.302, 73.7369, 163.189, 72.5171, 166.042, 71.9585, 167.454, 71.4361, 168.855, 70.9513, 170.244, 70.5057, 171.621, 70.1005, 172.985, 69.7374, 174.334, 69.4177, 175.669, 69.143, 176.987, 68.9147, 178.29, 68.7342, 179.574, 68.6031, 180.841, 68.5227, 182.089, 68.4946, 183.317, 68.5202, 184.524, 68.601, 185.71, 68.7384, 186.873, 68.9339, 188.014, 69.1889, 189.13, 69.4928, 190.229, 69.8329, 191.316, 70.2083, 192.391, 70.6177, 193.454, 71.0601, 194.504, 71.5342, 195.542, 72.039, 196.567, 72.5733, 197.579, 73.136, 198.577, 73.7259, 199.561, 74.342, 200.531, 74.9829, 201.486, 75.6478, 202.426, 76.3353, 203.352, 77.0445, 204.262, 77.774, 205.156, 78.5228, 206.035, 79.2898, 206.897, 80.0738, 207.743, 80.8737, 208.571, 81.6884, 209.383, 82.5166, 210.177, 83.3574, 210.954, 84.2095, 211.712, 85.0718, 212.452, 85.9432, 213.173, 87.7086, 214.559, 89.4966, 215.867, 91.2983, 217.095, 93.1044, 218.239, 94.906, 219.299, 96.6938, 220.271, 97.5798, 220.723, 98.4589, 221.153, 99.3301, 221.56, 100.192, 221.943, 101.044, 222.303, 101.884, 222.639, 102.712, 222.951, 103.527, 223.238, 104.326, 223.5, 105.11, 223.737, 105.876, 223.949, 106.625, 224.135, 107.354, 224.295, 108.063, 224.429, 108.75, 224.536, 109.414, 224.616, 110.054, 224.67, 110.67, 224.695, 111.259, 224.693, 111.821, 224.663, 112.355, 224.605, 112.859, 224.518, 113.332, 224.402, 113.774, 224.256, 114.182, 224.082, 114.557, 223.877, 115.297, 223.467, 116.009, 223.056, 116.686, 222.639, 117.009, 222.428, 117.322, 222.213, 117.621, 221.995, 117.909, 221.773, 118.047, 221.66, 118.182, 221.546, 118.313, 221.43, 118.441, 221.313, 118.565, 221.195, 118.684, 221.075, 118.8, 220.954, 118.912, 220.831, 119.019, 220.706, 119.122, 220.579, 119.221, 220.45, 119.315, 220.32, 119.404, 220.187, 119.489, 220.052, 119.568, 219.916, 119.643, 219.776, 119.713, 219.635, 119.777, 219.491, 119.837, 219.345, 119.89, 219.196, 119.939, 219.044, 119.982, 218.89, 120.019, 218.733, 120.05, 218.574, 120.075, 218.411, 120.095, 218.246, 120.108, 218.077, 120.115, 217.905, 120.116, 217.73, 120.111, 217.552, 120.098, 217.371, 120.08, 217.186, 120.054, 216.998, 120.022, 216.806, 119.983, 216.611, 119.937, 216.411, 119.883, 216.209, 119.823, 216.002, 119.755, 215.791, 119.68, 215.577, 119.597, 215.358, 119.506, 215.136, 119.408, 214.909, 119.302, 214.678, 114.691, 189.598, 130.665, 211.435, 130.887, 211.976, 131.082, 212.512, 131.249, 213.043, 131.389, 213.569, 131.503, 214.089, 131.591, 214.603, 131.653, 215.112, 131.69, 215.615, 131.702, 216.113, 131.69, 216.605, 131.653, 217.09, 131.593, 217.57, 131.509, 218.044, 131.403, 218.512, 131.274, 218.974, 131.123, 219.429, 130.951, 219.878, 130.757, 220.321, 130.542, 220.757, 130.306, 221.187, 130.051, 221.61, 129.776, 222.026, 129.481, 222.436, 129.168, 222.839, 128.836, 223.235, 128.486, 223.624, 128.118, 224.006, 127.733, 224.381, 127.33, 224.748, 126.912, 225.109, 126.477, 225.462, 126.026, 225.807, 125.56, 226.146, 125.079, 226.476, 124.584, 226.799, 124.074, 227.115, 123.551, 227.422, 123.014, 227.722, 122.464, 228.014, 121.902, 228.298, 121.327, 228.574, 120.741, 228.841, 120.143, 229.101, 119.534, 229.352, 118.285, 229.829, 116.997, 230.273, 115.672, 230.682, 114.315, 231.055, 112.928, 231.393, 111.514, 231.695, 110.077, 231.96, 108.62, 232.188, 107.145, 232.377, 105.657, 232.528, 104.907, 232.586, 104.153, 232.628, 103.395, 232.654, 102.632, 232.666, 101.867, 232.664, 101.098, 232.647, 99.5518, 232.573, 97.9979, 232.449, 96.4391, 232.276, 94.8784, 232.059, 93.3187, 231.802, 91.7631, 231.506, 90.2147, 231.177, 88.6763, 230.816, 87.1511, 230.428, 84.1521, 229.582, 81.242, 228.667, 78.4448, 227.708, 75.7846, 226.732, 70.9722, 224.841, 65.3853, 222.551, 64.0548, 222.042, 63.4227, 221.803, 62.7122, 221.515, 61.9293, 221.177, 61.0803, 220.788, 60.1713, 220.349, 59.2085, 219.859, 58.1981, 219.318, 57.1463, 218.725, 56.0592, 218.08, 54.943, 217.383, 53.804, 216.634, 52.6482, 215.832, 51.4819, 214.977, 50.3112, 214.068, 49.1423, 213.106, 47.9814, 212.089, 46.8347, 211.018, 45.7083, 209.893, 45.1547, 209.309, 44.6084, 208.712, 44.0704, 208.101, 43.5413, 207.476, 43.0219, 206.837, 42.513, 206.184, 42.0154, 205.518, 41.5298, 204.837, 41.057, 204.142, 40.5978, 203.433, 40.1529, 202.71, 39.7232, 201.972, 39.3094, 201.221, 38.9122, 200.455, 38.5325, 199.675, 38.171, 198.88, 37.8285, 198.071, 37.5057, 197.248, 37.2035, 196.41, 36.9226, 195.558, 36.6637, 194.691, 36.4277, 193.809, 36.2153, 192.913, 36.0273, 192.003, 35.8645, 191.077, 35.7276, 190.137, 35.6174, 189.182, 35.5347, 188.212, 35.5063, 187.208, 35.557, 186.15, 35.684, 185.042, 35.8849, 183.883, 36.157, 182.677, 36.4978, 181.425, 36.9046, 180.128, 37.375, 178.788, 37.9063, 177.407, 38.496, 175.986, 39.1414, 174.527, 39.84, 173.033, 41.3866, 169.942, 43.1149, 166.727, 45.0045, 163.401, 47.0346, 159.977, 51.4341, 152.892, 61.012, 138.148, 70.5283, 123.356, 74.8507, 116.213, 76.8307, 112.751, 78.6625, 109.381, 80.3253, 106.116, 81.087, 104.528, 81.7987, 102.97, 82.4578, 101.445, 83.0618, 99.9555, 83.6081, 98.502, 84.0942, 97.0865, 84.5173, 95.7107, 84.8751, 94.3764, 85.1648, 93.0852, 85.3839, 91.8387, 85.5299, 90.6388, 85.6001, 89.487, 85.5919, 88.3851, 85.5029, 87.3347, 85.2187, 85.311, 84.8879, 83.338, 84.5105, 81.418, 84.087, 79.5539, 83.6175, 77.748, 83.1023, 76.0031, 82.8277, 75.1542, 82.5417, 74.3216, 82.2444, 73.5055, 81.9359, 72.7062, 81.6162, 71.9241, 81.2852, 71.1594, 80.9431, 70.4126, 80.5898, 69.6839, 80.2254, 68.9736, 79.85, 68.2821, 79.4635, 67.6097, 79.066, 66.9567, 78.6575, 66.3235, 78.2381, 65.7103, 77.8078, 65.1175, 77.3665, 64.5454, 76.9145, 63.9943, 76.4516, 63.4646, 75.9779, 62.9566, 75.4935, 62.4705, 74.9984, 62.0068, 74.4925, 61.5657, 73.976, 61.1475, 73.4489, 60.7527, 72.9112, 60.3815, 72.3629, 60.0341, 71.8041, 59.7111, 71.2348, 59.4126, 70.655, 59.139, 70.0648, 58.8906, 69.4642, 58.6678, 68.8532, 58.4708, 68.2319, 58.3, 67.6002, 58.1557, 66.9583, 58.0383, 66.3061, 57.948, 65.6438, 57.8852, 64.9712, 57.8501, 64.2885, 57.8432, 63.5957, 57.8648, 62.8928, 57.9151, 62.1798, 57.9945, 61.4568, 58.1033, 60.7239, 58.2418, 59.9809, 58.4104, 59.2281, 58.6093, 58.4653, 58.839, 57.6927, 59.0996, 56.9103, 59.3917, 56.118, 59.7153, 55.316, 60.071, 54.5043, 60.459, 35.6321, 74.1644, 24.9326, 67.7394, 19.9875, 64.8737, 15.2825, 62.2702, 10.7952, 59.9522, 8.62631, 58.9076, 6.50345, 57.943, 4.42389, 57.0615, 2.38484, 56.2658, 0.383501, 55.559, -0.603893, 55.2399, -1.5829, 54.944, -2.55387, 54.6717, -3.51716, 54.4235, -4.4731, 54.1997, -5.42205, 54.0007, -6.36436, 53.8267, -7.30037, 53.6783, -8.23044, 53.5557, -9.15491, 53.4592, -10.0741, 53.3894, -10.9884, 53.3465, -11.8982, 53.3309, -12.8038, 53.3429, -13.7055, 53.383, -14.6037, 53.4515, -15.4987, 53.5487, -16.3909, 53.675, -17.2807, 53.8308, -18.1683, 54.0165, -19.0542, 54.2323, -19.9386, 54.4787, -20.822, 54.7561, -21.7047, 55.0647, -22.587, 55.4051, -23.4693, 55.7774, -24.3518, 56.1821, -25.2351, 56.6196, -26.1194, 57.0902, -27.005, 57.5943, -27.8924, 58.1322, -28.7818, 58.7043, -29.6737, 59.311, -30.5683, 59.9526, -31.4533, 60.63, -32.3157, 61.3434, -33.1553, 62.0926, -33.9716, 62.8772, -34.7644, 63.6969, -35.5332, 64.5513, -36.2777, 65.4401, -36.9976, 66.363, -37.6925, 67.3196, -38.3619, 68.3097, -39.0057, 69.3328, -39.6234, 70.3886, -40.2146, 71.4768, -40.779, 72.5971, -41.3163, 73.7492, -41.8261, 74.9326, -42.308, 76.147, -42.7616, 77.3922, -43.1867, 78.6678, -43.5829, 79.9734, -43.9498, 81.3088, -44.287, 82.6735, -44.5942, 84.0673, -44.871, 85.4898, -45.1171, 86.9407, -45.3321, 88.4196, -45.5157, 89.9262, -45.6675, 91.4603, -45.7872, 93.0213, -45.8743, 94.609, -45.9286, 96.2232, -45.9497, 97.8633, -45.9372, 99.5291, -45.8907, 101.22, -45.81, 102.937, -45.6946, 104.678, -45.5442, 106.443, -45.3584, 108.232, -45.137, 110.045, -44.8794, 111.882, -44.2547, 115.623, -43.4814, 119.454, -42.5566, 123.371, -41.4776, 127.373, -40.2414, 131.456, -38.8452, 135.618, -37.2861, 139.855, -35.5614, 144.166, -33.6681, 148.548, -31.6033, 152.998, -29.3643, 157.512, -26.9482, 162.09, -26.7507, 162.691, -26.5843, 163.3, -26.4482, 163.918, -26.3414, 164.543, -26.263, 165.176, -26.2122, 165.814, -26.188, 166.458, -26.1896, 167.108, -26.216, 167.762, -26.2665, 168.42, -26.3399, 169.082, -26.4355, 169.746, -26.5525, 170.413, -26.6897, 171.082, -26.8465, 171.751, -27.0218, 172.421, -27.2148, 173.092, -27.4246, 173.761, -27.6503, 174.43, -27.891, 175.096, -28.1457, 175.76, -28.4137, 176.422, -28.9856, 177.733, -29.5996, 179.026, -30.2485, 180.296, -30.925, 181.537, -31.622, 182.746, -32.3324, 183.918, -33.0489, 185.047, -34.4718, 187.162, -35.8332, 189.054, -37.0757, 190.685, -38.1421, 192.018, -38.9748, 193.017, -39.7099, 193.86, -49.7804, 210.682, -51.8719, 209.023, -53.9095, 207.324, -55.8936, 205.586, -57.8245, 203.811, -59.7025, 201.999, -61.5279, 200.153, -63.3011, 198.275, -65.0223, 196.364, -66.6919, 194.423, -68.3102, 192.454, -69.8775, 190.458, -71.3941, 188.436, -72.8604, 186.389, -74.2766, 184.32, -75.643, 182.229, -76.9601, 180.119, -78.228, 177.99, -79.4472, 175.845, -80.6179, 173.683, -81.7404, 171.508, -82.8151, 169.321, -83.8422, 167.122, -84.8222, 164.913, -85.7553, 162.697, -86.6417, 160.474, -87.482, 158.245, -88.2762, 156.013, -89.0249, 153.779, -89.7282, 151.543, -90.3865, 149.309, -91.0002, 147.076, -91.5694, 144.847, -92.0946, 142.623, -92.5761, 140.406, -93.0142, 138.196, -93.4091, 135.996, -93.7613, 133.807, -94.071, 131.63, -94.3385, 129.467, -94.5642, 127.32, -94.7483, 125.189, -94.8912, 123.076, -94.9933, 120.983, -95.0547, 118.911, -95.0759, 116.862, -95.0572, 114.836, -94.9988, 112.837, -94.9011, 110.864, -94.7643, 108.92, -94.5889, 107.005, -94.3751, 105.123, -94.1233, 103.272, -93.8337, 101.457, -93.5067, 99.6768, -93.1426, 97.9341, -92.7417, 96.2301, -92.3043, 94.5662, -91.8307, 92.9441, -91.3213, 91.365, -90.7764, 89.8305, -90.1962, 88.342, -89.5812, 86.9011, -88.9315, 85.5091, -88.2476, 84.1675, -88.1855, 84.0292, -87.9913, 83.6225, -87.6534, 82.9596, -87.1601, 82.0526, -86.4996, 80.9138, -85.6603, 79.5554, -84.6305, 77.9896, -83.3985, 76.2285, -81.9526, 74.2845, -80.281, 72.1697, -78.3722, 69.8962, -76.2143, 67.4764, -73.7958, 64.9224, -71.1048, 62.2464, -68.1298, 59.4606, -64.859, 56.5772, -61.9752, 53.9539, -58.0397, 50.5806, -55.6954, 48.6689, -53.1094, 46.6373, -50.289, 44.5081, -47.2412, 42.304, -43.973, 40.0474, -40.4917, 37.7608, -36.8044, 35.4666, -32.918, 33.1875, -28.8398, 30.9459, -24.5768, 28.7643, -20.1361, 26.6652, -15.5248, 24.6711, -13.1575, 23.7204, -10.7501, 22.8045, -8.30369, 21.926, -5.81905, 21.0879, -3.2971, 20.2929, -0.738726, 19.5438, 1.85519, 18.8435, 4.48375, 18.1947, 7.14608, 17.6003, 9.84128, 17.0631, 12.5685, 16.5859, 15.3268, 16.1715, 18.1153, 15.8228, 20.9331, 15.5424, 23.7793, 15.3334, 26.6531, 15.1984, 29.5536, 15.1402, 32.4798, 15.1618, 35.431, 15.2658, 38.4061, 15.4552, 41.4043, 15.7327, 44.4247, 16.1011, 47.4665, 16.5633, 50.5287, 17.1221, 53.6105, 17.7802, 56.7109, 18.5405, 59.8292, 19.4058, 62.9643, 20.3789, 66.1154, 21.4627, 69.2816, 22.6599, 72.4621, 23.9733)
+metadata/_edit_lock_ = true
+
+[node name="Path" type="Node2D" parent="Body/Neck/Head/Hair" node_paths=PackedStringArray("line")]
+position = Vector2(24.0613, 68.1546)
+script = ExtResource("1_inuwg")
+stroke_color = Color(0.580392, 0, 0.211765, 1)
+stroke_width = 2.0
+end_cap_mode = 1
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_fwayd")
+update_curve_at_runtime = true
+tolerance_degrees = 2.0
+arc_list = SubResource("Resource_rr8qp")
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/Hair/Path"]
+points = PackedVector2Array(-9.61644, -5.25069, -7.94586, -6.83242, -6.21727, -8.35578, -4.43067, -9.82076, -2.58606, -11.2274, 1.2772, -13.8655, 5.3725, -16.2701, 9.69985, -18.4412, 14.2592, -20.3789, 19.0507, -22.083, 24.0742, -23.5537, 29.3297, -24.7908, 34.8173, -25.7945, 40.5369, -26.5647, 46.4885, -27.1014, 52.6722, -27.4046, 59.088, -27.4743, 72.6156, -26.9133)
+width = 2.0
+default_color = Color(0.580392, 0, 0.211765, 1)
+end_cap_mode = 1
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D" type="Node2D" parent="Body/Neck/Head/Hair/Path" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(45.1276, 120.975)
+rotation = -0.130073
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath("../.."): 3,
+NodePath("../../Path2"): 0
+}
+metadata/_edit_lock_ = true
+
+[node name="Path2" type="Node2D" parent="Body/Neck/Head/Hair" node_paths=PackedStringArray("line")]
+position = Vector2(89.1321, 197.289)
+script = ExtResource("1_inuwg")
+stroke_color = Color(0.580392, 0, 0.211765, 1)
+stroke_width = 2.0
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_t2jyf")
+update_curve_at_runtime = true
+tolerance_degrees = 2.0
+arc_list = SubResource("Resource_r5ynq")
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/Hair/Path2"]
+points = PackedVector2Array(-19.9432, -8.15901, -25.0773, 24.753)
+width = 2.0
+default_color = Color(0.580392, 0, 0.211765, 1)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Path3" type="Node2D" parent="Body/Neck/Head/Hair" node_paths=PackedStringArray("line")]
+position = Vector2(-17.6514, 55.7047)
+script = ExtResource("1_inuwg")
+stroke_color = Color(0.580392, 0, 0.211765, 1)
+stroke_width = 2.0
+end_cap_mode = 1
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_rr8qp")
+update_curve_at_runtime = true
+tolerance_degrees = 2.0
+arc_list = SubResource("Resource_ej6pp")
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/Hair/Path3"]
+points = PackedVector2Array(-1.11281, -0.872726, 3.83957, -4.41093, 8.91846, -7.72259, 14.1239, -10.8077, 19.4558, -13.6663, 24.9143, -16.2984, 30.4992, -18.7039, 36.2107, -20.8828, 42.0487, -22.8353, 48.0132, -24.5611, 54.1043, -26.0605, 60.3218, -27.3333, 66.6659, -28.3795, 73.1365, -29.1992, 79.7336, -29.7923, 93.3073, -30.2989)
+width = 2.0
+default_color = Color(0.580392, 0, 0.211765, 1)
+end_cap_mode = 1
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D" type="Node2D" parent="Body/Neck/Head/Hair" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(112.022, 103.484)
+rotation = -0.192857
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath("../../BackHair"): 2,
+NodePath(".."): 2
+}
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/Hair"]
+points = PackedVector2Array(75.6559, 25.4058, 79.1803, 27.1794, 82.434, 28.9288, 83.9617, 29.8073, 85.4243, 30.6954, 86.8229, 31.5981, 88.1584, 32.5207, 88.8027, 32.9911, 89.4316, 33.4685, 90.0451, 33.9534, 90.6434, 34.4465, 91.2267, 34.9485, 91.7949, 35.46, 92.3482, 35.9817, 92.8867, 36.5141, 93.4106, 37.0581, 93.92, 37.6142, 94.4149, 38.183, 94.8955, 38.7653, 95.3619, 39.3616, 95.8142, 39.9726, 96.2525, 40.599, 96.6769, 41.2414, 97.8839, 43.0277, 99.2373, 45.1298, 100.952, 47.9216, 102.925, 51.316, 105.053, 55.2257, 106.142, 57.3465, 107.231, 59.5635, 108.307, 61.8657, 109.357, 64.2423, 110.367, 66.6823, 111.326, 69.1748, 112.219, 71.709, 113.035, 74.2739, 113.409, 75.5645, 113.759, 76.8587, 114.083, 78.1551, 114.38, 79.4524, 114.647, 80.7492, 114.883, 82.0442, 115.088, 83.3359, 115.257, 84.6231, 115.392, 85.9043, 115.489, 87.1783, 115.547, 88.4435, 115.564, 89.6988, 115.54, 90.9427, 115.471, 92.1738, 115.357, 93.3908, 115.196, 94.5923, 114.987, 95.777, 114.727, 96.9435, 114.415, 98.0904, 114.05, 99.2164, 113.63, 100.32, 113.153, 101.4, 112.617, 102.455, 112.022, 103.484, 109.274, 107.756, 106.098, 112.415, 90.9967, 133.888, 87.0891, 139.703, 83.3158, 145.593, 79.7703, 151.506, 78.1122, 154.454, 76.5461, 157.388, 75.0838, 160.302, 73.7369, 163.189, 72.5171, 166.042, 71.9585, 167.454, 71.4361, 168.855, 70.9513, 170.244, 70.5057, 171.621, 70.1005, 172.985, 69.7374, 174.334, 69.4177, 175.669, 69.143, 176.987, 68.9147, 178.29, 68.7342, 179.574, 68.6031, 180.841, 68.5227, 182.089, 68.4946, 183.317, 68.5202, 184.524, 68.601, 185.71, 68.7384, 186.873, 68.9339, 188.014, 69.1889, 189.13, 69.4928, 190.229, 69.8329, 191.316, 70.2083, 192.391, 70.6177, 193.454, 71.0601, 194.504, 71.5342, 195.542, 72.039, 196.567, 72.5733, 197.579, 73.136, 198.577, 73.7259, 199.561, 74.342, 200.531, 74.9829, 201.486, 75.6478, 202.426, 76.3353, 203.352, 77.0445, 204.262, 77.774, 205.156, 78.5228, 206.035, 79.2898, 206.897, 80.0738, 207.743, 80.8737, 208.571, 81.6884, 209.383, 82.5166, 210.177, 83.3574, 210.954, 84.2095, 211.712, 85.0718, 212.452, 85.9432, 213.173, 87.7086, 214.559, 89.4966, 215.867, 91.2983, 217.095, 93.1044, 218.239, 94.906, 219.299, 96.6938, 220.271, 97.5798, 220.723, 98.4589, 221.153, 99.3301, 221.56, 100.192, 221.943, 101.044, 222.303, 101.884, 222.639, 102.712, 222.951, 103.527, 223.238, 104.326, 223.5, 105.11, 223.737, 105.876, 223.949, 106.625, 224.135, 107.354, 224.295, 108.063, 224.429, 108.75, 224.536, 109.414, 224.616, 110.054, 224.67, 110.67, 224.695, 111.259, 224.693, 111.821, 224.663, 112.355, 224.605, 112.859, 224.518, 113.332, 224.402, 113.774, 224.256, 114.182, 224.082, 114.557, 223.877, 115.297, 223.467, 116.009, 223.056, 116.686, 222.639, 117.009, 222.428, 117.322, 222.213, 117.621, 221.995, 117.909, 221.773, 118.047, 221.66, 118.182, 221.546, 118.313, 221.43, 118.441, 221.313, 118.565, 221.195, 118.684, 221.075, 118.8, 220.954, 118.912, 220.831, 119.019, 220.706, 119.122, 220.579, 119.221, 220.45, 119.315, 220.32, 119.404, 220.187, 119.489, 220.052, 119.568, 219.916, 119.643, 219.776, 119.713, 219.635, 119.777, 219.491, 119.837, 219.345, 119.89, 219.196, 119.939, 219.044, 119.982, 218.89, 120.019, 218.733, 120.05, 218.574, 120.075, 218.411, 120.095, 218.246, 120.108, 218.077, 120.115, 217.905, 120.116, 217.73, 120.111, 217.552, 120.098, 217.371, 120.08, 217.186, 120.054, 216.998, 120.022, 216.806, 119.983, 216.611, 119.937, 216.411, 119.883, 216.209, 119.823, 216.002, 119.755, 215.791, 119.68, 215.577, 119.597, 215.358, 119.506, 215.136, 119.408, 214.909, 119.302, 214.678, 114.691, 189.598, 130.665, 211.435, 130.887, 211.976, 131.082, 212.512, 131.249, 213.043, 131.389, 213.569, 131.503, 214.089, 131.591, 214.603, 131.653, 215.112, 131.69, 215.615, 131.702, 216.113, 131.69, 216.605, 131.653, 217.09, 131.593, 217.57, 131.509, 218.044, 131.403, 218.512, 131.274, 218.974, 131.123, 219.429, 130.951, 219.878, 130.757, 220.321, 130.542, 220.757, 130.306, 221.187, 130.051, 221.61, 129.776, 222.026, 129.481, 222.436, 129.168, 222.839, 128.836, 223.235, 128.486, 223.624, 128.118, 224.006, 127.733, 224.381, 127.33, 224.748, 126.912, 225.109, 126.477, 225.462, 126.026, 225.807, 125.56, 226.146, 125.079, 226.476, 124.584, 226.799, 124.074, 227.115, 123.551, 227.422, 123.014, 227.722, 122.464, 228.014, 121.902, 228.298, 121.327, 228.574, 120.741, 228.841, 120.143, 229.101, 119.534, 229.352, 118.285, 229.829, 116.997, 230.273, 115.672, 230.682, 114.315, 231.055, 112.928, 231.393, 111.514, 231.695, 110.077, 231.96, 108.62, 232.188, 107.145, 232.377, 105.657, 232.528, 104.907, 232.586, 104.153, 232.628, 103.395, 232.654, 102.632, 232.666, 101.867, 232.664, 101.098, 232.647, 99.5518, 232.573, 97.9979, 232.449, 96.4391, 232.276, 94.8784, 232.059, 93.3187, 231.802, 91.7631, 231.506, 90.2147, 231.177, 88.6763, 230.816, 87.1511, 230.428, 84.1521, 229.582, 81.242, 228.667, 78.4448, 227.708, 75.7846, 226.732, 70.9722, 224.841, 65.3853, 222.551, 64.0548, 222.042, 63.4227, 221.803, 62.7122, 221.515, 61.9293, 221.177, 61.0803, 220.788, 60.1713, 220.349, 59.2085, 219.859, 58.1981, 219.318, 57.1463, 218.725, 56.0592, 218.08, 54.943, 217.383, 53.804, 216.634, 52.6482, 215.832, 51.4819, 214.977, 50.3112, 214.068, 49.1423, 213.106, 47.9814, 212.089, 46.8347, 211.018, 45.7083, 209.893, 45.1547, 209.309, 44.6084, 208.712, 44.0704, 208.101, 43.5413, 207.476, 43.0219, 206.837, 42.513, 206.184, 42.0154, 205.518, 41.5298, 204.837, 41.057, 204.142, 40.5978, 203.433, 40.1529, 202.71, 39.7232, 201.972, 39.3094, 201.221, 38.9122, 200.455, 38.5325, 199.675, 38.171, 198.88, 37.8285, 198.071, 37.5057, 197.248, 37.2035, 196.41, 36.9226, 195.558, 36.6637, 194.691, 36.4277, 193.809, 36.2153, 192.913, 36.0273, 192.003, 35.8645, 191.077, 35.7276, 190.137, 35.6174, 189.182, 35.5347, 188.212, 35.5063, 187.208, 35.557, 186.15, 35.684, 185.042, 35.8849, 183.883, 36.157, 182.677, 36.4978, 181.425, 36.9046, 180.128, 37.375, 178.788, 37.9063, 177.407, 38.496, 175.986, 39.1414, 174.527, 39.84, 173.033, 41.3866, 169.942, 43.1149, 166.727, 45.0045, 163.401, 47.0346, 159.977, 51.4341, 152.892, 61.012, 138.148, 70.5283, 123.356, 74.8507, 116.213, 76.8307, 112.751, 78.6625, 109.381, 80.3253, 106.116, 81.087, 104.528, 81.7987, 102.97, 82.4578, 101.445, 83.0618, 99.9555, 83.6081, 98.502, 84.0942, 97.0865, 84.5173, 95.7107, 84.8751, 94.3764, 85.1648, 93.0852, 85.3839, 91.8387, 85.5299, 90.6388, 85.6001, 89.487, 85.5919, 88.3851, 85.5029, 87.3347, 85.2187, 85.311, 84.8879, 83.338, 84.5105, 81.418, 84.087, 79.5539, 83.6175, 77.748, 83.1023, 76.0031, 82.8277, 75.1542, 82.5417, 74.3216, 82.2444, 73.5055, 81.9359, 72.7062, 81.6162, 71.9241, 81.2852, 71.1594, 80.9431, 70.4126, 80.5898, 69.6839, 80.2254, 68.9736, 79.85, 68.2821, 79.4635, 67.6097, 79.066, 66.9567, 78.6575, 66.3235, 78.2381, 65.7103, 77.8078, 65.1175, 77.3665, 64.5454, 76.9145, 63.9943, 76.4516, 63.4646, 75.9779, 62.9566, 75.4935, 62.4705, 74.9984, 62.0068, 74.4925, 61.5657, 73.976, 61.1475, 73.4489, 60.7527, 72.9112, 60.3815, 72.3629, 60.0341, 71.8041, 59.7111, 71.2348, 59.4126, 70.655, 59.139, 70.0648, 58.8906, 69.4642, 58.6678, 68.8532, 58.4708, 68.2319, 58.3, 67.6002, 58.1557, 66.9583, 58.0383, 66.3061, 57.948, 65.6438, 57.8852, 64.9712, 57.8501, 64.2885, 57.8432, 63.5957, 57.8648, 62.8928, 57.9151, 62.1798, 57.9945, 61.4568, 58.1033, 60.7239, 58.2418, 59.9809, 58.4104, 59.2281, 58.6093, 58.4653, 58.839, 57.6927, 59.0996, 56.9103, 59.3917, 56.118, 59.7153, 55.316, 60.071, 54.5043, 60.459, 35.6321, 74.1644, 24.9326, 67.7394, 19.9875, 64.8737, 15.2825, 62.2702, 10.7952, 59.9522, 8.62631, 58.9076, 6.50345, 57.943, 4.42389, 57.0615, 2.38484, 56.2658, 0.383501, 55.559, -0.603893, 55.2399, -1.5829, 54.944, -2.55387, 54.6717, -3.51716, 54.4235, -4.4731, 54.1997, -5.42205, 54.0007, -6.36436, 53.8267, -7.30037, 53.6783, -8.23044, 53.5557, -9.15491, 53.4592, -10.0741, 53.3894, -10.9884, 53.3465, -11.8982, 53.3309, -12.8038, 53.3429, -13.7055, 53.383, -14.6037, 53.4515, -15.4987, 53.5487, -16.3909, 53.675, -17.2807, 53.8308, -18.1683, 54.0165, -19.0542, 54.2323, -19.9386, 54.4787, -20.822, 54.7561, -21.7047, 55.0647, -22.587, 55.4051, -23.4693, 55.7774, -24.3518, 56.1821, -25.2351, 56.6196, -26.1194, 57.0902, -27.005, 57.5943, -27.8924, 58.1322, -28.7818, 58.7043, -29.6737, 59.311, -30.5683, 59.9526, -31.4533, 60.63, -32.3157, 61.3434, -33.1553, 62.0926, -33.9716, 62.8772, -34.7644, 63.6969, -35.5332, 64.5513, -36.2777, 65.4401, -36.9976, 66.363, -37.6925, 67.3196, -38.3619, 68.3097, -39.0057, 69.3328, -39.6234, 70.3886, -40.2146, 71.4768, -40.779, 72.5971, -41.3163, 73.7492, -41.8261, 74.9326, -42.308, 76.147, -42.7616, 77.3922, -43.1867, 78.6678, -43.5829, 79.9734, -43.9498, 81.3088, -44.287, 82.6735, -44.5942, 84.0673, -44.871, 85.4898, -45.1171, 86.9407, -45.3321, 88.4196, -45.5157, 89.9262, -45.6675, 91.4603, -45.7872, 93.0213, -45.8743, 94.609, -45.9286, 96.2232, -45.9497, 97.8633, -45.9372, 99.5291, -45.8907, 101.22, -45.81, 102.937, -45.6946, 104.678, -45.5442, 106.443, -45.3584, 108.232, -45.137, 110.045, -44.8794, 111.882, -44.2547, 115.623, -43.4814, 119.454, -42.5566, 123.371, -41.4776, 127.373, -40.2414, 131.456, -38.8452, 135.618, -37.2861, 139.855, -35.5614, 144.166, -33.6681, 148.548, -31.6033, 152.998, -29.3643, 157.512, -26.9482, 162.09, -26.7507, 162.691, -26.5843, 163.3, -26.4482, 163.918, -26.3414, 164.543, -26.263, 165.176, -26.2122, 165.814, -26.188, 166.458, -26.1896, 167.108, -26.216, 167.762, -26.2665, 168.42, -26.3399, 169.082, -26.4355, 169.746, -26.5525, 170.413, -26.6897, 171.082, -26.8465, 171.751, -27.0218, 172.421, -27.2148, 173.092, -27.4246, 173.761, -27.6503, 174.43, -27.891, 175.096, -28.1457, 175.76, -28.4137, 176.422, -28.9856, 177.733, -29.5996, 179.026, -30.2485, 180.296, -30.925, 181.537, -31.622, 182.746, -32.3324, 183.918, -33.0489, 185.047, -34.4718, 187.162, -35.8332, 189.054, -37.0757, 190.685, -38.1421, 192.018, -38.9748, 193.017, -39.7099, 193.86, -49.7804, 210.682, -51.8719, 209.023, -53.9095, 207.324, -55.8936, 205.586, -57.8245, 203.811, -59.7025, 201.999, -61.5279, 200.153, -63.3011, 198.275, -65.0223, 196.364, -66.6919, 194.423, -68.3102, 192.454, -69.8775, 190.458, -71.3941, 188.436, -72.8604, 186.389, -74.2766, 184.32, -75.643, 182.229, -76.9601, 180.119, -78.228, 177.99, -79.4472, 175.845, -80.6179, 173.683, -81.7404, 171.508, -82.8151, 169.321, -83.8422, 167.122, -84.8222, 164.913, -85.7553, 162.697, -86.6417, 160.474, -87.482, 158.245, -88.2762, 156.013, -89.0249, 153.779, -89.7282, 151.543, -90.3865, 149.309, -91.0002, 147.076, -91.5694, 144.847, -92.0946, 142.623, -92.5761, 140.406, -93.0142, 138.196, -93.4091, 135.996, -93.7613, 133.807, -94.071, 131.63, -94.3385, 129.467, -94.5642, 127.32, -94.7483, 125.189, -94.8912, 123.076, -94.9933, 120.983, -95.0547, 118.911, -95.0759, 116.862, -95.0572, 114.836, -94.9988, 112.837, -94.9011, 110.864, -94.7643, 108.92, -94.5889, 107.005, -94.3751, 105.123, -94.1233, 103.272, -93.8337, 101.457, -93.5067, 99.6768, -93.1426, 97.9341, -92.7417, 96.2301, -92.3043, 94.5662, -91.8307, 92.9441, -91.3213, 91.365, -90.7764, 89.8305, -90.1962, 88.342, -89.5812, 86.9011, -88.9315, 85.5091, -88.2476, 84.1675, -88.1855, 84.0292, -87.9913, 83.6225, -87.6534, 82.9596, -87.1601, 82.0526, -86.4996, 80.9138, -85.6603, 79.5554, -84.6305, 77.9896, -83.3985, 76.2285, -81.9526, 74.2845, -80.281, 72.1697, -78.3722, 69.8962, -76.2143, 67.4764, -73.7958, 64.9224, -71.1048, 62.2464, -68.1298, 59.4606, -64.859, 56.5772, -61.9752, 53.9539, -58.0397, 50.5806, -55.6954, 48.6689, -53.1094, 46.6373, -50.289, 44.5081, -47.2412, 42.304, -43.973, 40.0474, -40.4917, 37.7608, -36.8044, 35.4666, -32.918, 33.1875, -28.8398, 30.9459, -24.5768, 28.7643, -20.1361, 26.6652, -15.5248, 24.6711, -13.1575, 23.7204, -10.7501, 22.8045, -8.30369, 21.926, -5.81905, 21.0879, -3.2971, 20.2929, -0.738726, 19.5438, 1.85519, 18.8435, 4.48375, 18.1947, 7.14608, 17.6003, 9.84128, 17.0631, 12.5685, 16.5859, 15.3268, 16.1715, 18.1153, 15.8228, 20.9331, 15.5424, 23.7793, 15.3334, 26.6531, 15.1984, 29.5536, 15.1402, 32.4798, 15.1618, 35.431, 15.2658, 38.4061, 15.4552, 41.4043, 15.7327, 44.4247, 16.1011, 47.4665, 16.5633, 50.5287, 17.1221, 53.6105, 17.7802, 56.7109, 18.5405, 59.8292, 19.4058, 62.9643, 20.3789, 66.1154, 21.4627, 69.2816, 22.6599, 72.4621, 23.9733)
+closed = true
+width = 5.0
+width_curve = SubResource("Curve_r5ynq")
+default_color = Color(0.580392, 0, 0.211765, 1)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D2" type="Node2D" parent="Body/Neck/Head/Hair" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(96.6769, 41.2414)
+rotation = -0.196411
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 1,
+NodePath("../Path"): 1
+}
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D3" type="Node2D" parent="Body/Neck/Head/Hair" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(75.6559, 25.4058)
+rotation = -0.196411
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath("../../BackHair"): 1,
+NodePath(".."): 0,
+NodePath("../Path3"): 1
+}
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D4" type="Node2D" parent="Body/Neck/Head/Hair" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(64.0548, 222.042)
+rotation = -0.196411
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 9,
+NodePath("../Path2"): 1
+}
+metadata/_edit_lock_ = true
+
+[node name="Path4" type="Node2D" parent="Body/Neck/Head/Hair" node_paths=PackedStringArray("line")]
+position = Vector2(-96.1089, 124.991)
+script = ExtResource("1_inuwg")
+stroke_color = Color(0.580392, 0, 0.211765, 1)
+stroke_width = 2.0
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_bjmri")
+update_curve_at_runtime = true
+tolerance_degrees = 2.0
+arc_list = SubResource("Resource_w157y")
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/Hair/Path4"]
+points = PackedVector2Array(7.86132, -40.8235, 8.29562, -21.9512, 9.60254, -4.57242, 10.6422, 3.65373, 11.9706, 11.6227, 13.6115, 19.3733, 15.5885, 26.9441, 17.925, 34.374, 20.6446, 41.7017, 23.771, 48.966, 27.3276, 56.2055, 31.3381, 63.459, 35.8261, 70.7653, 40.815, 78.1631, 46.3285, 85.6911)
+width = 2.0
+default_color = Color(0.580392, 0, 0.211765, 1)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D5" type="Node2D" parent="Body/Neck/Head/Hair" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(-88.2476, 84.1675)
+rotation = -0.196411
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 18,
+NodePath("../Path4"): 0
+}
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D6" type="Node2D" parent="Body/Neck/Head/Hair" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(-49.7804, 210.682)
+rotation = -0.196411
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 17,
+NodePath("../Path4"): 1
+}
+metadata/_edit_lock_ = true
+
+[node name="Path5" type="Node2D" parent="Body/Neck/Head/Hair" node_paths=PackedStringArray("line")]
+position = Vector2(-72.5151, 64.2182)
+script = ExtResource("1_inuwg")
+stroke_color = Color(0.580392, 0, 0.211765, 1)
+stroke_width = 2.0
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_ryeyi")
+update_curve_at_runtime = true
+tolerance_degrees = 2.0
+arc_list = SubResource("Resource_qpkqr")
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/Hair/Path5"]
+points = PackedVector2Array(7.65607, -7.64099, 5.08186, 1.19951, 2.9296, 9.94026, 1.22734, 18.5952, 0.00311404, 27.1782, -0.715041, 35.7034, -0.899083, 44.1845, -0.520975, 52.6355, -0.112353, 56.8541, 0.447322, 61.0704, 1.16155, 65.2861, 2.03385, 69.5031, 3.06771, 73.723, 4.26664, 77.9475, 5.63415, 82.1785, 7.17374, 86.4176, 10.7832, 94.9274, 15.123, 103.491, 20.2213, 112.121, 26.106, 120.834, 32.8052, 129.641)
+width = 2.0
+default_color = Color(0.580392, 0, 0.211765, 1)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D7" type="Node2D" parent="Body/Neck/Head/Hair" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(-64.859, 56.5772)
+rotation = -0.196411
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 19,
+NodePath("../Path5"): 0
+}
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D8" type="Node2D" parent="Body/Neck/Head/Hair" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(-39.7099, 193.86)
+rotation = -0.196411
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 16,
+NodePath("../Path5"): 1
+}
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D" type="Node2D" parent="Body/Neck/Head" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(-15.9463, -14.3899)
+rotation = -0.0876902
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath("../.."): 0,
+NodePath(".."): 2
+}
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D2" type="Node2D" parent="Body/Neck/Head" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(30.6811, 7.9303)
+rotation = -0.0876902
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath("../.."): 1,
+NodePath(".."): 1
+}
+metadata/_edit_lock_ = true
+
+[node name="Eye" type="Node2D" parent="Body/Neck/Head" node_paths=PackedStringArray("polygon", "line", "glue_map")]
+position = Vector2(86.1287, -46.8739)
+rotation = 0.0577994
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0, 0, 0, 1)
+stroke_width = 2.0
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_ej6pp")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_ayt5m")
+glue_map = {
+3: NodePath("Lash")
+}
+use_interect_when_clipping = true
+rx = 10.3081
+ry = 24.0747
+
+[node name="Lash" type="Node2D" parent="Body/Neck/Head/Eye" node_paths=PackedStringArray("line")]
+position = Vector2(1.52588e-05, -24.0747)
+rotation = -0.456177
+script = ExtResource("1_inuwg")
+stroke_color = Color(0, 0, 0, 1)
+stroke_width = 2.0
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_ayt5m")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_wlod0")
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/Eye/Lash"]
+points = PackedVector2Array(-0.0906372, 0.273613, 0.106703, 0.27241, 0.325429, 0.290251, 0.819482, 0.384174, 1.37641, 0.557602, 1.98109, 0.812756, 2.61841, 1.15186, 3.27326, 1.57712, 3.93051, 2.09078, 4.57506, 2.69504, 5.35991, 3.8495, 6.22338, 4.9464, 7.16126, 5.98039, 8.16898, 6.94644, 9.24164, 7.83984, 10.374, 8.65624, 11.5606, 9.39167, 12.7955, 10.0425, 14.0729, 10.6057, 15.3864, 11.0783, 16.7297, 11.4582, 18.0962, 11.7434, 18.9873, 11.8766)
+width = 2.0
+width_curve = SubResource("Curve_ef0ch")
+default_color = Color(0, 0, 0, 1)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck/Head/Eye"]
+color = Color(1, 0.960784, 1, 1)
+polygon = PackedVector2Array(10.3081, 0, 10.0987, 4.85201, 9.49806, 9.37113, 8.54768, 13.4606, 7.28899, 17.0235, 6.55698, 18.5773, 5.76343, 19.9632, 4.91352, 21.1691, 4.01245, 22.1828, 3.54434, 22.6139, 3.06537, 22.9924, 2.57621, 23.3168, 2.07749, 23.5856, 1.56986, 23.7973, 1.05397, 23.9504, 0.530468, 24.0434, 0, 24.0747, -0.530468, 24.0434, -1.05397, 23.9504, -1.56986, 23.7973, -2.07749, 23.5856, -2.57621, 23.3168, -3.06537, 22.9924, -3.54434, 22.6139, -4.01245, 22.1828, -4.91352, 21.1691, -5.76343, 19.9632, -6.55698, 18.5773, -7.28899, 17.0235, -8.54768, 13.4606, -9.49806, 9.37113, -10.0987, 4.85201, -10.3081, 0, -10.0987, -4.85201, -9.49806, -9.37113, -8.54768, -13.4606, -7.28899, -17.0235, -6.55698, -18.5773, -5.76343, -19.9632, -4.91352, -21.1691, -4.01245, -22.1828, -3.54434, -22.6139, -3.06537, -22.9924, -2.57621, -23.3168, -2.07749, -23.5856, -1.56986, -23.7973, -1.05397, -23.9504, -0.530468, -24.0434, 0, -24.0747, 0.530468, -24.0434, 1.05397, -23.9504, 1.56986, -23.7973, 2.07749, -23.5856, 2.57621, -23.3168, 3.06537, -22.9924, 3.54434, -22.6139, 4.01245, -22.1828, 4.91352, -21.1691, 5.76343, -19.9632, 6.55698, -18.5773, 7.28899, -17.0235, 8.54768, -13.4606, 9.49806, -9.37113, 10.0987, -4.85201)
+metadata/_edit_lock_ = true
+
+[node name="Iris" type="Node2D" parent="Body/Neck/Head/Eye" node_paths=PackedStringArray("polygon", "clip_paths")]
+position = Vector2(-5.11155, -3.27573)
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.588235, 0, 0.505882, 1)
+stroke_width = 2.0
+curve = SubResource("Curve2D_wlod0")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_ef0ch")
+clip_paths = [NodePath("..")]
+shape_type = 2
+size = Vector2(24.8163, 56.1508)
+rx = 12.4082
+ry = 28.0754
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck/Head/Eye/Iris"]
+color = Color(0, 0.87298, 0.698602, 1)
+texture = SubResource("GradientTexture2D_48nhp")
+texture_offset = Vector2(12.4081, 28.0754)
+polygon = PackedVector2Array(5.64201, -20.7676, 6.16551, -20.6747, 6.68141, -20.5216, 7.18904, -20.3099, 7.68774, -20.0411, 8.17693, -19.7167, 8.65587, -19.3382, 9.11598, -18.9145, 10.2891, -15.6974, 11.4331, -10.9284, 12.1561, -5.65829, 12.4081, 0, 12.1561, 5.65829, 11.4331, 10.9284, 10.2891, 15.6974, 8.77396, 19.8525, 7.89281, 21.6645, 6.9376, 23.2807, 5.91454, 24.6869, 4.8299, 25.8692, 4.26641, 26.3718, 3.68987, 26.8132, 3.38631, 27.0082, 3.03406, 26.8613, 2.53534, 26.5925, 2.04617, 26.2681, 1.56721, 25.8896, 1.09909, 25.4586, 0.198013, 24.4448, -0.651871, 23.239, -1.44542, 21.8531, -2.17744, 20.2993, -3.43614, 16.7363, -4.38651, 12.6469, -4.98714, 8.12775, -5.19655, 3.27573, -4.98715, -1.57627, -4.38652, -6.0954, -3.43614, -10.1848, -2.17744, -13.7478, -1.44543, -15.3016, -0.651886, -16.6875, 0.198029, -17.8934, 1.09909, -18.9071, 1.56721, -19.3382, 2.04616, -19.7166, 2.53534, -20.0411, 3.03404, -20.3099, 3.54167, -20.5216, 4.05757, -20.6747, 4.58107, -20.7676, 5.11156, -20.799)
+polygons = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51]]
+metadata/_edit_lock_ = true
+
+[node name="Pupil" type="Node2D" parent="Body/Neck/Head/Eye/Iris" node_paths=PackedStringArray("polygon", "clip_paths")]
+position = Vector2(-1.09432, 3.43547)
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.588235, 0, 0.505882, 1)
+stroke_width = 2.0
+curve = SubResource("Curve2D_p0i0j")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_s3xq1")
+clip_paths = [NodePath("../..")]
+shape_type = 2
+size = Vector2(24, 50)
+rx = 12.0
+ry = 25.0
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck/Head/Eye/Iris/Pupil"]
+color = Color(0, 0, 0, 1)
+polygon = PackedVector2Array(4.12608, -23.483, 4.67102, -23.0354, 5.71999, -21.9827, 6.7094, -20.7305, 7.63319, -19.2913, 8.48535, -17.6778, 9.95064, -13.9779, 11.057, -9.73129, 11.7562, -5.03848, 12, 0, 11.7562, 5.03848, 11.057, 9.73129, 9.95064, 13.9779, 8.48535, 17.6778, 7.63319, 19.2913, 6.7094, 20.7305, 5.71999, 21.9827, 4.67102, 23.0354, 4.17301, 23.4445, 4.12837, 23.4259, 3.62965, 23.1571, 3.14049, 22.8326, 2.66153, 22.4542, 2.19341, 22.0231, 1.29233, 21.0094, 0.442444, 19.8035, -0.351105, 18.4176, -1.08313, 16.8638, -2.34183, 13.3008, -3.29219, 9.2114, -3.89282, 4.69228, -4.10223, -0.159744, -3.89284, -5.01174, -3.29221, -9.53087, -2.34183, -13.6203, -1.08313, -17.1833, -0.35112, -18.7371, 0.442429, -20.123, 1.29234, -21.3288, 2.19341, -22.3426, 2.66153, -22.7736, 3.14047, -23.1521, 3.62965, -23.4765, 3.9162, -23.631)
+polygons = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43]]
+metadata/_edit_lock_ = true
+
+[node name="PupilShine" type="Node2D" parent="Body/Neck/Head/Eye/Iris/Pupil" node_paths=PackedStringArray("polygon", "line", "clip_paths")]
+position = Vector2(-4.82516, -13.1802)
+rotation = 0.0993998
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(1, 1, 1, 0.439216)
+stroke_width = 0.5
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_lkcyw")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_ye2us")
+clip_paths = [NodePath("../../..")]
+shape_type = 2
+size = Vector2(16, 24)
+rx = 8.0
+ry = 12.0
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck/Head/Eye/Iris/Pupil/PupilShine"]
+polygon = PackedVector2Array(5.6569, -8.48535, 6.17323, -7.63319, 6.63376, -6.7094, 7.03447, -5.71999, 7.37134, -4.67102, 7.83747, -2.41847, 8, 0, 7.83747, 2.41847, 7.37134, 4.67102, 7.03447, 5.71999, 6.63376, 6.7094, 6.17323, 7.63319, 5.6569, 8.48535, 5.08879, 9.25984, 4.47293, 9.95064, 3.81333, 10.5517, 3.11401, 11.057, 2.379, 11.4605, 1.94076, 11.6295, 1.73834, 8.03561, 1.88754, 3.47919, 2.42743, -0.684387, 3.32631, -4.35466, 3.90053, -5.97343, 4.55263, -7.43123, 5.27867, -8.71548, 5.38275, -8.85908)
+polygons = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]]
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/Eye/Iris/Pupil/PupilShine"]
+points = PackedVector2Array(5.6569, -8.48535, 6.17323, -7.63319, 6.63376, -6.7094, 7.03447, -5.71999, 7.37134, -4.67102, 7.83747, -2.41847, 8, 0, 7.83747, 2.41847, 7.37134, 4.67102, 7.03447, 5.71999, 6.63376, 6.7094, 6.17323, 7.63319, 5.6569, 8.48535, 5.08879, 9.25984, 4.47293, 9.95064, 3.81333, 10.5517, 3.11401, 11.057, 2.379, 11.4605, 1.94076, 11.6295, 1.73834, 8.03561, 1.88754, 3.47919, 2.42743, -0.684387, 3.32631, -4.35466, 3.90053, -5.97343, 4.55263, -7.43123, 5.27867, -8.71548, 5.38275, -8.85908)
+closed = true
+width = 0.5
+default_color = Color(1, 1, 1, 0.439216)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="PupilShine2" type="Node2D" parent="Body/Neck/Head/Eye/Iris/Pupil" node_paths=PackedStringArray("polygon", "line", "clip_paths")]
+position = Vector2(1.24684, 7.96526)
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(1, 1, 1, 0.662745)
+stroke_width = 0.5
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_48nhp")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_13sh3")
+clip_paths = [NodePath("../../..")]
+shape_type = 2
+size = Vector2(1.78526, 4.13709)
+rx = 0.89263
+ry = 2.06855
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck/Head/Eye/Iris/Pupil/PupilShine2"]
+polygon = PackedVector2Array(0.0459366, -2.06586, 0.0912704, -2.05787, 0.135941, -2.04471, 0.179901, -2.02652, 0.223083, -2.00343, 0.26545, -1.97555, 0.306923, -1.94303, 0.347458, -1.90599, 0.425484, -1.81889, 0.499084, -1.71528, 0.567802, -1.5962, 0.631187, -1.46269, 0.740189, -1.15656, 0.822487, -0.805183, 0.874496, -0.416893, 0.892632, 0, 0.874496, 0.416893, 0.822487, 0.805183, 0.740189, 1.15656, 0.631187, 1.46269, 0.567802, 1.5962, 0.499084, 1.71528, 0.425484, 1.81889, 0.347458, 1.90599, 0.306923, 1.94303, 0.26545, 1.97555, 0.223083, 2.00343, 0.179901, 2.02652, 0.135941, 2.04471, 0.0912704, 2.05787, 0.0459366, 2.06586, 0, 2.06854, -0.0459366, 2.06586, -0.0912704, 2.05787, -0.135941, 2.04471, -0.179901, 2.02652, -0.223083, 2.00343, -0.26545, 1.97555, -0.306923, 1.94303, -0.347458, 1.90599, -0.425484, 1.81889, -0.499084, 1.71528, -0.567802, 1.5962, -0.631187, 1.46269, -0.740189, 1.15656, -0.822487, 0.805183, -0.874496, 0.416893, -0.892632, 0, -0.874496, -0.416893, -0.822487, -0.805183, -0.740189, -1.15656, -0.631187, -1.46269, -0.567802, -1.5962, -0.499084, -1.71528, -0.425484, -1.81889, -0.347458, -1.90599, -0.306923, -1.94303, -0.26545, -1.97555, -0.223083, -2.00343, -0.179901, -2.02652, -0.135941, -2.04471, -0.0912704, -2.05787, -0.0459366, -2.06586, 0, -2.06854)
+polygons = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63]]
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/Eye/Iris/Pupil/PupilShine2"]
+points = PackedVector2Array(0.0459366, -2.06586, 0.0912704, -2.05787, 0.135941, -2.04471, 0.179901, -2.02652, 0.223083, -2.00343, 0.26545, -1.97555, 0.306923, -1.94303, 0.347458, -1.90599, 0.425484, -1.81889, 0.499084, -1.71528, 0.567802, -1.5962, 0.631187, -1.46269, 0.740189, -1.15656, 0.822487, -0.805183, 0.874496, -0.416893, 0.892632, 0, 0.874496, 0.416893, 0.822487, 0.805183, 0.740189, 1.15656, 0.631187, 1.46269, 0.567802, 1.5962, 0.499084, 1.71528, 0.425484, 1.81889, 0.347458, 1.90599, 0.306923, 1.94303, 0.26545, 1.97555, 0.223083, 2.00343, 0.179901, 2.02652, 0.135941, 2.04471, 0.0912704, 2.05787, 0.0459366, 2.06586, 0, 2.06854, -0.0459366, 2.06586, -0.0912704, 2.05787, -0.135941, 2.04471, -0.179901, 2.02652, -0.223083, 2.00343, -0.26545, 1.97555, -0.306923, 1.94303, -0.347458, 1.90599, -0.425484, 1.81889, -0.499084, 1.71528, -0.567802, 1.5962, -0.631187, 1.46269, -0.740189, 1.15656, -0.822487, 0.805183, -0.874496, 0.416893, -0.892632, 0, -0.874496, -0.416893, -0.822487, -0.805183, -0.740189, -1.15656, -0.631187, -1.46269, -0.567802, -1.5962, -0.499084, -1.71528, -0.425484, -1.81889, -0.347458, -1.90599, -0.306923, -1.94303, -0.26545, -1.97555, -0.223083, -2.00343, -0.179901, -2.02652, -0.135941, -2.04471, -0.0912704, -2.05787, -0.0459366, -2.06586, 0, -2.06854)
+closed = true
+width = 0.5
+default_color = Color(1, 1, 1, 0.662745)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/Eye"]
+points = PackedVector2Array(10.3081, 0, 10.0987, 4.85201, 9.49806, 9.37113, 8.54768, 13.4606, 7.28899, 17.0235, 6.55698, 18.5773, 5.76343, 19.9632, 4.91352, 21.1691, 4.01245, 22.1828, 3.54434, 22.6139, 3.06537, 22.9924, 2.57621, 23.3168, 2.07749, 23.5856, 1.56986, 23.7973, 1.05397, 23.9504, 0.530468, 24.0434, 0, 24.0747, -0.530468, 24.0434, -1.05397, 23.9504, -1.56986, 23.7973, -2.07749, 23.5856, -2.57621, 23.3168, -3.06537, 22.9924, -3.54434, 22.6139, -4.01245, 22.1828, -4.91352, 21.1691, -5.76343, 19.9632, -6.55698, 18.5773, -7.28899, 17.0235, -8.54768, 13.4606, -9.49806, 9.37113, -10.0987, 4.85201, -10.3081, 0, -10.0987, -4.85201, -9.49806, -9.37113, -8.54768, -13.4606, -7.28899, -17.0235, -6.55698, -18.5773, -5.76343, -19.9632, -4.91352, -21.1691, -4.01245, -22.1828, -3.54434, -22.6139, -3.06537, -22.9924, -2.57621, -23.3168, -2.07749, -23.5856, -1.56986, -23.7973, -1.05397, -23.9504, -0.530468, -24.0434, 0, -24.0747, 0.530468, -24.0434, 1.05397, -23.9504, 1.56986, -23.7973, 2.07749, -23.5856, 2.57621, -23.3168, 3.06537, -22.9924, 3.54434, -22.6139, 4.01245, -22.1828, 4.91352, -21.1691, 5.76343, -19.9632, 6.55698, -18.5773, 7.28899, -17.0235, 8.54768, -13.4606, 9.49806, -9.37113, 10.0987, -4.85201)
+closed = true
+width = 2.0
+width_curve = SubResource("Curve_inuwg")
+default_color = Color(0, 0, 0, 1)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Mouth" type="Node2D" parent="Body/Neck/Head" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(70.7687, -1.04735)
+rotation = -0.144918
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.427451, 0.207843, 0.760784, 1)
+stroke_width = 3.0
+begin_cap_mode = 2
+end_cap_mode = 2
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_ycisl")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_lkcyw")
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck/Head/Mouth"]
+polygon = PackedVector2Array(2.54356, 0.664536, 1.30654, 0.0175916, 0.117661, -0.714067, -1.01729, -1.52688, -2.09277, -2.41687, -3.10355, -3.37973, -4.0447, -4.41074, -4.91164, -5.5049, -5.70014, -6.65686, -6.40637, -7.86102, -7.02688, -9.11152, -7.55864, -10.4022, -7.99907, -11.7269, -8.34603, -13.0791, -8.59782, -14.4522, -8.75321, -15.8395, -8.81145, -17.2343, -8.80157, -18.014, -9.90125, -17.1541, -10.9383, -16.2196, -11.9076, -15.215, -12.8044, -14.1452, -13.6245, -13.0155, -14.3638, -11.8313, -15.0186, -10.5985, -15.5859, -9.32292, -16.0628, -8.01093, -16.447, -6.66886, -16.7366, -5.30327, -16.9303, -3.92079, -17.0271, -2.52817, -17.0265, -1.13219, -16.9286, 0.260349, -16.7337, 1.64266, -16.4429, 3.00801, -16.0575, 4.34975, -15.5795, 5.66134, -15.0112, 6.93639, -14.3553, 8.16869, -13.745, 9.15728)
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/Mouth"]
+points = PackedVector2Array(2.54356, 0.664536, 1.30654, 0.0175916, 0.117661, -0.714067, -1.01729, -1.52688, -2.09277, -2.41687, -3.10355, -3.37973, -4.0447, -4.41074, -4.91164, -5.5049, -5.70014, -6.65686, -6.40637, -7.86102, -7.02688, -9.11152, -7.55864, -10.4022, -7.99907, -11.7269, -8.34603, -13.0791, -8.59782, -14.4522, -8.75321, -15.8395, -8.81145, -17.2343, -8.80157, -18.014, -9.90125, -17.1541, -10.9383, -16.2196, -11.9076, -15.215, -12.8044, -14.1452, -13.6245, -13.0155, -14.3638, -11.8313, -15.0186, -10.5985, -15.5859, -9.32292, -16.0628, -8.01093, -16.447, -6.66886, -16.7366, -5.30327, -16.9303, -3.92079, -17.0271, -2.52817, -17.0265, -1.13219, -16.9286, 0.260349, -16.7337, 1.64266, -16.4429, 3.00801, -16.0575, 4.34975, -15.5795, 5.66134, -15.0112, 6.93639, -14.3553, 8.16869, -13.745, 9.15728)
+width = 3.0
+width_curve = SubResource("Curve_ye2us")
+default_color = Color(0.427451, 0.207843, 0.760784, 1)
+begin_cap_mode = 2
+end_cap_mode = 2
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Nose" type="Node2D" parent="Body/Neck/Head" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(69.3222, -44.1276)
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.427451, 0.207843, 0.760784, 1)
+stroke_width = 4.0
+line_joint_mode = 2
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_ef0ch")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_ycisl")
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck/Head/Nose"]
+color = Color(0.556863, 0.603922, 1, 1)
+polygon = PackedVector2Array(6.13687, -3.51773, 6.21259, 0.0743157, 6.61921, 3.90234, 7.54896, 8.49655, 8.275, 10.9431, 9.20982, 13.4156, 10.3794, 15.859, 11.8098, 18.2181, 13.5269, 20.4378, 15.5568, 22.4628, 16.6971, 23.3851, 17.9254, 24.238, 19.2449, 25.0147, 20.6588, 25.7082, 20.69, 26.8518, 20.6208, 28.0973, 20.4449, 29.4223, 20.1562, 30.8043, 19.7486, 32.2208, 19.2158, 33.6493, 18.5518, 35.0674, 17.7504, 36.4526, 16.8054, 37.7823, 15.7106, 39.0341, 14.46, 40.1855, 13.0473, 41.2141, 11.4663, 42.0973, 9.71101, 42.8126, 7.77517, 43.3377, 5.65263, 43.6499, 4.56407, 43.692, 3.51608, 43.6249, 2.50826, 43.4554, 1.54022, 43.1908, 0.611555, 42.8381, -0.27812, 42.4044, -1.1292, 41.8968, -1.94208, 41.3224, -3.45481, 40.0013, -4.81947, 38.4979, -6.0392, 36.8687, -7.11716, 35.1705, -8.86037, 31.7936, -10.0743, 28.8203, -11.0152, 25.8978)
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/Nose"]
+points = PackedVector2Array(6.13687, -3.51773, 6.21259, 0.0743157, 6.61921, 3.90234, 7.54896, 8.49655, 8.275, 10.9431, 9.20982, 13.4156, 10.3794, 15.859, 11.8098, 18.2181, 13.5269, 20.4378, 15.5568, 22.4628, 16.6971, 23.3851, 17.9254, 24.238, 19.2449, 25.0147, 20.6588, 25.7082, 20.69, 26.8518, 20.6208, 28.0973, 20.4449, 29.4223, 20.1562, 30.8043, 19.7486, 32.2208, 19.2158, 33.6493, 18.5518, 35.0674, 17.7504, 36.4526, 16.8054, 37.7823, 15.7106, 39.0341, 14.46, 40.1855, 13.0473, 41.2141, 11.4663, 42.0973, 9.71101, 42.8126, 7.77517, 43.3377, 5.65263, 43.6499, 4.56407, 43.692, 3.51608, 43.6249, 2.50826, 43.4554, 1.54022, 43.1908, 0.611555, 42.8381, -0.27812, 42.4044, -1.1292, 41.8968, -1.94208, 41.3224, -3.45481, 40.0013, -4.81947, 38.4979, -6.0392, 36.8687, -7.11716, 35.1705, -8.86037, 31.7936, -10.0743, 28.8203, -11.0152, 25.8978)
+width = 4.0
+width_curve = SubResource("Curve_48nhp")
+default_color = Color(0.427451, 0.207843, 0.760784, 1)
+joint_mode = 2
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="EyeFront" type="Node2D" parent="Body/Neck/Head" node_paths=PackedStringArray("polygon", "line", "glue_map")]
+position = Vector2(32.107, -44.2939)
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0, 0, 0, 1)
+stroke_width = 4.0
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_s3xq1")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_ala13")
+glue_map = {
+3: NodePath("Lash")
+}
+use_interect_when_clipping = true
+rx = 22.3641
+ry = 28.4301
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck/Head/EyeFront"]
+polygon = PackedVector2Array(21.446, 0.794495, 21.149, 4.20391, 20.6355, 7.36076, 19.9222, 10.2711, 19.0256, 12.941, 17.9623, 15.3765, 16.7489, 17.5837, 15.4018, 19.5686, 13.9378, 21.3373, 12.3733, 22.8958, 10.7248, 24.2503, 9.00909, 25.4067, 7.24256, 26.3711, 5.44183, 27.1496, 3.62345, 27.7482, 1.80398, 28.173, 0, 28.4301, -3.48863, 28.6478, -6.76219, 28.5004, -8.3045, 28.2429, -9.77646, 27.838, -11.1726, 27.2669, -12.4873, 26.511, -13.1124, 26.0578, -13.7151, 25.5514, -14.2947, 24.9895, -14.8504, 24.3696, -15.8878, 22.9467, -16.8217, 21.264, -17.6466, 19.3029, -18.357, 17.0447, -19.412, 11.5617, -19.3913, 9.29751, -18.9297, 3.78309, -18.3463, 0.406171, -17.428, -3.06434, -16.8199, -4.75981, -16.0999, -6.38881, -15.2588, -7.92137, -14.2871, -9.32756, -9.9236, -14.6689, -5.23448, -19.5962, -2.80571, -21.7019, -0.341018, -23.4609, 0.900062, -24.1849, 2.14444, -24.7919, 3.39021, -25.2716, 4.63549, -25.614, 5.27041, -25.7186, 5.92873, -25.7623, 6.60741, -25.745, 7.30341, -25.667, 8.01366, -25.5283, 8.73513, -25.329, 10.1995, -24.7491, 11.6722, -23.928, 13.1288, -22.8666, 14.5449, -21.5655, 15.8962, -20.0257, 17.1582, -18.2479, 18.3067, -16.2329, 19.3171, -13.9815, 20.1651, -11.4944, 20.8264, -8.77248, 21.2766, -5.81649, 21.4913, -2.62724)
+metadata/_edit_lock_ = true
+
+[node name="Lash" type="Node2D" parent="Body/Neck/Head/EyeFront" node_paths=PackedStringArray("line")]
+position = Vector2(-14.2871, -9.32756)
+rotation = 2.24227
+script = ExtResource("1_inuwg")
+stroke_color = Color(0, 0, 0, 1)
+stroke_width = 2.0
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_ye2us")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_lno47")
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/EyeFront/Lash"]
+points = PackedVector2Array(-0.0906369, 0.273612, 1.28385, 0.517639, 2.63796, 0.85695, 3.96511, 1.28989, 5.25883, 1.81436, 6.5128, 2.42779, 7.72093, 3.1272, 8.87734, 3.90919, 9.97637, 4.76993, 11.0127, 5.70524, 11.9812, 6.71057, 12.8773, 7.781, 13.6965, 8.91134, 14.1008, 9.53712)
+width = 2.0
+width_curve = SubResource("Curve_ef0ch")
+default_color = Color(0, 0, 0, 1)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Iris" type="Node2D" parent="Body/Neck/Head/EyeFront" node_paths=PackedStringArray("polygon", "clip_paths")]
+position = Vector2(-5.45288, 5.5916)
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0, 0, 0, 1)
+stroke_width = 2.0
+curve = SubResource("Curve2D_13sh3")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_xhpvu")
+clip_paths = [NodePath("..")]
+use_interect_when_clipping = true
+shape_type = 2
+size = Vector2(35.548, 48.2463)
+rx = 17.774
+ry = 24.1232
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck/Head/EyeFront/Iris"]
+color = Color(0, 0.87451, 0.698039, 1)
+texture = SubResource("GradientTexture2D_lno47")
+texture_offset = Vector2(17.774, 24.1231)
+polygon = PackedVector2Array(1.81733, -23.9986, 3.58216, -23.6331, 5.28555, -23.0387, 6.91856, -22.2275, 8.47227, -21.2117, 9.93773, -20.0034, 11.306, -18.6147, 12.5682, -17.0578, 13.7154, -15.3447, 14.7385, -13.4876, 15.6288, -11.4987, 16.3773, -9.38998, 16.9749, -7.17362, 17.4129, -4.86176, 17.6822, -2.46651, 17.774, 0, 17.6822, 2.46651, 17.4129, 4.86176, 16.9749, 7.17362, 16.3773, 9.38998, 15.6288, 11.4987, 14.7386, 13.4876, 13.7154, 15.3447, 12.5682, 17.0578, 11.306, 18.6147, 9.93773, 20.0034, 8.47227, 21.2117, 6.91856, 22.2275, 5.78327, 22.7914, 5.45288, 22.8385, 1.96425, 23.0562, -1.3093, 22.9088, -2.85162, 22.6513, -4.32359, 22.2464, -5.7197, 21.6753, -7.0344, 20.9194, -7.65952, 20.4662, -8.26219, 19.9598, -8.84178, 19.3979, -9.39755, 18.778, -10.435, 17.3551, -11.3689, 15.6724, -12.1938, 13.7113, -12.9041, 11.4531, -13.9591, 5.97009, -13.9384, 3.70591, -13.4768, -1.80852, -12.8934, -5.18544, -11.9751, -8.65595, -11.367, -10.3514, -10.647, -11.9804, -9.80589, -13.513, -8.83422, -14.9192, -4.47073, -20.2605, -0.850266, -24.0649, 0, -24.1232)
+polygons = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]]
+metadata/_edit_lock_ = true
+
+[node name="Pupil" type="Node2D" parent="Body/Neck/Head/EyeFront/Iris" node_paths=PackedStringArray("polygon", "clip_paths")]
+position = Vector2(-3.08707, -0.685577)
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0, 0, 0, 1)
+stroke_width = 2.0
+curve = SubResource("Curve2D_78whv")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_y8bhp")
+clip_paths = [NodePath("../.."), NodePath("..")]
+use_interect_when_clipping = true
+shape_type = 2
+size = Vector2(31.2052, 45.2643)
+rx = 15.6026
+ry = 22.6321
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck/Head/EyeFront/Iris/Pupil"]
+color = Color(0, 0, 0, 1)
+polygon = PackedVector2Array(1.59531, -22.5153, 2.37617, -22.3714, 3.14454, -22.1724, 4.63982, -21.6147, 6.07333, -20.8537, 7.43723, -19.9006, 8.72366, -18.767, 9.9248, -17.4642, 11.0328, -16.0035, 12.0398, -14.3963, 12.938, -12.654, 13.7195, -10.788, 14.3765, -8.8096, 14.9012, -6.73024, 15.2856, -4.56126, 15.522, -2.31406, 15.6026, 0, 15.522, 2.31406, 15.2856, 4.56126, 14.9012, 6.73024, 14.3765, 8.8096, 13.7195, 10.788, 12.938, 12.654, 12.0398, 14.3963, 11.0328, 16.0035, 9.9248, 17.4642, 8.72367, 18.767, 7.43723, 19.9006, 6.07333, 20.8537, 4.63982, 21.6147, 3.14454, 22.1724, 2.37617, 22.3714, 1.59531, 22.5153, 0.802925, 22.6027, 0, 22.6321, -0.802925, 22.6027, -1.59531, 22.5153, -2.37617, 22.3714, -2.80972, 22.2591, -3.94733, 21.605, -4.57245, 21.1518, -5.17513, 20.6454, -5.75471, 20.0834, -6.31049, 19.4636, -7.34789, 18.0407, -8.28179, 16.358, -9.10669, 14.3969, -9.81704, 12.1386, -10.8721, 6.65568, -10.8513, 4.39149, -10.3897, -1.12293, -9.80635, -4.49986, -8.88806, -7.97037, -8.27992, -9.66583, -7.55996, -11.2948, -6.71883, -12.8274, -5.74715, -14.2336, -1.38366, -19.5749, 1.43175, -22.5333)
+polygons = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58]]
+metadata/_edit_lock_ = true
+
+[node name="PupilShine" type="Node2D" parent="Body/Neck/Head/EyeFront/Iris/Pupil" node_paths=PackedStringArray("polygon", "line", "clip_paths")]
+position = Vector2(-1.03037, -9.94677)
+rotation = 0.236561
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(1, 1, 1, 0.560784)
+stroke_width = 0.5
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_w157y")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_7717w")
+clip_paths = [NodePath("../../.."), NodePath("..")]
+shape_type = 2
+size = Vector2(16, 24)
+rx = 8.0
+ry = 12.0
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck/Head/EyeFront/Iris/Pupil/PupilShine"]
+polygon = PackedVector2Array(0.41169, -11.9844, 0.81797, -11.938, 1.21835, -11.8617, 1.61231, -11.7562, 2.379, -11.4605, 3.11401, -11.057, 3.81333, -10.5517, 4.47293, -9.95064, 5.08879, -9.25984, 5.6569, -8.48535, 6.17323, -7.63319, 6.63376, -6.7094, 7.03447, -5.71999, 7.37134, -4.67102, 7.83747, -2.41847, 8, 0, 7.83747, 2.41847, 7.37134, 4.67102, 7.03447, 5.71999, 6.63376, 6.7094, 6.17323, 7.63319, 5.6569, 8.48535, 5.08879, 9.25984, 4.47293, 9.95064, 3.81333, 10.5517, 3.11401, 11.057, 2.379, 11.4605, 1.61231, 11.7562, 1.21835, 11.8617, 0.81797, 11.938, 0.41169, 11.9844, 0, 12, -0.41169, 11.9844, -0.81797, 11.938, -1.21835, 11.8617, -1.61231, 11.7562, -2.379, 11.4605, -3.11401, 11.057, -3.81333, 10.5517, -4.47293, 9.95064, -5.08879, 9.25984, -5.6569, 8.48535, -6.17323, 7.63319, -6.63376, 6.7094, -7.03447, 5.71999, -7.20705, 5.18258, -7.17566, 3.7629, -6.98181, 1.97212, -6.66367, 0.219765, -6.20514, -1.46725, -5.59009, -3.062, -2.5999, -9.27718, -1.09219, -11.8858, -0.81797, -11.938, -0.41169, -11.9844, 0, -12)
+polygons = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]]
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/EyeFront/Iris/Pupil/PupilShine"]
+points = PackedVector2Array(0.41169, -11.9844, 0.81797, -11.938, 1.21835, -11.8617, 1.61231, -11.7562, 2.379, -11.4605, 3.11401, -11.057, 3.81333, -10.5517, 4.47293, -9.95064, 5.08879, -9.25984, 5.6569, -8.48535, 6.17323, -7.63319, 6.63376, -6.7094, 7.03447, -5.71999, 7.37134, -4.67102, 7.83747, -2.41847, 8, 0, 7.83747, 2.41847, 7.37134, 4.67102, 7.03447, 5.71999, 6.63376, 6.7094, 6.17323, 7.63319, 5.6569, 8.48535, 5.08879, 9.25984, 4.47293, 9.95064, 3.81333, 10.5517, 3.11401, 11.057, 2.379, 11.4605, 1.61231, 11.7562, 1.21835, 11.8617, 0.81797, 11.938, 0.41169, 11.9844, 0, 12, -0.41169, 11.9844, -0.81797, 11.938, -1.21835, 11.8617, -1.61231, 11.7562, -2.379, 11.4605, -3.11401, 11.057, -3.81333, 10.5517, -4.47293, 9.95064, -5.08879, 9.25984, -5.6569, 8.48535, -6.17323, 7.63319, -6.63376, 6.7094, -7.03447, 5.71999, -7.20705, 5.18258, -7.17566, 3.7629, -6.98181, 1.97212, -6.66367, 0.219765, -6.20514, -1.46725, -5.59009, -3.062, -2.5999, -9.27718, -1.09219, -11.8858, -0.81797, -11.938, -0.41169, -11.9844, 0, -12)
+closed = true
+width = 0.5
+default_color = Color(1, 1, 1, 0.560784)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="ExtraStroke" type="Line2D" parent="Body/Neck/Head/EyeFront/Iris/Pupil/PupilShine/Stroke"]
+visible = false
+points = PackedVector2Array(7.37134, -4.67102, 7.58776, -3.62515, 5.88145, -3.14936, -0.334999, -0.727379, -6.38522, 2.12116, -6.38108, 2.11504, -6.31966, 2.04053, -6.15194, 1.87279, -5.64703, 1.4684, -4.03872, 0.432213, 0.936218, -2.16418, 7.04475, -4.72474, 7.32463, -4.81645)
+closed = true
+width = 0.5
+default_color = Color(1, 1, 1, 0.560784)
+metadata/_edit_lock_ = true
+
+[node name="PupilShine2" type="Node2D" parent="Body/Neck/Head/EyeFront/Iris/Pupil" node_paths=PackedStringArray("polygon", "line", "clip_paths")]
+position = Vector2(6.48325, 4.35518)
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(1, 1, 1, 0.662745)
+stroke_width = 0.5
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_ala13")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_13sh3")
+clip_paths = [NodePath("../../..")]
+shape_type = 2
+size = Vector2(4, 4)
+rx = 2.0
+ry = 2.0
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck/Head/EyeFront/Iris/Pupil/PupilShine2"]
+polygon = PackedVector2Array(0.204491, -1.98968, 0.403076, -1.95937, 0.594749, -1.91009, 0.778503, -1.84283, 0.953331, -1.75861, 1.11823, -1.65844, 1.2722, -1.5433, 1.41422, -1.41422, 1.5433, -1.2722, 1.65844, -1.11823, 1.75861, -0.953331, 1.84283, -0.778503, 1.91009, -0.594749, 1.95937, -0.403076, 1.98968, -0.204491, 2, 0, 1.98968, 0.204491, 1.95937, 0.403076, 1.91009, 0.594749, 1.84283, 0.778503, 1.75861, 0.953331, 1.65844, 1.11823, 1.5433, 1.2722, 1.41422, 1.41422, 1.2722, 1.5433, 1.11823, 1.65844, 0.953331, 1.75861, 0.778503, 1.84283, 0.594749, 1.91009, 0.403076, 1.95937, 0.204491, 1.98968, 0, 2, -0.204491, 1.98968, -0.403076, 1.95937, -0.594749, 1.91009, -0.778503, 1.84283, -0.953331, 1.75861, -1.11823, 1.65844, -1.2722, 1.5433, -1.41422, 1.41422, -1.5433, 1.2722, -1.65844, 1.11823, -1.75861, 0.953331, -1.84283, 0.778503, -1.91009, 0.594749, -1.95937, 0.403076, -1.98968, 0.204491, -2, 0, -1.98968, -0.204491, -1.95937, -0.403076, -1.91009, -0.594749, -1.84283, -0.778503, -1.75861, -0.953331, -1.65844, -1.11823, -1.5433, -1.2722, -1.41422, -1.41422, -1.2722, -1.5433, -1.11823, -1.65844, -0.953331, -1.75861, -0.778503, -1.84283, -0.594749, -1.91009, -0.403076, -1.95937, -0.204491, -1.98968, 0, -2)
+polygons = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63]]
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/EyeFront/Iris/Pupil/PupilShine2"]
+points = PackedVector2Array(0.204491, -1.98968, 0.403076, -1.95937, 0.594749, -1.91009, 0.778503, -1.84283, 0.953331, -1.75861, 1.11823, -1.65844, 1.2722, -1.5433, 1.41422, -1.41422, 1.5433, -1.2722, 1.65844, -1.11823, 1.75861, -0.953331, 1.84283, -0.778503, 1.91009, -0.594749, 1.95937, -0.403076, 1.98968, -0.204491, 2, 0, 1.98968, 0.204491, 1.95937, 0.403076, 1.91009, 0.594749, 1.84283, 0.778503, 1.75861, 0.953331, 1.65844, 1.11823, 1.5433, 1.2722, 1.41422, 1.41422, 1.2722, 1.5433, 1.11823, 1.65844, 0.953331, 1.75861, 0.778503, 1.84283, 0.594749, 1.91009, 0.403076, 1.95937, 0.204491, 1.98968, 0, 2, -0.204491, 1.98968, -0.403076, 1.95937, -0.594749, 1.91009, -0.778503, 1.84283, -0.953331, 1.75861, -1.11823, 1.65844, -1.2722, 1.5433, -1.41422, 1.41422, -1.5433, 1.2722, -1.65844, 1.11823, -1.75861, 0.953331, -1.84283, 0.778503, -1.91009, 0.594749, -1.95937, 0.403076, -1.98968, 0.204491, -2, 0, -1.98968, -0.204491, -1.95937, -0.403076, -1.91009, -0.594749, -1.84283, -0.778503, -1.75861, -0.953331, -1.65844, -1.11823, -1.5433, -1.2722, -1.41422, -1.41422, -1.2722, -1.5433, -1.11823, -1.65844, -0.953331, -1.75861, -0.778503, -1.84283, -0.594749, -1.91009, -0.403076, -1.95937, -0.204491, -1.98968, 0, -2)
+closed = true
+width = 0.5
+default_color = Color(1, 1, 1, 0.662745)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/EyeFront"]
+points = PackedVector2Array(21.446, 0.794495, 21.149, 4.20391, 20.6355, 7.36076, 19.9222, 10.2711, 19.0256, 12.941, 17.9623, 15.3765, 16.7489, 17.5837, 15.4018, 19.5686, 13.9378, 21.3373, 12.3733, 22.8958, 10.7248, 24.2503, 9.00909, 25.4067, 7.24256, 26.3711, 5.44183, 27.1496, 3.62345, 27.7482, 1.80398, 28.173, 0, 28.4301, -3.48863, 28.6478, -6.76219, 28.5004, -8.3045, 28.2429, -9.77646, 27.838, -11.1726, 27.2669, -12.4873, 26.511, -13.1124, 26.0578, -13.7151, 25.5514, -14.2947, 24.9895, -14.8504, 24.3696, -15.8878, 22.9467, -16.8217, 21.264, -17.6466, 19.3029, -18.357, 17.0447, -19.412, 11.5617, -19.3913, 9.29751, -18.9297, 3.78309, -18.3463, 0.406171, -17.428, -3.06434, -16.8199, -4.75981, -16.0999, -6.38881, -15.2588, -7.92137, -14.2871, -9.32756, -9.9236, -14.6689, -5.23448, -19.5962, -2.80571, -21.7019, -0.341018, -23.4609, 0.900062, -24.1849, 2.14444, -24.7919, 3.39021, -25.2716, 4.63549, -25.614, 5.27041, -25.7186, 5.92873, -25.7623, 6.60741, -25.745, 7.30341, -25.667, 8.01366, -25.5283, 8.73513, -25.329, 10.1995, -24.7491, 11.6722, -23.928, 13.1288, -22.8666, 14.5449, -21.5655, 15.8962, -20.0257, 17.1582, -18.2479, 18.3067, -16.2329, 19.3171, -13.9815, 20.1651, -11.4944, 20.8264, -8.77248, 21.2766, -5.81649, 21.4913, -2.62724)
+closed = true
+width = 4.0
+width_curve = SubResource("Curve_ryeyi")
+default_color = Color(0, 0, 0, 1)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Ear" type="Node2D" parent="Body/Neck/Head" node_paths=PackedStringArray("polygon", "line")]
+z_index = 1
+position = Vector2(3.42202, -63.7032)
+rotation = -0.436805
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.427451, 0.207843, 0.760784, 1)
+stroke_width = 4.0
+begin_cap_mode = 2
+end_cap_mode = 2
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_xhpvu")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_78whv")
+
+[node name="Fill" type="Polygon2D" parent="Body/Neck/Head/Ear"]
+color = Color(0.556863, 0.603922, 1, 1)
+polygon = PackedVector2Array(-0.216156, 0.27977, -4.05494, -3.67149, -7.38366, -7.87746, -10.2082, -12.2864, -12.5346, -16.8467, -14.3686, -21.5066, -15.7163, -26.2143, -16.5835, -30.9182, -16.9761, -35.5665, -16.9001, -40.1076, -16.3614, -44.4897, -15.3659, -48.6612, -13.9195, -52.5702, -12.0282, -56.1652, -10.9176, -57.8287, -9.69787, -59.3943, -8.36991, -60.8555, -6.93441, -62.2059, -5.39211, -63.439, -3.74375, -64.5483, -3.04157, -64.207, -2.26812, -63.7255, -0.529983, -62.3655, 3.55285, -58.2232, 8.14287, -52.5, 12.8782, -45.5747, 17.397, -37.8262, 21.3374, -29.6331, 24.3375, -21.3742, 25.3718, -17.3385, 26.0354, -13.4283)
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/Ear"]
+points = PackedVector2Array(-0.216156, 0.27977, -4.05494, -3.67149, -7.38366, -7.87746, -10.2082, -12.2864, -12.5346, -16.8467, -14.3686, -21.5066, -15.7163, -26.2143, -16.5835, -30.9182, -16.9761, -35.5665, -16.9001, -40.1076, -16.3614, -44.4897, -15.3659, -48.6612, -13.9195, -52.5702, -12.0282, -56.1652, -10.9176, -57.8287, -9.69787, -59.3943, -8.36991, -60.8555, -6.93441, -62.2059, -5.39211, -63.439, -3.74375, -64.5483, -3.04157, -64.207, -2.26812, -63.7255, -0.529983, -62.3655, 3.55285, -58.2232, 8.14287, -52.5, 12.8782, -45.5747, 17.397, -37.8262, 21.3374, -29.6331, 24.3375, -21.3742, 25.3718, -17.3385, 26.0354, -13.4283)
+width = 4.0
+width_curve = SubResource("Curve_y8bhp")
+default_color = Color(0.427451, 0.207843, 0.760784, 1)
+begin_cap_mode = 2
+end_cap_mode = 2
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Path" type="Node2D" parent="Body/Neck/Head/Ear" node_paths=PackedStringArray("line")]
+position = Vector2(-0.198175, -15.8101)
+script = ExtResource("1_inuwg")
+stroke_color = Color(0.427451, 0.207843, 0.760784, 1)
+stroke_width = 2.0
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_7717w")
+update_curve_at_runtime = true
+tolerance_degrees = 2.0
+arc_list = SubResource("Resource_ryeyi")
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Neck/Head/Ear/Path"]
+points = PackedVector2Array(0.0507202, -0.158768, -1.35259, -1.63226, -2.6205, -3.1445, -3.753, -4.69551, -4.26847, -5.48555, -4.7501, -6.28527, -5.19787, -7.09469, -5.61179, -7.9138, -5.99186, -8.7426, -6.33808, -9.58108, -6.65045, -10.4293, -6.92897, -11.2871, -7.17363, -12.1547, -7.38445, -13.0319, -7.56141, -13.9189, -7.70453, -14.8155, -7.81379, -15.7218, -7.8892, -16.6378, -7.93076, -17.5635, -7.93847, -18.4989, -7.91233, -19.4439, -7.85234, -20.3987, -7.6308, -22.3373, -7.27386, -24.3146, -6.78151, -26.3307, -6.15376, -28.3856)
+width = 2.0
+width_curve = SubResource("Curve_qpkqr")
+default_color = Color(0.427451, 0.207843, 0.760784, 1)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body"]
+color = Color(0.558594, 0.606873, 1, 1)
+polygon = PackedVector2Array(-52.9414, -33.224, -51.7496, -33.8212, -50.4681, -34.3921, -49.1002, -34.9371, -47.6495, -35.4569, -44.5133, -36.4227, -41.0875, -37.2939, -33.4777, -38.7699, -25.0426, -39.9195, -6.5858, -41.3787, 12.5042, -41.9494, 59.6188, -40.9053, 99.2969, -5.36705, 96.225, -1.87789, 92.7209, 1.74545, 88.8128, 5.46957, 84.529, 9.26107, 74.9469, 16.9126, 64.2003, 24.4329, 52.5148, 31.5548, 46.3906, 34.8827, 40.1162, 38.0109, 33.72, 40.9059, 27.2301, 43.5342, 20.6748, 45.8626, 14.0822, 47.8575, 7.48057, 49.4856, 0.89814, 50.7135, -5.63691, 51.5078, -8.87785, 51.7319, -12.0964, 51.8351, -15.2889, 51.8132, -18.452, 51.662, -21.5821, 51.3773, -24.6756, 50.955, -27.7291, 50.3909, -30.739, 49.6809, -33.7018, 48.8207, -36.614, 47.8061, -39.472, 46.6331, -42.2723, 45.2974, -45.0114, 43.7948, -47.6857, 42.1212, -50.2918, 40.2724, -52.8261, 38.2442, -55.2851, 36.0325, -57.6652, 33.633, -59.963, 31.0417, -62.1749, 28.2542, -64.2973, 25.2666, -66.3268, 22.0745, -68.2598, 18.6737, -70.0928, 15.0602, -71.8223, 11.2298, -73.4447, 7.17824, -73.5662, 5.97648, -73.647, 4.56595, -73.6781, 2.69717, -73.6122, 0.431249, -73.4018, -2.17069, -72.9997, -5.04752, -72.3586, -8.13813, -71.9335, -9.7445, -71.431, -11.3814, -70.845, -13.0412, -70.1696, -14.7162, -69.399, -16.3988, -68.5272, -18.0813, -67.5482, -19.7562, -66.4563, -21.4158, -65.2453, -23.0524, -63.9096, -24.6584, -62.443, -26.2262, -60.8398, -27.7481, -59.0939, -29.2164, -57.1995, -30.6236, -55.1506, -31.962)
+metadata/_edit_lock_ = true
+
+[node name="FrontFrontLeg" type="Node2D" parent="Body" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(40, -4)
+rotation = -0.0792349
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.427548, 0.209066, 0.760482, 1)
+line_joint_mode = 2
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_p8hpb")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_nndv2")
+offset = Vector2(-1, 43.3333)
+
+[node name="Stroke" type="Line2D" parent="Body/FrontFrontLeg"]
+points = PackedVector2Array(27.19, -1.95666, 21.3743, 73.1478, 12.6771, 76.4133, 8.21304, 77.8784, 6.00144, 78.4233, 3.82224, 78.7878, 1.68954, 78.9301, -0.382572, 78.8087, -1.39151, 78.6361, -2.38002, 78.382, -3.34633, 78.0411, -4.2887, 77.6083, -5.20536, 77.0783, -6.09454, 76.446, -6.95449, 75.7062, -7.78345, 74.8536, -8.57965, 73.8831, -9.34133, 72.7894, -10.7541, 70.2118, -8.28506, 46.9509, -8.53777, 23.3822, -10.0098, 10.2195, -12.75, -3.25)
+width_curve = SubResource("Curve_p8hpb")
+default_color = Color(0.427548, 0.209066, 0.760482, 1)
+joint_mode = 2
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="LowerLeg" type="Node2D" parent="Body/FrontFrontLeg" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(2.25, 73.5)
+rotation = -0.0668674
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.427548, 0.209066, 0.760482, 1)
+line_joint_mode = 2
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_6svqr")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_ipurh")
+
+[node name="Stroke" type="Line2D" parent="Body/FrontFrontLeg/LowerLeg"]
+points = PackedVector2Array(19.1051, 0.926422, 27.1715, 73.4236, 21.2378, 76.1927, 15.2851, 78.1706, 9.31353, 79.3574, 3.323, 79.7529, -2.68647, 79.3574, -8.71488, 78.1706, -14.7622, 76.1927, -20.8285, 73.4236, -21.0649, 73.004, -21.2746, 72.4972, -21.4583, 71.9062, -21.6167, 71.234, -21.8609, 69.6581, -22.0129, 67.7935, -21.8171, 57.9278, -18.7919, 31.6369, -12.7553, -4.14976)
+width_curve = SubResource("Curve_1ve1q")
+default_color = Color(0.427548, 0.209066, 0.760482, 1)
+joint_mode = 2
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/FrontFrontLeg/LowerLeg"]
+color = Color(0.558594, 0.606873, 1, 1)
+polygon = PackedVector2Array(19.1051, 0.926422, 27.1715, 73.4236, 21.2378, 76.1927, 15.2851, 78.1706, 9.31353, 79.3574, 3.323, 79.7529, -2.68647, 79.3574, -8.71488, 78.1706, -14.7622, 76.1927, -20.8285, 73.4236, -21.0649, 73.004, -21.2746, 72.4972, -21.4583, 71.9062, -21.6167, 71.234, -21.8609, 69.6581, -22.0129, 67.7935, -21.8171, 57.9278, -18.7919, 31.6369, -12.7553, -4.14976)
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/FrontFrontLeg"]
+color = Color(0.558594, 0.606873, 1, 1)
+polygon = PackedVector2Array(27.19, -1.95666, 21.3743, 73.1478, 12.6771, 76.4133, 8.21304, 77.8784, 6.00144, 78.4233, 3.82224, 78.7878, 1.68954, 78.9301, -0.382572, 78.8087, -1.39151, 78.6361, -2.38002, 78.382, -3.34633, 78.0411, -4.2887, 77.6083, -5.20536, 77.0783, -6.09454, 76.446, -6.95449, 75.7062, -7.78345, 74.8536, -8.57965, 73.8831, -9.34133, 72.7894, -10.7541, 70.2118, -8.28506, 46.9509, -8.53777, 23.3822, -10.0098, 10.2195, -12.75, -3.25)
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D" type="Node2D" parent="Body/FrontFrontLeg" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(-10.7541, 70.2118)
+rotation = -0.0993543
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 2,
+NodePath("../LowerLeg"): 3
+}
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D2" type="Node2D" parent="Body/FrontFrontLeg" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(21.3743, 73.1478)
+rotation = -0.0993543
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 1,
+NodePath("../LowerLeg"): 0
+}
+metadata/_edit_lock_ = true
+
+[node name="BackFrontLeg" type="Node2D" parent="Body" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(-60, -2)
+rotation = 0.138036
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.427548, 0.209066, 0.760482, 1)
+line_joint_mode = 2
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_ipurh")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_nndv2")
+offset = Vector2(-1, 43.3333)
+
+[node name="Stroke" type="Line2D" parent="Body/BackFrontLeg"]
+points = PackedVector2Array(24.5918, 4.49943, 27.0925, 10.727, 29.3554, 17.7858, 31.5261, 26.8296, 33.0294, 37.3747, 33.2899, 48.9373, 32.7743, 54.949, 31.7322, 61.0336, 30.0917, 67.1308, 27.781, 73.18, 19.3764, 81.9569, 15.3299, 85.229, 13.3297, 86.5299, 11.339, 87.5862, 9.35321, 88.3818, 7.36781, 88.9007, 6.37385, 89.0514, 5.3783, 89.1269, 4.38061, 89.1253, 3.38019, 89.0445, 2.37649, 88.8825, 1.36895, 88.6374, 0.357002, 88.3071, -0.659918, 87.8897, -2.71093, 86.7854, -4.78858, 85.3084, -12.0539, 10.9409)
+width_curve = SubResource("Curve_d7gkk")
+default_color = Color(0.427548, 0.209066, 0.760482, 1)
+joint_mode = 2
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="LowerLeg" type="Node2D" parent="Body/BackFrontLeg" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(2.25, 73.5)
+rotation = -0.132747
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.427548, 0.209066, 0.760482, 1)
+line_joint_mode = 2
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_d7gkk")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_ipurh")
+
+[node name="Stroke" type="Line2D" parent="Body/BackFrontLeg/LowerLeg"]
+points = PackedVector2Array(25.3487, 3.06203, 24.0553, 29.0148, 24.4063, 52.0481, 25.4051, 63.3351, 27.1715, 73.4236, 21.2378, 76.1927, 15.2851, 78.1706, 9.31353, 79.3574, 3.323, 79.7529, -2.68647, 79.3574, -8.71488, 78.1706, -14.7622, 76.1927, -20.8285, 73.4236, -21.0618, 73.0148, -21.2625, 72.54, -21.4314, 72.0015, -21.5694, 71.4016, -21.7567, 70.027, -21.8317, 68.4347, -21.6749, 64.6712, -21.1584, 60.2594, -16.684, 39.0982, -8.5396, 10.7729)
+width_curve = SubResource("Curve_1ve1q")
+default_color = Color(0.427548, 0.209066, 0.760482, 1)
+joint_mode = 2
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/BackFrontLeg/LowerLeg"]
+color = Color(0.558594, 0.606873, 1, 1)
+polygon = PackedVector2Array(25.3487, 3.06203, 24.0553, 29.0148, 24.4063, 52.0481, 25.4051, 63.3351, 27.1715, 73.4236, 21.2378, 76.1927, 15.2851, 78.1706, 9.31353, 79.3574, 3.323, 79.7529, -2.68647, 79.3574, -8.71488, 78.1706, -14.7622, 76.1927, -20.8285, 73.4236, -21.0618, 73.0148, -21.2625, 72.54, -21.4314, 72.0015, -21.5694, 71.4016, -21.7567, 70.027, -21.8317, 68.4347, -21.6749, 64.6712, -21.1584, 60.2594, -16.684, 39.0982, -8.5396, 10.7729)
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/BackFrontLeg"]
+color = Color(0.558594, 0.606873, 1, 1)
+polygon = PackedVector2Array(24.5918, 4.49943, 27.0925, 10.727, 29.3554, 17.7858, 31.5261, 26.8296, 33.0294, 37.3747, 33.2899, 48.9373, 32.7743, 54.949, 31.7322, 61.0336, 30.0917, 67.1308, 27.781, 73.18, 19.3764, 81.9569, 15.3299, 85.229, 13.3297, 86.5299, 11.339, 87.5862, 9.35321, 88.3818, 7.36781, 88.9007, 6.37385, 89.0514, 5.3783, 89.1269, 4.38061, 89.1253, 3.38019, 89.0445, 2.37649, 88.8825, 1.36895, 88.6374, 0.357002, 88.3071, -0.659918, 87.8897, -2.71093, 86.7854, -4.78858, 85.3084, -12.0539, 10.9409)
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D" type="Node2D" parent="Body/BackFrontLeg" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(-4.78859, 85.3084)
+rotation = -0.510873
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 2,
+NodePath("../LowerLeg"): 3
+}
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D2" type="Node2D" parent="Body/BackFrontLeg" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(27.781, 73.18)
+rotation = -0.510873
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 1,
+NodePath("../LowerLeg"): 0
+}
+metadata/_edit_lock_ = true
+
+[node name="MergeBumVertices" type="Node2D" parent="Body" node_paths=PackedStringArray("vertex_map")]
+position = Vector2(-73.4447, 7.17824)
+script = ExtResource("4_p8hpb")
+vertex_map = {
+NodePath(".."): 3,
+NodePath("../BackFrontLeg"): 3
+}
+metadata/_edit_lock_ = true
+
+[node name="CutieMark" type="Node2D" parent="Body" node_paths=PackedStringArray("polygon")]
+position = Vector2(-38, -8)
+rotation = -0.292342
+scale = Vector2(1.10382, 1.10382)
+script = ExtResource("1_inuwg")
+polygon = NodePath("Polygon2D")
+stroke_color = Color(0.588235, 0, 0.505882, 1)
+stroke_width = 2.0
+curve = SubResource("Curve2D_lno47")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_hc35e")
+metadata/_edit_lock_ = true
+
+[node name="Polygon2D" type="Polygon2D" parent="Body/CutieMark"]
+color = Color(0.976471, 0.184314, 0.376471, 1)
+polygon = PackedVector2Array(-0.0625, 0.125, -4.4385, -1.17515, -7.85912, -2.63649, -9.24824, -3.40894, -10.443, -4.19929, -11.4582, -5.00006, -12.3088, -5.8038, -13.0094, -6.60303, -13.575, -7.3903, -14.0204, -8.15813, -14.3604, -8.89905, -14.6098, -9.60561, -14.7835, -10.2703, -14.963, -11.4444, -14.9754, -11.7151, -14.9645, -11.9979, -14.9306, -12.2906, -14.8742, -12.5909, -14.6959, -13.2058, -14.4333, -13.8248, -14.0901, -14.4303, -13.6701, -15.0044, -13.1769, -15.5295, -12.6143, -15.9878, -12.3082, -16.1864, -11.9861, -16.3617, -11.6485, -16.5114, -11.2959, -16.6334, -10.9287, -16.7253, -10.5475, -16.7851, -10.1526, -16.8105, -9.74455, -16.7993, -9.32382, -16.7492, -8.89087, -16.658, -8.44616, -16.5236, -7.99015, -16.3437, -7.52332, -16.1161, -7.04612, -15.8386, -6.0625, -15.125, -6.00237, -15.5928, -5.91116, -16.0404, -5.79049, -16.4673, -5.642, -16.8734, -5.4673, -17.2582, -5.26801, -17.6216, -5.04577, -17.9631, -4.8022, -18.2825, -4.53891, -18.5795, -4.25754, -18.8538, -3.9597, -19.105, -3.64702, -19.3329, -2.98364, -19.7174, -2.28039, -20.0049, -1.55026, -20.1929, -0.806231, -20.279, -0.433067, -20.2831, -0.0613022, -20.2608, 0.307441, -20.2118, 0.671538, -20.1357, 1.02937, -20.0324, 1.3793, -19.9014, 1.71972, -19.7425, 2.04899, -19.5554, 2.3655, -19.3397, 2.66763, -19.0952, 2.95374, -18.8216, 3.22221, -18.5185, 3.71106, -17.8656, 4.13694, -17.1742, 4.4935, -16.4381, 4.7744, -15.6507, 4.97332, -14.8057, 5.08391, -13.8966, 5.09983, -12.9172, 5.01475, -11.8608, 4.82233, -10.7212, 4.51623, -9.49199, 3.53765, -6.73891, 2.02831, -3.55032)
+metadata/_edit_lock_ = true
+
+[node name="Rectangle" type="Node2D" parent="Body/CutieMark" node_paths=PackedStringArray("polygon")]
+position = Vector2(-6, -3)
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.588235, 0, 0.505882, 1)
+stroke_width = 2.0
+curve = SubResource("Curve2D_y6oqb")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_g8ae8")
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/CutieMark/Rectangle"]
+color = Color(0.988235, 0.835294, 0.247059, 1)
+polygon = PackedVector2Array(-3, -4, -2.95138, -4.01252, -2.90253, -4.02106, -2.85345, -4.02575, -2.80417, -4.02668, -2.75468, -4.02398, -2.70502, -4.01776, -2.6052, -3.99522, -2.50483, -3.95997, -2.40401, -3.91294, -2.30287, -3.85504, -2.20151, -3.78718, -1.9986, -3.62524, -1.7962, -3.43447, -1.39655, -2.99569, -0.643319, -2.09429, -0.304284, -1.74885, -0.147343, -1.62809, -0.0724151, -1.5839, 0, -1.55172, 0.145626, -1.50875, 0.29701, -1.48114, 0.610992, -1.45905, 1.24138, -1.45689, 1.39064, -1.44625, 1.53354, -1.42511, 1.66856, -1.39022, 1.73264, -1.36661, 1.79418, -1.33836, 1.853, -1.30506, 1.9089, -1.2663, 1.96169, -1.22168, 2.01118, -1.1708, 2.05719, -1.11325, 2.09953, -1.04863, 2.138, -0.976528, 2.17242, -0.896551, 2.19979, -0.813302, 2.21758, -0.731638, 2.22633, -0.651527, 2.22657, -0.572938, 2.21883, -0.495839, 2.20364, -0.420199, 2.18153, -0.345985, 2.15302, -0.273167, 2.07897, -0.131591, 1.98573, 0.00478233, 1.75863, 0.262931, 1.26078, 0.727909, 1.05792, 0.938779, 0.982856, 1.03969, 0.953773, 1.08913, 0.93103, 1.13793, 0.913498, 1.19314, 0.899476, 1.26118, 0.880652, 1.43211, 0.870684, 1.88793, 0.887928, 3.05172, 0.873113, 3.64332, 0.814655, 4.16379, 0.762493, 4.37918, 0.72953, 4.47247, 0.691541, 4.55496, 0.648198, 4.62572, 0.624415, 4.65643, 0.599172, 4.68386, 0.572425, 4.70791, 0.544134, 4.72846, 0.514259, 4.7454, 0.482758, 4.75862, 0.449856, 4.76806, 0.415832, 4.77381, 0.380724, 4.77598, 0.344574, 4.77467, 0.307419, 4.76999, 0.2693, 4.76204, 0.190327, 4.73673, 0.107969, 4.69958, 0.0225427, 4.65141, -0.156253, 4.52532, -0.536776, 4.17733, -0.931038, 3.74569, -1.99421, 2.47825, -2.12744, 2.34049, -2.24138, 2.24138, -2.29499, 2.20624, -2.3522, 2.17803, -2.4128, 2.15623, -2.47656, 2.14029, -2.54325, 2.12968, -2.61264, 2.12386, -2.75862, 2.12446, -3.40517, 2.21121, -3.74057, 2.24508, -3.90494, 2.24462, -4.06466, 2.22683, -4.1422, 2.2101, -4.21791, 2.18742, -4.29154, 2.15827, -4.36288, 2.1221, -4.43169, 2.07838, -4.49774, 2.02658, -4.56082, 1.96614, -4.62069, 1.89655, -4.67232, 1.8223, -4.71129, 1.74826, -4.73826, 1.67443, -4.74746, 1.6376, -4.75391, 1.60082, -4.75769, 1.5641, -4.75889, 1.52744, -4.75389, 1.45429, -4.73957, 1.38139, -4.71659, 1.30873, -4.68564, 1.23632, -4.64738, 1.16417, -4.55159, 1.02067, -4.30172, 0.737068, -3.71875, 0.184805, -3.47131, -0.083042, -3.37734, -0.214718, -3.34014, -0.279972, -3.31035, -0.344828, -3.28813, -0.41511, -3.27277, -0.496119, -3.26024, -0.687164, -3.29095, -1.16325, -3.43966, -2.31466, -3.48007, -2.88894, -3.47481, -3.15363, -3.44612, -3.39494, -3.42147, -3.50484, -3.38914, -3.60654, -3.34853, -3.69923, -3.29903, -3.78213, -3.27076, -3.81966, -3.24003, -3.85444, -3.20678, -3.88638, -3.17093, -3.91538, -3.1324, -3.94134, -3.09112, -3.96417, -3.04701, -3.98375)
+metadata/_edit_lock_ = true
+
+[node name="Rectangle2" type="Node2D" parent="Body/CutieMark" node_paths=PackedStringArray("polygon")]
+position = Vector2(1, -14)
+scale = Vector2(0.644827, 0.644827)
+script = ExtResource("1_inuwg")
+polygon = NodePath("Fill")
+stroke_color = Color(0.588235, 0, 0.505882, 1)
+stroke_width = 2.0
+curve = SubResource("Curve2D_y6oqb")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_g8ae8")
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Body/CutieMark/Rectangle2"]
+color = Color(0.988235, 0.835294, 0.247059, 1)
+polygon = PackedVector2Array(-3, -4, -2.95138, -4.01252, -2.90253, -4.02106, -2.85345, -4.02575, -2.80417, -4.02668, -2.75468, -4.02398, -2.70502, -4.01776, -2.6052, -3.99522, -2.50483, -3.95997, -2.40401, -3.91294, -2.30287, -3.85504, -2.20151, -3.78718, -1.9986, -3.62524, -1.7962, -3.43447, -1.39655, -2.99569, -0.643319, -2.09429, -0.304284, -1.74885, -0.147343, -1.62809, -0.0724151, -1.5839, 0, -1.55172, 0.145626, -1.50875, 0.29701, -1.48114, 0.610992, -1.45905, 1.24138, -1.45689, 1.39064, -1.44625, 1.53354, -1.42511, 1.66856, -1.39022, 1.73264, -1.36661, 1.79418, -1.33836, 1.853, -1.30506, 1.9089, -1.2663, 1.96169, -1.22168, 2.01118, -1.1708, 2.05719, -1.11325, 2.09953, -1.04863, 2.138, -0.976528, 2.17242, -0.896551, 2.19979, -0.813302, 2.21758, -0.731638, 2.22633, -0.651527, 2.22657, -0.572938, 2.21883, -0.495839, 2.20364, -0.420199, 2.18153, -0.345985, 2.15302, -0.273167, 2.07897, -0.131591, 1.98573, 0.00478233, 1.75863, 0.262931, 1.26078, 0.727909, 1.05792, 0.938779, 0.982856, 1.03969, 0.953773, 1.08913, 0.93103, 1.13793, 0.913498, 1.19314, 0.899476, 1.26118, 0.880652, 1.43211, 0.870684, 1.88793, 0.887928, 3.05172, 0.873113, 3.64332, 0.814655, 4.16379, 0.762493, 4.37918, 0.72953, 4.47247, 0.691541, 4.55496, 0.648198, 4.62572, 0.624415, 4.65643, 0.599172, 4.68386, 0.572425, 4.70791, 0.544134, 4.72846, 0.514259, 4.7454, 0.482758, 4.75862, 0.449856, 4.76806, 0.415832, 4.77381, 0.380724, 4.77598, 0.344574, 4.77467, 0.307419, 4.76999, 0.2693, 4.76204, 0.190327, 4.73673, 0.107969, 4.69958, 0.0225427, 4.65141, -0.156253, 4.52532, -0.536776, 4.17733, -0.931038, 3.74569, -1.99421, 2.47825, -2.12744, 2.34049, -2.24138, 2.24138, -2.29499, 2.20624, -2.3522, 2.17803, -2.4128, 2.15623, -2.47656, 2.14029, -2.54325, 2.12968, -2.61264, 2.12386, -2.75862, 2.12446, -3.40517, 2.21121, -3.74057, 2.24508, -3.90494, 2.24462, -4.06466, 2.22683, -4.1422, 2.2101, -4.21791, 2.18742, -4.29154, 2.15827, -4.36288, 2.1221, -4.43169, 2.07838, -4.49774, 2.02658, -4.56082, 1.96614, -4.62069, 1.89655, -4.67232, 1.8223, -4.71129, 1.74826, -4.73826, 1.67443, -4.74746, 1.6376, -4.75391, 1.60082, -4.75769, 1.5641, -4.75889, 1.52744, -4.75389, 1.45429, -4.73957, 1.38139, -4.71659, 1.30873, -4.68564, 1.23632, -4.64738, 1.16417, -4.55159, 1.02067, -4.30172, 0.737068, -3.71875, 0.184805, -3.47131, -0.083042, -3.37734, -0.214718, -3.34014, -0.279972, -3.31035, -0.344828, -3.28813, -0.41511, -3.27277, -0.496119, -3.26024, -0.687164, -3.29095, -1.16325, -3.43966, -2.31466, -3.48007, -2.88894, -3.47481, -3.15363, -3.44612, -3.39494, -3.42147, -3.50484, -3.38914, -3.60654, -3.34853, -3.69923, -3.29903, -3.78213, -3.27076, -3.81966, -3.24003, -3.85444, -3.20678, -3.88638, -3.17093, -3.91538, -3.1324, -3.94134, -3.09112, -3.96417, -3.04701, -3.98375)
+metadata/_edit_lock_ = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_xtm0y")
+}
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(50, -80)
+zoom = Vector2(1.4, 1.4)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(150, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 283.0
+offset_top = -283.0
+offset_right = 433.0
+offset_bottom = -147.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 10
+size_flags_vertical = 3
+
+[node name="ResetPoseButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "reset pose"
+
+[node name="BlinkButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "blink"
+
+[node name="CloseMouthButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "close mouth"
+
+[node name="OpenMouthButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "open  mouth"
+
+[node name="StaggerButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "stagger"
+
+[connection signal="pressed" from="VBoxContainer/ResetPoseButton" to="." method="_on_reset_pose_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/BlinkButton" to="." method="_on_blink_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/CloseMouthButton" to="." method="_on_close_mouth_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/OpenMouthButton" to="." method="_on_open_mouth_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/StaggerButton" to="." method="_on_stagger_button_pressed"]

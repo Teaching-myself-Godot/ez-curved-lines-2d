@@ -1,10 +1,12 @@
 # Changelog
 
 
-## 2.19.1
+## 2.19.2
 
 ### Added
 
+- Link to My Little Pony video
+- My Little Pony example scene under `res://addons/curved_lines_2d/examples/pony.tscn`
 - Ability to 'merge' a point of 2 or more `ScalableVectorShape2D` nodes using a new `SVSVertexMerge2D` node
 - Link to video about adding 2D MSAA anti aliasing to Compatibility Mode
 
