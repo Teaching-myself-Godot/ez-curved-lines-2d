@@ -36,7 +36,7 @@ curved_lines_2d/antialiased_line_2d=true
 [application]
 
 config/name="EZ Curved Lines 2D"
-run/main_scene="uid://c7cfqopy0hlbx"
+run/main_scene="uid://gmlmhdf0cxl8"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://b5yxa1e62b0hb"
 
@@ -46,8 +46,6 @@ enabled=PackedStringArray("res://addons/curved_lines_2d/plugin.cfg", "res://addo
 
 [rendering]
 
-renderer/rendering_method="gl_compatibility"
-renderer/rendering_method.mobile="gl_compatibility"
 anti_aliasing/quality/msaa_2d=3
 anti_aliasing/screen_space_roughness_limiter/amount=4.0
 anti_aliasing/screen_space_roughness_limiter/limit=1.0
