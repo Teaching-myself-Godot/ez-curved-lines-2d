@@ -571,6 +571,8 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 						i += 7
 				"z", "Z":
 					cursor = cursor_start
+		# Add a new ScalableVectorShape2D to the list for this section of
+		# the path definition (`d`-attribute of the path element)
 		var shape := ScalableVectorShape2D.new()
 		shape.name = shape_name
 		shape.curve = curve
@@ -579,6 +581,10 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 		shapes.append(shape)
 
 	log_message("Postprocessing for %s" % shape_name, LogLevel.DEBUG)
+	# Loop through al the shapes in this <path> element looking for holes
+	# if a shape is a hole, make sure it is not in the post_processed_shapes
+	# array after this loop, but a member of the surrounding shape's clip_paths
+	# array.
 	var post_processed_shapes : Array[ScalableVectorShape2D] = []
 	for shape : ScalableVectorShape2D in shapes:
 		var poly := shape.tessellate()
@@ -598,6 +604,9 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 						shape.clip_paths.append(shape1)
 					post_processed_shapes.erase(shape1)
 
+	# Append actual new shapes to the scene by copying the `curve`, `arc_list` and
+	# `clip_paths`. Also, the shapes inside the `clip_paths` property are added as
+	# actual node in the resulting scene
 	for shape in post_processed_shapes:
 		var new_path := create_path2d(shape_name, current_node,  shape.curve.duplicate(true), shape.arc_list.arcs.duplicate(true), get_svg_transform(element),
 					element.get_merged_styles(log_message), scene_root, gradients, shape.get_meta("is_closed"))
@@ -607,10 +616,11 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 							Transform2D.IDENTITY, {}, scene_root, gradients, cutout.get_meta("is_closed"), new_path))
 			cutout.free()
 		shape.free()
+		# append_array is used here, because clip paths may already have been added via the
+		# `create_path2d(...)` call chain.
 		new_path.clip_paths.append_array(clips)
 		undo_redo.add_do_property(new_path, 'clip_paths', new_path.clip_paths)
 		undo_redo.add_undo_property(new_path, 'clip_paths', [])
-
 
 
 func create_path2d(path_name: String, parent: Node, curve: Curve2D, arcs: Array[ScalableArc],
