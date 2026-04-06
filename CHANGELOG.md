@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 2.19.2
+## 2.19.3
 
 ### Added
 
@@ -9,6 +9,11 @@
 - My Little Pony example scene under `res://addons/curved_lines_2d/examples/pony.tscn`
 - Ability to 'merge' a point of 2 or more `ScalableVectorShape2D` nodes using a new `SVSVertexMerge2D` node
 - Link to video about adding 2D MSAA anti aliasing to Compatibility Mode
+
+### Changed
+
+- Fixes bug: cutouts in svg import fail when multiple shapes with holes are all in one path in any order
+- Fixes regression: clip-paths were overridden by holes if both clip-paths and holes were set on the same shape
 
 ## 2.18.4
 

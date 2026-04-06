@@ -389,6 +389,7 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 	# FIXME: implement better parsing here
 	var str_path = parse_attribute_string(
 				element.get_named_attribute_value("d")).replacen(",", " ")
+	var shape_name := element.get_named_attribute_value("id") if element.has_attribute("id") else "Path"
 
 	for symbol in ["m", "M", "v", "V", "h", "H", "l", "L", "c", "C", "s", "S", "a", "A", "q", "Q", "t", "T", "z", "Z"]:
 		str_path = str_path.replace(symbol, " " + symbol + " ")
@@ -412,8 +413,7 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 		log_message("⚠️ Support for the m/M (move to) command is limited to cut-outs in svg paths")
 	var string_array_count = 0
 	var cursor = Vector2.ZERO
-	var main_shape : ScalableVectorShape2D = null
-	var new_clip_paths : Array[ScalableVectorShape2D] = []
+	var shapes : Array[ScalableVectorShape2D] = []
 	for string_array in string_arrays:
 		var curve = Curve2D.new()
 		var arcs : Array[ScalableArc] = []
@@ -571,27 +571,56 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 						i += 7
 				"z", "Z":
 					cursor = cursor_start
-		if curve.get_point_count() > 1:
-			var id = element.get_named_attribute_value("id") if element.has_attribute("id") else "Path"
-			if (string_array_count > 1 and Geometry2D.is_point_in_polygon(curve.get_point_position(0),
-						main_shape.transform * main_shape.tessellate() )):
-				new_clip_paths.append(create_path2d("CutoutFor%s" % id, current_node,  curve, arcs,
-							Transform2D.IDENTITY, {}, scene_root, gradients,
-							string_array[string_array.size()-1].to_upper() == "Z", main_shape))
-			else:
-				var result := create_path2d(id, current_node,  curve, arcs, get_svg_transform(element),
-							element.get_merged_styles(log_message), scene_root, gradients,
-							string_array[string_array.size()-1].to_upper() == "Z")
-				if string_array_count == 1:
-					main_shape = result
+		# Add a new ScalableVectorShape2D to the list for this section of
+		# the path definition (`d`-attribute of the path element)
+		var shape := ScalableVectorShape2D.new()
+		shape.name = shape_name
+		shape.curve = curve
+		shape.arc_list = ScalableArcList.new(arcs)
+		shape.set_meta("is_closed", string_array[string_array.size()-1].to_upper() == "Z")
+		shapes.append(shape)
 
-	if not new_clip_paths.is_empty():
-		log_message("Processing %d cutouts for %s" % [new_clip_paths.size(), main_shape.name], LogLevel.DEBUG)
-		main_shape.clip_paths = new_clip_paths
-		undo_redo.add_do_property(main_shape, 'clip_paths', new_clip_paths)
-		undo_redo.add_undo_property(main_shape, 'clip_paths', [])
+	log_message("Postprocessing for %s" % shape_name, LogLevel.DEBUG)
+	# Loop through al the shapes in this <path> element looking for holes
+	# if a shape is a hole, make sure it is not in the post_processed_shapes
+	# array after this loop, but a member of the surrounding shape's clip_paths
+	# array.
+	var post_processed_shapes : Array[ScalableVectorShape2D] = []
+	for shape : ScalableVectorShape2D in shapes:
+		var poly := shape.tessellate()
+		post_processed_shapes.append(shape)
+		for shape1 : ScalableVectorShape2D in shapes:
+			if shape1 == shape:
+				continue
+			var poly1 := shape1.tessellate()
+			var res := Geometry2D.intersect_polygons(poly, poly1)
+			if res.size() > 0:
+				if Geometry2D.is_point_in_polygon(poly[0], poly1):
+					if shape not in shape1.clip_paths:
+						shape1.clip_paths.append(shape)
+					post_processed_shapes.erase(shape)
+				else:
+					if shape1 not in shape.clip_paths:
+						shape.clip_paths.append(shape1)
+					post_processed_shapes.erase(shape1)
 
-
+	# Append actual new shapes to the scene by copying the `curve`, `arc_list` and
+	# `clip_paths`. Also, the shapes inside the `clip_paths` property are added as
+	# actual node in the resulting scene
+	for shape in post_processed_shapes:
+		var new_path := create_path2d(shape_name, current_node,  shape.curve.duplicate(true), shape.arc_list.arcs.duplicate(true), get_svg_transform(element),
+					element.get_merged_styles(log_message), scene_root, gradients, shape.get_meta("is_closed"))
+		var clips : Array[ScalableVectorShape2D] = []
+		for cutout in shape.clip_paths:
+			clips.append(create_path2d("CutoutFor%s" % shape_name, current_node, cutout.curve.duplicate(true), cutout.arc_list.arcs.duplicate(true),
+							Transform2D.IDENTITY, {}, scene_root, gradients, cutout.get_meta("is_closed"), new_path))
+			cutout.free()
+		shape.free()
+		# append_array is used here, because clip paths may already have been added via the
+		# `create_path2d(...)` call chain.
+		new_path.clip_paths.append_array(clips)
+		undo_redo.add_do_property(new_path, 'clip_paths', new_path.clip_paths)
+		undo_redo.add_undo_property(new_path, 'clip_paths', [])
 
 
 func create_path2d(path_name: String, parent: Node, curve: Curve2D, arcs: Array[ScalableArc],
