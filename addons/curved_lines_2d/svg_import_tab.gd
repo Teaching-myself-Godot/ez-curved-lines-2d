@@ -389,6 +389,7 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 	# FIXME: implement better parsing here
 	var str_path = parse_attribute_string(
 				element.get_named_attribute_value("d")).replacen(",", " ")
+	var shape_name := element.get_named_attribute_value("id") if element.has_attribute("id") else "Path"
 
 	for symbol in ["m", "M", "v", "V", "h", "H", "l", "L", "c", "C", "s", "S", "a", "A", "q", "Q", "t", "T", "z", "Z"]:
 		str_path = str_path.replace(symbol, " " + symbol + " ")
@@ -571,14 +572,13 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 				"z", "Z":
 					cursor = cursor_start
 		var shape := ScalableVectorShape2D.new()
-		shape.name = element.get_named_attribute_value("id") + str(shapes.size() + 1)
+		shape.name = shape_name
 		shape.curve = curve
 		shape.arc_list = ScalableArcList.new(arcs)
 		shape.set_meta("is_closed", string_array[string_array.size()-1].to_upper() == "Z")
 		shapes.append(shape)
 
-	var id := element.get_named_attribute_value("id") if element.has_attribute("id") else "Path"
-	log_message("Postprocessing for %s" % id, LogLevel.DEBUG)
+	log_message("Postprocessing for %s" % shape_name, LogLevel.DEBUG)
 	var post_processed_shapes : Array[ScalableVectorShape2D] = []
 	for shape : ScalableVectorShape2D in shapes:
 		var poly := shape.tessellate()
@@ -599,11 +599,11 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 					post_processed_shapes.erase(shape1)
 
 	for shape in post_processed_shapes:
-		var new_path := create_path2d(id, current_node,  shape.curve.duplicate(true), shape.arc_list.arcs.duplicate(true), get_svg_transform(element),
+		var new_path := create_path2d(shape_name, current_node,  shape.curve.duplicate(true), shape.arc_list.arcs.duplicate(true), get_svg_transform(element),
 					element.get_merged_styles(log_message), scene_root, gradients, shape.get_meta("is_closed"))
 		var clips : Array[ScalableVectorShape2D] = []
 		for cutout in shape.clip_paths:
-			clips.append(create_path2d("CutoutFor%s" % id, current_node, cutout.curve.duplicate(true), cutout.arc_list.arcs.duplicate(true),
+			clips.append(create_path2d("CutoutFor%s" % shape_name, current_node, cutout.curve.duplicate(true), cutout.arc_list.arcs.duplicate(true),
 							Transform2D.IDENTITY, {}, scene_root, gradients, cutout.get_meta("is_closed"), new_path))
 			cutout.free()
 		shape.free()
