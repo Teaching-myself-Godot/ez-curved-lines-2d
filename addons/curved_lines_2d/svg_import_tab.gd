@@ -412,9 +412,6 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 		log_message("⚠️ Support for the m/M (move to) command is limited to cut-outs in svg paths")
 	var string_array_count = 0
 	var cursor = Vector2.ZERO
-	var main_shape : ScalableVectorShape2D = null
-	var new_clip_paths : Array[ScalableVectorShape2D] = []
-	var z_count := 0
 	var shapes : Array[ScalableVectorShape2D] = []
 	for string_array in string_arrays:
 		var curve = Curve2D.new()
@@ -573,21 +570,6 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 						i += 7
 				"z", "Z":
 					cursor = cursor_start
-					z_count+=1
-		#if curve.get_point_count() > 1:
-			#var id = element.get_named_attribute_value("id") if element.has_attribute("id") else "Path"
-			#if (string_array_count > 1 and Geometry2D.is_point_in_polygon(curve.get_point_position(0),
-						#main_shape.transform * main_shape.tessellate() )):
-				#new_clip_paths.append(create_path2d("CutoutFor%s" % id, current_node,  curve, arcs,
-							#Transform2D.IDENTITY, {}, scene_root, gradients,
-							#string_array[string_array.size()-1].to_upper() == "Z", main_shape))
-			#else:
-				#var result := create_path2d(id, current_node,  curve, arcs, get_svg_transform(element),
-							#element.get_merged_styles(log_message), scene_root, gradients,
-							#string_array[string_array.size()-1].to_upper() == "Z")
-				#if string_array_count == 1:
-					#main_shape = result
-
 		var shape := ScalableVectorShape2D.new()
 		shape.name = element.get_named_attribute_value("id") + str(shapes.size() + 1)
 		shape.curve = curve
@@ -623,15 +605,11 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 		for cutout in shape.clip_paths:
 			clips.append(create_path2d("CutoutFor%s" % id, current_node, cutout.curve.duplicate(true), cutout.arc_list.arcs.duplicate(true),
 							Transform2D.IDENTITY, {}, scene_root, gradients, cutout.get_meta("is_closed"), new_path))
-		new_path.clip_paths = clips
-		undo_redo.add_do_property(main_shape, 'clip_paths', clips)
-		undo_redo.add_undo_property(main_shape, 'clip_paths', [])
-	#if not new_clip_paths.is_empty():
-		#log_message("Processing %d cutouts for %s" % [new_clip_paths.size(), main_shape.name], LogLevel.DEBUG)
-		#main_shape.clip_paths = new_clip_paths
-		#undo_redo.add_do_property(main_shape, 'clip_paths', new_clip_paths)
-		#undo_redo.add_undo_property(main_shape, 'clip_paths', [])
-
+			cutout.free()
+		shape.free()
+		new_path.clip_paths.append_array(clips)
+		undo_redo.add_do_property(new_path, 'clip_paths', new_path.clip_paths)
+		undo_redo.add_undo_property(new_path, 'clip_paths', [])
 
 
 
