@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 2.19.3
+## 2.19.4
 
 ### Added
 
@@ -14,6 +14,7 @@
 
 - Fixes bug: cutouts in svg import fail when multiple shapes with holes are all in one path in any order
 - Fixes regression: clip-paths were overridden by holes if both clip-paths and holes were set on the same shape
+- Fixes bug: custom key frame buttons now only accept animation player own by edited scene
 
 ## 2.18.4
 
