@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
+    <polygon fill="#6B67FD" stroke="#000000" stroke-width="0" points="20,10 10,10 10,20">
+        <animate attributeName="points" keyTimes="0; 1.0" values="20,10 10,10 10,20; 20,10 10,10 20,20" begin="0" dur="1" fill="freeze" calcMode="spline" keySplines="0 0 1 1">
+        </animate>
+    </polygon>
+</svg>
