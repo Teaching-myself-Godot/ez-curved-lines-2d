@@ -175,6 +175,7 @@ static func get_progress_ratio_for_point_on_curve(p : Vector2, c : Curve2D, max_
 	return d / c.get_baked_length()
 
 
+# Adapted from: https://stackoverflow.com/a/8405756/1081548
 static func slice_bezier(p1: Vector2, cp2 : Vector2, cp3 : Vector2, p4 : Vector2,
 		t : float) -> Curve2D:
 	var x1 := p1.x
