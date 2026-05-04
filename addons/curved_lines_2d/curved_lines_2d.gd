@@ -763,7 +763,6 @@ func _set_handle_hover(g_mouse_pos : Vector2, svs : ScalableVectorShape2D) -> vo
 				svs.set_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE, p)
 
 	var closest_point_on_curve := svs.get_closest_point_on_curve(g_mouse_pos)
-
 	if mouse_pos.distance_to(_vp_transform(closest_point_on_curve.point_position)) < 15:
 		svs.set_meta(META_NAME_HOVER_CLOSEST_POINT, closest_point_on_curve)
 
@@ -1485,9 +1484,23 @@ func _add_point_on_curve_segment(svs : ScalableVectorShape2D) -> void:
 	if md_closest_point.before_segment >= svs.curve.point_count:
 		_add_point_to_curve(svs, md_closest_point.local_point_position)
 	else:
+		var sliced_segment := svs.get_sliced_curve_segment(md_closest_point)
 		_add_point_to_curve(svs, md_closest_point.local_point_position,
 				Vector2.ZERO, Vector2.ZERO, md_closest_point.before_segment)
-
+		if (
+			svs.curve.get_point_out(md_closest_point.before_segment - 1).length() > 0.0 or
+			svs.curve.get_point_in(md_closest_point.before_segment + 1).length() > 0.0
+		):
+			undo_redo.create_action("Update curve control points after slicing segment")
+			undo_redo.add_do_method(svs.curve, "set_point_out", md_closest_point.before_segment - 1, sliced_segment.get_point_out(0))
+			undo_redo.add_undo_method(svs.curve, "set_point_out", md_closest_point.before_segment -1, svs.curve.get_point_out(md_closest_point.before_segment - 1))
+			undo_redo.add_do_method(svs.curve, "set_point_in", md_closest_point.before_segment, sliced_segment.get_point_in(1))
+			undo_redo.add_undo_method(svs.curve, "set_point_in", md_closest_point.before_segment, svs.curve.get_point_in(md_closest_point.before_segment))
+			undo_redo.add_do_method(svs.curve, "set_point_out", md_closest_point.before_segment, sliced_segment.get_point_out(1))
+			undo_redo.add_undo_method(svs.curve, "set_point_out", md_closest_point.before_segment, svs.curve.get_point_out(md_closest_point.before_segment))
+			undo_redo.add_do_method(svs.curve, "set_point_in", md_closest_point.before_segment + 1, sliced_segment.get_point_in(2))
+			undo_redo.add_undo_method(svs.curve, "set_point_in", md_closest_point.before_segment + 1, svs.curve.get_point_in(md_closest_point.before_segment + 1))
+			undo_redo.commit_action()
 
 func _drag_curve_segment(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
 	if svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:

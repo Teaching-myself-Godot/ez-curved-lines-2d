@@ -1140,6 +1140,24 @@ func get_closest_point_on_curve(global_pos : Vector2) -> ClosestPointOnCurveMeta
 	return ClosestPointOnCurveMeta.new(before_segment, to_global(closest_result), closest_result)
 
 
+func get_sliced_curve_segment(cpc : ClosestPointOnCurveMeta) -> Curve2D:
+	var curve_segment := Curve2D.new()
+	curve_segment.add_point(curve.get_point_position(cpc.before_segment - 1))
+	curve_segment.set_point_out(0, curve.get_point_out(cpc.before_segment - 1))
+	curve_segment.add_point(curve.get_point_position(cpc.before_segment))
+	curve_segment.set_point_in(1, curve.get_point_in(cpc.before_segment))
+	var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
+			cpc.local_point_position, curve_segment, max_stages, tolerance_degrees)
+	return Geometry2DUtil.slice_bezier(
+		curve_segment.get_point_position(0),
+		curve_segment.get_point_out(0),
+		curve_segment.get_point_in(1),
+		curve_segment.get_point_position(1),
+		progress_ratio
+	)
+
+
+
 # Adapted from the GodSVG repository to draw arc in stead of determine bounding box.
 # https://github.com/MewPurPur/GodSVG/blob/53168a8cf74739fe828f488901eada02d5d97b69/src/data_classes/ElementPath.gd#L118
 func tessellate_arc_segment(start : Vector2, arc_radius : Vector2, arc_rotation_deg : float,
