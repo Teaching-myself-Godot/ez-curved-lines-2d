@@ -1423,7 +1423,7 @@ func _remove_rounded_corners_from_rect(svs : ScalableVectorShape2D):
 
 
 func _add_point_to_curve(svs : ScalableVectorShape2D, local_pos : Vector2,
-		cp_in := Vector2.ZERO, cp_out := Vector2.ZERO, idx := -1) -> void:
+		cp_in := Vector2.ZERO, cp_out := Vector2.ZERO, idx := -1, do_commit := true) -> void:
 	undo_redo.create_action("Add point at %s to %s " % [str(local_pos), str(svs)])
 
 	undo_redo.add_do_method(svs.curve, 'add_point', local_pos, cp_in, cp_out, idx)
@@ -1433,6 +1433,8 @@ func _add_point_to_curve(svs : ScalableVectorShape2D, local_pos : Vector2,
 		undo_redo.add_do_method(svs.arc_list, 'handle_point_added_at_index', idx)
 		undo_redo.add_undo_method(svs.curve, 'remove_point', idx)
 		undo_redo.add_undo_method(svs.arc_list, 'handle_point_removed_at_index', idx)
+	if not do_commit:
+		return
 	undo_redo.commit_action()
 
 
@@ -1484,14 +1486,14 @@ func _add_point_on_curve_segment(svs : ScalableVectorShape2D) -> void:
 	if md_closest_point.before_segment >= svs.curve.point_count:
 		_add_point_to_curve(svs, md_closest_point.local_point_position)
 	else:
-		var sliced_segment := svs.get_sliced_curve_segment(md_closest_point)
-		_add_point_to_curve(svs, md_closest_point.local_point_position,
-				Vector2.ZERO, Vector2.ZERO, md_closest_point.before_segment)
 		if (
 			svs.curve.get_point_out(md_closest_point.before_segment - 1).length() > 0.0 or
-			svs.curve.get_point_in(md_closest_point.before_segment + 1).length() > 0.0
+			svs.curve.get_point_in(md_closest_point.before_segment).length() > 0.0
 		):
-			undo_redo.create_action("Update curve control points after slicing segment")
+			# This is a curved segment, so when a point is added, control points are recalculated
+			var sliced_segment := svs.get_sliced_curve_segment(md_closest_point)
+			_add_point_to_curve(svs, md_closest_point.local_point_position,
+				Vector2.ZERO, Vector2.ZERO, md_closest_point.before_segment, false)
 			undo_redo.add_do_method(svs.curve, "set_point_out", md_closest_point.before_segment - 1, sliced_segment.get_point_out(0))
 			undo_redo.add_undo_method(svs.curve, "set_point_out", md_closest_point.before_segment -1, svs.curve.get_point_out(md_closest_point.before_segment - 1))
 			undo_redo.add_do_method(svs.curve, "set_point_in", md_closest_point.before_segment, sliced_segment.get_point_in(1))
@@ -1501,6 +1503,9 @@ func _add_point_on_curve_segment(svs : ScalableVectorShape2D) -> void:
 			undo_redo.add_do_method(svs.curve, "set_point_in", md_closest_point.before_segment + 1, sliced_segment.get_point_in(2))
 			undo_redo.add_undo_method(svs.curve, "set_point_in", md_closest_point.before_segment + 1, svs.curve.get_point_in(md_closest_point.before_segment + 1))
 			undo_redo.commit_action()
+		else:
+			_add_point_to_curve(svs, md_closest_point.local_point_position,
+				Vector2.ZERO, Vector2.ZERO, md_closest_point.before_segment)
 
 func _drag_curve_segment(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
 	if svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:
