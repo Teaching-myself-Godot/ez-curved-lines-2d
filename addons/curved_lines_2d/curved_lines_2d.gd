@@ -870,7 +870,6 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 			hint += "\n- Right click to remove arc (straighten this line segment)"
 		else:
 			if Input.is_key_pressed(KEY_ALT):
-				print(svs.get_global_halfway_point(md_p))
 				_draw_crosshair(viewport_control, _vp_transform(svs.get_global_halfway_point(md_p)), 3.0, 8, Color.ANTIQUE_WHITE, 2)
 			else:
 				_draw_crosshair(viewport_control, _vp_transform(md_p.point_position))

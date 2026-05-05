@@ -184,10 +184,9 @@ static func get_halfway_point_on_bezier(c : Curve2D, max_stages := 5, tolerance_
 		var prev_d := d
 		d += p1.distance_to(pts[i])
 		if d >= tot_d * 0.5:
-			var rto_a := prev_d / tot_d
-			var rto_b := d / tot_d
-			print(rto_a, "--", rto_b)
-			return (pts[i-1] + pts[i]) * 0.5
+			var d_ratio := 0.5 - (prev_d / tot_d) if prev_d > 0.0 else 0.5
+			var d_abs := tot_d * d_ratio
+			return pts[i-1] + pts[i-1].direction_to(pts[i]) * d_abs
 		p1 = pts[i]
 	return Vector2.ZERO
 
