@@ -871,7 +871,7 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 			hint += "\n- Right click to remove arc (straighten this line segment)"
 		else:
 			if Input.is_key_pressed(KEY_ALT):
-				_draw_crosshair(viewport_control, _vp_transform(svs.to_global(svs.get_curve_segment_halfway_point(md_p))), 3.0, 8, Color.ANTIQUE_WHITE, 2)
+				_draw_crosshair(viewport_control, _vp_transform(svs.to_global(svs.get_curve_segment_halfway_point(md_p.before_segment))), 3.0, 8, Color.ANTIQUE_WHITE, 2)
 			else:
 				_draw_crosshair(viewport_control, _vp_transform(md_p.point_position))
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
@@ -1491,7 +1491,7 @@ func _add_point_on_curve_segment(svs : ScalableVectorShape2D, subdivide := false
 	var md_closest_point : ClosestPointOnCurveMeta = svs.get_meta(META_NAME_HOVER_CLOSEST_POINT)
 	if svs.is_arc_start(md_closest_point.before_segment - 1):
 		return
-	var placement_point := svs.get_curve_segment_halfway_point(md_closest_point) if subdivide else  md_closest_point.local_point_position
+	var placement_point := svs.get_curve_segment_halfway_point(md_closest_point.before_segment) if subdivide else md_closest_point.local_point_position
 	if md_closest_point.before_segment >= svs.curve.point_count:
 		_add_point_to_curve(svs, placement_point)
 	else:
@@ -1515,6 +1515,14 @@ func _add_point_on_curve_segment(svs : ScalableVectorShape2D, subdivide := false
 		else:
 			_add_point_to_curve(svs, placement_point,
 				Vector2.ZERO, Vector2.ZERO, md_closest_point.before_segment)
+
+
+func _subdivide_curve(svs : ScalableVectorShape2D) -> void:
+	undo_redo.create_action("Subdivide shape %s" % str(svs))
+	undo_redo.add_do_property(svs, 'curve', svs.get_subdivided_curve())
+	undo_redo.add_undo_property(svs, 'curve', svs.curve.duplicate())
+	undo_redo.commit_action()
+
 
 func _drag_curve_segment(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
 	if svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:
@@ -1790,7 +1798,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 					_add_color_stop(current_selection, mouse_pos)
 				return true
 			elif _is_svs_valid(current_selection) and current_selection.has_fine_point(mouse_pos) and event.double_click:
-				print("do subdivide")
+				_subdivide_curve(current_selection)
 				return true
 			else:
 				var results := _find_scalable_vector_shape_2d_nodes_at(mouse_pos)
