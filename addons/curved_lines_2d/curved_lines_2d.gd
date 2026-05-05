@@ -842,7 +842,8 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 		if only_cutout_hints:
 			hint = "- Hold Shift to resize shape with mousewheel"
 		if svs.has_fine_point(mouse_pos):
-			hint += "\n- Hold Ctrl+Shift to %s %s here (or Cmd+Shift for mac)\n" % [
+			hint += "\n- Double click to subdivide all curve segments
+				- Hold Ctrl+Shift to %s %s here (or Cmd+Shift for mac)\n" % [
 					OPERATION_NAME_MAP[current_clip_operation]["verb"],
 					SHAPE_NAME_MAP[current_cutout_shape]
 			]
@@ -1787,6 +1788,9 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			elif _is_svs_valid(current_selection) and current_selection.has_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE):
 				if event.double_click:
 					_add_color_stop(current_selection, mouse_pos)
+				return true
+			elif _is_svs_valid(current_selection) and current_selection.has_fine_point(mouse_pos) and event.double_click:
+				print("do subdivide")
 				return true
 			else:
 				var results := _find_scalable_vector_shape_2d_nodes_at(mouse_pos)
