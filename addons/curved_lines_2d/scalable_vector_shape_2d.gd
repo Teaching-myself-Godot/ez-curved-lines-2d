@@ -1140,14 +1140,14 @@ func get_closest_point_on_curve(global_pos : Vector2) -> ClosestPointOnCurveMeta
 	return ClosestPointOnCurveMeta.new(before_segment, to_global(closest_result), closest_result)
 
 
-func get_sliced_curve_segment(cpc : ClosestPointOnCurveMeta) -> Curve2D:
+func get_sliced_curve_segment(before_segment : int, point_position : Vector2) -> Curve2D:
 	var curve_segment := Curve2D.new()
-	curve_segment.add_point(curve.get_point_position(cpc.before_segment - 1))
-	curve_segment.set_point_out(0, curve.get_point_out(cpc.before_segment - 1))
-	curve_segment.add_point(curve.get_point_position(cpc.before_segment))
-	curve_segment.set_point_in(1, curve.get_point_in(cpc.before_segment))
+	curve_segment.add_point(curve.get_point_position(before_segment - 1))
+	curve_segment.set_point_out(0, curve.get_point_out(before_segment - 1))
+	curve_segment.add_point(curve.get_point_position(before_segment))
+	curve_segment.set_point_in(1, curve.get_point_in(before_segment))
 	var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
-			cpc.local_point_position, curve_segment, max_stages, tolerance_degrees)
+			point_position, curve_segment, max_stages, tolerance_degrees)
 	return Geometry2DUtil.slice_bezier(
 		curve_segment.get_point_position(0),
 		curve_segment.get_point_out(0),
@@ -1157,13 +1157,14 @@ func get_sliced_curve_segment(cpc : ClosestPointOnCurveMeta) -> Curve2D:
 	)
 
 
-func get_global_halfway_point(cpc : ClosestPointOnCurveMeta) -> Vector2:
+func get_curve_segment_halfway_point(cpc : ClosestPointOnCurveMeta) -> Vector2:
+	var p_idx_1 := cpc.before_segment if cpc.before_segment < curve.point_count else 0
 	var curve_segment := Curve2D.new()
 	curve_segment.add_point(curve.get_point_position(cpc.before_segment - 1))
 	curve_segment.set_point_out(0, curve.get_point_out(cpc.before_segment - 1))
-	curve_segment.add_point(curve.get_point_position(cpc.before_segment))
-	curve_segment.set_point_in(1, curve.get_point_in(cpc.before_segment))
-	return to_global(Geometry2DUtil.get_halfway_point_on_bezier(curve_segment, max_stages, tolerance_degrees))
+	curve_segment.add_point(curve.get_point_position(p_idx_1))
+	curve_segment.set_point_in(1, curve.get_point_in(p_idx_1))
+	return Geometry2DUtil.get_halfway_point_on_bezier(curve_segment, max_stages, tolerance_degrees)
 
 # Adapted from the GodSVG repository to draw arc in stead of determine bounding box.
 # https://github.com/MewPurPur/GodSVG/blob/53168a8cf74739fe828f488901eada02d5d97b69/src/data_classes/ElementPath.gd#L118

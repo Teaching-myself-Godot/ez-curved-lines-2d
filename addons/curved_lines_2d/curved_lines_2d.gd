@@ -870,19 +870,19 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 			hint += "\n- Right click to remove arc (straighten this line segment)"
 		else:
 			if Input.is_key_pressed(KEY_ALT):
-				_draw_crosshair(viewport_control, _vp_transform(svs.get_global_halfway_point(md_p)), 3.0, 8, Color.ANTIQUE_WHITE, 2)
+				_draw_crosshair(viewport_control, _vp_transform(svs.to_global(svs.get_curve_segment_halfway_point(md_p))), 3.0, 8, Color.ANTIQUE_WHITE, 2)
 			else:
 				_draw_crosshair(viewport_control, _vp_transform(md_p.point_position))
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 				if svs.curve.point_count > 1:
-					hint = "- Double click to add point on the line"
-					if md_p.before_segment < svs.curve.point_count:
-						if Input.is_key_pressed(KEY_ALT):
-							hint += "\n- Left Click to add point halfway the line (Alt held)"
-						else:
-							hint += "\n- Alt + Click to add point halfway the line"
-						hint += "\n- Drag to change curve"
-						hint += "\n- Right click to convert line segment to arc"
+					if Input.is_key_pressed(KEY_ALT):
+						hint += "\n- Left Click to add point halfway the line (Alt held)"
+					else:
+						hint = "- Double click to add point on the line"
+						hint += "\n- Alt + Click to add point halfway the line"
+						if md_p.before_segment < svs.curve.point_count:
+							hint += "\n- Drag to change curve"
+							hint += "\n- Right click to convert line segment to arc"
 				else:
 					_draw_add_point_hint(viewport_control, svs, false)
 		if not hint.is_empty():
@@ -1120,6 +1120,7 @@ func _on_global_position_for_handle_changed(global_pos : Vector2, meta_name: Str
 			META_NAME_HOVER_POINT_IDX:
 				_update_curve_point_position(cur, global_pos, idx)
 		update_overlays()
+
 
 func _update_curve_point_position(current_selection : ScalableVectorShape2D, mouse_pos : Vector2, idx : int) -> void:
 	if not in_undo_redo_transaction:
@@ -1481,7 +1482,7 @@ func _start_cutout_shape(svs : ScalableVectorShape2D, pos : Vector2) -> void:
 	_create_shape(new_shape, EditorInterface.get_edited_scene_root(), "CutoutOf%s" % svs.name, svs)
 
 
-func _add_point_on_curve_segment(svs : ScalableVectorShape2D) -> void:
+func _add_point_on_curve_segment(svs : ScalableVectorShape2D, subdivide := false) -> void:
 	if svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:
 		return
 	if not svs.has_meta(META_NAME_HOVER_CLOSEST_POINT):
@@ -1489,16 +1490,17 @@ func _add_point_on_curve_segment(svs : ScalableVectorShape2D) -> void:
 	var md_closest_point : ClosestPointOnCurveMeta = svs.get_meta(META_NAME_HOVER_CLOSEST_POINT)
 	if svs.is_arc_start(md_closest_point.before_segment - 1):
 		return
+	var placement_point := svs.get_curve_segment_halfway_point(md_closest_point) if subdivide else  md_closest_point.local_point_position
 	if md_closest_point.before_segment >= svs.curve.point_count:
-		_add_point_to_curve(svs, md_closest_point.local_point_position)
+		_add_point_to_curve(svs, placement_point)
 	else:
 		if (
 			svs.curve.get_point_out(md_closest_point.before_segment - 1).length() > 0.0 or
 			svs.curve.get_point_in(md_closest_point.before_segment).length() > 0.0
 		):
 			# This is a curved segment, so when a point is added, control points are recalculated
-			var sliced_segment := svs.get_sliced_curve_segment(md_closest_point)
-			_add_point_to_curve(svs, md_closest_point.local_point_position,
+			var sliced_segment := svs.get_sliced_curve_segment(md_closest_point.before_segment, placement_point)
+			_add_point_to_curve(svs, placement_point,
 				Vector2.ZERO, Vector2.ZERO, md_closest_point.before_segment, false)
 			undo_redo.add_do_method(svs.curve, "set_point_out", md_closest_point.before_segment - 1, sliced_segment.get_point_out(0))
 			undo_redo.add_undo_method(svs.curve, "set_point_out", md_closest_point.before_segment -1, svs.curve.get_point_out(md_closest_point.before_segment - 1))
@@ -1510,7 +1512,7 @@ func _add_point_on_curve_segment(svs : ScalableVectorShape2D) -> void:
 			undo_redo.add_undo_reference(svs.curve)
 			undo_redo.commit_action()
 		else:
-			_add_point_to_curve(svs, md_closest_point.local_point_position,
+			_add_point_to_curve(svs, placement_point,
 				Vector2.ZERO, Vector2.ZERO, md_closest_point.before_segment)
 
 func _drag_curve_segment(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
@@ -1777,6 +1779,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				var cp_md : ClosestPointOnCurveMeta = current_selection.get_meta(META_NAME_HOVER_CLOSEST_POINT)
 				if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and current_selection.is_arc_start(cp_md.before_segment - 1):
 					arc_settings_popup_panel.popup_with_value(current_selection.arc_list.get_arc_for_point(cp_md.before_segment - 1))
+				elif Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and Input.is_key_pressed(KEY_ALT):
+					_add_point_on_curve_segment(current_selection, true)
 				elif event.double_click:
 					_add_point_on_curve_segment(current_selection)
 				return true
