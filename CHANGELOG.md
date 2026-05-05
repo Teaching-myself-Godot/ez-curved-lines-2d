@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.20.0
+
+### Changed
+
+- Recalculate control points when adding a point on a curved line
 
 ## 2.19.4
 
