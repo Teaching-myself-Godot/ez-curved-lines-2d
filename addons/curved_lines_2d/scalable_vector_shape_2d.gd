@@ -1157,6 +1157,13 @@ func get_sliced_curve_segment(cpc : ClosestPointOnCurveMeta) -> Curve2D:
 	)
 
 
+func get_global_halfway_point(cpc : ClosestPointOnCurveMeta) -> Vector2:
+	var curve_segment := Curve2D.new()
+	curve_segment.add_point(curve.get_point_position(cpc.before_segment - 1))
+	curve_segment.set_point_out(0, curve.get_point_out(cpc.before_segment - 1))
+	curve_segment.add_point(curve.get_point_position(cpc.before_segment))
+	curve_segment.set_point_in(1, curve.get_point_in(cpc.before_segment))
+	return to_global(Geometry2DUtil.get_halfway_point_on_bezier(curve_segment, max_stages, tolerance_degrees))
 
 # Adapted from the GodSVG repository to draw arc in stead of determine bounding box.
 # https://github.com/MewPurPur/GodSVG/blob/53168a8cf74739fe828f488901eada02d5d97b69/src/data_classes/ElementPath.gd#L118

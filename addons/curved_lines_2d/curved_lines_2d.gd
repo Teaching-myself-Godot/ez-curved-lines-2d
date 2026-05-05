@@ -869,12 +869,19 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 			hint = "- Left click to open arc settings"
 			hint += "\n- Right click to remove arc (straighten this line segment)"
 		else:
-			var p = _vp_transform(md_p.point_position)
-			_draw_crosshair(viewport_control, _vp_transform(md_p.point_position))
+			if Input.is_key_pressed(KEY_ALT):
+				print(svs.get_global_halfway_point(md_p))
+				_draw_crosshair(viewport_control, _vp_transform(svs.get_global_halfway_point(md_p)), 3.0, 8, Color.ANTIQUE_WHITE, 2)
+			else:
+				_draw_crosshair(viewport_control, _vp_transform(md_p.point_position))
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 				if svs.curve.point_count > 1:
 					hint = "- Double click to add point on the line"
 					if md_p.before_segment < svs.curve.point_count:
+						if Input.is_key_pressed(KEY_ALT):
+							hint += "\n- Left Click to add point halfway the line (Alt held)"
+						else:
+							hint += "\n- Alt + Click to add point halfway the line"
 						hint += "\n- Drag to change curve"
 						hint += "\n- Right click to convert line segment to arc"
 				else:
