@@ -156,3 +156,57 @@ static func get_polygon_indices(polygons : Array[PackedVector2Array], indices : 
 	return result
 
 
+static func is_point_on_segment(p : Vector2, s1 : Vector2, s2: Vector2) -> bool:
+	return Geometry2D.segment_intersects_circle(s1, s2, p, 0.01) > -1
+
+
+static func get_progress_ratio_for_point_on_curve(p : Vector2, c : Curve2D, max_stages := 5,
+		tolerance_degrees := 4.0) -> float:
+	# Heuristic to find progress_ratio of cpc
+	var d := 0.0
+	var pts := c.tessellate(max_stages, tolerance_degrees)
+	var p1 := pts[0]
+	for i in range(1, pts.size()):
+		if Geometry2DUtil.is_point_on_segment(p, p1, pts[i]):
+			d += p1.distance_to(p)
+			break
+		d += p1.distance_to(pts[i])
+		p1 = pts[i]
+	return d / c.get_baked_length()
+
+
+# Adapted from: https://stackoverflow.com/a/8405756/1081548
+static func slice_bezier(p1: Vector2, cp2 : Vector2, cp3 : Vector2, p4 : Vector2,
+		t : float) -> Curve2D:
+	var x1 := p1.x
+	var y1 := p1.y
+	var x2 := x1 + cp2.x
+	var y2 := y1 + cp2.y
+	var x4 := p4.x
+	var y4 := p4.y
+	var x3 := x4 + cp3.x
+	var y3 := y4 + cp3.y
+
+	var x12 := (x2-x1)*t+x1
+	var y12 = (y2-y1)*t+y1
+	var x23 = (x3-x2)*t+x2
+	var y23 = (y3-y2)*t+y2
+	var x34 = (x4-x3)*t+x3
+	var y34 = (y4-y3)*t+y3
+	var x123 = (x23-x12)*t+x12
+	var y123 = (y23-y12)*t+y12
+	var x234 = (x34-x23)*t+x23
+	var y234 = (y34-y23)*t+y23
+	var x1234 = (x234-x123)*t+x123
+	var y1234 = (y234-y123)*t+y123
+	var sliced_curve := Curve2D.new()
+	sliced_curve.add_point(Vector2(x1, y1))
+	sliced_curve.add_point(Vector2(x1234, y1234))
+	sliced_curve.add_point(Vector2(x4, y4))
+
+	sliced_curve.set_point_out(0, Vector2(x12, y12) - sliced_curve.get_point_position(0))
+	sliced_curve.set_point_in(1, Vector2(x123, y123) - sliced_curve.get_point_position(1))
+	sliced_curve.set_point_out(1, Vector2(x234, y234) - sliced_curve.get_point_position(1))
+	sliced_curve.set_point_in(2, Vector2(x34, y34) - sliced_curve.get_point_position(2))
+
+	return sliced_curve
