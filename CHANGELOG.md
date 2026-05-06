@@ -1,6 +1,11 @@
 # Changelog
 
-## 2.20.0
+## 2.20.1
+
+### Added
+
+- Use alt+click while hovering over an edge to add a point at the halfway-mark
+- Use double-click while hovering over a shape to subdivide all its edges
 
 ### Changed
 
