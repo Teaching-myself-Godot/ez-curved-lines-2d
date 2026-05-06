@@ -1,5 +1,7 @@
 # Scalable Vector Shapes 2D plugin for Godot 4
 
+Ask questions on [discord](https://discord.gg/mNTdwgwBy)
+
 Scalable Vector Shapes 2D lets you do 3 things:
 1. Draw seamless vector shapes using a Path Editor inspired by the awesome [Inkscape](https://inkscape.org/) with a new node type: [`ScalableVectorShape2D`](./scalable_vector_shape_2d.gd)[^1]
 2. Animate the shape of the curve using keyframes on a [property-track](https://docs.godotengine.org/en/stable/tutorials/animation/introduction.html#doc-introduction-animation)  in an [`AnimationPlayer`](https://docs.godotengine.org/en/stable/classes/class_animationplayer.html#class-animationplayer)
@@ -56,6 +58,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
     - [Flipping paths](#flipping-paths)
 - [Manipulating shapes](#manipulating-shapes)
   - [Adding a point to a shape](#adding-a-point-to-a-shape)
+  - [Subdividing a shape](#subdividing-a-shape)
   - [Bending a curve](#bending-a-curve)
   - [Creating, mirroring and dragging control point handles](#creating-mirroring-and-dragging-control-point-handles)
   - [Closing the loop and breaking the loop](#closing-the-loop-and-breaking-the-loop)
@@ -357,6 +360,19 @@ Using `Ctrl`[^5] + `Left Click` you can add a point anywhere in the 2D viewport,
 By double clicking on a line segment you can add a point _inbetween_ 2 existing points:
 
 ![add point to a line](./screenshots/18-add-point-to-line.png)
+
+By holding alt and left-clicking while hovering over a line segment you add a point at the halfway-mark of a curve:
+
+![add a point at the halfway mark of an edge](./screenshots/alt-click-subdivide.png)
+
+
+## Subdividing a shape
+
+Double click on a shape without hovering over an edge to subdivide all edges on the shape:
+
+![subdivide shape](./screenshots/subdivide.gif)
+
+
 
 ## Bending a curve
 

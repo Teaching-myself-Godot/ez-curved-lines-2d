@@ -1140,14 +1140,14 @@ func get_closest_point_on_curve(global_pos : Vector2) -> ClosestPointOnCurveMeta
 	return ClosestPointOnCurveMeta.new(before_segment, to_global(closest_result), closest_result)
 
 
-func get_sliced_curve_segment(cpc : ClosestPointOnCurveMeta) -> Curve2D:
+func get_sliced_curve_segment(before_segment : int, point_position : Vector2) -> Curve2D:
 	var curve_segment := Curve2D.new()
-	curve_segment.add_point(curve.get_point_position(cpc.before_segment - 1))
-	curve_segment.set_point_out(0, curve.get_point_out(cpc.before_segment - 1))
-	curve_segment.add_point(curve.get_point_position(cpc.before_segment))
-	curve_segment.set_point_in(1, curve.get_point_in(cpc.before_segment))
+	curve_segment.add_point(curve.get_point_position(before_segment - 1))
+	curve_segment.set_point_out(0, curve.get_point_out(before_segment - 1))
+	curve_segment.add_point(curve.get_point_position(before_segment))
+	curve_segment.set_point_in(1, curve.get_point_in(before_segment))
 	var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
-			cpc.local_point_position, curve_segment, max_stages, tolerance_degrees)
+			point_position, curve_segment, max_stages, tolerance_degrees)
 	return Geometry2DUtil.slice_bezier(
 		curve_segment.get_point_position(0),
 		curve_segment.get_point_out(0),
@@ -1156,6 +1156,32 @@ func get_sliced_curve_segment(cpc : ClosestPointOnCurveMeta) -> Curve2D:
 		progress_ratio
 	)
 
+
+func get_curve_segment_halfway_point(before_segment : int) -> Vector2:
+	var p_idx_1 := before_segment if before_segment < curve.point_count else 0
+	var curve_segment := Curve2D.new()
+	curve_segment.add_point(curve.get_point_position(before_segment - 1))
+	curve_segment.set_point_out(0, curve.get_point_out(before_segment - 1))
+	curve_segment.add_point(curve.get_point_position(p_idx_1))
+	curve_segment.set_point_in(1, curve.get_point_in(p_idx_1))
+	return Geometry2DUtil.get_halfway_point_on_bezier(curve_segment, max_stages, tolerance_degrees)
+
+
+func get_subdivided_curve() -> Curve2D:
+	if curve.point_count < 2:
+		return curve
+	var new_curve := Curve2D.new()
+	new_curve.add_point(curve.get_point_position(0))
+	for i in range(1, curve.point_count):
+		var segment := get_sliced_curve_segment(i, get_curve_segment_halfway_point(i))
+		new_curve.add_point(segment.get_point_position(1))
+		new_curve.add_point(segment.get_point_position(2))
+		if curve.get_point_out(i - 1).length() > 0.0 or curve.get_point_in(i).length() > 0.0:
+			new_curve.set_point_out((i * 2) - 2, segment.get_point_out(0))
+			new_curve.set_point_in((i * 2) - 1, segment.get_point_in(1))
+			new_curve.set_point_out((i * 2) - 1, segment.get_point_out(1))
+			new_curve.set_point_in(i * 2, segment.get_point_in(2))
+	return new_curve
 
 
 # Adapted from the GodSVG repository to draw arc in stead of determine bounding box.

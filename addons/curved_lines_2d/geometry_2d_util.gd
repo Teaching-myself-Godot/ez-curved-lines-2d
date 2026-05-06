@@ -175,6 +175,22 @@ static func get_progress_ratio_for_point_on_curve(p : Vector2, c : Curve2D, max_
 	return d / c.get_baked_length()
 
 
+static func get_halfway_point_on_bezier(c : Curve2D, max_stages := 5, tolerance_degrees := 4.0) -> Vector2:
+	var pts := c.tessellate(max_stages, tolerance_degrees)
+	var tot_d := c.get_baked_length()
+	var d := 0.0
+	var p1 := pts[0]
+	for i in range(1, pts.size()):
+		var prev_d := d
+		d += p1.distance_to(pts[i])
+		if d >= tot_d * 0.5:
+			var d_ratio := 0.5 - (prev_d / tot_d) if prev_d > 0.0 else 0.5
+			var d_abs := tot_d * d_ratio
+			return pts[i-1] + pts[i-1].direction_to(pts[i]) * d_abs
+		p1 = pts[i]
+	return Vector2.ZERO
+
+
 # Adapted from: https://stackoverflow.com/a/8405756/1081548
 static func slice_bezier(p1: Vector2, cp2 : Vector2, cp3 : Vector2, p4 : Vector2,
 		t : float) -> Curve2D:

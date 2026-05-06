@@ -58,6 +58,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 		- [Flipping paths](#flipping-paths)
 - [Manipulating shapes](#manipulating-shapes)
 	- [Adding a point to a shape](#adding-a-point-to-a-shape)
+	- [Subdividing a shape](#subdividing-a-shape)
 	- [Bending a curve](#bending-a-curve)
 	- [Creating, mirroring and dragging control point handles](#creating-mirroring-and-dragging-control-point-handles)
 	- [Closing the loop and breaking the loop](#closing-the-loop-and-breaking-the-loop)
@@ -359,6 +360,19 @@ Using `Ctrl`[^5] + `Left Click` you can add a point anywhere in the 2D viewport,
 By double clicking on a line segment you can add a point _inbetween_ 2 existing points:
 
 ![add point to a line](./addons/curved_lines_2d/screenshots/18-add-point-to-line.png)
+
+By holding alt and left-clicking while hovering over a line segment you add a point at the halfway-mark of a curve:
+
+![add a point at the halfway mark of an edge](./addons/curved_lines_2d/screenshots/alt-click-subdivide.png)
+
+
+## Subdividing a shape
+
+Double click on a shape without hovering over an edge to subdivide all edges on the shape:
+
+![subdivide shape](./addons/curved_lines_2d/screenshots/subdivide.gif)
+
+
 
 ## Bending a curve
 
