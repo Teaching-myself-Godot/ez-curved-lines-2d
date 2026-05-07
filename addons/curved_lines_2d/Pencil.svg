@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="16"
+   height="16"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="Pencil.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2">
+      <path
+         id="path3"
+         style="opacity:0.859539;fill:#e0e0e0;fill-rule:evenodd;stroke-width:24.377;stroke-miterlimit:80;stroke-opacity:0.441441;paint-order:markers fill stroke"
+         d="M 0.97756409,11.576111 12.15665,0.39702603 15.57965,3.8200267 4.4005647,14.999112 0.42603537,15.306118 Z"
+         sodipodi:nodetypes="cccccc" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     showguides="true"
+     inkscape:zoom="1"
+     inkscape:cx="-13"
+     inkscape:cy="0.5"
+     inkscape:current-layer="svg1">
+    <sodipodi:guide
+       position="13.417137,13.709876"
+       orientation="-0.70710678,-0.70710678"
+       id="guide3"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="12.272075,8.9055953"
+       orientation="0.70710678,-0.70710678"
+       id="guide4"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="1.6429148,5.0970202"
+       orientation="0.70710678,-0.70710678"
+       id="guide5"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="3.1683168,4.2772277"
+       orientation="-0.70710678,-0.70710678"
+       id="guide6"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <ellipse
+     style="opacity:1;fill:#e0e0e0;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:24.377;stroke-miterlimit:80;stroke-opacity:0.441441;paint-order:markers fill stroke"
+     id="path1"
+     cx="0.43562135"
+     cy="15.445889"
+     rx="2.4021406"
+     ry="2.3772478"
+     clip-path="url(#clipPath2)" />
+  <path
+     id="rect1"
+     style="opacity:1;fill:none;fill-rule:evenodd;stroke:#e0e0e0;stroke-width:1;stroke-miterlimit:80;stroke-dasharray:none;stroke-opacity:0.862745;paint-order:markers fill stroke"
+     d="M 1.5003097,11.028473 11.833045,0.74552311 15.206261,4.1685237 4.9233103,14.451474 0.94878098,14.758479 Z"
+     sodipodi:nodetypes="cccccc" />
+  <path
+     style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#e0e0e0;stroke-width:1;stroke-miterlimit:80;stroke-dasharray:none;stroke-opacity:0.862745;paint-order:markers fill stroke"
+     d="M 2.3047054,10.885378 5.0710239,13.59764"
+     id="path5"
+     sodipodi:nodetypes="cc" />
+  <path
+     style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#e0e0e0;stroke-width:1;stroke-miterlimit:80;stroke-dasharray:none;stroke-opacity:0.862745;paint-order:markers fill stroke"
+     d="M 13.447745,2.3938394 3.520352,12.039604"
+     id="path6" />
+  <path
+     style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#e0e0e0;stroke-width:1;stroke-miterlimit:80;stroke-dasharray:none;stroke-opacity:0.862745;paint-order:markers fill stroke"
+     d="M 14.187019,3.4147415 4.5764576,13.025303"
+     id="path7" />
+</svg>
