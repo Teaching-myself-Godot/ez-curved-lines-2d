@@ -106,6 +106,8 @@ var _lmb_is_down_inside_viewport := false
 var merge_node_toggle_button : Button
 var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
 
+var pencil_draw_toggle_button : CheckBox
+
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
 	plugin = preload("res://addons/curved_lines_2d/line_2d_generator_inspector_plugin.gd").new()
@@ -156,6 +158,7 @@ func _enter_tree():
 	uniform_transform_edit_buttons = load("res://addons/curved_lines_2d/uniform_transform_edit_buttons.tscn").instantiate()
 	var canvas_editor_buttons_container = EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*").find_child("*HFlowContainer*", true, false)
 	canvas_editor_buttons_container.add_child(uniform_transform_edit_buttons)
+
 	merge_node_toggle_button = Button.new()
 	merge_node_toggle_button.tooltip_text = "Merge vertices (M)"
 	merge_node_toggle_button.icon = load("res://addons/curved_lines_2d/MergeChain.svg")
@@ -163,6 +166,17 @@ func _enter_tree():
 	merge_node_toggle_button.flat = true
 	merge_node_toggle_button.toggled.connect(_on_merge_node_toggle_button_toggled)
 	canvas_editor_buttons_container.add_child(merge_node_toggle_button)
+
+	pencil_draw_toggle_button = CheckBox.new()
+	pencil_draw_toggle_button.tooltip_text = "Pencil draw (P)"
+	var pencil_icon : Texture2D = load("res://addons/curved_lines_2d/Pencil.svg")
+	var pencil_icon_checked : Texture2D = load("res://addons/curved_lines_2d/PencilBlue.svg")
+	pencil_draw_toggle_button.flat = true
+	pencil_draw_toggle_button.add_theme_icon_override("checked", pencil_icon_checked)
+	pencil_draw_toggle_button.add_theme_icon_override("unchecked", pencil_icon)
+	pencil_draw_toggle_button.toggled.connect(_on_pencil_draw_toggle_button_toggled)
+	canvas_editor_buttons_container.add_child(pencil_draw_toggle_button)
+
 
 	if not _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
 		_get_select_mode_button().toggled.connect(_on_select_mode_toggled)
@@ -181,10 +195,19 @@ func _on_merge_node_toggle_button_toggled(toggled_on : bool) -> void:
 	_merge_box_rect.size = Vector2.ZERO
 	if not toggled_on:
 		return
+	pencil_draw_toggle_button.button_pressed = false
 	var scene_root := EditorInterface.get_edited_scene_root()
 	if is_instance_valid(scene_root):
 		EditorInterface.edit_node(scene_root)
 	update_overlays()
+
+
+func _on_pencil_draw_toggle_button_toggled(toggled_on : bool) -> void:
+	if not toggled_on:
+		return
+	uniform_transform_edit_buttons.enable()
+	merge_node_toggle_button.button_pressed = false
+
 
 
 func _on_select_mode_toggled(toggled_on : bool) -> void:
@@ -192,17 +215,23 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 	if toggled_on and _is_svs_valid(current_selection):
 		uniform_transform_edit_buttons.enable()
 		merge_node_toggle_button.show()
+		pencil_draw_toggle_button.show()
 	elif toggled_on:
 		uniform_transform_edit_buttons.hide()
 		merge_node_toggle_button.show()
+		pencil_draw_toggle_button.show()
 	else:
 		uniform_transform_edit_buttons.hide()
 		merge_node_toggle_button.hide()
+		pencil_draw_toggle_button.hide()
+		pencil_draw_toggle_button.button_pressed = false
 		merge_node_toggle_button.button_pressed = false
 
 
 func _on_uniform_transform_mode_changed(new_mode : UniformTransformMode) -> void:
 	_uniform_transform_mode = new_mode
+	if new_mode != UniformTransformMode.NONE:
+		pencil_draw_toggle_button.button_pressed = false
 	update_overlays()
 
 
@@ -2058,6 +2087,7 @@ func _exit_tree():
 
 	uniform_transform_edit_buttons.queue_free()
 	merge_node_toggle_button.queue_free()
+	pencil_draw_toggle_button.queue_free()
 	remove_inspector_plugin(plugin)
 	remove_custom_type("DrawablePath2D")
 	remove_custom_type("ScalableVectorShape2D")
