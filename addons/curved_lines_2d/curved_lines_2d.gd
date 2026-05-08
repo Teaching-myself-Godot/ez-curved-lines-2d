@@ -30,6 +30,7 @@ const SETTING_NAME_ANTIALIASED_LINE_2D := "addons/curved_lines_2d/antialiased_li
 
 const SETTING_NAME_KEEP_DRAWING := "addons/curved_lines_2d/keep_drawing"
 const SETTING_NAME_PENCIL_GRANULARITY := "addons/curved_lines_2d/granularity"
+const SETTING_NAME_CLOSE_PENCIL_PATH := "addons/curved_lines_2d/close_pencil_path"
 
 const META_NAME_HOVER_POINT_IDX := "_hover_point_idx_"
 const META_NAME_HOVER_CP_IN_IDX := "_hover_cp_in_idx_"
@@ -1829,6 +1830,9 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 			if not event.is_pressed():
 				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 				if _is_svs_valid(current_selection):
+					var svs := current_selection as ScalableVectorShape2D
+					if _get_close_pencil_path() and svs.curve.point_count > 2:
+						_add_point_to_curve(svs, svs.curve.get_point_position(0))
 					if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 						select_node_reversibly(current_selection.get_parent())
 					else:
@@ -2209,6 +2213,12 @@ static func _get_pencil_granularity() -> int:
 	if ProjectSettings.has_setting(SETTING_NAME_PENCIL_GRANULARITY):
 		return ProjectSettings.get_setting(SETTING_NAME_PENCIL_GRANULARITY)
 	return 4
+
+
+static func _get_close_pencil_path() -> bool:
+	if ProjectSettings.has_setting(SETTING_NAME_CLOSE_PENCIL_PATH):
+		return ProjectSettings.get_setting(SETTING_NAME_CLOSE_PENCIL_PATH)
+	return false
 
 func _exit_tree():
 	if _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):

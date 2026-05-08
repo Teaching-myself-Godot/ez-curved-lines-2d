@@ -11,6 +11,7 @@ func _enter_tree() -> void:
 	%Granularity.add_child(granularity_input)
 	granularity_input.value_changed.connect(_on_granularity_value_changed)
 	%KeepDrawingOptionButton.select(CurvedLines2D._get_keep_drawing_behavior())
+	%ClosePathCheckBox.button_pressed = CurvedLines2D._get_close_pencil_path()
 
 
 func _on_granularity_value_changed(new_val) -> void:
@@ -31,4 +32,9 @@ func _make_number_input(lbl : String, value : float, min_value : float, max_valu
 
 func _on_keep_drawing_option_button_item_selected(opt : CurvedLines2D.KeepDrawingBehavior) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_KEEP_DRAWING, opt)
+	ProjectSettings.save()
+
+
+func _on_close_path_check_box_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_CLOSE_PENCIL_PATH, toggled_on)
 	ProjectSettings.save()

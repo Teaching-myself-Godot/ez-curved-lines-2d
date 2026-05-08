@@ -21,10 +21,10 @@ metadata/_tab_index = 2
 [node name="SelectionBehaviourContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_constants/separation = 13
+theme_override_constants/separation = 6
 
 [node name="Label" type="Label" parent="VBoxContainer/SelectionBehaviourContainer"]
-custom_minimum_size = Vector2(164, 0)
+custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 tooltip_text = "Determine what to do once you are done drawing:
 - draw another one (select the parent and keep the current draw mode toggled on)
@@ -50,14 +50,14 @@ layout_mode = 2
 [node name="PencilSettingsContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_constants/separation = 13
+theme_override_constants/separation = 8
 
 [node name="Label" type="Label" parent="VBoxContainer/PencilSettingsContainer"]
-custom_minimum_size = Vector2(164, 0)
+custom_minimum_size = Vector2(152, 0)
 layout_mode = 2
 tooltip_text = "The minimum distance between points added to the (out)line at the current zoom level of the 2D editor viewport."
 mouse_filter = 0
-text = "Pencil*"
+text = "Pencil / Outlines*"
 
 [node name="Granularity" type="PanelContainer" parent="VBoxContainer/PencilSettingsContainer"]
 unique_name_in_owner = true
@@ -65,7 +65,13 @@ custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="ClosePathCheckBox" type="CheckBox" parent="VBoxContainer/PencilSettingsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Close curve of newly drawn path"
+
 [node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
 layout_mode = 2
 
 [connection signal="item_selected" from="VBoxContainer/SelectionBehaviourContainer/KeepDrawingOptionButton" to="." method="_on_keep_drawing_option_button_item_selected"]
+[connection signal="toggled" from="VBoxContainer/PencilSettingsContainer/ClosePathCheckBox" to="." method="_on_close_path_check_box_toggled"]

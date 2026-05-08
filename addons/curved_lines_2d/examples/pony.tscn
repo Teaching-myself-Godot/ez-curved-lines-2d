@@ -2391,7 +2391,7 @@ NodePath("../LowerLeg"): 0
 metadata/_edit_lock_ = true
 
 [node name="SVSVertexMerge2D2" type="Node2D" parent="Body/FrontBackLeg" node_paths=PackedStringArray("vertex_map")]
-position = Vector2(-8.89595, 81.5466)
+position = Vector2(-8.89594, 81.5466)
 rotation = 0.665231
 script = ExtResource("4_p8hpb")
 vertex_map = {
@@ -2431,7 +2431,7 @@ polygon = PackedVector2Array(13.6271, -11.8026, -1.92606, -28.3036, -17.2001, -4
 metadata/_edit_lock_ = true
 
 [node name="SVSVertexMerge2D" type="Node2D" parent="Body/Tail" node_paths=PackedStringArray("vertex_map")]
-position = Vector2(13.6271, -11.8025)
+position = Vector2(13.6271, -11.8026)
 rotation = 0.901859
 scale = Vector2(1.08689, 1.0799)
 skew = -0.201318
@@ -2443,7 +2443,7 @@ NodePath(".."): 0
 metadata/_edit_lock_ = true
 
 [node name="SVSVertexMerge2D2" type="Node2D" parent="Body/Tail" node_paths=PackedStringArray("vertex_map")]
-position = Vector2(-101.872, -51.5176)
+position = Vector2(-101.872, -51.5175)
 rotation = 1.14354
 scale = Vector2(1.13894, 1.02486)
 skew = -0.171998
@@ -2503,7 +2503,7 @@ NodePath("../Path2"): 1
 metadata/_edit_lock_ = true
 
 [node name="SVSVertexMerge2D4" type="Node2D" parent="Body/Tail" node_paths=PackedStringArray("vertex_map")]
-position = Vector2(-1.55304, 15.4331)
+position = Vector2(-1.55305, 15.4331)
 rotation = 1.00185
 scale = Vector2(1.10906, 1.05712)
 skew = -0.195706
@@ -2548,7 +2548,7 @@ metadata/_edit_lock_ = true
 
 [node name="SVSVertexMerge2D" type="Node2D" parent="Body/Neck" node_paths=PackedStringArray("vertex_map")]
 visible = false
-position = Vector2(-17.3993, -27.989)
+position = Vector2(-17.3993, -27.9891)
 rotation = -0.210176
 script = ExtResource("4_p8hpb")
 vertex_map = {
@@ -2558,7 +2558,7 @@ NodePath(".."): 3
 metadata/_edit_lock_ = true
 
 [node name="SVSVertexMerge2D2" type="Node2D" parent="Body/Neck" node_paths=PackedStringArray("vertex_map")]
-position = Vector2(25.2387, 3.93773)
+position = Vector2(25.2388, 3.93773)
 rotation = -0.210176
 script = ExtResource("4_p8hpb")
 vertex_map = {
@@ -2752,7 +2752,7 @@ sharp_limit = 90.0
 metadata/_edit_lock_ = true
 
 [node name="SVSVertexMerge2D2" type="Node2D" parent="Body/Neck/Head/Hair" node_paths=PackedStringArray("vertex_map")]
-position = Vector2(96.6769, 41.2414)
+position = Vector2(96.6769, 41.2413)
 rotation = -0.196411
 script = ExtResource("4_p8hpb")
 vertex_map = {
@@ -2851,7 +2851,7 @@ NodePath("../Path5"): 0
 metadata/_edit_lock_ = true
 
 [node name="SVSVertexMerge2D8" type="Node2D" parent="Body/Neck/Head/Hair" node_paths=PackedStringArray("vertex_map")]
-position = Vector2(-39.7099, 193.86)
+position = Vector2(-39.7099, 193.859)
 rotation = -0.196411
 script = ExtResource("4_p8hpb")
 vertex_map = {
@@ -2871,7 +2871,7 @@ NodePath(".."): 2
 metadata/_edit_lock_ = true
 
 [node name="SVSVertexMerge2D2" type="Node2D" parent="Body/Neck/Head" node_paths=PackedStringArray("vertex_map")]
-position = Vector2(30.6811, 7.9303)
+position = Vector2(30.681, 7.93027)
 rotation = -0.0876902
 script = ExtResource("4_p8hpb")
 vertex_map = {
