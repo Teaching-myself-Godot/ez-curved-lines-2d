@@ -107,7 +107,7 @@ var merge_node_toggle_button : Button
 var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
 
 var pencil_draw_toggle_button : CheckBox
-var _current_pencil_line : Array[Vector2] = []
+var _drawing_pencil_line := false
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -1049,10 +1049,43 @@ func _handle_draw_vertex_merge_box(viewport_control: Control) -> void:
 		_draw_hint(viewport_control, "\nMerge points of:%s" % entries)
 
 
-func _handle_draw_current_pencil_line(viewport_control : Control) -> void:
+func _handle_pencil_draw(viewport_control : Control) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-	if _is_svs_valid(current_selection):
-		_draw_curve(viewport_control, current_selection)
+	if _is_svs_valid(current_selection) and Input.is_key_pressed(KEY_SHIFT) and _drawing_pencil_line:
+		var svs := current_selection as ScalableVectorShape2D
+		_draw_curve(viewport_control, svs)
+		for idx in svs.curve.point_count:
+			_draw_crosshair(
+				viewport_control,
+				_vp_transform(svs.to_global(svs.curve.get_point_position(idx))),
+				2.0, 4.0, VIEWPORT_ORANGE, 1
+			)
+			viewport_control.draw_line(
+				_vp_transform(svs.to_global(svs.curve.get_point_position(svs.curve.point_count - 1))),
+				_vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position()),
+				Color.RED
+			)
+
+	if Input.is_key_pressed(KEY_SHIFT):
+		if _drawing_pencil_line:
+			_draw_hint(viewport_control, "- Left click to add a straight line segment (Shift Held)")
+		else:
+			_draw_hint(viewport_control, "- Left click to start drawing straight lines (Shift Held)")
+	elif Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		_draw_hint(viewport_control, "- Hold Shift to draw straight line segments
+			- Release left mouse button to finish outline / stroke
+		")
+	else:
+		if _drawing_pencil_line:
+			_draw_hint(viewport_control, "- Hold left again to continue drawing (Shift Released)
+				- Left click to finish (Shift released)
+				- Hold Shift again to continue drawing straight line segments
+			")
+		else:
+			_draw_hint(viewport_control, "
+				- Hold and drag left mouse button to draw outlines / strokes
+				- Hold Shift to draw straight line segments
+			")
 
 
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
@@ -1063,7 +1096,7 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 	if merge_node_toggle_button.button_pressed:
 		return _handle_draw_vertex_merge_box(viewport_control)
 	elif pencil_draw_toggle_button.button_pressed:
-		return _handle_draw_current_pencil_line(viewport_control)
+		return _handle_pencil_draw(viewport_control)
 
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
@@ -1750,34 +1783,54 @@ func _handle_draw_merge_box_input(event) -> bool:
 	return true
 
 
-func _handle_pencil_draw_input(event : InputEvent) -> bool:
+func _start_drawing_new_pencil_line() -> void:
 	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	var new_shape := ScalableVectorShape2D.new()
+	new_shape.curve = Curve2D.new()
+	_create_shape(new_shape, EditorInterface.get_edited_scene_root(), "PencilDrawing", null, true)
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if _is_svs_valid(current_selection):
+		_add_point_to_curve(current_selection, current_selection.to_local(pos))
+	_drawing_pencil_line = true
+
+
+func _add_point_to_pencil_line() -> void:
+	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if _is_svs_valid(current_selection):
+		var last_point := (current_selection as ScalableVectorShape2D).curve.get_point_position(current_selection.curve.point_count -1)
+		if _vp_transform(current_selection.to_global(last_point)).distance_to(_vp_transform(pos)) > 4.0:
+			_add_point_to_curve(current_selection, current_selection.to_local(pos))
+
+
+func _handle_pencil_draw_input(event : InputEvent) -> bool:
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
-		if event.is_pressed() and _current_pencil_line.is_empty():
-			var new_shape := ScalableVectorShape2D.new()
-			new_shape.curve = Curve2D.new()
-			_create_shape(new_shape, EditorInterface.get_edited_scene_root(), "PencilDrawing", null, true)
-			var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-			if _is_svs_valid(current_selection):
-				_add_point_to_curve(current_selection, current_selection.to_local(pos))
-			return true
-		if not event.is_pressed():
-			var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-			if _is_svs_valid(current_selection):
-				select_node_reversibly(current_selection.get_parent())
-			update_overlays()
-			return true
+		if Input.is_key_pressed(KEY_SHIFT):
+			if event.is_pressed() and not _drawing_pencil_line:
+				_start_drawing_new_pencil_line()
+				return true
+			elif not event.is_pressed() and _drawing_pencil_line:
+				_add_point_to_pencil_line()
+		else:
+			if event.is_pressed() and _drawing_pencil_line:
+				return true
+			if event.is_pressed() and not _drawing_pencil_line:
+				_start_drawing_new_pencil_line()
+				return true
+			if not event.is_pressed():
+				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+				if _is_svs_valid(current_selection):
+					select_node_reversibly(current_selection.get_parent())
+				update_overlays()
+				_drawing_pencil_line = false
+				return true
 
 	if event is InputEventMouseMotion:
+		update_overlays()
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-
-			if _is_svs_valid(current_selection):
-				var last_point := (current_selection as ScalableVectorShape2D).curve.get_point_position(current_selection.curve.point_count -1)
-				if _vp_transform(current_selection.to_global(last_point)).distance_to(_vp_transform(pos)) > 4.0:
-					_add_point_to_curve(current_selection, current_selection.to_local(pos))
-			update_overlays()
+			_add_point_to_pencil_line()
 			return true
+
 	return false
 
 
@@ -1791,7 +1844,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			merge_node_toggle_button.button_pressed = not merge_node_toggle_button.button_pressed
 		elif (event as InputEventKey).keycode == KEY_P:
 			pencil_draw_toggle_button.button_pressed = not pencil_draw_toggle_button.button_pressed
-
+			if not pencil_draw_toggle_button.button_pressed:
+				_drawing_pencil_line = false
 
 	if merge_node_toggle_button.button_pressed:
 		return _handle_draw_merge_box_input(event)
