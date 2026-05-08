@@ -6,6 +6,7 @@ signal set_shape_preview(curve : Curve2D)
 
 const TABS_NAME := [
 	"Project Settings",
+	"Draw Settings",
 	"Create Shapes",
 	"Import SVG File",
 	"Advanced Editing",

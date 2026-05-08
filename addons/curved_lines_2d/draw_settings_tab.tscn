@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3 uid="uid://ir0lsf5ikpdl"]
+
+[ext_resource type="Script" uid="uid://2gwqgaeywun8" path="res://addons/curved_lines_2d/draw_settings_tab.gd" id="1_6abb2"]
+
+[node name="DrawSettingsTab" type="VBoxContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 39.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+script = ExtResource("1_6abb2")
+metadata/_tab_index = 2
+
+[node name="EditorSettingsContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 2
+theme_override_constants/separation = 13
+
+[node name="Label" type="Label" parent="EditorSettingsContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+tooltip_text = "Determines what settings apply to the 2D Editor Viewport."
+mouse_filter = 0
+text = "Pencil*"
+
+[node name="Granularity" type="PanelContainer" parent="EditorSettingsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator2" type="HSeparator" parent="."]
+layout_mode = 2

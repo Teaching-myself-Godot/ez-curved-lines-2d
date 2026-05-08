@@ -28,6 +28,8 @@ const SETTING_NAME_CURVE_MAX_STAGES := "addons/curved_lines_2d/default_max_stage
 
 const SETTING_NAME_ANTIALIASED_LINE_2D := "addons/curved_lines_2d/antialiased_line_2d"
 
+const SETTING_NAME_PENCIL_GRANULARITY := "addons/curved_lines_2d/granularity"
+
 const META_NAME_HOVER_POINT_IDX := "_hover_point_idx_"
 const META_NAME_HOVER_CP_IN_IDX := "_hover_cp_in_idx_"
 const META_NAME_HOVER_CP_OUT_IDX := "_hover_cp_out_idx_"
@@ -1799,7 +1801,7 @@ func _add_point_to_pencil_line() -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection):
 		var last_point := (current_selection as ScalableVectorShape2D).curve.get_point_position(current_selection.curve.point_count -1)
-		if _vp_transform(current_selection.to_global(last_point)).distance_to(_vp_transform(pos)) > 4.0:
+		if _vp_transform(current_selection.to_global(last_point)).distance_to(_vp_transform(pos)) > _get_pencil_granularity():
 			_add_point_to_curve(current_selection, current_selection.to_local(pos))
 
 
@@ -2186,6 +2188,10 @@ static func _get_default_max_stages() -> int:
 		return ProjectSettings.get_setting(SETTING_NAME_CURVE_MAX_STAGES)
 	return 5
 
+static func _get_pencil_granularity() -> int:
+	if ProjectSettings.has_setting(SETTING_NAME_PENCIL_GRANULARITY):
+		return ProjectSettings.get_setting(SETTING_NAME_PENCIL_GRANULARITY)
+	return 4
 
 func _exit_tree():
 	if _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):

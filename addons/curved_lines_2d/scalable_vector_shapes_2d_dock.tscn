@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://drrarjj0668n"]
+[gd_scene load_steps=9 format=3 uid="uid://drrarjj0668n"]
 
 [ext_resource type="Script" uid="uid://dtiys8sevuh65" path="res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.gd" id="1_1mm15"]
 [ext_resource type="PackedScene" uid="uid://cfeemeccrtef7" path="res://addons/curved_lines_2d/svg_import_tab.tscn" id="2_0fwlu"]
 [ext_resource type="PackedScene" uid="uid://dwns40mbgt82s" path="res://addons/curved_lines_2d/svs_edit_tab.tscn" id="3_psho1"]
 [ext_resource type="PackedScene" uid="uid://3r7rlhrwfmfe" path="res://addons/curved_lines_2d/advanced_tab.tscn" id="4_0fwlu"]
+[ext_resource type="PackedScene" uid="uid://ir0lsf5ikpdl" path="res://addons/curved_lines_2d/draw_settings_tab.tscn" id="4_lgpk4"]
 [ext_resource type="PackedScene" uid="uid://d3j2c8gduqsuu" path="res://addons/curved_lines_2d/project_settings_tab.tscn" id="4_psho1"]
 [ext_resource type="PackedScene" uid="uid://hr7df18ngxmj" path="res://addons/curved_lines_2d/video_explainer_tab.tscn" id="6_mi8vn"]
 [ext_resource type="PackedScene" uid="uid://r23wu41l5ng5" path="res://addons/curved_lines_2d/play_tatra_tab.tscn" id="7_8qxkf"]
@@ -15,7 +16,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-current_tab = 1
+current_tab = 2
 script = ExtResource("1_1mm15")
 
 [node name="ProjectSettingsTab" parent="." instance=ExtResource("4_psho1")]
@@ -25,35 +26,41 @@ layout_mode = 2
 metadata/_tab_index = 0
 metadata/_tab_name = "Project Settings"
 
-[node name="SVSEditTab" parent="." instance=ExtResource("3_psho1")]
+[node name="DrawSettingsTab" parent="." instance=ExtResource("4_lgpk4")]
 unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 1
+
+[node name="SVSEditTab" parent="." instance=ExtResource("3_psho1")]
+unique_name_in_owner = true
+layout_mode = 2
+metadata/_tab_index = 2
 metadata/_tab_name = "Create Shapes"
 
 [node name="SVGImportTab" parent="." instance=ExtResource("2_0fwlu")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-metadata/_tab_index = 2
+metadata/_tab_index = 3
 metadata/_tab_name = "Import SVG File"
 
 [node name="AdvancedTab" parent="." instance=ExtResource("4_0fwlu")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-metadata/_tab_index = 3
+metadata/_tab_index = 4
 metadata/_tab_name = "Advanced Editing"
 
 [node name="VideoExplainerTab" parent="." instance=ExtResource("6_mi8vn")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-metadata/_tab_index = 4
+metadata/_tab_index = 5
 metadata/_tab_name = "Video Explainers"
 
 [node name="PlayTatraTab" parent="." instance=ExtResource("7_8qxkf")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+metadata/_tab_index = 6
 metadata/_tab_name = "Play Tatra!"
