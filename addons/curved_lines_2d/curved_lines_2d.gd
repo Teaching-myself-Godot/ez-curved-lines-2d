@@ -169,7 +169,7 @@ func _enter_tree():
 	canvas_editor_buttons_container.add_child(merge_node_toggle_button)
 
 	pencil_draw_toggle_button = CheckBox.new()
-	pencil_draw_toggle_button.tooltip_text = "Pencil draw (P)"
+	pencil_draw_toggle_button.tooltip_text = "Draw strokes and outlines (P)"
 	var pencil_icon : Texture2D = load("res://addons/curved_lines_2d/Pencil.svg")
 	var pencil_icon_checked : Texture2D = load("res://addons/curved_lines_2d/PencilBlue.svg")
 	pencil_draw_toggle_button.flat = true
@@ -1790,10 +1790,12 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if (
 		event is InputEventKey and
 		(event as InputEventKey).pressed and
-		(event as InputEventKey).keycode == KEY_M and
 		_get_select_mode_button().button_pressed
 	):
-		merge_node_toggle_button.button_pressed = true
+		if (event as InputEventKey).keycode == KEY_M:
+			merge_node_toggle_button.button_pressed = true
+		elif (event as InputEventKey).keycode == KEY_P:
+			pencil_draw_toggle_button.button_pressed = true
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		_lmb_is_down_inside_viewport = (event as InputEventMouseButton).pressed
