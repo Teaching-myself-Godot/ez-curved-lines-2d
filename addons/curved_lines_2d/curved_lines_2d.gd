@@ -1782,20 +1782,21 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
-	if merge_node_toggle_button.button_pressed:
-		return _handle_draw_merge_box_input(event)
-	if pencil_draw_toggle_button.button_pressed:
-		return _handle_pencil_draw_input(event)
-
 	if (
 		event is InputEventKey and
 		(event as InputEventKey).pressed and
 		_get_select_mode_button().button_pressed
 	):
 		if (event as InputEventKey).keycode == KEY_M:
-			merge_node_toggle_button.button_pressed = true
+			merge_node_toggle_button.button_pressed = not merge_node_toggle_button.button_pressed
 		elif (event as InputEventKey).keycode == KEY_P:
-			pencil_draw_toggle_button.button_pressed = true
+			pencil_draw_toggle_button.button_pressed = not pencil_draw_toggle_button.button_pressed
+
+
+	if merge_node_toggle_button.button_pressed:
+		return _handle_draw_merge_box_input(event)
+	if pencil_draw_toggle_button.button_pressed:
+		return _handle_pencil_draw_input(event)
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		_lmb_is_down_inside_viewport = (event as InputEventMouseButton).pressed
