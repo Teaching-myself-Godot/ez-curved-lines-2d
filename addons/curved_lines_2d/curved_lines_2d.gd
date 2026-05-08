@@ -28,6 +28,7 @@ const SETTING_NAME_CURVE_MAX_STAGES := "addons/curved_lines_2d/default_max_stage
 
 const SETTING_NAME_ANTIALIASED_LINE_2D := "addons/curved_lines_2d/antialiased_line_2d"
 
+const SETTING_NAME_KEEP_DRAWING := "addons/curved_lines_2d/keep_drawing"
 const SETTING_NAME_PENCIL_GRANULARITY := "addons/curved_lines_2d/granularity"
 
 const META_NAME_HOVER_POINT_IDX := "_hover_point_idx_"
@@ -42,6 +43,11 @@ const META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE := "_hover_closest_point_on
 const META_NAME_SELECT_HINT := "_select_hint_"
 
 const VIEWPORT_ORANGE := Color(0.737, 0.463, 0.337)
+
+enum KeepDrawingBehavior {
+	KEEP_DRAWING_ON_SAME_PARENT,
+	SELECT_DRAWN_SHAPE
+}
 
 enum PaintOrder {
 	FILL_STROKE_MARKERS,
@@ -110,6 +116,7 @@ var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
 
 var pencil_draw_toggle_button : CheckBox
 var _drawing_pencil_line := false
+
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -1822,7 +1829,10 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 			if not event.is_pressed():
 				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 				if _is_svs_valid(current_selection):
-					select_node_reversibly(current_selection.get_parent())
+					if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
+						select_node_reversibly(current_selection.get_parent())
+					else:
+						pencil_draw_toggle_button.button_pressed = false
 				update_overlays()
 				_drawing_pencil_line = false
 				return true
@@ -2187,6 +2197,13 @@ static func _get_default_max_stages() -> int:
 	if ProjectSettings.has_setting(SETTING_NAME_CURVE_MAX_STAGES):
 		return ProjectSettings.get_setting(SETTING_NAME_CURVE_MAX_STAGES)
 	return 5
+
+
+static func _get_keep_drawing_behavior() -> KeepDrawingBehavior:
+	if ProjectSettings.has_setting(SETTING_NAME_KEEP_DRAWING):
+		return ProjectSettings.get_setting(SETTING_NAME_KEEP_DRAWING)
+	return KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT
+
 
 static func _get_pencil_granularity() -> int:
 	if ProjectSettings.has_setting(SETTING_NAME_PENCIL_GRANULARITY):

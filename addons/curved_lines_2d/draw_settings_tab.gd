@@ -6,10 +6,11 @@ extends Control
 func _enter_tree() -> void:
 	var granularity_input := _make_number_input(
 		"Granularity",
-		4, 1, 50, "px"
+		CurvedLines2D._get_pencil_granularity(), 1, 50, "px"
 	)
 	%Granularity.add_child(granularity_input)
 	granularity_input.value_changed.connect(_on_granularity_value_changed)
+	%KeepDrawingOptionButton.select(CurvedLines2D._get_keep_drawing_behavior())
 
 
 func _on_granularity_value_changed(new_val) -> void:
@@ -27,3 +28,7 @@ func _make_number_input(lbl : String, value : float, min_value : float, max_valu
 	x_slider.step = step
 	return x_slider
 
+
+func _on_keep_drawing_option_button_item_selected(opt : CurvedLines2D.KeepDrawingBehavior) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_KEEP_DRAWING, opt)
+	ProjectSettings.save()
