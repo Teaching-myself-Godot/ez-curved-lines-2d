@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.21.0
+
+### Added
+
+- The pencil tool!
+
 ## 2.20.1
 
 ### Added

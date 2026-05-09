@@ -28,6 +28,10 @@ const SETTING_NAME_CURVE_MAX_STAGES := "addons/curved_lines_2d/default_max_stage
 
 const SETTING_NAME_ANTIALIASED_LINE_2D := "addons/curved_lines_2d/antialiased_line_2d"
 
+const SETTING_NAME_KEEP_DRAWING := "addons/curved_lines_2d/keep_drawing"
+const SETTING_NAME_PENCIL_GRANULARITY := "addons/curved_lines_2d/granularity"
+const SETTING_NAME_CLOSE_PENCIL_PATH := "addons/curved_lines_2d/close_pencil_path"
+
 const META_NAME_HOVER_POINT_IDX := "_hover_point_idx_"
 const META_NAME_HOVER_CP_IN_IDX := "_hover_cp_in_idx_"
 const META_NAME_HOVER_CP_OUT_IDX := "_hover_cp_out_idx_"
@@ -40,6 +44,11 @@ const META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE := "_hover_closest_point_on
 const META_NAME_SELECT_HINT := "_select_hint_"
 
 const VIEWPORT_ORANGE := Color(0.737, 0.463, 0.337)
+
+enum KeepDrawingBehavior {
+	KEEP_DRAWING_ON_SAME_PARENT,
+	SELECT_DRAWN_SHAPE
+}
 
 enum PaintOrder {
 	FILL_STROKE_MARKERS,
@@ -106,6 +115,10 @@ var _lmb_is_down_inside_viewport := false
 var merge_node_toggle_button : Button
 var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
 
+var pencil_draw_toggle_button : CheckBox
+var _drawing_pencil_line := false
+
+
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
 	plugin = preload("res://addons/curved_lines_2d/line_2d_generator_inspector_plugin.gd").new()
@@ -156,6 +169,7 @@ func _enter_tree():
 	uniform_transform_edit_buttons = load("res://addons/curved_lines_2d/uniform_transform_edit_buttons.tscn").instantiate()
 	var canvas_editor_buttons_container = EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*").find_child("*HFlowContainer*", true, false)
 	canvas_editor_buttons_container.add_child(uniform_transform_edit_buttons)
+
 	merge_node_toggle_button = Button.new()
 	merge_node_toggle_button.tooltip_text = "Merge vertices (M)"
 	merge_node_toggle_button.icon = load("res://addons/curved_lines_2d/MergeChain.svg")
@@ -163,6 +177,17 @@ func _enter_tree():
 	merge_node_toggle_button.flat = true
 	merge_node_toggle_button.toggled.connect(_on_merge_node_toggle_button_toggled)
 	canvas_editor_buttons_container.add_child(merge_node_toggle_button)
+
+	pencil_draw_toggle_button = CheckBox.new()
+	pencil_draw_toggle_button.tooltip_text = "Draw strokes and outlines (P)"
+	var pencil_icon : Texture2D = load("res://addons/curved_lines_2d/Pencil.svg")
+	var pencil_icon_checked : Texture2D = load("res://addons/curved_lines_2d/PencilBlue.svg")
+	pencil_draw_toggle_button.flat = true
+	pencil_draw_toggle_button.add_theme_icon_override("checked", pencil_icon_checked)
+	pencil_draw_toggle_button.add_theme_icon_override("unchecked", pencil_icon)
+	pencil_draw_toggle_button.toggled.connect(_on_pencil_draw_toggle_button_toggled)
+	canvas_editor_buttons_container.add_child(pencil_draw_toggle_button)
+
 
 	if not _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
 		_get_select_mode_button().toggled.connect(_on_select_mode_toggled)
@@ -181,10 +206,24 @@ func _on_merge_node_toggle_button_toggled(toggled_on : bool) -> void:
 	_merge_box_rect.size = Vector2.ZERO
 	if not toggled_on:
 		return
+	pencil_draw_toggle_button.button_pressed = false
 	var scene_root := EditorInterface.get_edited_scene_root()
 	if is_instance_valid(scene_root):
 		EditorInterface.edit_node(scene_root)
 	update_overlays()
+
+
+func _on_pencil_draw_toggle_button_toggled(toggled_on : bool) -> void:
+	update_overlays()
+	if not toggled_on:
+		return
+	uniform_transform_edit_buttons.enable()
+	merge_node_toggle_button.button_pressed = false
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if not is_instance_valid(current_selection):
+		var scene_root := EditorInterface.get_edited_scene_root()
+		if is_instance_valid(scene_root):
+			EditorInterface.edit_node(scene_root)
 
 
 func _on_select_mode_toggled(toggled_on : bool) -> void:
@@ -192,17 +231,23 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 	if toggled_on and _is_svs_valid(current_selection):
 		uniform_transform_edit_buttons.enable()
 		merge_node_toggle_button.show()
+		pencil_draw_toggle_button.show()
 	elif toggled_on:
 		uniform_transform_edit_buttons.hide()
 		merge_node_toggle_button.show()
+		pencil_draw_toggle_button.show()
 	else:
 		uniform_transform_edit_buttons.hide()
 		merge_node_toggle_button.hide()
+		pencil_draw_toggle_button.hide()
+		pencil_draw_toggle_button.button_pressed = false
 		merge_node_toggle_button.button_pressed = false
 
 
 func _on_uniform_transform_mode_changed(new_mode : UniformTransformMode) -> void:
 	_uniform_transform_mode = new_mode
+	if new_mode != UniformTransformMode.NONE:
+		pencil_draw_toggle_button.button_pressed = false
 	update_overlays()
 
 
@@ -237,7 +282,7 @@ func _on_shape_created(curve : Curve2D, scene_root : Node, node_name : String) -
 	_create_shape(new_shape, scene_root, node_name)
 
 
-func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_name : String, is_cutout_for : ScalableVectorShape2D = null) -> void:
+func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_name : String, is_cutout_for : ScalableVectorShape2D = null, force_no_realign := false) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	var parent = current_selection if current_selection is Node else scene_root
 	new_shape.update_curve_at_runtime = _is_setting_update_curve_at_runtime()
@@ -277,7 +322,7 @@ func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_na
 	new_shape.begin_cap_mode = _get_default_begin_cap()
 	new_shape.end_cap_mode = _get_default_end_cap()
 	new_shape.line_joint_mode = _get_default_joint_mode()
-	if not is_instance_valid(is_cutout_for):
+	if not force_no_realign and not is_instance_valid(is_cutout_for):
 		_set_viewport_pos_to_selection()
 
 
@@ -362,6 +407,7 @@ func _add_collision_to_created_shape(new_shape : ScalableVectorShape2D, scene_ro
 		undo_redo.add_do_property(new_shape, 'collision_object', collision)
 		undo_redo.add_undo_method(new_shape, 'remove_child', collision)
 
+
 func _scene_can_export_animations() -> bool:
 	return (EditorInterface.get_edited_scene_root() is CanvasItem and
 		not EditorInterface.get_edited_scene_root().find_children("*", "AnimationPlayer").filter(
@@ -370,6 +416,7 @@ func _scene_can_export_animations() -> bool:
 		not EditorInterface.get_edited_scene_root()
 				.find_children("*", "ScalableVectorShape2D").is_empty()
 	)
+
 
 func _on_selection_changed():
 	var scene_root := EditorInterface.get_edited_scene_root()
@@ -1012,6 +1059,49 @@ func _handle_draw_vertex_merge_box(viewport_control: Control) -> void:
 		_draw_hint(viewport_control, "\nMerge points of:%s" % entries)
 
 
+func _handle_pencil_draw(viewport_control : Control) -> void:
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if _is_svs_valid(current_selection) and Input.is_key_pressed(KEY_SHIFT) and _drawing_pencil_line:
+		var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+		if _is_snapped_to_pixel():
+			pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+
+		var svs := current_selection as ScalableVectorShape2D
+		_draw_curve(viewport_control, svs)
+		for idx in svs.curve.point_count:
+			_draw_crosshair(
+				viewport_control,
+				_vp_transform(svs.to_global(svs.curve.get_point_position(idx))),
+				2.0, 4.0, VIEWPORT_ORANGE, 1
+			)
+			viewport_control.draw_line(
+				_vp_transform(svs.to_global(svs.curve.get_point_position(svs.curve.point_count - 1))),
+				_vp_transform(pos),
+				Color.RED
+			)
+
+	if Input.is_key_pressed(KEY_SHIFT):
+		if _drawing_pencil_line:
+			_draw_hint(viewport_control, "- Left click to add a straight line segment (Shift Held)")
+		else:
+			_draw_hint(viewport_control, "- Left click to start drawing straight lines (Shift Held)")
+	elif Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		_draw_hint(viewport_control, "- Hold Shift to draw straight line segments
+			- Release left mouse button to finish outline / stroke
+		")
+	else:
+		if _drawing_pencil_line:
+			_draw_hint(viewport_control, "- Hold left again to continue drawing (Shift Released)
+				- Left click to finish (Shift released)
+				- Hold Shift again to continue drawing straight line segments
+			")
+		else:
+			_draw_hint(viewport_control, "
+				- Hold and drag left mouse button to draw outlines / strokes
+				- Hold Shift to draw straight line segments
+			")
+
+
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 	if not _is_editing_enabled():
 		return
@@ -1019,6 +1109,8 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		return
 	if merge_node_toggle_button.button_pressed:
 		return _handle_draw_vertex_merge_box(viewport_control)
+	elif pencil_draw_toggle_button.button_pressed:
+		return _handle_pencil_draw(viewport_control)
 
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
@@ -1705,17 +1797,85 @@ func _handle_draw_merge_box_input(event) -> bool:
 	return true
 
 
-func _forward_canvas_gui_input(event: InputEvent) -> bool:
-	if merge_node_toggle_button.button_pressed:
-		return _handle_draw_merge_box_input(event)
+func _start_drawing_new_pencil_line() -> void:
+	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	if _is_snapped_to_pixel():
+		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
 
+	var new_shape := ScalableVectorShape2D.new()
+	new_shape.curve = Curve2D.new()
+	_create_shape(new_shape, EditorInterface.get_edited_scene_root(), "PencilDrawing", null, true)
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if _is_svs_valid(current_selection):
+		_add_point_to_curve(current_selection, current_selection.to_local(pos))
+	_drawing_pencil_line = true
+
+
+func _add_point_to_pencil_line() -> void:
+	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	if _is_snapped_to_pixel():
+		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if _is_svs_valid(current_selection):
+		var last_point := (current_selection as ScalableVectorShape2D).curve.get_point_position(current_selection.curve.point_count -1)
+		if _vp_transform(current_selection.to_global(last_point)).distance_to(_vp_transform(pos)) > _get_pencil_granularity():
+			_add_point_to_curve(current_selection, current_selection.to_local(pos))
+
+
+func _handle_pencil_draw_input(event : InputEvent) -> bool:
+	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		if Input.is_key_pressed(KEY_SHIFT):
+			if event.is_pressed() and not _drawing_pencil_line:
+				_start_drawing_new_pencil_line()
+				return true
+			elif not event.is_pressed() and _drawing_pencil_line:
+				_add_point_to_pencil_line()
+		else:
+			if event.is_pressed() and _drawing_pencil_line:
+				return true
+			if event.is_pressed() and not _drawing_pencil_line:
+				_start_drawing_new_pencil_line()
+				return true
+			if not event.is_pressed():
+				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+				if _is_svs_valid(current_selection):
+					var svs := current_selection as ScalableVectorShape2D
+					if _get_close_pencil_path() and svs.curve.point_count > 2:
+						_add_point_to_curve(svs, svs.curve.get_point_position(0))
+					if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
+						select_node_reversibly(current_selection.get_parent())
+					else:
+						pencil_draw_toggle_button.button_pressed = false
+				update_overlays()
+				_drawing_pencil_line = false
+				return true
+
+	if event is InputEventMouseMotion:
+		update_overlays()
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			_add_point_to_pencil_line()
+			return true
+
+	return false
+
+
+func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if (
 		event is InputEventKey and
 		(event as InputEventKey).pressed and
-		(event as InputEventKey).keycode == KEY_M and
 		_get_select_mode_button().button_pressed
 	):
-		merge_node_toggle_button.button_pressed = true
+		if (event as InputEventKey).keycode == KEY_M:
+			merge_node_toggle_button.button_pressed = not merge_node_toggle_button.button_pressed
+		elif (event as InputEventKey).keycode == KEY_P:
+			pencil_draw_toggle_button.button_pressed = not pencil_draw_toggle_button.button_pressed
+			if not pencil_draw_toggle_button.button_pressed:
+				_drawing_pencil_line = false
+
+	if merge_node_toggle_button.button_pressed:
+		return _handle_draw_merge_box_input(event)
+	if pencil_draw_toggle_button.button_pressed:
+		return _handle_pencil_draw_input(event)
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		_lmb_is_down_inside_viewport = (event as InputEventMouseButton).pressed
@@ -2052,12 +2212,30 @@ static func _get_default_max_stages() -> int:
 	return 5
 
 
+static func _get_keep_drawing_behavior() -> KeepDrawingBehavior:
+	if ProjectSettings.has_setting(SETTING_NAME_KEEP_DRAWING):
+		return ProjectSettings.get_setting(SETTING_NAME_KEEP_DRAWING)
+	return KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT
+
+
+static func _get_pencil_granularity() -> int:
+	if ProjectSettings.has_setting(SETTING_NAME_PENCIL_GRANULARITY):
+		return ProjectSettings.get_setting(SETTING_NAME_PENCIL_GRANULARITY)
+	return 4
+
+
+static func _get_close_pencil_path() -> bool:
+	if ProjectSettings.has_setting(SETTING_NAME_CLOSE_PENCIL_PATH):
+		return ProjectSettings.get_setting(SETTING_NAME_CLOSE_PENCIL_PATH)
+	return false
+
 func _exit_tree():
 	if _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
 		_get_select_mode_button().toggled.disconnect(_on_select_mode_toggled)
 
 	uniform_transform_edit_buttons.queue_free()
 	merge_node_toggle_button.queue_free()
+	pencil_draw_toggle_button.queue_free()
 	remove_inspector_plugin(plugin)
 	remove_custom_type("DrawablePath2D")
 	remove_custom_type("ScalableVectorShape2D")
