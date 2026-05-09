@@ -1062,6 +1062,10 @@ func _handle_draw_vertex_merge_box(viewport_control: Control) -> void:
 func _handle_pencil_draw(viewport_control : Control) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and Input.is_key_pressed(KEY_SHIFT) and _drawing_pencil_line:
+		var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+		if _is_snapped_to_pixel():
+			pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+
 		var svs := current_selection as ScalableVectorShape2D
 		_draw_curve(viewport_control, svs)
 		for idx in svs.curve.point_count:
@@ -1072,7 +1076,7 @@ func _handle_pencil_draw(viewport_control : Control) -> void:
 			)
 			viewport_control.draw_line(
 				_vp_transform(svs.to_global(svs.curve.get_point_position(svs.curve.point_count - 1))),
-				_vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position()),
+				_vp_transform(pos),
 				Color.RED
 			)
 
@@ -1795,6 +1799,9 @@ func _handle_draw_merge_box_input(event) -> bool:
 
 func _start_drawing_new_pencil_line() -> void:
 	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	if _is_snapped_to_pixel():
+		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+
 	var new_shape := ScalableVectorShape2D.new()
 	new_shape.curve = Curve2D.new()
 	_create_shape(new_shape, EditorInterface.get_edited_scene_root(), "PencilDrawing", null, true)
@@ -1806,6 +1813,8 @@ func _start_drawing_new_pencil_line() -> void:
 
 func _add_point_to_pencil_line() -> void:
 	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	if _is_snapped_to_pixel():
+		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection):
 		var last_point := (current_selection as ScalableVectorShape2D).curve.get_point_position(current_selection.curve.point_count -1)
