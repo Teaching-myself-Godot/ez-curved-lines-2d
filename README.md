@@ -514,6 +514,8 @@ Configuration options for this tool are described under [The Draw Settings tab](
 
 Strokes, Fills and Collisions drawn by this tool are configured in the: [Create Shapes Tab](#the-create-shapes-dock)
 
+This pencil tool also respects the `Snap to Pixel` setting with the `Snap Resolution`, which are described under the [Project Settings Tab](#the-project-settings-dock).
+
 # Manipulating 2D Shapes in the 3D export
 
 Using the new `Export to 3D Scene` in the [Advanced Editing Tab](#the-advanced-tab) produces the new `AdaptableVectorShape3D` node, which holds instances of `CSGPolygon3D` with:
