@@ -118,6 +118,10 @@ var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
 var pencil_draw_toggle_button : CheckBox
 var _drawing_pencil_line := false
 
+var brush_draw_toggle_button : CheckBox
+var _current_brush_shape := PackedVector2Array()
+var _current_brush_stroke := PackedVector2Array()
+
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -188,6 +192,21 @@ func _enter_tree():
 	pencil_draw_toggle_button.toggled.connect(_on_pencil_draw_toggle_button_toggled)
 	canvas_editor_buttons_container.add_child(pencil_draw_toggle_button)
 
+	brush_draw_toggle_button = CheckBox.new()
+	brush_draw_toggle_button.tooltip_text = "Paint Polygons (B)"
+	var brush_icon : Texture2D = load("res://addons/curved_lines_2d/Brush.svg")
+	var brush_icon_checked : Texture2D = load("res://addons/curved_lines_2d/BrushBlue.svg")
+	brush_draw_toggle_button.flat = true
+	brush_draw_toggle_button.add_theme_icon_override("checked", brush_icon_checked)
+	brush_draw_toggle_button.add_theme_icon_override("unchecked", brush_icon)
+	brush_draw_toggle_button.toggled.connect(_on_brush_draw_toggle_button_toggled)
+	canvas_editor_buttons_container.add_child(brush_draw_toggle_button)
+	print("TODO: load current brush shape from settings")
+	var current_brush_curve := Curve2D.new()
+	ScalableVectorShape2D.set_ellipse_points(current_brush_curve, Vector2(10,10), Vector2.ZERO, 0.0)
+	_current_brush_shape = current_brush_curve.tessellate(_get_default_max_stages(), _get_default_tolerance_degrees())
+
+
 
 	if not _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
 		_get_select_mode_button().toggled.connect(_on_select_mode_toggled)
@@ -213,6 +232,14 @@ func _on_merge_node_toggle_button_toggled(toggled_on : bool) -> void:
 	update_overlays()
 
 
+func _select_scene_root_when_nothing_is_selected() -> void:
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if not is_instance_valid(current_selection):
+		var scene_root := EditorInterface.get_edited_scene_root()
+		if is_instance_valid(scene_root):
+			EditorInterface.edit_node(scene_root)
+
+
 func _on_pencil_draw_toggle_button_toggled(toggled_on : bool) -> void:
 	update_overlays()
 	if not toggled_on:
@@ -220,11 +247,18 @@ func _on_pencil_draw_toggle_button_toggled(toggled_on : bool) -> void:
 		return
 	uniform_transform_edit_buttons.enable()
 	merge_node_toggle_button.button_pressed = false
-	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-	if not is_instance_valid(current_selection):
-		var scene_root := EditorInterface.get_edited_scene_root()
-		if is_instance_valid(scene_root):
-			EditorInterface.edit_node(scene_root)
+	brush_draw_toggle_button.button_pressed = false
+	_select_scene_root_when_nothing_is_selected()
+
+
+func _on_brush_draw_toggle_button_toggled(toggled_on : bool) -> void:
+	update_overlays()
+	if not toggled_on:
+		return
+	uniform_transform_edit_buttons.enable()
+	merge_node_toggle_button.button_pressed = false
+	pencil_draw_toggle_button.button_pressed = false
+	_select_scene_root_when_nothing_is_selected()
 
 
 func _on_select_mode_toggled(toggled_on : bool) -> void:
@@ -1103,6 +1137,15 @@ func _handle_pencil_draw(viewport_control : Control) -> void:
 			")
 
 
+func _handle_brush_draw(viewport_control : Control) -> void:
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		_draw_hint(viewport_control, "- Release left mouse button finish drawing")
+	else:
+		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+		viewport_control.draw_polygon(Array(_current_brush_shape).map(func(p): return _vp_transform(p + mouse_pos)), [_get_default_fill_color()])
+		_draw_hint(viewport_control, "- Hold and drag left mouse button to draw a polygon with brush")
+
+
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 	if not _is_editing_enabled():
 		return
@@ -1112,6 +1155,8 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		return _handle_draw_vertex_merge_box(viewport_control)
 	elif pencil_draw_toggle_button.button_pressed:
 		return _handle_pencil_draw(viewport_control)
+	elif brush_draw_toggle_button.button_pressed:
+		return _handle_brush_draw(viewport_control)
 
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
@@ -1863,6 +1908,26 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 	return false
 
 
+func _handle_brush_draw_input(event : InputEvent) -> bool:
+	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		update_overlays()
+		if event.is_pressed():
+			print("TODO: start brush drag")
+		else:
+			print("TODO: end brush drag")
+			if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
+				print("TODO: select parent of brush strokes")
+			else:
+				brush_draw_toggle_button.button_pressed = false
+		return true
+	if event is InputEventMouseMotion:
+		update_overlays()
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			print("TODO: drag brush")
+			return true
+	return false
+
+
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if (
 		event is InputEventKey and
@@ -1878,8 +1943,10 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 
 	if merge_node_toggle_button.button_pressed:
 		return _handle_draw_merge_box_input(event)
-	if pencil_draw_toggle_button.button_pressed:
+	elif pencil_draw_toggle_button.button_pressed:
 		return _handle_pencil_draw_input(event)
+	elif brush_draw_toggle_button.button_pressed:
+		return _handle_brush_draw_input(event)
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		_lmb_is_down_inside_viewport = (event as InputEventMouseButton).pressed
@@ -2240,6 +2307,7 @@ func _exit_tree():
 	uniform_transform_edit_buttons.queue_free()
 	merge_node_toggle_button.queue_free()
 	pencil_draw_toggle_button.queue_free()
+	brush_draw_toggle_button.queue_free()
 	remove_inspector_plugin(plugin)
 	remove_custom_type("DrawablePath2D")
 	remove_custom_type("ScalableVectorShape2D")

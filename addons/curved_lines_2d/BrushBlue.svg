@@ -4,7 +4,7 @@
    height="16"
    version="1.1"
    id="svg1"
-   sodipodi:docname="Brush.svg"
+   sodipodi:docname="BrushBlue.svg"
    inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
    xml:space="preserve"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -52,11 +52,11 @@
        id="guide2"
        inkscape:locked="false" /></sodipodi:namedview><path
      id="rect2"
-     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke-miterlimit:80;paint-order:markers fill stroke"
+     style="fill:#699ce8;fill-opacity:1;fill-rule:evenodd;stroke-miterlimit:80;paint-order:markers fill stroke"
      transform="rotate(45)"
      d="m 10.976696,-9.5926592 c 0.771914,0.040627 1.490456,3.6402109 0.816632,7.4059371 0.467089,1.65242814 0.914182,1.9637847 1.516644,2.68037778 L 13.413153,2.4280692 12.76965,3.2705127 C 12.266068,5.2194394 9.6810252,4.7198558 9.515367,6.7792964 L 8.859411,7.317828 8.908782,0.57178108 c 0,0 1.0885501,-1.15360865 1.510424,-2.71610868 -0.01038,-0.1065175 -0.6982112,-7.2170175 0.557491,-7.4483312 z"
      sodipodi:nodetypes="ccccccccccc" /><rect
-     style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-miterlimit:80;stroke-opacity:1;paint-order:markers fill stroke"
+     style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#699ce8;stroke-miterlimit:80;stroke-opacity:1;paint-order:markers fill stroke"
      id="rect3"
      width="4.2149916"
      height="5.1752391"
