@@ -216,6 +216,7 @@ func _on_merge_node_toggle_button_toggled(toggled_on : bool) -> void:
 func _on_pencil_draw_toggle_button_toggled(toggled_on : bool) -> void:
 	update_overlays()
 	if not toggled_on:
+		_drawing_pencil_line = false
 		return
 	uniform_transform_edit_buttons.enable()
 	merge_node_toggle_button.button_pressed = false
@@ -1840,6 +1841,9 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 				if _is_svs_valid(current_selection):
 					var svs := current_selection as ScalableVectorShape2D
+					if svs.curve.point_count <= 1:
+						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs.curve)).undo()
+						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs)).undo()
 					if _get_close_pencil_path() and svs.curve.point_count > 2:
 						_add_point_to_curve(svs, svs.curve.get_point_position(0))
 					if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
