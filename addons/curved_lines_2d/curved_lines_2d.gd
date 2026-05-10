@@ -120,7 +120,6 @@ var _drawing_pencil_line := false
 
 var brush_draw_toggle_button : CheckBox
 var _current_brush_shape := PackedVector2Array()
-var _current_brush_stroke := PackedVector2Array()
 
 
 func _enter_tree():
@@ -226,6 +225,7 @@ func _on_merge_node_toggle_button_toggled(toggled_on : bool) -> void:
 	if not toggled_on:
 		return
 	pencil_draw_toggle_button.button_pressed = false
+	brush_draw_toggle_button.button_pressed = false
 	var scene_root := EditorInterface.get_edited_scene_root()
 	if is_instance_valid(scene_root):
 		EditorInterface.edit_node(scene_root)
@@ -267,22 +267,27 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 		uniform_transform_edit_buttons.enable()
 		merge_node_toggle_button.show()
 		pencil_draw_toggle_button.show()
+		brush_draw_toggle_button.show()
 	elif toggled_on:
 		uniform_transform_edit_buttons.hide()
 		merge_node_toggle_button.show()
 		pencil_draw_toggle_button.show()
+		brush_draw_toggle_button.show()
 	else:
 		uniform_transform_edit_buttons.hide()
 		merge_node_toggle_button.hide()
 		pencil_draw_toggle_button.hide()
+		brush_draw_toggle_button.hide()
 		pencil_draw_toggle_button.button_pressed = false
 		merge_node_toggle_button.button_pressed = false
+		brush_draw_toggle_button.button_pressed = false
 
 
 func _on_uniform_transform_mode_changed(new_mode : UniformTransformMode) -> void:
 	_uniform_transform_mode = new_mode
 	if new_mode != UniformTransformMode.NONE:
 		pencil_draw_toggle_button.button_pressed = false
+		brush_draw_toggle_button.button_pressed = false
 	update_overlays()
 
 
@@ -1225,6 +1230,7 @@ func _start_undo_redo_transaction(name := "") -> void:
 		UndoRedoEntry.UNDO_PROPS : []
 	}
 
+
 func _commit_undo_redo_transaction() -> void:
 	if not in_undo_redo_transaction:
 		return
@@ -1451,6 +1457,7 @@ func _remove_color_stop(svs : ScalableVectorShape2D, remove_idx : int) -> void:
 	undo_redo.add_undo_property(svs.polygon.texture.gradient, 'offsets', offsets)
 	undo_redo.add_undo_method(svs, 'notify_assigned_node_change')
 	undo_redo.commit_action()
+
 
 func _update_curve_cp_out_position(current_selection : ScalableVectorShape2D, mouse_pos : Vector2, idx : int) -> void:
 	if idx == current_selection.curve.point_count - 1:
@@ -1843,18 +1850,24 @@ func _handle_draw_merge_box_input(event) -> bool:
 	return true
 
 
-func _start_drawing_new_pencil_line() -> void:
+func _start_freehand_shape(name : String, is_pencil := false) -> ScalableVectorShape2D:
 	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if _is_snapped_to_pixel():
 		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
 
 	var new_shape := ScalableVectorShape2D.new()
 	new_shape.curve = Curve2D.new()
-	_create_shape(new_shape, EditorInterface.get_edited_scene_root(), "PencilDrawing", null, true)
+	_create_shape(new_shape, EditorInterface.get_edited_scene_root(), name, null, true)
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection):
-		_add_point_to_curve(current_selection, current_selection.to_local(pos))
-	_drawing_pencil_line = true
+		undo_redo.create_action("reposition to mouse position: %s" % str(new_shape))
+		undo_redo.add_do_property(current_selection, 'global_position', pos)
+		undo_redo.add_undo_reference(current_selection)
+		undo_redo.commit_action()
+		if is_pencil:
+			_add_point_to_curve(current_selection, Vector2.ZERO)
+	_drawing_pencil_line = is_pencil
+	return current_selection
 
 
 func _add_point_to_pencil_line() -> void:
@@ -1872,7 +1885,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		if Input.is_key_pressed(KEY_SHIFT):
 			if event.is_pressed() and not _drawing_pencil_line:
-				_start_drawing_new_pencil_line()
+				_start_freehand_shape("PencilDrawing", true)
 				return true
 			elif not event.is_pressed() and _drawing_pencil_line:
 				_add_point_to_pencil_line()
@@ -1880,7 +1893,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 			if event.is_pressed() and _drawing_pencil_line:
 				return true
 			if event.is_pressed() and not _drawing_pencil_line:
-				_start_drawing_new_pencil_line()
+				_start_freehand_shape("PencilDrawing", true)
 				return true
 			if not event.is_pressed():
 				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
@@ -1888,6 +1901,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 					var svs := current_selection as ScalableVectorShape2D
 					if svs.curve.point_count <= 1:
 						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs.curve)).undo()
+						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs)).undo()
 						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs)).undo()
 					if _get_close_pencil_path() and svs.curve.point_count > 2:
 						_add_point_to_curve(svs, svs.curve.get_point_position(0))
@@ -1908,22 +1922,52 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 	return false
 
 
+func _set_curve_from_polygon(svs : ScalableVectorShape2D, poly : PackedVector2Array, pos := Vector2.ZERO, do_local_tranform := false) -> void:
+	svs.curve.set_block_signals(true)
+	svs.curve.clear_points()
+	if do_local_tranform:
+		for p in poly:
+			svs.curve.add_point(svs.to_local(p + pos))
+	else:
+		for p in poly:
+			svs.curve.add_point(p)
+	svs.curve.set_block_signals(false)
+	svs.curve.changed.emit()
+
+
 func _handle_brush_draw_input(event : InputEvent) -> bool:
+	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	if _is_snapped_to_pixel():
+		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		update_overlays()
 		if event.is_pressed():
-			print("TODO: start brush drag")
+			var svs := _start_freehand_shape("BrushStroke")
+			_set_curve_from_polygon(svs, _current_brush_shape, pos)
 		else:
-			print("TODO: end brush drag")
 			if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
-				print("TODO: select parent of brush strokes")
+				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+				if is_instance_valid(current_selection):
+					select_node_reversibly(current_selection.get_parent())
 			else:
 				brush_draw_toggle_button.button_pressed = false
 		return true
 	if event is InputEventMouseMotion:
 		update_overlays()
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			print("TODO: drag brush")
+			var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+			if _is_svs_valid(current_selection):
+				var svs := current_selection as ScalableVectorShape2D
+				var current_poly := svs.tessellate()
+				var merge_target := PackedVector2Array()
+				for p in _current_brush_shape:
+					merge_target.append(svs.to_local(p + pos))
+				var res := Geometry2D.merge_polygons(merge_target, current_poly)
+				if res.size() == 1:
+					print(merge_target.size(), " == ", current_poly.size(), " == ", res[0].size())
+					_set_curve_from_polygon(svs, res[0], pos)
+				else:
+					print("foo ", res.size())
 			return true
 	return false
 
@@ -1940,6 +1984,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			pencil_draw_toggle_button.button_pressed = not pencil_draw_toggle_button.button_pressed
 			if not pencil_draw_toggle_button.button_pressed:
 				_drawing_pencil_line = false
+		elif (event as InputEventKey).keycode == KEY_B:
+			brush_draw_toggle_button.button_pressed = not brush_draw_toggle_button.button_pressed
 
 	if merge_node_toggle_button.button_pressed:
 		return _handle_draw_merge_box_input(event)
