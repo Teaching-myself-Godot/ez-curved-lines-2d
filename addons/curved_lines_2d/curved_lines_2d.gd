@@ -120,7 +120,7 @@ var _drawing_pencil_line := false
 
 var brush_draw_toggle_button : CheckBox
 var _current_brush_shape := PackedVector2Array()
-
+var _current_brush_stroke := PackedVector2Array()
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -1144,6 +1144,9 @@ func _handle_pencil_draw(viewport_control : Control) -> void:
 
 func _handle_brush_draw(viewport_control : Control) -> void:
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		if not _current_brush_stroke.is_empty():
+			viewport_control.draw_polygon(
+				Array(_current_brush_stroke).map(func(p): return _vp_transform(p)), [_get_default_fill_color()])
 		_draw_hint(viewport_control, "- Release left mouse button finish drawing")
 	else:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
@@ -1942,9 +1945,11 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		update_overlays()
 		if event.is_pressed():
-			var svs := _start_freehand_shape("BrushStroke")
-			_set_curve_from_polygon(svs, _current_brush_shape, pos)
+			#var svs := _start_freehand_shape("BrushStroke")
+			#_set_curve_from_polygon(svs, _current_brush_shape, pos)
+			_current_brush_stroke = PackedVector2Array(Array(_current_brush_shape.duplicate()).map(func(p): return p + pos))
 		else:
+			_current_brush_stroke.clear()
 			if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 				if is_instance_valid(current_selection):
@@ -1955,20 +1960,24 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 	if event is InputEventMouseMotion:
 		update_overlays()
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-			if _is_svs_valid(current_selection):
-				var svs := current_selection as ScalableVectorShape2D
-				var current_poly := svs.tessellate()
-				var merge_target := PackedVector2Array()
-				for p in _current_brush_shape:
-					merge_target.append(svs.to_local(p + pos))
-				var res := Geometry2D.merge_polygons(merge_target, current_poly)
-				if res.size() == 1:
-					print(merge_target.size(), " == ", current_poly.size(), " == ", res[0].size())
-					_set_curve_from_polygon(svs, res[0], pos)
-				else:
-					print("foo ", res.size())
-			return true
+			var merge_target := Array(_current_brush_shape.duplicate()).map(func(p): return p + pos)
+			var res := Geometry2D.merge_polygons(_current_brush_stroke, merge_target)
+			if res.size() == 1:
+				_current_brush_stroke = res[0]
+			#var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+			#if _is_svs_valid(current_selection):
+				#var svs := current_selection as ScalableVectorShape2D
+				#var current_poly := svs.tessellate()
+				#var merge_target := PackedVector2Array()
+				#for p in _current_brush_shape:
+					#merge_target.append(svs.to_local(p + pos))
+				#var res := Geometry2D.merge_polygons(merge_target, current_poly)
+				#if res.size() == 1:
+					#print(merge_target.size(), " == ", current_poly.size(), " == ", res[0].size())
+					#_set_curve_from_polygon(svs, res[0], pos)
+				#else:
+					#print("foo ", res.size())
+			#return true
 	return false
 
 
