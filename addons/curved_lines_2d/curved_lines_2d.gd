@@ -31,6 +31,7 @@ const SETTING_NAME_ANTIALIASED_LINE_2D := "addons/curved_lines_2d/antialiased_li
 const SETTING_NAME_KEEP_DRAWING := "addons/curved_lines_2d/keep_drawing"
 const SETTING_NAME_PENCIL_GRANULARITY := "addons/curved_lines_2d/granularity"
 const SETTING_NAME_CLOSE_PENCIL_PATH := "addons/curved_lines_2d/close_pencil_path"
+const SETTING_NAME_BRUSH_SHAPE := "addons/curved_lines_2d/brush_shape"
 
 const META_NAME_HOVER_POINT_IDX := "_hover_point_idx_"
 const META_NAME_HOVER_CP_IN_IDX := "_hover_cp_in_idx_"
@@ -50,6 +51,7 @@ enum KeepDrawingBehavior {
 	SELECT_DRAWN_SHAPE
 }
 
+enum BrushShape { ELLIPSE, RECTANGLE }
 enum PaintOrder {
 	FILL_STROKE_MARKERS,
 	STROKE_FILL_MARKERS,
@@ -167,6 +169,8 @@ func _enter_tree():
 		scalable_vector_shapes_2d_dock.edit_tab.rect_created.connect(_on_rect_created)
 	if not scalable_vector_shapes_2d_dock.edit_tab.ellipse_created.is_connected(_on_ellipse_created):
 		scalable_vector_shapes_2d_dock.edit_tab.ellipse_created.connect(_on_ellipse_created)
+	if not scalable_vector_shapes_2d_dock.brush_changed.is_connected(_update_brush):
+		scalable_vector_shapes_2d_dock.brush_changed.connect(_update_brush)
 	scene_changed.connect(_on_scene_changed)
 
 	uniform_transform_edit_buttons = load("res://addons/curved_lines_2d/uniform_transform_edit_buttons.tscn").instantiate()
@@ -200,12 +204,8 @@ func _enter_tree():
 	brush_draw_toggle_button.add_theme_icon_override("unchecked", brush_icon)
 	brush_draw_toggle_button.toggled.connect(_on_brush_draw_toggle_button_toggled)
 	canvas_editor_buttons_container.add_child(brush_draw_toggle_button)
-	print("TODO: load current brush shape from settings")
-	var current_brush_curve := Curve2D.new()
-	ScalableVectorShape2D.set_ellipse_points(current_brush_curve, Vector2(10,10), Vector2.ZERO, 0.0)
-	_current_brush_shape = current_brush_curve.tessellate(_get_default_max_stages(), _get_default_tolerance_degrees())
 
-
+	_update_brush()
 
 	if not _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
 		_get_select_mode_button().toggled.connect(_on_select_mode_toggled)
@@ -293,6 +293,15 @@ func _on_uniform_transform_mode_changed(new_mode : UniformTransformMode) -> void
 
 func _is_ctrl_or_cmd_pressed() -> bool:
 	return Input.is_key_pressed(KEY_CTRL) or Input.is_key_pressed(KEY_META)
+
+
+func _update_brush() -> void:
+	var current_brush_curve := Curve2D.new()
+	if _get_brush_shape() == BrushShape.ELLIPSE:
+		ScalableVectorShape2D.set_ellipse_points(current_brush_curve, Vector2(10,10), Vector2.ZERO, 0.0)
+	else:
+		ScalableVectorShape2D.set_rect_points(current_brush_curve, 10.0, 10.0)
+	_current_brush_shape = current_brush_curve.tessellate(_get_default_max_stages(), _get_default_tolerance_degrees())
 
 
 func _on_shape_preview(curve : Curve2D):
@@ -2347,6 +2356,13 @@ static func _get_close_pencil_path() -> bool:
 	if ProjectSettings.has_setting(SETTING_NAME_CLOSE_PENCIL_PATH):
 		return ProjectSettings.get_setting(SETTING_NAME_CLOSE_PENCIL_PATH)
 	return false
+
+
+static func _get_brush_shape() -> BrushShape:
+	if ProjectSettings.has_setting(SETTING_NAME_BRUSH_SHAPE):
+		return ProjectSettings.get_setting(SETTING_NAME_BRUSH_SHAPE)
+	return BrushShape.ELLIPSE
+
 
 func _exit_tree():
 	if _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
