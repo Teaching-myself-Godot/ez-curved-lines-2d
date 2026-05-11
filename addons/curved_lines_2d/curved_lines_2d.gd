@@ -109,6 +109,9 @@ var arc_settings_popup_panel : PopupPanel
 
 var _vp_horizontal_scrollbar_locked_value := 0.0
 var _locking_vp_horizontal_scrollbar := false
+var _vp_vertical_scrollbar_locked_value := 0.0
+var _locking_vp_vertical_scrollbar := false
+
 
 var uniform_transform_edit_buttons : Control
 var _uniform_transform_mode := UniformTransformMode.NONE
@@ -126,6 +129,7 @@ var _drawing_pencil_line := false
 var brush_draw_toggle_button : CheckBox
 var _current_brush_shape := PackedVector2Array()
 var _current_brush_stroke := PackedVector2Array()
+var _brush_start_pos := Vector2.ZERO
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -298,16 +302,19 @@ func _is_ctrl_or_cmd_pressed() -> bool:
 	return Input.is_key_pressed(KEY_CTRL) or Input.is_key_pressed(KEY_META)
 
 
-func _update_brush() -> void:
+func _update_brush(via_hotkey := false) -> void:
 	var current_brush_curve := Curve2D.new()
 	if _get_brush_shape() == BrushShape.ELLIPSE:
 		ScalableVectorShape2D.set_ellipse_points(current_brush_curve,
-				Vector2(_get_brush_size_x(), _get_brush_size_y()), Vector2.ZERO, _get_brush_rotation())
+				Vector2(_get_brush_size_x(), _get_brush_size_y()), Vector2.ZERO,
+					deg_to_rad(_get_brush_rotation()))
 	else:
 		ScalableVectorShape2D.set_rect_points(current_brush_curve,
-				_get_brush_size_x(), _get_brush_size_y(), 0.0, 0.0, Vector2.ZERO, _get_brush_rotation())
+				_get_brush_size_x(), _get_brush_size_y(), 0.0, 0.0, Vector2.ZERO,
+					deg_to_rad(_get_brush_rotation()))
 	_current_brush_shape = current_brush_curve.tessellate(_get_default_max_stages(), _get_default_tolerance_degrees())
-
+	if via_hotkey:
+		scalable_vector_shapes_2d_dock.sync_draw_settings()
 
 func _on_shape_preview(curve : Curve2D):
 	shape_preview = curve
@@ -1157,6 +1164,26 @@ func _handle_pencil_draw(viewport_control : Control) -> void:
 
 
 func _handle_brush_draw(viewport_control : Control) -> void:
+	var ctrl_hint := (
+		"- Toggle brush shape between Rectangle and Ellipse (Ctrl/Cmd held)"
+			if _is_ctrl_or_cmd_pressed() else
+		"- Use Ctrl+mousewheel to toggle brush shape (Cmd on mac)"
+	)
+	var shift_hint := (
+		"- Use mousewheel to resize brush (Shift held)"
+			if Input.is_key_pressed(KEY_SHIFT) else
+		"- Use Shift+mousewheel to resize brush"
+	)
+	var ctr_shift_hint := (
+		"- Use mousewheel to rotate brush (Ctr+Shift held)"
+			if Input.is_key_pressed(KEY_SHIFT) and _is_ctrl_or_cmd_pressed() else
+		"- Use Ctrl+Shift+mousewheel to rotate brush"
+	)
+	var cmd_key_hints := (
+			("\n" + ctrl_hint if not Input.is_key_pressed(KEY_SHIFT) else "") +
+			("\n" + shift_hint if not _is_ctrl_or_cmd_pressed() else "") +
+			("\n" + ctr_shift_hint)
+	)
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		if not _current_brush_stroke.is_empty():
 			var pts := Array(_current_brush_stroke).map(func(p): return _vp_transform(p))
@@ -1164,7 +1191,7 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 				viewport_control.draw_polygon(pts, [_get_default_fill_color()])
 			else:
 				viewport_control.draw_polyline(pts, Color.LIME)
-		_draw_hint(viewport_control, "- Release left mouse button finish drawing")
+		_draw_hint(viewport_control, "- Release left mouse button finish drawing" + cmd_key_hints)
 	else:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		var pts := Array(_current_brush_shape).map(func(p): return _vp_transform(p + mouse_pos))
@@ -1172,10 +1199,15 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 			viewport_control.draw_polygon(pts, [_get_default_fill_color()])
 		else:
 			viewport_control.draw_polyline(pts, Color.LIME)
-		_draw_hint(viewport_control, "- Hold and drag left mouse button to draw a polygon with brush")
+
+		_draw_hint(viewport_control, "- Hold and drag left mouse button to draw a polygon with brush" +
+				cmd_key_hints
+		)
+
 	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(sel):
 		_draw_curve(viewport_control, sel)
+
 
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 	if not _is_editing_enabled():
@@ -1750,6 +1782,13 @@ func _get_vp_h_scroll_bar() -> HScrollBar:
 	return editor_vp.find_child("*HScrollBar*", true, false)
 
 
+func _get_vp_v_scroll_bar() -> VScrollBar:
+	var editor_vp := EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*")
+	if editor_vp == null:
+		return null
+	return editor_vp.find_child("*VScrollBar*", true, false)
+
+
 func _handle_input_for_uniform_translate(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
 	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
@@ -1948,10 +1987,15 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 
 
 func _set_curve_from_polygon(svs : ScalableVectorShape2D, poly : PackedVector2Array) -> void:
+	undo_redo.create_action("reposition to brush start pos %s" % str(svs))
+	undo_redo.add_do_property(svs, 'global_position', _brush_start_pos)
+	undo_redo.add_undo_reference(svs)
+	undo_redo.commit_action()
 	svs.curve.set_block_signals(true)
 	svs.curve.clear_points()
 	for p in poly:
 		svs.curve.add_point(svs.to_local(p))
+	svs.curve.add_point(svs.to_local(poly[0]))
 	svs.curve.set_block_signals(false)
 	svs.curve.changed.emit()
 
@@ -1960,9 +2004,11 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if _is_snapped_to_pixel():
 		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		update_overlays()
 		if event.is_pressed():
+			_brush_start_pos = pos
 			_current_brush_stroke = PackedVector2Array(Array(_current_brush_shape.duplicate()).map(func(p): return p + pos))
 		else:
 			var svs := _start_freehand_shape("BrushStroke")
@@ -1975,6 +2021,53 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 			else:
 				brush_draw_toggle_button.button_pressed = false
 		return true
+	else:
+		if _is_ctrl_or_cmd_pressed() or Input.is_key_pressed(KEY_SHIFT):
+			_lock_vp_scroll()
+		else:
+			_locking_vp_horizontal_scrollbar = false
+			_locking_vp_vertical_scrollbar = false
+
+	if (event is InputEventMouseButton and
+		(event as InputEventMouseButton).button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN] and
+		(event as InputEventMouseButton).pressed
+	):
+		if _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
+			var new_rotation := (
+				_get_brush_rotation() + 1
+						if event.button_index == MOUSE_BUTTON_WHEEL_UP else
+				_get_brush_rotation() - 1
+			)
+			if new_rotation < 0:
+				new_rotation = 359
+			elif new_rotation > 360:
+				new_rotation = 1
+			ProjectSettings.set_setting(SETTING_NAME_BRUSH_ROTATION, new_rotation)
+			_update_brush(true)
+			update_overlays()
+			return true
+		elif _is_ctrl_or_cmd_pressed():
+			match _get_brush_shape():
+				BrushShape.ELLIPSE:
+					ProjectSettings.set_setting(SETTING_NAME_BRUSH_SHAPE, BrushShape.RECTANGLE)
+				BrushShape.RECTANGLE:
+					ProjectSettings.set_setting(SETTING_NAME_BRUSH_SHAPE, BrushShape.ELLIPSE)
+			_update_brush(true)
+			update_overlays()
+			return true
+		elif Input.is_key_pressed(KEY_SHIFT):
+			var new_x := _get_brush_size_x() + (1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -1)
+			var new_y := _get_brush_size_y() + (1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -1)
+			if new_x < 1:
+				new_x = 1
+			if new_y < 1:
+				new_y = 1
+			ProjectSettings.set_setting(SETTING_NAME_BRUSH_SIZE_X, new_x)
+			ProjectSettings.set_setting(SETTING_NAME_BRUSH_SIZE_Y, new_y)
+			_update_brush(true)
+			update_overlays()
+			return true
+
 	if event is InputEventMouseMotion:
 		update_overlays()
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
@@ -1993,6 +2086,21 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 
 			return true
 	return false
+
+
+func _lock_vp_scroll():
+	var vp_horiz_scrollbar := _get_vp_h_scroll_bar()
+	if vp_horiz_scrollbar is HScrollBar:
+		if not _locking_vp_horizontal_scrollbar:
+			_vp_horizontal_scrollbar_locked_value = vp_horiz_scrollbar.value
+			_locking_vp_horizontal_scrollbar = true
+		vp_horiz_scrollbar.value = _vp_horizontal_scrollbar_locked_value
+	var vp_vert_scrollbar := _get_vp_v_scroll_bar()
+	if vp_vert_scrollbar is VScrollBar:
+		if not _locking_vp_vertical_scrollbar:
+			_vp_vertical_scrollbar_locked_value = vp_vert_scrollbar.value
+			_locking_vp_vertical_scrollbar = true
+		vp_vert_scrollbar.value = _vp_vertical_scrollbar_locked_value
 
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
@@ -2043,15 +2151,10 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			return _handle_input_for_uniform_rotate(event, current_selection)
 
 	if _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
-		var vp_horiz_scrollbar := _get_vp_h_scroll_bar()
-		if vp_horiz_scrollbar is HScrollBar:
-			if not _locking_vp_horizontal_scrollbar:
-				_vp_horizontal_scrollbar_locked_value = vp_horiz_scrollbar.value
-				_locking_vp_horizontal_scrollbar = true
-			vp_horiz_scrollbar.value = _vp_horizontal_scrollbar_locked_value
+		_lock_vp_scroll()
 	else:
 		_locking_vp_horizontal_scrollbar = false
-
+		_locking_vp_vertical_scrollbar = false
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()

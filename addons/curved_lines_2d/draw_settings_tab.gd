@@ -3,26 +3,37 @@ extends Control
 
 signal brush_changed()
 
+var brush_size_x_input : EditorSpinSlider
+var brush_size_y_input : EditorSpinSlider
+var brush_rotation_input : EditorSpinSlider
+
 func _enter_tree() -> void:
 	var granularity_input := _make_number_input("Granularity", CurvedLines2D._get_pencil_granularity(), 1, 50, "px")
 	%Granularity.add_child(granularity_input)
 	granularity_input.value_changed.connect(_on_granularity_value_changed)
 
-	var brush_size_x_input := _make_number_input("Size X",CurvedLines2D._get_brush_size_x(), 1, 500, "px")
+	brush_size_x_input = _make_number_input("Size X", CurvedLines2D._get_brush_size_x(), 1, 500, "px")
 	%BrushSizeXContainer.add_child(brush_size_x_input)
 	brush_size_x_input.value_changed.connect(_on_brush_size_x_value_changed)
 
-	var brush_size_y_input := _make_number_input("Size Y", CurvedLines2D._get_brush_size_y(), 1, 500, "px")
+	brush_size_y_input = _make_number_input("Size Y", CurvedLines2D._get_brush_size_y(), 1, 500, "px")
 	%BrushSizeYContainer.add_child(brush_size_y_input)
 	brush_size_y_input.value_changed.connect(_on_brush_size_y_value_changed)
 
-	var brush_rotation_input := _make_number_input("Rotation", CurvedLines2D._get_brush_rotation(), 0, 360, "°")
+	brush_rotation_input = _make_number_input("Rotation", CurvedLines2D._get_brush_rotation(), 0, 360, "°")
 	%BrushRotationContainer.add_child(brush_rotation_input)
 	brush_rotation_input.value_changed.connect(_on_brush_rotation_value_changed)
 
 	%KeepDrawingOptionButton.select(CurvedLines2D._get_keep_drawing_behavior())
 	%ClosePathCheckBox.button_pressed = CurvedLines2D._get_close_pencil_path()
 	%BrushShapeOptionButton.select(CurvedLines2D._get_brush_shape())
+
+func sync_settings() -> void:
+	brush_size_x_input.set_value_no_signal(CurvedLines2D._get_brush_size_x())
+	brush_size_y_input.set_value_no_signal(CurvedLines2D._get_brush_size_y())
+	brush_rotation_input.set_value_no_signal(CurvedLines2D._get_brush_rotation())
+	%BrushShapeOptionButton.select(CurvedLines2D._get_brush_shape())
+	ProjectSettings.save()
 
 
 func _on_granularity_value_changed(new_val) -> void:

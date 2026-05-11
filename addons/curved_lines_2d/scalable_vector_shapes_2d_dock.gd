@@ -18,6 +18,7 @@ const TABS_NAME := [
 var warning_dialog : AcceptDialog
 var edit_tab : Control
 var import_tab : Control
+var draw_settings_tab : Control
 
 func _enter_tree() -> void:
 	for i in min(TABS_NAME.size(), get_child_count()):
@@ -25,6 +26,7 @@ func _enter_tree() -> void:
 
 	edit_tab = %SVSEditTab
 	import_tab = %SVGImportTab
+	draw_settings_tab = %DrawSettingsTab
 	warning_dialog = AcceptDialog.new()
 	EditorInterface.get_base_control().add_child(warning_dialog)
 	edit_tab.warning_dialog = warning_dialog
@@ -52,3 +54,7 @@ func set_selected_animation_player(animation_player : AnimationPlayer) -> void:
 
 func _on_draw_settings_tab_brush_changed() -> void:
 	brush_changed.emit()
+
+
+func sync_draw_settings() -> void:
+	draw_settings_tab.sync_settings()
