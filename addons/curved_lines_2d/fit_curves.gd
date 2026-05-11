@@ -7,21 +7,21 @@ class_name FitCurves
 
 
 # evaluates cubic bezier at t, return point
-func bezier_q(ctrl_poly : PackedVector2Array, t : float) -> Vector2:
+static func bezier_q(ctrl_poly : PackedVector2Array, t : float) -> Vector2:
 	return (1.0-t)**3 * ctrl_poly[0] + 3*(1.0-t)**2 * t * ctrl_poly[1] + 3*(1.0-t)* t**2 * ctrl_poly[2] + t**3 * ctrl_poly[3]
 
 
 # evaluates cubic bezier first derivative at t, return point
-func bezier_qprime(ctrl_poly : PackedVector2Array, t : float) -> Vector2:
+static func bezier_qprime(ctrl_poly : PackedVector2Array, t : float) -> Vector2:
 	return 3*(1.0-t)**2 * (ctrl_poly[1]-ctrl_poly[0]) + 6*(1.0-t) * t * (ctrl_poly[2]-ctrl_poly[1]) + 3*t**2 * (ctrl_poly[3]-ctrl_poly[2])
 
 
 # evaluates cubic bezier second derivative at t, return point
-func bezier_qprimeprime(ctrl_poly : PackedVector2Array, t : float) -> Vector2:
+static func bezier_qprimeprime(ctrl_poly : PackedVector2Array, t : float) -> Vector2:
 	return 6*(1.0-t) * (ctrl_poly[2]-2*ctrl_poly[1]+ctrl_poly[0]) + 6*(t) * (ctrl_poly[3]-2*ctrl_poly[2]+ctrl_poly[1])
 
 
-func reparameterize(bezier : PackedVector2Array, points : PackedVector2Array, parameters : Array[float]) -> Array[float]:
+static func reparameterize(bezier : PackedVector2Array, points : PackedVector2Array, parameters : Array[float]) -> Array[float]:
 	var result : Array[float] = []
 	for i in points.size():
 		var point := points[i]
@@ -30,7 +30,7 @@ func reparameterize(bezier : PackedVector2Array, points : PackedVector2Array, pa
 	return result
 
 
-func newtonRaphsonRootFind(bez : PackedVector2Array, point : Vector2, u : float):
+static func newtonRaphsonRootFind(bez : PackedVector2Array, point : Vector2, u : float):
 	var d := bezier_q(bez, u)-point
 	#   numerator = (d * bezier.qprime(bez, u)).sum()
 	var numerator : float = vec2_sum(d * bezier_qprime(bez, u))
@@ -43,7 +43,7 @@ func newtonRaphsonRootFind(bez : PackedVector2Array, point : Vector2, u : float)
 		return u - numerator/denominator
 
 
-func chordLengthParameterize(points : PackedVector2Array) -> Array[float]:
+static func chordLengthParameterize(points : PackedVector2Array) -> Array[float]:
 	var u := [0.0]
 	for i in range(1, points.size()):
 		u.append(u[i-1] + (points[i] - points[i-1]).normalized())
@@ -53,19 +53,19 @@ func chordLengthParameterize(points : PackedVector2Array) -> Array[float]:
 	return u
 
 
-func vec2_sum(v : Vector2) -> float:
+static func vec2_sum(v : Vector2) -> float:
 	return v.x + v.y
 
 
-func vec2_squared(v : Vector2) -> Vector2:
+static func vec2_squared(v : Vector2) -> Vector2:
 	return Vector2(v.x ** 2, v.y ** 2)
 
 
-func vec2_squared_length(v : Vector2) -> float:
+static func vec2_squared_length(v : Vector2) -> float:
 	return v.x ** 2 + v.y ** 2
 
 
-func computeMaxError(points : PackedVector2Array, bez : PackedVector2Array, parameters : Array[float]) -> Array:
+static func computeMaxError(points : PackedVector2Array, bez : PackedVector2Array, parameters : Array[float]) -> Array:
 	var max_dist := 0.0
 	var split_point = points.size() / 2
 	for i in points.size():
