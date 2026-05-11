@@ -34,6 +34,7 @@ const SETTING_NAME_CLOSE_PENCIL_PATH := "addons/curved_lines_2d/close_pencil_pat
 const SETTING_NAME_BRUSH_SHAPE := "addons/curved_lines_2d/brush_shape"
 const SETTING_NAME_BRUSH_SIZE_X := "addons/curved_lines_2d/brush_size_x"
 const SETTING_NAME_BRUSH_SIZE_Y := "addons/curved_lines_2d/brush_size_y"
+const SETTING_NAME_BRUSH_ROTATION := "addons/curved_lines_2d/brush_rotation"
 
 const META_NAME_HOVER_POINT_IDX := "_hover_point_idx_"
 const META_NAME_HOVER_CP_IN_IDX := "_hover_cp_in_idx_"
@@ -301,10 +302,10 @@ func _update_brush() -> void:
 	var current_brush_curve := Curve2D.new()
 	if _get_brush_shape() == BrushShape.ELLIPSE:
 		ScalableVectorShape2D.set_ellipse_points(current_brush_curve,
-				Vector2(_get_brush_size_x(), _get_brush_size_y()), Vector2.ZERO, 0.0)
+				Vector2(_get_brush_size_x(), _get_brush_size_y()), Vector2.ZERO, _get_brush_rotation())
 	else:
 		ScalableVectorShape2D.set_rect_points(current_brush_curve,
-				_get_brush_size_x(), _get_brush_size_y())
+				_get_brush_size_x(), _get_brush_size_y(), 0.0, 0.0, Vector2.ZERO, _get_brush_rotation())
 	_current_brush_shape = current_brush_curve.tessellate(_get_default_max_stages(), _get_default_tolerance_degrees())
 
 
@@ -2379,6 +2380,12 @@ static func _get_brush_size_y() -> float:
 	if ProjectSettings.has_setting(SETTING_NAME_BRUSH_SIZE_Y):
 		return ProjectSettings.get_setting(SETTING_NAME_BRUSH_SIZE_Y)
 	return 25.0
+
+
+static func _get_brush_rotation() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_BRUSH_ROTATION):
+		return ProjectSettings.get_setting(SETTING_NAME_BRUSH_ROTATION)
+	return 0.0
 
 
 static func _get_brush_shape() -> BrushShape:
