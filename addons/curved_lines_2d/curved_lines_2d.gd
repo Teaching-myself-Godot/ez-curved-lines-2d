@@ -32,6 +32,8 @@ const SETTING_NAME_KEEP_DRAWING := "addons/curved_lines_2d/keep_drawing"
 const SETTING_NAME_PENCIL_GRANULARITY := "addons/curved_lines_2d/granularity"
 const SETTING_NAME_CLOSE_PENCIL_PATH := "addons/curved_lines_2d/close_pencil_path"
 const SETTING_NAME_BRUSH_SHAPE := "addons/curved_lines_2d/brush_shape"
+const SETTING_NAME_BRUSH_SIZE_X := "addons/curved_lines_2d/brush_size_x"
+const SETTING_NAME_BRUSH_SIZE_Y := "addons/curved_lines_2d/brush_size_y"
 
 const META_NAME_HOVER_POINT_IDX := "_hover_point_idx_"
 const META_NAME_HOVER_CP_IN_IDX := "_hover_cp_in_idx_"
@@ -298,9 +300,11 @@ func _is_ctrl_or_cmd_pressed() -> bool:
 func _update_brush() -> void:
 	var current_brush_curve := Curve2D.new()
 	if _get_brush_shape() == BrushShape.ELLIPSE:
-		ScalableVectorShape2D.set_ellipse_points(current_brush_curve, Vector2(10,10), Vector2.ZERO, 0.0)
+		ScalableVectorShape2D.set_ellipse_points(current_brush_curve,
+				Vector2(_get_brush_size_x(), _get_brush_size_y()), Vector2.ZERO, 0.0)
 	else:
-		ScalableVectorShape2D.set_rect_points(current_brush_curve, 10.0, 10.0)
+		ScalableVectorShape2D.set_rect_points(current_brush_curve,
+				_get_brush_size_x(), _get_brush_size_y())
 	_current_brush_shape = current_brush_curve.tessellate(_get_default_max_stages(), _get_default_tolerance_degrees())
 
 
@@ -1154,12 +1158,19 @@ func _handle_pencil_draw(viewport_control : Control) -> void:
 func _handle_brush_draw(viewport_control : Control) -> void:
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		if not _current_brush_stroke.is_empty():
-			viewport_control.draw_polygon(
-				Array(_current_brush_stroke).map(func(p): return _vp_transform(p)), [_get_default_fill_color()])
+			var pts := Array(_current_brush_stroke).map(func(p): return _vp_transform(p))
+			if _is_add_fill_enabled():
+				viewport_control.draw_polygon(pts, [_get_default_fill_color()])
+			else:
+				viewport_control.draw_polyline(pts, Color.LIME)
 		_draw_hint(viewport_control, "- Release left mouse button finish drawing")
 	else:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
-		viewport_control.draw_polygon(Array(_current_brush_shape).map(func(p): return _vp_transform(p + mouse_pos)), [_get_default_fill_color()])
+		var pts := Array(_current_brush_shape).map(func(p): return _vp_transform(p + mouse_pos))
+		if _is_add_fill_enabled():
+			viewport_control.draw_polygon(pts, [_get_default_fill_color()])
+		else:
+			viewport_control.draw_polyline(pts, Color.LIME)
 		_draw_hint(viewport_control, "- Hold and drag left mouse button to draw a polygon with brush")
 	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(sel):
@@ -2356,6 +2367,18 @@ static func _get_close_pencil_path() -> bool:
 	if ProjectSettings.has_setting(SETTING_NAME_CLOSE_PENCIL_PATH):
 		return ProjectSettings.get_setting(SETTING_NAME_CLOSE_PENCIL_PATH)
 	return false
+
+
+static func _get_brush_size_x() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_BRUSH_SIZE_X):
+		return ProjectSettings.get_setting(SETTING_NAME_BRUSH_SIZE_X)
+	return 25.0
+
+
+static func _get_brush_size_y() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_BRUSH_SIZE_Y):
+		return ProjectSettings.get_setting(SETTING_NAME_BRUSH_SIZE_Y)
+	return 25.0
 
 
 static func _get_brush_shape() -> BrushShape:

@@ -91,6 +91,7 @@ text = "Brush / Polygons*"
 [node name="BrushShapeOptionButton" type="OptionButton" parent="VBoxContainer/BrushSettingsContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_vertical = 4
 selected = 0
 item_count = 2
 popup/item_0/text = "Ellipse Brush"
