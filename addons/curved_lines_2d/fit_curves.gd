@@ -20,6 +20,7 @@ func bezier_qprime(ctrl_poly : PackedVector2Array, t : float) -> Vector2:
 func bezier_qprimeprime(ctrl_poly : PackedVector2Array, t : float) -> Vector2:
 	return 6*(1.0-t) * (ctrl_poly[2]-2*ctrl_poly[1]+ctrl_poly[0]) + 6*(t) * (ctrl_poly[3]-2*ctrl_poly[2]+ctrl_poly[1])
 
+
 func reparameterize(bezier : PackedVector2Array, points : PackedVector2Array, parameters : Array[float]) -> Array[float]:
 	var result : Array[float] = []
 	for i in points.size():
