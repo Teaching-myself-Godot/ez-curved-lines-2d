@@ -132,6 +132,7 @@ var _current_brush_stroke := PackedVector2Array()
 var _brush_start_pos := Vector2.ZERO
 
 func _enter_tree():
+	FitCurves.run_assertions()
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
 	plugin = preload("res://addons/curved_lines_2d/line_2d_generator_inspector_plugin.gd").new()
 	add_inspector_plugin(plugin)
@@ -157,7 +158,8 @@ func _enter_tree():
 	add_control_to_bottom_panel(scalable_vector_shapes_2d_dock as Control, "Scalable Vector Shapes 2D")
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
 	undo_redo.version_changed.connect(update_overlays)
-	make_bottom_panel_item_visible(scalable_vector_shapes_2d_dock)
+	print("TODO: revert auto select of svs dock")
+	#make_bottom_panel_item_visible(scalable_vector_shapes_2d_dock)
 
 	set_global_position_popup_panel = preload("res://addons/curved_lines_2d/set_global_position_popup_panel.tscn").instantiate()
 	arc_settings_popup_panel = preload("res://addons/curved_lines_2d/arc_settings_popup_panel.tscn").instantiate()
