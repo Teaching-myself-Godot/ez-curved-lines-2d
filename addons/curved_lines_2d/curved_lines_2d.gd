@@ -1993,13 +1993,14 @@ func _set_curve_from_polygon(svs : ScalableVectorShape2D, poly : PackedVector2Ar
 	undo_redo.add_do_property(svs, 'global_position', _brush_start_pos)
 	undo_redo.add_undo_reference(svs)
 	undo_redo.commit_action()
-	svs.curve.set_block_signals(true)
-	svs.curve.clear_points()
-	for p in poly:
-		svs.curve.add_point(svs.to_local(p))
-	svs.curve.add_point(svs.to_local(poly[0]))
-	svs.curve.set_block_signals(false)
-	svs.curve.changed.emit()
+	svs.curve = FitCurves.fit_curve(PackedVector2Array(Array(poly).map(func(p): return svs.to_local(p))))
+	#svs.curve.clear_points()
+	#
+	#for p in poly:
+		#svs.curve.add_point(svs.to_local(p))
+	#svs.curve.add_point(svs.to_local(poly[0]))
+	#svs.curve.set_block_signals(false)
+	#svs.curve.changed.emit()
 
 
 func _handle_brush_draw_input(event : InputEvent) -> bool:
