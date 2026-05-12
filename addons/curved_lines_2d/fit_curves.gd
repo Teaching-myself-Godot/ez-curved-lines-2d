@@ -20,27 +20,32 @@ static func bezier_qprime(ctrl_poly : PackedVector2Array, t : float) -> Vector2:
 static func bezier_qprimeprime(ctrl_poly : PackedVector2Array, t : float) -> Vector2:
 	return 6*(1.0-t) * (ctrl_poly[2]-2*ctrl_poly[1]+ctrl_poly[0]) + 6*(t) * (ctrl_poly[3]-2*ctrl_poly[2]+ctrl_poly[1])
 
-#
-#static func reparameterize(bezier : PackedVector2Array, points : PackedVector2Array, parameters : Array[float]) -> Array[float]:
-	#var result : Array[float] = []
-	#for i in points.size():
-		#var point := points[i]
-		#var u := parameters[i]
-		#result.append(newton_raphson_root_find(bezier, point, u))
-	#return result
+
+static func reparameterize(bezier : PackedVector2Array, points : PackedVector2Array, parameters : Array[float]) -> Array[float]:
+	var result : Array[float] = []
+	for i in points.size():
+		var point := points[i]
+		var u := parameters[i]
+		result.append(newton_raphson_root_find(bezier, point, u))
+	return result
 
 
-#static func newton_raphson_root_find(bez : PackedVector2Array, point : Vector2, u : float):
-	#var d := bezier_q(bez, u)-point
-	##   numerator = (d * bezier.qprime(bez, u)).sum()
-	#var numerator : float = vec2_sum(d * bezier_qprime(bez, u))
-	##   denominator =                     (bezier.qprime(bez, u)**2 +        d * bezier.qprimeprime(bez, u)).sum()
-	#var denominator := vec2_sum(vec2_squared(bezier_qprime(bez, u)) + d * bezier_qprimeprime(bez, u))
-#
-	#if denominator == 0.0:
-		#return u
-	#else:
-		#return u - numerator/denominator
+static func newton_raphson_root_find(bez : PackedVector2Array, point : Vector2, u : float):
+	var d := bezier_q(bez, u)-point
+	var numerator : float = vec2_sum(d * bezier_qprime(bez, u))
+	var denominator := vec2_sum(vec2_squared(bezier_qprime(bez, u))) + vec2_sum(d * bezier_qprimeprime(bez, u))
+	if denominator == 0.0:
+		return u
+	else:
+		return u - numerator/denominator
+
+
+static func vec2_sum(v : Vector2) -> float:
+	return v.x + v.y
+
+
+static func vec2_squared(v : Vector2) -> Vector2:
+	return Vector2(v.x ** 2, v.y ** 2)
 
 
 static func chord_length_parameterize(points : PackedVector2Array) -> Array[float]:
@@ -99,3 +104,9 @@ static func run_assertions() -> void:
 	var clp_expected := [0.0, 0.20780757891225984, 0.4086791285720354, 1.0]
 	for i in range(4):
 		assert(is_equal_approx(clp_actual[i], clp_expected[i]), "chord_length_parameterize")
+	assert(is_equal_approx(newton_raphson_root_find(test_bez, Vector2(1.3,1.4), 0.4), 0.1509920), "newton_raphson_root_find")
+	var rpm_actual := reparameterize(test_bez, test_pts_coarse, test_params_coarse)
+	var rpm_expected := [0.0, 0.25366532841917966, 0.5316642025269103, 1.0]
+	for i in range(4):
+		assert(is_equal_approx(rpm_actual[i], rpm_expected[i]), "reparameterize")
+
