@@ -1985,19 +1985,19 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 
 	return false
 
-
-func _set_curve_from_polygon(svs : ScalableVectorShape2D, poly : PackedVector2Array) -> void:
-	undo_redo.create_action("reposition to brush start pos %s" % str(svs))
-	undo_redo.add_do_property(svs, 'global_position', _brush_start_pos)
-	undo_redo.add_undo_reference(svs)
-	undo_redo.commit_action()
-	svs.curve.set_block_signals(true)
-	svs.curve.clear_points()
-	for p in poly:
-		svs.curve.add_point(svs.to_local(p))
-	svs.curve.add_point(svs.to_local(poly[0]))
-	svs.curve.set_block_signals(false)
-	svs.curve.changed.emit()
+#
+#func _set_curve_from_polygon(svs : ScalableVectorShape2D, poly : PackedVector2Array) -> void:
+	#undo_redo.create_action("reposition to brush start pos %s" % str(svs))
+	#undo_redo.add_do_property(svs, 'global_position', _brush_start_pos)
+	#undo_redo.add_undo_reference(svs)
+	#undo_redo.commit_action()
+	#svs.curve.set_block_signals(true)
+	#svs.curve.clear_points()
+	#for p in poly:
+		#svs.curve.add_point(svs.to_local(p))
+	#svs.curve.add_point(svs.to_local(poly[0]))
+	#svs.curve.set_block_signals(false)
+	#svs.curve.changed.emit()
 
 
 func _handle_brush_draw_input(event : InputEvent) -> bool:
@@ -2011,15 +2011,28 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 			_brush_start_pos = pos
 			_current_brush_stroke = PackedVector2Array(Array(_current_brush_shape.duplicate()).map(func(p): return p + pos))
 		else:
-			var svs := _start_freehand_shape("BrushStroke")
-			_set_curve_from_polygon(svs, _current_brush_stroke)
-			_current_brush_stroke.clear()
-			if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
-				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-				if is_instance_valid(current_selection):
-					select_node_reversibly(current_selection.get_parent())
-			else:
-				brush_draw_toggle_button.button_pressed = false
+			var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+			if is_instance_valid(current_selection):
+				var polygon_2d := Polygon2D.new()
+				undo_redo.create_action("Add polygon fill")
+				undo_redo.add_do_method(current_selection, 'add_child', polygon_2d)
+				undo_redo.add_undo_method(current_selection, 'remove_child', polygon_2d)
+				undo_redo.add_do_property(polygon_2d, 'owner', EditorInterface.get_edited_scene_root())
+				undo_redo.add_undo_reference(polygon_2d)
+				undo_redo.commit_action()
+				polygon_2d.set_meta("_edit_lock_", true)
+				polygon_2d.global_position = _brush_start_pos
+
+				polygon_2d.polygon = PackedVector2Array(
+					Array(_current_brush_stroke.duplicate()).map(func(p): return polygon_2d.to_local(p))
+				)
+				polygon_2d.color = _get_default_fill_color()
+				_current_brush_stroke.clear()
+				select_node_reversibly(polygon_2d)
+				select_node_reversibly(current_selection)
+				update_overlays()
+
+
 		return true
 	else:
 		if _is_ctrl_or_cmd_pressed() or Input.is_key_pressed(KEY_SHIFT):
