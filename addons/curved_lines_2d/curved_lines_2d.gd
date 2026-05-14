@@ -130,6 +130,7 @@ var brush_draw_toggle_button : CheckBox
 var _current_brush_shape := PackedVector2Array()
 var _current_brush_stroke := PackedVector2Array()
 var _brush_start_pos := Vector2.ZERO
+var _last_brush_pos := Vector2.ZERO
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -2009,6 +2010,7 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 		update_overlays()
 		if event.is_pressed():
 			_brush_start_pos = pos
+			_last_brush_pos = pos
 			_current_brush_stroke = PackedVector2Array(Array(_current_brush_shape.duplicate()).map(func(p): return p + pos))
 		else:
 			var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
@@ -2083,7 +2085,8 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 
 	if event is InputEventMouseMotion:
 		update_overlays()
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and pos.distance_to(_last_brush_pos) > _get_pencil_granularity():
+			_last_brush_pos = pos
 			var merge_target := Array(_current_brush_shape.duplicate()).map(func(p): return p + pos)
 			var res := Geometry2D.merge_polygons(_current_brush_stroke, merge_target)
 			if res.size() == 1:
