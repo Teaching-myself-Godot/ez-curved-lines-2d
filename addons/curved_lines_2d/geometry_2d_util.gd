@@ -171,6 +171,20 @@ static func get_closest_point_on_polyline(p : Vector2, poly_points : PackedVecto
 	return closest_result
 
 
+static func get_intersection_point_on_polyline(p1 : Vector2, q1 : Vector2, poly_points : PackedVector2Array) -> Vector2:
+	var closest_distance := INF
+	var closest_result := Vector2.INF
+	for i in range(1, poly_points.size()):
+		var p2 := poly_points[i - 1]
+		var q2 := poly_points[i]
+		var result := Geometry2D.get_closest_points_between_segments(p1, q1, p2, q2)
+		var distance := result[0].distance_to(result[1])
+		if distance < closest_distance:
+			closest_result = result[1]
+			closest_distance = distance
+	return closest_result
+
+
 static func get_progress_ratio_for_point_on_curve(p : Vector2, c : Curve2D, max_stages := 5,
 		tolerance_degrees := 4.0) -> float:
 	# Heuristic to find progress_ratio of cpc

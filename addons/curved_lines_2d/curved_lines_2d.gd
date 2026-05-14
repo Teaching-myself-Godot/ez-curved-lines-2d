@@ -2024,17 +2024,19 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 				undo_redo.commit_action()
 				polygon_2d.set_meta("_edit_lock_", true)
 				polygon_2d.global_position = _brush_start_pos
-
+				var def_stroke := PackedVector2Array()
+				def_stroke.append(_current_brush_stroke[0])
+				for i in range(1, _current_brush_stroke.size()):
+					if _vp_transform(_current_brush_stroke[i]).distance_to(_vp_transform(def_stroke[-1])) > _get_pencil_granularity():
+						def_stroke.append(_current_brush_stroke[i])
 				polygon_2d.polygon = PackedVector2Array(
-					Array(_current_brush_stroke.duplicate()).map(func(p): return polygon_2d.to_local(p))
+					Array(def_stroke.duplicate()).map(func(p): return polygon_2d.to_local(p))
 				)
 				polygon_2d.color = _get_default_fill_color()
 				_current_brush_stroke.clear()
 				select_node_reversibly(polygon_2d)
 				select_node_reversibly(current_selection)
 				update_overlays()
-
-
 		return true
 	else:
 		if _is_ctrl_or_cmd_pressed() or Input.is_key_pressed(KEY_SHIFT):
@@ -2085,11 +2087,20 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 
 	if event is InputEventMouseMotion:
 		update_overlays()
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and pos.distance_to(_last_brush_pos) > _get_pencil_granularity():
-			_last_brush_pos = pos
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and pos.distance_to(_last_brush_pos):
 			var merge_target := Array(_current_brush_shape.duplicate()).map(func(p): return p + pos)
-			var res := Geometry2D.merge_polygons(_current_brush_stroke, merge_target)
-			if res.size() == 1:
+			var direction := _last_brush_pos.direction_to(pos)
+			var stroke_rect_poly := PackedVector2Array([
+				Geometry2DUtil.get_intersection_point_on_polyline(_last_brush_pos, _last_brush_pos + direction.rotated(deg_to_rad(-90.0)) * (max(_get_brush_size_x(), _get_brush_size_y()) * 2), _current_brush_stroke),
+				Geometry2DUtil.get_intersection_point_on_polyline(_last_brush_pos, _last_brush_pos + direction.rotated(deg_to_rad(90.0)) * (max(_get_brush_size_x(), _get_brush_size_y()) * 2), _current_brush_stroke),
+				Geometry2DUtil.get_intersection_point_on_polyline(pos, pos + direction.rotated(deg_to_rad(90.0)) * (max(_get_brush_size_x(), _get_brush_size_y()) * 2), merge_target),
+				Geometry2DUtil.get_intersection_point_on_polyline(pos, pos + direction.rotated(deg_to_rad(-90.0)) * (max(_get_brush_size_x(), _get_brush_size_y()) * 2), merge_target)
+			])
+			_last_brush_pos = pos
+			var res0 := Geometry2D.merge_polygons(_current_brush_stroke, stroke_rect_poly)
+			var res := Geometry2D.merge_polygons(res0[0], merge_target)
+			#var res := Geometry2D.merge_polygons(_current_brush_stroke, merge_target)
+			if res.size() > 0:
 				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 				var new_stroke := res[0]
 				if _is_svs_valid(current_selection):
