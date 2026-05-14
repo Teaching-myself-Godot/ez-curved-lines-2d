@@ -178,8 +178,8 @@ static func get_intersection_point_on_polyline(p1 : Vector2, q1 : Vector2, poly_
 		var p2 := poly_points[i - 1]
 		var q2 := poly_points[i]
 		var result := Geometry2D.get_closest_points_between_segments(p1, q1, p2, q2)
-		var distance := result[0].distance_to(result[1])
-		if distance < closest_distance:
+		var distance := p1.distance_to(result[1])
+		if result[0].is_equal_approx(result[1]) and distance < closest_distance:
 			closest_result = result[1]
 			closest_distance = distance
 	return closest_result
