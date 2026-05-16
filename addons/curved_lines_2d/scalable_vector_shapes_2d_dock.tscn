@@ -66,3 +66,5 @@ visible = false
 layout_mode = 2
 metadata/_tab_index = 6
 metadata/_tab_name = "Play Tatra!"
+
+[connection signal="brush_changed" from="DrawSettingsTab" to="." method="_on_draw_settings_tab_brush_changed"]

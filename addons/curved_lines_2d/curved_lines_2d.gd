@@ -29,8 +29,12 @@ const SETTING_NAME_CURVE_MAX_STAGES := "addons/curved_lines_2d/default_max_stage
 const SETTING_NAME_ANTIALIASED_LINE_2D := "addons/curved_lines_2d/antialiased_line_2d"
 
 const SETTING_NAME_KEEP_DRAWING := "addons/curved_lines_2d/keep_drawing"
-const SETTING_NAME_PENCIL_GRANULARITY := "addons/curved_lines_2d/granularity"
+const SETTING_NAME_FREEHAND_DRAW_GRANULARITY := "addons/curved_lines_2d/granularity"
 const SETTING_NAME_CLOSE_PENCIL_PATH := "addons/curved_lines_2d/close_pencil_path"
+const SETTING_NAME_BRUSH_SHAPE := "addons/curved_lines_2d/brush_shape"
+const SETTING_NAME_BRUSH_SIZE_X := "addons/curved_lines_2d/brush_size_x"
+const SETTING_NAME_BRUSH_SIZE_Y := "addons/curved_lines_2d/brush_size_y"
+const SETTING_NAME_BRUSH_ROTATION := "addons/curved_lines_2d/brush_rotation"
 
 const META_NAME_HOVER_POINT_IDX := "_hover_point_idx_"
 const META_NAME_HOVER_CP_IN_IDX := "_hover_cp_in_idx_"
@@ -50,6 +54,7 @@ enum KeepDrawingBehavior {
 	SELECT_DRAWN_SHAPE
 }
 
+enum BrushShape { ELLIPSE, RECTANGLE }
 enum PaintOrder {
 	FILL_STROKE_MARKERS,
 	STROKE_FILL_MARKERS,
@@ -104,6 +109,9 @@ var arc_settings_popup_panel : PopupPanel
 
 var _vp_horizontal_scrollbar_locked_value := 0.0
 var _locking_vp_horizontal_scrollbar := false
+var _vp_vertical_scrollbar_locked_value := 0.0
+var _locking_vp_vertical_scrollbar := false
+
 
 var uniform_transform_edit_buttons : Control
 var _uniform_transform_mode := UniformTransformMode.NONE
@@ -118,6 +126,11 @@ var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
 var pencil_draw_toggle_button : CheckBox
 var _drawing_pencil_line := false
 
+var brush_draw_toggle_button : CheckBox
+var _current_brush_shape := PackedVector2Array()
+var _current_brush_stroke := PackedVector2Array()
+var _brush_start_pos := Vector2.ZERO
+var _last_brush_pos := Vector2.ZERO
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -164,6 +177,8 @@ func _enter_tree():
 		scalable_vector_shapes_2d_dock.edit_tab.rect_created.connect(_on_rect_created)
 	if not scalable_vector_shapes_2d_dock.edit_tab.ellipse_created.is_connected(_on_ellipse_created):
 		scalable_vector_shapes_2d_dock.edit_tab.ellipse_created.connect(_on_ellipse_created)
+	if not scalable_vector_shapes_2d_dock.brush_changed.is_connected(_update_brush):
+		scalable_vector_shapes_2d_dock.brush_changed.connect(_update_brush)
 	scene_changed.connect(_on_scene_changed)
 
 	uniform_transform_edit_buttons = load("res://addons/curved_lines_2d/uniform_transform_edit_buttons.tscn").instantiate()
@@ -188,6 +203,17 @@ func _enter_tree():
 	pencil_draw_toggle_button.toggled.connect(_on_pencil_draw_toggle_button_toggled)
 	canvas_editor_buttons_container.add_child(pencil_draw_toggle_button)
 
+	brush_draw_toggle_button = CheckBox.new()
+	brush_draw_toggle_button.tooltip_text = "Paint Polygons (B)"
+	var brush_icon : Texture2D = load("res://addons/curved_lines_2d/Brush.svg")
+	var brush_icon_checked : Texture2D = load("res://addons/curved_lines_2d/BrushBlue.svg")
+	brush_draw_toggle_button.flat = true
+	brush_draw_toggle_button.add_theme_icon_override("checked", brush_icon_checked)
+	brush_draw_toggle_button.add_theme_icon_override("unchecked", brush_icon)
+	brush_draw_toggle_button.toggled.connect(_on_brush_draw_toggle_button_toggled)
+	canvas_editor_buttons_container.add_child(brush_draw_toggle_button)
+
+	_update_brush()
 
 	if not _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
 		_get_select_mode_button().toggled.connect(_on_select_mode_toggled)
@@ -207,10 +233,19 @@ func _on_merge_node_toggle_button_toggled(toggled_on : bool) -> void:
 	if not toggled_on:
 		return
 	pencil_draw_toggle_button.button_pressed = false
+	brush_draw_toggle_button.button_pressed = false
 	var scene_root := EditorInterface.get_edited_scene_root()
 	if is_instance_valid(scene_root):
 		EditorInterface.edit_node(scene_root)
 	update_overlays()
+
+
+func _select_scene_root_when_nothing_is_selected() -> void:
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if not is_instance_valid(current_selection):
+		var scene_root := EditorInterface.get_edited_scene_root()
+		if is_instance_valid(scene_root):
+			EditorInterface.edit_node(scene_root)
 
 
 func _on_pencil_draw_toggle_button_toggled(toggled_on : bool) -> void:
@@ -220,11 +255,18 @@ func _on_pencil_draw_toggle_button_toggled(toggled_on : bool) -> void:
 		return
 	uniform_transform_edit_buttons.enable()
 	merge_node_toggle_button.button_pressed = false
-	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-	if not is_instance_valid(current_selection):
-		var scene_root := EditorInterface.get_edited_scene_root()
-		if is_instance_valid(scene_root):
-			EditorInterface.edit_node(scene_root)
+	brush_draw_toggle_button.button_pressed = false
+	_select_scene_root_when_nothing_is_selected()
+
+
+func _on_brush_draw_toggle_button_toggled(toggled_on : bool) -> void:
+	update_overlays()
+	if not toggled_on:
+		return
+	uniform_transform_edit_buttons.enable()
+	merge_node_toggle_button.button_pressed = false
+	pencil_draw_toggle_button.button_pressed = false
+	_select_scene_root_when_nothing_is_selected()
 
 
 func _on_select_mode_toggled(toggled_on : bool) -> void:
@@ -233,28 +275,47 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 		uniform_transform_edit_buttons.enable()
 		merge_node_toggle_button.show()
 		pencil_draw_toggle_button.show()
+		brush_draw_toggle_button.show()
 	elif toggled_on:
 		uniform_transform_edit_buttons.hide()
 		merge_node_toggle_button.show()
 		pencil_draw_toggle_button.show()
+		brush_draw_toggle_button.show()
 	else:
 		uniform_transform_edit_buttons.hide()
 		merge_node_toggle_button.hide()
 		pencil_draw_toggle_button.hide()
+		brush_draw_toggle_button.hide()
 		pencil_draw_toggle_button.button_pressed = false
 		merge_node_toggle_button.button_pressed = false
+		brush_draw_toggle_button.button_pressed = false
 
 
 func _on_uniform_transform_mode_changed(new_mode : UniformTransformMode) -> void:
 	_uniform_transform_mode = new_mode
 	if new_mode != UniformTransformMode.NONE:
 		pencil_draw_toggle_button.button_pressed = false
+		brush_draw_toggle_button.button_pressed = false
 	update_overlays()
 
 
 func _is_ctrl_or_cmd_pressed() -> bool:
 	return Input.is_key_pressed(KEY_CTRL) or Input.is_key_pressed(KEY_META)
 
+
+func _update_brush(via_hotkey := false) -> void:
+	var current_brush_curve := Curve2D.new()
+	if _get_brush_shape() == BrushShape.ELLIPSE:
+		ScalableVectorShape2D.set_ellipse_points(current_brush_curve,
+				Vector2(_get_brush_size_x(), _get_brush_size_y()), Vector2.ZERO,
+					deg_to_rad(_get_brush_rotation()))
+	else:
+		ScalableVectorShape2D.set_rect_points(current_brush_curve,
+				_get_brush_size_x(), _get_brush_size_y(), 0.0, 0.0, Vector2.ZERO,
+					deg_to_rad(_get_brush_rotation()))
+	_current_brush_shape = current_brush_curve.tessellate(_get_default_max_stages(), _get_default_tolerance_degrees())
+	if via_hotkey:
+		scalable_vector_shapes_2d_dock.sync_draw_settings()
 
 func _on_shape_preview(curve : Curve2D):
 	shape_preview = curve
@@ -1103,6 +1164,67 @@ func _handle_pencil_draw(viewport_control : Control) -> void:
 			")
 
 
+func _handle_brush_draw(viewport_control : Control) -> void:
+	var ctrl_hint := (
+		"- Toggle brush shape between Rectangle and Ellipse (Ctrl/Cmd held)"
+			if _is_ctrl_or_cmd_pressed() else
+		"- Use Ctrl+mousewheel to toggle brush shape (Cmd on mac)"
+	)
+	var shift_hint := (
+		"- Use mousewheel to resize brush (Shift held)"
+			if Input.is_key_pressed(KEY_SHIFT) else
+		"- Use Shift+mousewheel to resize brush"
+	)
+	var ctr_shift_hint := (
+		"- Use mousewheel to rotate brush (Ctr+Shift held)"
+			if Input.is_key_pressed(KEY_SHIFT) and _is_ctrl_or_cmd_pressed() else
+		"- Use Ctrl+Shift+mousewheel to rotate brush"
+	)
+	var cmd_key_hints := (
+			("\n" + ctrl_hint if not Input.is_key_pressed(KEY_SHIFT) else "") +
+			("\n" + shift_hint if not _is_ctrl_or_cmd_pressed() else "") +
+			("\n" + ctr_shift_hint)
+	)
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		if not _current_brush_stroke.is_empty():
+			var pts := Array(_current_brush_stroke).map(func(p): return _vp_transform(p))
+			pts.append(pts[0])
+			match _get_default_paint_order():
+				PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
+					if _is_add_stroke_enabled():
+						viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
+					if _is_add_fill_enabled():
+						viewport_control.draw_polygon(pts, [_get_default_fill_color()])
+				PaintOrder.MARKERS_FILL_STROKE, PaintOrder.FILL_STROKE_MARKERS, PaintOrder.FILL_MARKERS_STROKE, _:
+					if _is_add_fill_enabled():
+						viewport_control.draw_polygon(pts, [_get_default_fill_color()])
+					if _is_add_stroke_enabled():
+						viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
+			if not _is_add_fill_enabled() and not _is_add_stroke_enabled():
+				viewport_control.draw_polyline(pts, Color.LIME, 1.0, true)
+
+		_draw_hint(viewport_control, "- Release left mouse button finish drawing" + cmd_key_hints)
+	else:
+		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+		if _is_snapped_to_pixel():
+			mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+		var pts := Array(Geometry2DUtil.get_polygon_at_granularity(_current_brush_shape,
+				_get_guarded_brush_granularity()
+		)).map(func(p): return _vp_transform(p + mouse_pos))
+		if _is_add_fill_enabled():
+			viewport_control.draw_polygon(pts, [_get_default_fill_color()])
+		else:
+			viewport_control.draw_polyline(pts, Color.LIME)
+
+		_draw_hint(viewport_control, "- Hold and drag left mouse button to draw a polygon with brush" +
+				cmd_key_hints
+		)
+
+	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if _is_svs_valid(sel):
+		_draw_curve(viewport_control, sel)
+
+
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 	if not _is_editing_enabled():
 		return
@@ -1112,6 +1234,8 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		return _handle_draw_vertex_merge_box(viewport_control)
 	elif pencil_draw_toggle_button.button_pressed:
 		return _handle_pencil_draw(viewport_control)
+	elif brush_draw_toggle_button.button_pressed:
+		return _handle_brush_draw(viewport_control)
 
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
@@ -1179,6 +1303,7 @@ func _start_undo_redo_transaction(name := "") -> void:
 		UndoRedoEntry.DO_PROPS: [],
 		UndoRedoEntry.UNDO_PROPS : []
 	}
+
 
 func _commit_undo_redo_transaction() -> void:
 	if not in_undo_redo_transaction:
@@ -1406,6 +1531,7 @@ func _remove_color_stop(svs : ScalableVectorShape2D, remove_idx : int) -> void:
 	undo_redo.add_undo_property(svs.polygon.texture.gradient, 'offsets', offsets)
 	undo_redo.add_undo_method(svs, 'notify_assigned_node_change')
 	undo_redo.commit_action()
+
 
 func _update_curve_cp_out_position(current_selection : ScalableVectorShape2D, mouse_pos : Vector2, idx : int) -> void:
 	if idx == current_selection.curve.point_count - 1:
@@ -1672,6 +1798,13 @@ func _get_vp_h_scroll_bar() -> HScrollBar:
 	return editor_vp.find_child("*HScrollBar*", true, false)
 
 
+func _get_vp_v_scroll_bar() -> VScrollBar:
+	var editor_vp := EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*")
+	if editor_vp == null:
+		return null
+	return editor_vp.find_child("*VScrollBar*", true, false)
+
+
 func _handle_input_for_uniform_translate(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
 	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
@@ -1798,18 +1931,23 @@ func _handle_draw_merge_box_input(event) -> bool:
 	return true
 
 
-func _start_drawing_new_pencil_line() -> void:
+func _start_freehand_shape(name : String, is_pencil := false) -> ScalableVectorShape2D:
 	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if _is_snapped_to_pixel():
 		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
 
 	var new_shape := ScalableVectorShape2D.new()
 	new_shape.curve = Curve2D.new()
-	_create_shape(new_shape, EditorInterface.get_edited_scene_root(), "PencilDrawing", null, true)
+	_create_shape(new_shape, EditorInterface.get_edited_scene_root(), name, null, true)
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-	if _is_svs_valid(current_selection):
-		_add_point_to_curve(current_selection, current_selection.to_local(pos))
-	_drawing_pencil_line = true
+	if _is_svs_valid(current_selection) and is_pencil:
+		undo_redo.create_action("reposition to mouse position: %s" % str(new_shape))
+		undo_redo.add_do_property(current_selection, 'global_position', pos)
+		undo_redo.add_undo_reference(current_selection)
+		undo_redo.commit_action()
+		_add_point_to_curve(current_selection, Vector2.ZERO)
+	_drawing_pencil_line = is_pencil
+	return current_selection
 
 
 func _add_point_to_pencil_line() -> void:
@@ -1819,7 +1957,7 @@ func _add_point_to_pencil_line() -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection):
 		var last_point := (current_selection as ScalableVectorShape2D).curve.get_point_position(current_selection.curve.point_count -1)
-		if _vp_transform(current_selection.to_global(last_point)).distance_to(_vp_transform(pos)) > _get_pencil_granularity():
+		if current_selection.to_global(last_point).distance_to(pos) > _get_freehand_draw_granularity():
 			_add_point_to_curve(current_selection, current_selection.to_local(pos))
 
 
@@ -1827,7 +1965,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		if Input.is_key_pressed(KEY_SHIFT):
 			if event.is_pressed() and not _drawing_pencil_line:
-				_start_drawing_new_pencil_line()
+				_start_freehand_shape("PencilDrawing", true)
 				return true
 			elif not event.is_pressed() and _drawing_pencil_line:
 				_add_point_to_pencil_line()
@@ -1835,7 +1973,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 			if event.is_pressed() and _drawing_pencil_line:
 				return true
 			if event.is_pressed() and not _drawing_pencil_line:
-				_start_drawing_new_pencil_line()
+				_start_freehand_shape("PencilDrawing", true)
 				return true
 			if not event.is_pressed():
 				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
@@ -1843,6 +1981,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 					var svs := current_selection as ScalableVectorShape2D
 					if svs.curve.point_count <= 1:
 						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs.curve)).undo()
+						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs)).undo()
 						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs)).undo()
 					if _get_close_pencil_path() and svs.curve.point_count > 2:
 						_add_point_to_curve(svs, svs.curve.get_point_position(0))
@@ -1863,6 +2002,150 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 	return false
 
 
+func _set_curve_from_polygon(svs : ScalableVectorShape2D, poly : PackedVector2Array) -> void:
+	undo_redo.create_action("reposition to brush start pos %s" % str(svs))
+	undo_redo.add_do_property(svs, 'global_position', _brush_start_pos)
+	undo_redo.add_undo_reference(svs)
+	undo_redo.commit_action()
+	svs.curve.set_block_signals(true)
+	svs.curve.clear_points()
+	svs.curve.add_point(svs.to_local(poly[0]))
+	for i in range(1, poly.size()):
+		var prev_p := poly[i - 1]
+		var p := poly[i]
+		var next_p := poly[i + 1] if i < poly.size() - 1 else poly[0]
+		if not prev_p.direction_to(next_p).is_equal_approx(p.direction_to(next_p)):
+			svs.curve.add_point(svs.to_local(p))
+	svs.curve.add_point(svs.to_local(poly[0]))
+	svs.curve.set_block_signals(false)
+	svs.curve.changed.emit()
+
+
+func _handle_brush_draw_input(event : InputEvent) -> bool:
+	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	if _is_snapped_to_pixel():
+		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+
+	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		update_overlays()
+		if event.is_pressed():
+			_brush_start_pos = pos
+			_last_brush_pos = pos
+			var new_stroke := PackedVector2Array(Array(_current_brush_shape.duplicate()).map(func(p): return p + pos))
+			_current_brush_stroke = Geometry2DUtil.get_polygon_at_granularity(new_stroke,
+					_get_guarded_brush_granularity())
+
+		else:
+			var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+			if is_instance_valid(current_selection):
+				var svs := _start_freehand_shape("BrushStroke", false)
+				_set_curve_from_polygon(svs, _current_brush_stroke)
+				_current_brush_stroke.clear()
+				if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
+					select_node_reversibly(svs.get_parent())
+				else:
+					brush_draw_toggle_button.button_pressed = false
+				update_overlays()
+		return true
+	else:
+		if _is_ctrl_or_cmd_pressed() or Input.is_key_pressed(KEY_SHIFT):
+			_lock_vp_scroll()
+		else:
+			_locking_vp_horizontal_scrollbar = false
+			_locking_vp_vertical_scrollbar = false
+
+	if (event is InputEventMouseButton and
+		(event as InputEventMouseButton).button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN] and
+		(event as InputEventMouseButton).pressed
+	):
+		if _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
+			var new_rotation := (
+				_get_brush_rotation() + 1
+						if event.button_index == MOUSE_BUTTON_WHEEL_UP else
+				_get_brush_rotation() - 1
+			)
+			if new_rotation < 0:
+				new_rotation = 359
+			elif new_rotation > 360:
+				new_rotation = 1
+			ProjectSettings.set_setting(SETTING_NAME_BRUSH_ROTATION, new_rotation)
+			_update_brush(true)
+			update_overlays()
+			return true
+		elif _is_ctrl_or_cmd_pressed():
+			match _get_brush_shape():
+				BrushShape.ELLIPSE:
+					ProjectSettings.set_setting(SETTING_NAME_BRUSH_SHAPE, BrushShape.RECTANGLE)
+				BrushShape.RECTANGLE:
+					ProjectSettings.set_setting(SETTING_NAME_BRUSH_SHAPE, BrushShape.ELLIPSE)
+			_update_brush(true)
+			update_overlays()
+			return true
+		elif Input.is_key_pressed(KEY_SHIFT):
+			var new_x := _get_brush_size_x() + (1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -1)
+			var new_y := _get_brush_size_y() + (1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -1)
+			if new_x < 1:
+				new_x = 1
+			if new_y < 1:
+				new_y = 1
+			ProjectSettings.set_setting(SETTING_NAME_BRUSH_SIZE_X, new_x)
+			ProjectSettings.set_setting(SETTING_NAME_BRUSH_SIZE_Y, new_y)
+			_update_brush(true)
+			update_overlays()
+			return true
+
+	if event is InputEventMouseMotion:
+		update_overlays()
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and pos.distance_to(_last_brush_pos):
+			var merge_target := Array(_current_brush_shape.duplicate()).map(func(p): return p + pos)
+			var direction := _last_brush_pos.direction_to(pos)
+			var extreme1 : Vector2 = Geometry2DUtil.get_closest_point_on_polyline(
+					direction.rotated(deg_to_rad(-90.0)) * max(_get_brush_size_x(), _get_brush_size_y()),
+					_current_brush_shape
+			)
+			var extreme2 := Geometry2DUtil.get_closest_point_on_polyline(
+					direction.rotated(deg_to_rad(90.0)) * max(_get_brush_size_x(), _get_brush_size_y()),
+					_current_brush_shape
+			)
+			var stroke_rect_poly := PackedVector2Array([
+				extreme1 + _last_brush_pos,
+				extreme2 + _last_brush_pos,
+				extreme2 + pos,
+				extreme1 + pos
+			])
+			_last_brush_pos = pos
+			var res0 := Geometry2D.merge_polygons(_current_brush_stroke, stroke_rect_poly)
+			var res := Geometry2D.merge_polygons(res0[0], merge_target)
+			if res.size() > 0:
+				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+				var new_stroke := res[0]
+				if _is_svs_valid(current_selection):
+					var svs := current_selection as ScalableVectorShape2D
+					var intersect_target := Array(svs.tessellate()).map(func(p): return svs.to_global(p))
+					var res1 := Geometry2D.intersect_polygons(res[0], intersect_target)
+					if res1.size() == 1:
+						new_stroke = res1[0]
+				_current_brush_stroke = Geometry2DUtil.get_polygon_at_granularity(new_stroke,
+						_get_guarded_brush_granularity())
+			return true
+	return false
+
+
+func _lock_vp_scroll():
+	var vp_horiz_scrollbar := _get_vp_h_scroll_bar()
+	if vp_horiz_scrollbar is HScrollBar:
+		if not _locking_vp_horizontal_scrollbar:
+			_vp_horizontal_scrollbar_locked_value = vp_horiz_scrollbar.value
+			_locking_vp_horizontal_scrollbar = true
+		vp_horiz_scrollbar.value = _vp_horizontal_scrollbar_locked_value
+	var vp_vert_scrollbar := _get_vp_v_scroll_bar()
+	if vp_vert_scrollbar is VScrollBar:
+		if not _locking_vp_vertical_scrollbar:
+			_vp_vertical_scrollbar_locked_value = vp_vert_scrollbar.value
+			_locking_vp_vertical_scrollbar = true
+		vp_vert_scrollbar.value = _vp_vertical_scrollbar_locked_value
+
+
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if (
 		event is InputEventKey and
@@ -1875,11 +2158,15 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			pencil_draw_toggle_button.button_pressed = not pencil_draw_toggle_button.button_pressed
 			if not pencil_draw_toggle_button.button_pressed:
 				_drawing_pencil_line = false
+		elif (event as InputEventKey).keycode == KEY_B:
+			brush_draw_toggle_button.button_pressed = not brush_draw_toggle_button.button_pressed
 
 	if merge_node_toggle_button.button_pressed:
 		return _handle_draw_merge_box_input(event)
-	if pencil_draw_toggle_button.button_pressed:
+	elif pencil_draw_toggle_button.button_pressed:
 		return _handle_pencil_draw_input(event)
+	elif brush_draw_toggle_button.button_pressed:
+		return _handle_brush_draw_input(event)
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		_lmb_is_down_inside_viewport = (event as InputEventMouseButton).pressed
@@ -1907,15 +2194,10 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			return _handle_input_for_uniform_rotate(event, current_selection)
 
 	if _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
-		var vp_horiz_scrollbar := _get_vp_h_scroll_bar()
-		if vp_horiz_scrollbar is HScrollBar:
-			if not _locking_vp_horizontal_scrollbar:
-				_vp_horizontal_scrollbar_locked_value = vp_horiz_scrollbar.value
-				_locking_vp_horizontal_scrollbar = true
-			vp_horiz_scrollbar.value = _vp_horizontal_scrollbar_locked_value
+		_lock_vp_scroll()
 	else:
 		_locking_vp_horizontal_scrollbar = false
-
+		_locking_vp_vertical_scrollbar = false
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
@@ -2222,9 +2504,16 @@ static func _get_keep_drawing_behavior() -> KeepDrawingBehavior:
 	return KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT
 
 
-static func _get_pencil_granularity() -> int:
-	if ProjectSettings.has_setting(SETTING_NAME_PENCIL_GRANULARITY):
-		return ProjectSettings.get_setting(SETTING_NAME_PENCIL_GRANULARITY)
+static func _get_guarded_brush_granularity() -> float:
+	return min(
+		min(_get_freehand_draw_granularity(), float(_get_brush_size_x()) * (2.0/3.0)),
+		float(_get_brush_size_y()) * (2.0/3.0)
+	)
+
+
+static func _get_freehand_draw_granularity() -> int:
+	if ProjectSettings.has_setting(SETTING_NAME_FREEHAND_DRAW_GRANULARITY):
+		return ProjectSettings.get_setting(SETTING_NAME_FREEHAND_DRAW_GRANULARITY)
 	return 4
 
 
@@ -2233,6 +2522,31 @@ static func _get_close_pencil_path() -> bool:
 		return ProjectSettings.get_setting(SETTING_NAME_CLOSE_PENCIL_PATH)
 	return false
 
+
+static func _get_brush_size_x() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_BRUSH_SIZE_X):
+		return ProjectSettings.get_setting(SETTING_NAME_BRUSH_SIZE_X)
+	return 25.0
+
+
+static func _get_brush_size_y() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_BRUSH_SIZE_Y):
+		return ProjectSettings.get_setting(SETTING_NAME_BRUSH_SIZE_Y)
+	return 25.0
+
+
+static func _get_brush_rotation() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_BRUSH_ROTATION):
+		return ProjectSettings.get_setting(SETTING_NAME_BRUSH_ROTATION)
+	return 0.0
+
+
+static func _get_brush_shape() -> BrushShape:
+	if ProjectSettings.has_setting(SETTING_NAME_BRUSH_SHAPE):
+		return ProjectSettings.get_setting(SETTING_NAME_BRUSH_SHAPE)
+	return BrushShape.ELLIPSE
+
+
 func _exit_tree():
 	if _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
 		_get_select_mode_button().toggled.disconnect(_on_select_mode_toggled)
@@ -2240,6 +2554,7 @@ func _exit_tree():
 	uniform_transform_edit_buttons.queue_free()
 	merge_node_toggle_button.queue_free()
 	pencil_draw_toggle_button.queue_free()
+	brush_draw_toggle_button.queue_free()
 	remove_inspector_plugin(plugin)
 	remove_custom_type("DrawablePath2D")
 	remove_custom_type("ScalableVectorShape2D")

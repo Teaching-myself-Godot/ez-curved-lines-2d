@@ -1115,14 +1115,7 @@ func _get_closest_point_on_curve_segment(p : Vector2, segment_p1_idx : int) -> V
 		if arc else
 			seg.tessellate(max_stages, tolerance_degrees)
 	)
-	var closest_result := Vector2.INF
-	for i in range(1, poly_points.size()):
-		var p_a := poly_points[i - 1]
-		var p_b := poly_points[i]
-		var c_p := Geometry2D.get_closest_point_to_segment(p, p_a, p_b)
-		if p.distance_to(c_p) < p.distance_to(closest_result):
-			closest_result = c_p
-	return closest_result
+	return Geometry2DUtil.get_closest_point_on_polyline(p, poly_points)
 
 
 func get_closest_point_on_curve(global_pos : Vector2) -> ClosestPointOnCurveMeta:

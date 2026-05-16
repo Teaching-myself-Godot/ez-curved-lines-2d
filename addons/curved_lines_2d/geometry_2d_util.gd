@@ -160,6 +160,31 @@ static func is_point_on_segment(p : Vector2, s1 : Vector2, s2: Vector2) -> bool:
 	return Geometry2D.segment_intersects_circle(s1, s2, p, 0.01) > -1
 
 
+static func get_closest_point_on_polyline(p : Vector2, poly_points : PackedVector2Array) -> Vector2:
+	var closest_result := Vector2.INF
+	for i in range(1, poly_points.size()):
+		var p_a := poly_points[i - 1]
+		var p_b := poly_points[i]
+		var c_p := Geometry2D.get_closest_point_to_segment(p, p_a, p_b)
+		if p.distance_to(c_p) < p.distance_to(closest_result):
+			closest_result = c_p
+	return closest_result
+
+
+static func get_intersection_point_on_polyline(p1 : Vector2, q1 : Vector2, poly_points : PackedVector2Array) -> Vector2:
+	var closest_distance := INF
+	var closest_result := Vector2.INF
+	for i in range(1, poly_points.size()):
+		var p2 := poly_points[i - 1]
+		var q2 := poly_points[i]
+		var result := Geometry2D.get_closest_points_between_segments(p1, q1, p2, q2)
+		var distance := p1.distance_to(result[1])
+		if result[0].is_equal_approx(result[1]) and distance < closest_distance:
+			closest_result = result[1]
+			closest_distance = distance
+	return closest_result
+
+
 static func get_progress_ratio_for_point_on_curve(p : Vector2, c : Curve2D, max_stages := 5,
 		tolerance_degrees := 4.0) -> float:
 	# Heuristic to find progress_ratio of cpc
@@ -191,9 +216,17 @@ static func get_halfway_point_on_bezier(c : Curve2D, max_stages := 5, tolerance_
 	return Vector2.ZERO
 
 
+static func get_polygon_at_granularity(poly : PackedVector2Array, granularity : float) -> PackedVector2Array:
+	var def_poly := PackedVector2Array()
+	def_poly.append(poly[0])
+	for i in range(1, poly.size()):
+		if poly[i].distance_to(def_poly[-1]) > granularity:
+			def_poly.append(poly[i])
+	return def_poly
+
+
 # Adapted from: https://stackoverflow.com/a/8405756/1081548
-static func slice_bezier(p1: Vector2, cp2 : Vector2, cp3 : Vector2, p4 : Vector2,
-		t : float) -> Curve2D:
+static func slice_bezier(p1: Vector2, cp2 : Vector2, cp3 : Vector2, p4 : Vector2, t : float) -> Curve2D:
 	var x1 := p1.x
 	var y1 := p1.y
 	var x2 := x1 + cp2.x
@@ -202,7 +235,6 @@ static func slice_bezier(p1: Vector2, cp2 : Vector2, cp3 : Vector2, p4 : Vector2
 	var y4 := p4.y
 	var x3 := x4 + cp3.x
 	var y3 := y4 + cp3.y
-
 	var x12 := (x2-x1)*t+x1
 	var y12 = (y2-y1)*t+y1
 	var x23 = (x3-x2)*t+x2
@@ -219,10 +251,9 @@ static func slice_bezier(p1: Vector2, cp2 : Vector2, cp3 : Vector2, p4 : Vector2
 	sliced_curve.add_point(Vector2(x1, y1))
 	sliced_curve.add_point(Vector2(x1234, y1234))
 	sliced_curve.add_point(Vector2(x4, y4))
-
 	sliced_curve.set_point_out(0, Vector2(x12, y12) - sliced_curve.get_point_position(0))
 	sliced_curve.set_point_in(1, Vector2(x123, y123) - sliced_curve.get_point_position(1))
 	sliced_curve.set_point_out(1, Vector2(x234, y234) - sliced_curve.get_point_position(1))
 	sliced_curve.set_point_in(2, Vector2(x34, y34) - sliced_curve.get_point_position(2))
-
 	return sliced_curve
+
