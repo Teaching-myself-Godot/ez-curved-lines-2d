@@ -1188,13 +1188,22 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		if not _current_brush_stroke.is_empty():
 			var pts := Array(_current_brush_stroke).map(func(p): return _vp_transform(p))
-			if _is_add_fill_enabled():
-				viewport_control.draw_polygon(pts, [_get_default_fill_color()])
 			pts.append(pts[0])
-			if _is_add_stroke_enabled():
-				viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
-			if not _is_add_fill_enabled() and not _is_add_fill_enabled():
+			match _get_default_paint_order():
+				PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
+					if _is_add_stroke_enabled():
+						viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
+					if _is_add_fill_enabled():
+						viewport_control.draw_polygon(pts, [_get_default_fill_color()])
+				PaintOrder.MARKERS_FILL_STROKE, PaintOrder.FILL_STROKE_MARKERS, PaintOrder.FILL_MARKERS_STROKE, _:
+					if _is_add_fill_enabled():
+						viewport_control.draw_polygon(pts, [_get_default_fill_color()])
+					if _is_add_stroke_enabled():
+						viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
+			if not _is_add_fill_enabled() and not _is_add_stroke_enabled():
 				viewport_control.draw_polyline(pts, Color.LIME, 1.0, true)
+
+
 		_draw_hint(viewport_control, "- Release left mouse button finish drawing" + cmd_key_hints)
 	else:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
