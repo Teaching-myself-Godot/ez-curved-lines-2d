@@ -1198,7 +1198,13 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 		_draw_hint(viewport_control, "- Release left mouse button finish drawing" + cmd_key_hints)
 	else:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
-		var pts := Array(_current_brush_shape).map(func(p): return _vp_transform(p + mouse_pos))
+		if _is_snapped_to_pixel():
+			mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+		var pts0 := [_current_brush_shape[0]]
+		for i in range(1, _current_brush_shape.size()):
+			if pts0[-1].distance_to(_current_brush_shape[i]) > _get_pencil_granularity():
+				pts0.append(_current_brush_shape[i])
+		var pts := Array(pts0).map(func(p): return _vp_transform(p + mouse_pos))
 		if _is_add_fill_enabled():
 			viewport_control.draw_polygon(pts, [_get_default_fill_color()])
 		else:
@@ -1945,7 +1951,7 @@ func _add_point_to_pencil_line() -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection):
 		var last_point := (current_selection as ScalableVectorShape2D).curve.get_point_position(current_selection.curve.point_count -1)
-		if _vp_transform(current_selection.to_global(last_point)).distance_to(_vp_transform(pos)) > _get_pencil_granularity():
+		if current_selection.to_global(last_point).distance_to(pos) > _get_pencil_granularity():
 			_add_point_to_curve(current_selection, current_selection.to_local(pos))
 
 
@@ -2019,7 +2025,14 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 		if event.is_pressed():
 			_brush_start_pos = pos
 			_last_brush_pos = pos
-			_current_brush_stroke = PackedVector2Array(Array(_current_brush_shape.duplicate()).map(func(p): return p + pos))
+			var new_stroke := PackedVector2Array(Array(_current_brush_shape.duplicate()).map(func(p): return p + pos))
+			var def_stroke := PackedVector2Array()
+			def_stroke.append(new_stroke[0])
+			for i in range(1, new_stroke.size()):
+				if new_stroke[i].distance_to(def_stroke[-1]) > _get_pencil_granularity():
+					def_stroke.append(new_stroke[i])
+			_current_brush_stroke = def_stroke
+
 		else:
 			var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 			if is_instance_valid(current_selection):
@@ -2084,11 +2097,19 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and pos.distance_to(_last_brush_pos):
 			var merge_target := Array(_current_brush_shape.duplicate()).map(func(p): return p + pos)
 			var direction := _last_brush_pos.direction_to(pos)
+			var extreme1 : Vector2 = Geometry2DUtil.get_closest_point_on_polyline(
+					direction.rotated(deg_to_rad(-90.0)) * max(_get_brush_size_x(), _get_brush_size_y()),
+					_current_brush_shape
+			)
+			var extreme2 := Geometry2DUtil.get_closest_point_on_polyline(
+					direction.rotated(deg_to_rad(90.0)) * max(_get_brush_size_x(), _get_brush_size_y()),
+					_current_brush_shape
+			)
 			var stroke_rect_poly := PackedVector2Array([
-				Geometry2DUtil.get_intersection_point_on_polyline(_last_brush_pos, _last_brush_pos + direction.rotated(deg_to_rad(-90.0)) * (max(EditorInterface.get_editor_viewport_2d().size.x, EditorInterface.get_editor_viewport_2d().size.y)), _current_brush_stroke),
-				Geometry2DUtil.get_intersection_point_on_polyline(_last_brush_pos, _last_brush_pos + direction.rotated(deg_to_rad(90.0)) * (max(EditorInterface.get_editor_viewport_2d().size.x, EditorInterface.get_editor_viewport_2d().size.y)), _current_brush_stroke),
-				Geometry2DUtil.get_intersection_point_on_polyline(pos, pos + direction.rotated(deg_to_rad(90.0)) * (max(_get_brush_size_x(), _get_brush_size_y()) * 2), merge_target),
-				Geometry2DUtil.get_intersection_point_on_polyline(pos, pos + direction.rotated(deg_to_rad(-90.0)) * (max(_get_brush_size_x(), _get_brush_size_y()) * 2), merge_target)
+				extreme1 + _last_brush_pos,
+				extreme2 + _last_brush_pos,
+				extreme2 + pos,
+				extreme1 + pos
 			])
 			_last_brush_pos = pos
 			var res0 := Geometry2D.merge_polygons(_current_brush_stroke, stroke_rect_poly)
@@ -2105,10 +2126,9 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 				var def_stroke := PackedVector2Array()
 				def_stroke.append(new_stroke[0])
 				for i in range(1, new_stroke.size()):
-					if _vp_transform(new_stroke[i]).distance_to(_vp_transform(def_stroke[-1])) > _get_pencil_granularity():
+					if new_stroke[i].distance_to(def_stroke[-1]) > _get_pencil_granularity():
 						def_stroke.append(new_stroke[i])
 				_current_brush_stroke = def_stroke
-
 			return true
 	return false
 
