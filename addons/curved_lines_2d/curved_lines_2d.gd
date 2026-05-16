@@ -1203,17 +1203,14 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 			if not _is_add_fill_enabled() and not _is_add_stroke_enabled():
 				viewport_control.draw_polyline(pts, Color.LIME, 1.0, true)
 
-
 		_draw_hint(viewport_control, "- Release left mouse button finish drawing" + cmd_key_hints)
 	else:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_snapped_to_pixel():
 			mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
-		var pts0 := [_current_brush_shape[0]]
-		for i in range(1, _current_brush_shape.size()):
-			if pts0[-1].distance_to(_current_brush_shape[i]) > _get_freehand_draw_granularity():
-				pts0.append(_current_brush_shape[i])
-		var pts := Array(pts0).map(func(p): return _vp_transform(p + mouse_pos))
+		var pts := Array(Geometry2DUtil.get_polygon_at_granularity(_current_brush_shape,
+				_get_guarded_brush_granularity()
+		)).map(func(p): return _vp_transform(p + mouse_pos))
 		if _is_add_fill_enabled():
 			viewport_control.draw_polygon(pts, [_get_default_fill_color()])
 		else:
@@ -2035,12 +2032,8 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 			_brush_start_pos = pos
 			_last_brush_pos = pos
 			var new_stroke := PackedVector2Array(Array(_current_brush_shape.duplicate()).map(func(p): return p + pos))
-			var def_stroke := PackedVector2Array()
-			def_stroke.append(new_stroke[0])
-			for i in range(1, new_stroke.size()):
-				if new_stroke[i].distance_to(def_stroke[-1]) > _get_freehand_draw_granularity():
-					def_stroke.append(new_stroke[i])
-			_current_brush_stroke = def_stroke
+			_current_brush_stroke = Geometry2DUtil.get_polygon_at_granularity(new_stroke,
+					_get_guarded_brush_granularity())
 
 		else:
 			var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
@@ -2132,12 +2125,8 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 					var res1 := Geometry2D.intersect_polygons(res[0], intersect_target)
 					if res1.size() == 1:
 						new_stroke = res1[0]
-				var def_stroke := PackedVector2Array()
-				def_stroke.append(new_stroke[0])
-				for i in range(1, new_stroke.size()):
-					if new_stroke[i].distance_to(def_stroke[-1]) > _get_freehand_draw_granularity():
-						def_stroke.append(new_stroke[i])
-				_current_brush_stroke = def_stroke
+				_current_brush_stroke = Geometry2DUtil.get_polygon_at_granularity(new_stroke,
+						_get_guarded_brush_granularity())
 			return true
 	return false
 
@@ -2513,6 +2502,13 @@ static func _get_keep_drawing_behavior() -> KeepDrawingBehavior:
 	if ProjectSettings.has_setting(SETTING_NAME_KEEP_DRAWING):
 		return ProjectSettings.get_setting(SETTING_NAME_KEEP_DRAWING)
 	return KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT
+
+
+static func _get_guarded_brush_granularity() -> float:
+	return min(
+		min(_get_freehand_draw_granularity(), float(_get_brush_size_x()) * (2.0/3.0)),
+		float(_get_brush_size_y()) * (2.0/3.0)
+	)
 
 
 static func _get_freehand_draw_granularity() -> int:

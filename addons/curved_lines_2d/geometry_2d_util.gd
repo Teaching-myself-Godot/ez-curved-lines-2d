@@ -216,6 +216,15 @@ static func get_halfway_point_on_bezier(c : Curve2D, max_stages := 5, tolerance_
 	return Vector2.ZERO
 
 
+static func get_polygon_at_granularity(poly : PackedVector2Array, granularity : float) -> PackedVector2Array:
+	var def_poly := PackedVector2Array()
+	def_poly.append(poly[0])
+	for i in range(1, poly.size()):
+		if poly[i].distance_to(def_poly[-1]) > granularity:
+			def_poly.append(poly[i])
+	return def_poly
+
+
 # Adapted from: https://stackoverflow.com/a/8405756/1081548
 static func slice_bezier(p1: Vector2, cp2 : Vector2, cp3 : Vector2, p4 : Vector2, t : float) -> Curve2D:
 	var x1 := p1.x
