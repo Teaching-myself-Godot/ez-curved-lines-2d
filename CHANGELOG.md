@@ -1,15 +1,17 @@
 # Changelog
 
-## 2.21.2
+## 2.21.3
 
 ### Added
 
 - The pencil tool!
+- The brush tool! (documentation to follow)
 
 ### Changed
 
 - Fixed bug: pencil does not leave behind empty shapes anymore
 - Fixed bug: pencil tool does not continue drawing on currently selected shape after toggling off pencil mode
+- Fixed bug: pencil shape position now at place of first click
 
 ## 2.20.1
 
