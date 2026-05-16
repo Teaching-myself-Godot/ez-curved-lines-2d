@@ -8,7 +8,7 @@ var brush_size_y_input : EditorSpinSlider
 var brush_rotation_input : EditorSpinSlider
 
 func _enter_tree() -> void:
-	var granularity_input := _make_number_input("Granularity", CurvedLines2D._get_pencil_granularity(), 1, 50, "px")
+	var granularity_input := _make_number_input("Granularity (min distance between points)", CurvedLines2D._get_freehand_draw_granularity(), 1, 50, "px")
 	%Granularity.add_child(granularity_input)
 	granularity_input.value_changed.connect(_on_granularity_value_changed)
 
@@ -37,7 +37,7 @@ func sync_settings() -> void:
 
 
 func _on_granularity_value_changed(new_val) -> void:
-	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_PENCIL_GRANULARITY, new_val)
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_FREEHAND_DRAW_GRANULARITY, new_val)
 	ProjectSettings.save()
 
 

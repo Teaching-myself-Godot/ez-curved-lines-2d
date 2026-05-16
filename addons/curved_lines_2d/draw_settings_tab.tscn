@@ -56,9 +56,8 @@ theme_override_constants/separation = 8
 [node name="Label" type="Label" parent="VBoxContainer/PencilSettingsContainer"]
 custom_minimum_size = Vector2(152, 0)
 layout_mode = 2
-tooltip_text = "Settings for the pencil tool (draw strokes and outlines by hand)"
 mouse_filter = 0
-text = "Pencil / Outlines*"
+text = "Misc Behavior"
 
 [node name="Granularity" type="PanelContainer" parent="VBoxContainer/PencilSettingsContainer"]
 unique_name_in_owner = true
@@ -69,7 +68,6 @@ size_flags_horizontal = 3
 [node name="ClosePathCheckBox" type="CheckBox" parent="VBoxContainer/PencilSettingsContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-button_pressed = true
 text = "Close curve of newly drawn path"
 
 [node name="HSeparator3" type="HSeparator" parent="VBoxContainer"]

@@ -29,7 +29,7 @@ const SETTING_NAME_CURVE_MAX_STAGES := "addons/curved_lines_2d/default_max_stage
 const SETTING_NAME_ANTIALIASED_LINE_2D := "addons/curved_lines_2d/antialiased_line_2d"
 
 const SETTING_NAME_KEEP_DRAWING := "addons/curved_lines_2d/keep_drawing"
-const SETTING_NAME_PENCIL_GRANULARITY := "addons/curved_lines_2d/granularity"
+const SETTING_NAME_FREEHAND_DRAW_GRANULARITY := "addons/curved_lines_2d/granularity"
 const SETTING_NAME_CLOSE_PENCIL_PATH := "addons/curved_lines_2d/close_pencil_path"
 const SETTING_NAME_BRUSH_SHAPE := "addons/curved_lines_2d/brush_shape"
 const SETTING_NAME_BRUSH_SIZE_X := "addons/curved_lines_2d/brush_size_x"
@@ -1202,7 +1202,7 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 			mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 		var pts0 := [_current_brush_shape[0]]
 		for i in range(1, _current_brush_shape.size()):
-			if pts0[-1].distance_to(_current_brush_shape[i]) > _get_pencil_granularity():
+			if pts0[-1].distance_to(_current_brush_shape[i]) > _get_freehand_draw_granularity():
 				pts0.append(_current_brush_shape[i])
 		var pts := Array(pts0).map(func(p): return _vp_transform(p + mouse_pos))
 		if _is_add_fill_enabled():
@@ -1951,7 +1951,7 @@ func _add_point_to_pencil_line() -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection):
 		var last_point := (current_selection as ScalableVectorShape2D).curve.get_point_position(current_selection.curve.point_count -1)
-		if current_selection.to_global(last_point).distance_to(pos) > _get_pencil_granularity():
+		if current_selection.to_global(last_point).distance_to(pos) > _get_freehand_draw_granularity():
 			_add_point_to_curve(current_selection, current_selection.to_local(pos))
 
 
@@ -2029,7 +2029,7 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 			var def_stroke := PackedVector2Array()
 			def_stroke.append(new_stroke[0])
 			for i in range(1, new_stroke.size()):
-				if new_stroke[i].distance_to(def_stroke[-1]) > _get_pencil_granularity():
+				if new_stroke[i].distance_to(def_stroke[-1]) > _get_freehand_draw_granularity():
 					def_stroke.append(new_stroke[i])
 			_current_brush_stroke = def_stroke
 
@@ -2126,7 +2126,7 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 				var def_stroke := PackedVector2Array()
 				def_stroke.append(new_stroke[0])
 				for i in range(1, new_stroke.size()):
-					if new_stroke[i].distance_to(def_stroke[-1]) > _get_pencil_granularity():
+					if new_stroke[i].distance_to(def_stroke[-1]) > _get_freehand_draw_granularity():
 						def_stroke.append(new_stroke[i])
 				_current_brush_stroke = def_stroke
 			return true
@@ -2506,9 +2506,9 @@ static func _get_keep_drawing_behavior() -> KeepDrawingBehavior:
 	return KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT
 
 
-static func _get_pencil_granularity() -> int:
-	if ProjectSettings.has_setting(SETTING_NAME_PENCIL_GRANULARITY):
-		return ProjectSettings.get_setting(SETTING_NAME_PENCIL_GRANULARITY)
+static func _get_freehand_draw_granularity() -> int:
+	if ProjectSettings.has_setting(SETTING_NAME_FREEHAND_DRAW_GRANULARITY):
+		return ProjectSettings.get_setting(SETTING_NAME_FREEHAND_DRAW_GRANULARITY)
 	return 4
 
 
