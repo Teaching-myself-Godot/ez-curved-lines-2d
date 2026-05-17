@@ -2003,6 +2003,21 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 
 
 func _set_curve_from_polygon(svs : ScalableVectorShape2D, poly : PackedVector2Array) -> void:
+	print("todo, implement curve fit")
+	var fitness_prep := BasicFit.prepare_polyline_segments(poly)
+	var poly1 := PackedVector2Array()
+	var fit_line := Line2D.new()
+	for i in fitness_prep:
+		poly1.append(svs.to_local(poly[i]))
+	fit_line.default_color = Color.RED
+	fit_line.name = "BasicFit"
+	EditorInterface.get_edited_scene_root().add_child(fit_line, true)
+	fit_line.owner = EditorInterface.get_edited_scene_root()
+	fit_line.points = poly1
+	fit_line.closed = true
+	fit_line.width = 1.0
+	print("=-=-=-=-=\n")
+
 	undo_redo.create_action("reposition to brush start pos %s" % str(svs))
 	undo_redo.add_do_property(svs, 'global_position', _brush_start_pos)
 	undo_redo.add_undo_reference(svs)
