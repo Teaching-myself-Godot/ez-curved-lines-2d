@@ -201,20 +201,27 @@ static func get_progress_ratio_for_point_on_curve(p : Vector2, c : Curve2D, max_
 
 
 static func get_halfway_point_on_bezier(c : Curve2D, max_stages := 5, tolerance_degrees := 4.0) -> Vector2:
+	return get_point_on_bezier_at_ratio(c, 0.5, max_stages, tolerance_degrees)
+
+
+static func get_point_on_bezier_at_ratio(c : Curve2D, ratio : float, max_stages := 5, tolerance_degrees := 4.0) -> Vector2:
 	var pts := c.tessellate(max_stages, tolerance_degrees)
 	var tot_d := c.get_baked_length()
+	return get_point_on_polyline_at_ratio(pts, ratio, tot_d)
+
+
+static func get_point_on_polyline_at_ratio(pts : PackedVector2Array, ratio : float, tot_d : float) -> Vector2:
 	var d := 0.0
 	var p1 := pts[0]
 	for i in range(1, pts.size()):
 		var prev_d := d
 		d += p1.distance_to(pts[i])
-		if d >= tot_d * 0.5:
-			var d_ratio := 0.5 - (prev_d / tot_d) if prev_d > 0.0 else 0.5
+		if d >= tot_d * ratio:
+			var d_ratio := ratio - (prev_d / tot_d) if prev_d > 0.0 else ratio
 			var d_abs := tot_d * d_ratio
 			return pts[i-1] + pts[i-1].direction_to(pts[i]) * d_abs
 		p1 = pts[i]
 	return Vector2.ZERO
-
 
 static func get_polygon_at_granularity(poly : PackedVector2Array, granularity : float) -> PackedVector2Array:
 	var def_poly := PackedVector2Array()
