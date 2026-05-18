@@ -65,12 +65,12 @@ static func get_speculative_quadratic_control_point(polyline : PackedVector2Arra
 		return polyline[0] + polyline[-1] / 2.0
 	var segment_start_point := polyline[0]
 	var segment_end_point := polyline[-1]
-	var halfway_point := (segment_start_point + segment_end_point) / 2
+	var halfway_point := (segment_start_point + segment_end_point) / 2.0
 	var d : float = Array(polyline).reduce(sum_distances, {"prev": polyline[0], "sum": 0.0})["sum"]
 	var polyline_halfway_point := Geometry2DUtil.get_point_on_polyline_at_ratio(polyline, 0.5, d)
 	var dir := halfway_point.direction_to(polyline_halfway_point)
 	var distance := halfway_point.distance_to(polyline_halfway_point)
-	return halfway_point + distance * 2 * dir
+	return halfway_point + (distance * 2.422 * dir)
 
 
 static func conjecture_curve_for_polyline(polyline : PackedVector2Array) -> Curve2D:
@@ -80,6 +80,21 @@ static func conjecture_curve_for_polyline(polyline : PackedVector2Array) -> Curv
 	c.add_point(polyline[-1])
 	if polyline[0].direction_to(q).rotated(2*PI).is_equal_approx(polyline[-1].direction_to(q)):
 		return c
-	c.set_point_out(0, (q - polyline[0]) * (2.0 / 3.0))
-	c.set_point_in(1, (q - polyline[-1]) * (2.0 / 3.0))
+	c.set_point_out(0, (q - polyline[0]) * (2.0 / (1.1*PI)))
+	c.set_point_in(1, (q - polyline[-1]) * (2.0 / (1.1*PI)))
+	return c
+
+static func conjecture_curves_for_polyline_segments(poly : PackedVector2Array, splits : Array[int]) -> Curve2D:
+	var c := Curve2D.new()
+	c.add_point(poly[0])
+	for i in splits.size():
+		var s_idx := splits[i]
+		var next := splits[i + 1] if i + 1 < splits.size() else -2
+		var segment := poly.slice(s_idx, next + 1)
+		if next < 0:
+			segment.append(poly[0])
+		var cs := conjecture_curve_for_polyline(segment)
+		c.set_point_out(c.point_count - 1, cs.get_point_out(0))
+		c.add_point(cs.get_point_position(1))
+		c.set_point_in(c.point_count - 1, cs.get_point_in(1))
 	return c

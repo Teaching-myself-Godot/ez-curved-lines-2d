@@ -2002,57 +2002,17 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 	return false
 
 
-func _set_curve_from_polygon(svs : ScalableVectorShape2D, poly : PackedVector2Array) -> void:
+func _set_curve_from_polygon(svs : ScalableVectorShape2D, pts : PackedVector2Array) -> void:
 	print("BasicFit.prepare_polyline_segments")
-	var fitness_prep := BasicFit.prepare_polyline_segments(poly)
-	var poly1 := PackedVector2Array()
-	var segment_line := Line2D.new()
-	segment_line.default_color = Color.RED
-	segment_line.name = "BasicFit"
-	EditorInterface.get_edited_scene_root().add_child(segment_line, true)
-	segment_line.owner = EditorInterface.get_edited_scene_root()
-
-	print("BasicFit.conjecture_curves_for_polyline_segments (TODO)")
-	for i in fitness_prep.size():
-		var s_idx := fitness_prep[i]
-		var next := fitness_prep[i + 1] if i + 1 < fitness_prep.size() else -2
-		poly1.append(svs.to_local(poly[s_idx]))
-		var segment := poly.slice(s_idx, next + 1)
-		if next < 0:
-			segment.append(poly[0])
-		print("+--BasicFit.conjecture_curve_for_polyline_segment")
-		var c := BasicFit.conjecture_curve_for_polyline(segment)
-		var pts := c.tessellate(5, 1.0)
-		var fit_line := Line2D.new()
-		fit_line.width = 0.5
-		fit_line.default_color = Color.AQUA
-		fit_line.closed = false
-		fit_line.name = "C"
-		segment_line.add_child(fit_line, true)
-		fit_line.owner = EditorInterface.get_edited_scene_root()
-		fit_line.points = pts
-
-	segment_line.points = poly1
-	segment_line.closed = true
-	segment_line.width = 1.0
-	print("=-=-=-=-=\n")
 
 	undo_redo.create_action("reposition to brush start pos %s" % str(svs))
 	undo_redo.add_do_property(svs, 'global_position', _brush_start_pos)
 	undo_redo.add_undo_reference(svs)
 	undo_redo.commit_action()
-	svs.curve.set_block_signals(true)
 	svs.curve.clear_points()
-	svs.curve.add_point(svs.to_local(poly[0]))
-	for i in range(1, poly.size()):
-		var prev_p := poly[i - 1]
-		var p := poly[i]
-		var next_p := poly[i + 1] if i < poly.size() - 1 else poly[0]
-		if not prev_p.direction_to(next_p).is_equal_approx(p.direction_to(next_p)):
-			svs.curve.add_point(svs.to_local(p))
-	svs.curve.add_point(svs.to_local(poly[0]))
-	svs.curve.set_block_signals(false)
-	svs.curve.changed.emit()
+	var poly := PackedVector2Array(Array(pts).map(func(p): return svs.to_local(p)))
+	var fitness_prep := BasicFit.prepare_polyline_segments(poly, 0.5 * (_get_brush_size_x() + _get_brush_size_y()))
+	svs.curve = BasicFit.conjecture_curves_for_polyline_segments(poly, fitness_prep)
 
 
 func _handle_brush_draw_input(event : InputEvent) -> bool:
