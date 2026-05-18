@@ -57,6 +57,10 @@ static func sum_distances(d_sum : Dictionary, point : Vector2) -> Dictionary:
 
 
 static func get_speculative_quadratic_control_point(polyline : PackedVector2Array) -> Vector2:
+	if polyline.size() < 2:
+		return polyline[0]
+	if is_zero_approx(polyline[0].distance_to(polyline[-1])):
+		return polyline[0] + polyline[-1] / 2.0
 	var segment_start_point := polyline[0]
 	var segment_end_point := polyline[-1]
 	var halfway_point := (segment_start_point + segment_end_point) / 2
@@ -65,3 +69,15 @@ static func get_speculative_quadratic_control_point(polyline : PackedVector2Arra
 	var dir := halfway_point.direction_to(polyline_halfway_point)
 	var distance := halfway_point.distance_to(polyline_halfway_point)
 	return halfway_point + distance * 2 * dir
+
+
+static func conjecture_curve_for_polyline(polyline : PackedVector2Array) -> Curve2D:
+	var q := get_speculative_quadratic_control_point(polyline)
+	var c := Curve2D.new()
+	c.add_point(polyline[0])
+	c.add_point(polyline[-1])
+	if polyline[0].direction_to(q).rotated(2*PI).is_equal_approx(polyline[-1].direction_to(q)):
+		return c
+	c.set_point_out(0, (q - polyline[0]) * (2.0 / 3.0))
+	c.set_point_in(1, (q - polyline[-1]) * (2.0 / 3.0))
+	return c

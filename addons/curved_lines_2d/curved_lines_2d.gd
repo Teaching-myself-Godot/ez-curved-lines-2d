@@ -2006,11 +2006,11 @@ func _set_curve_from_polygon(svs : ScalableVectorShape2D, poly : PackedVector2Ar
 	print("BasicFit.prepare_polyline_segments")
 	var fitness_prep := BasicFit.prepare_polyline_segments(poly)
 	var poly1 := PackedVector2Array()
-	var fit_line := Line2D.new()
-	fit_line.default_color = Color.RED
-	fit_line.name = "BasicFit"
-	EditorInterface.get_edited_scene_root().add_child(fit_line, true)
-	fit_line.owner = EditorInterface.get_edited_scene_root()
+	var segment_line := Line2D.new()
+	segment_line.default_color = Color.RED
+	segment_line.name = "BasicFit"
+	EditorInterface.get_edited_scene_root().add_child(segment_line, true)
+	segment_line.owner = EditorInterface.get_edited_scene_root()
 
 	print("BasicFit.conjecture_curves_for_polyline_segments (TODO)")
 	for i in fitness_prep.size():
@@ -2020,17 +2020,21 @@ func _set_curve_from_polygon(svs : ScalableVectorShape2D, poly : PackedVector2Ar
 		var segment := poly.slice(s_idx, next + 1)
 		if next < 0:
 			segment.append(poly[0])
-		print("+--BasicFit.get_speculative_quadratic_control_point")
-		var q := BasicFit.get_speculative_quadratic_control_point(segment)
-		var q_n := Node2D.new()
-		q_n.name = "Q"
-		q_n.position = q
-		fit_line.add_child(q_n, true)
-		q_n.owner = EditorInterface.get_edited_scene_root()
+		print("+--BasicFit.conjecture_curve_for_polyline_segment")
+		var c := BasicFit.conjecture_curve_for_polyline(segment)
+		var pts := c.tessellate(5, 1.0)
+		var fit_line := Line2D.new()
+		fit_line.width = 0.5
+		fit_line.default_color = Color.AQUA
+		fit_line.closed = false
+		fit_line.name = "C"
+		segment_line.add_child(fit_line, true)
+		fit_line.owner = EditorInterface.get_edited_scene_root()
+		fit_line.points = pts
 
-	fit_line.points = poly1
-	fit_line.closed = true
-	fit_line.width = 1.0
+	segment_line.points = poly1
+	segment_line.closed = true
+	segment_line.width = 1.0
 	print("=-=-=-=-=\n")
 
 	undo_redo.create_action("reposition to brush start pos %s" % str(svs))
