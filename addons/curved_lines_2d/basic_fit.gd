@@ -4,10 +4,9 @@ extends Object
 
 const MAX_ANGLE_INBOUND_TO_OUTBOUND := deg_to_rad(30.0)
 const MAX_CUMULATIVE_ANGLE_PER_SEGMENT := deg_to_rad(90.0)
-const MIN_DISTANCE_BETWEEN_SEGMENT_STARTS := 50.0
 
 
-static func prepare_polyline_segments(pts : PackedVector2Array) -> Array[int]:
+static func prepare_polyline_segments(pts : PackedVector2Array, snap := 10.0) -> Array[int]:
 	if pts.size() < 4:
 		return [0]
 
@@ -20,6 +19,8 @@ static func prepare_polyline_segments(pts : PackedVector2Array) -> Array[int]:
 		var next_p := pts[i + 1] if i < pts.size() - 1 else pts[0]
 		if absf(prev_p.direction_to(p).angle_to(p.direction_to(next_p))) > MAX_ANGLE_INBOUND_TO_OUTBOUND:
 			splits.append(i)
+		if prev_p.distance_to(p) >= snap and i-1 not in splits:
+			splits.append(i-1)
 
 	# any p of which the p_a bends in the opposite direction of the p_a' that came before it
 	# or the difference in angle with the previous p_a(p[s_idx]) exceeds 45° will also become
@@ -38,12 +39,13 @@ static func prepare_polyline_segments(pts : PackedVector2Array) -> Array[int]:
 					or is_equal_approx(absf(cumulative_angle), MAX_CUMULATIVE_ANGLE_PER_SEGMENT)
 					or (last_angle > 0.0 and cur_angle < 0.0)
 					or (last_angle < 0.0 and cur_angle > 0.0)
-		) and cumulative_distance > MIN_DISTANCE_BETWEEN_SEGMENT_STARTS):
+		)):
 			splits.append(i)
 		if i in splits:
 			cumulative_angle = 0.0
 			cumulative_distance = 0.0
 		last_angle = cur_angle
+
 	splits.sort()
 	return splits
 
