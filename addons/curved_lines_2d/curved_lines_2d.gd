@@ -2003,16 +2003,31 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 
 
 func _set_curve_from_polygon(svs : ScalableVectorShape2D, poly : PackedVector2Array) -> void:
-	print("todo, implement curve fit")
+	print("BasicFit.prepare_polyline_segments")
 	var fitness_prep := BasicFit.prepare_polyline_segments(poly)
 	var poly1 := PackedVector2Array()
 	var fit_line := Line2D.new()
-	for i in fitness_prep:
-		poly1.append(svs.to_local(poly[i]))
 	fit_line.default_color = Color.RED
 	fit_line.name = "BasicFit"
 	EditorInterface.get_edited_scene_root().add_child(fit_line, true)
 	fit_line.owner = EditorInterface.get_edited_scene_root()
+
+	print("BasicFit.conjecture_curves_for_polyline_segments (TODO)")
+	for i in fitness_prep.size():
+		var s_idx := fitness_prep[i]
+		var next := fitness_prep[i + 1] if i + 1 < fitness_prep.size() else -2
+		poly1.append(svs.to_local(poly[s_idx]))
+		var segment := poly.slice(s_idx, next + 1)
+		if next < 0:
+			segment.append(poly[0])
+		print("+--BasicFit.get_speculative_quadratic_control_point")
+		var q := BasicFit.get_speculative_quadratic_control_point(segment)
+		var q_n := Node2D.new()
+		q_n.name = "Q"
+		q_n.position = q
+		fit_line.add_child(q_n, true)
+		q_n.owner = EditorInterface.get_edited_scene_root()
+
 	fit_line.points = poly1
 	fit_line.closed = true
 	fit_line.width = 1.0

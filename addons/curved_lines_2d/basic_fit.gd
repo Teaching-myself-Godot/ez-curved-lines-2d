@@ -21,7 +21,6 @@ static func prepare_polyline_segments(pts : PackedVector2Array) -> Array[int]:
 		if absf(prev_p.direction_to(p).angle_to(p.direction_to(next_p))) > MAX_ANGLE_INBOUND_TO_OUTBOUND:
 			splits.append(i)
 
-	print("pass 1: ", splits)
 	# any p of which the p_a bends in the opposite direction of the p_a' that came before it
 	# or the difference in angle with the previous p_a(p[s_idx]) exceeds 45° will also become
 	# the start of a new s_idx
@@ -45,6 +44,24 @@ static func prepare_polyline_segments(pts : PackedVector2Array) -> Array[int]:
 			cumulative_angle = 0.0
 			cumulative_distance = 0.0
 		last_angle = cur_angle
-	print("pass 2: ", splits)
 	splits.sort()
 	return splits
+
+
+static func sum_distances(d_sum : Dictionary, point : Vector2) -> Dictionary:
+	var d := point.distance_to(d_sum["prev"])
+	return {
+		"prev": point,
+		"sum": d + d_sum["sum"]
+	}
+
+
+static func get_speculative_quadratic_control_point(polyline : PackedVector2Array) -> Vector2:
+	var segment_start_point := polyline[0]
+	var segment_end_point := polyline[-1]
+	var halfway_point := (segment_start_point + segment_end_point) / 2
+	var d : float = Array(polyline).reduce(sum_distances, {"prev": polyline[0], "sum": 0.0})["sum"]
+	var polyline_halfway_point := Geometry2DUtil.get_point_on_polyline_at_ratio(polyline, 0.5, d)
+	var dir := halfway_point.direction_to(polyline_halfway_point)
+	var distance := halfway_point.distance_to(polyline_halfway_point)
+	return halfway_point + distance * 2 * dir

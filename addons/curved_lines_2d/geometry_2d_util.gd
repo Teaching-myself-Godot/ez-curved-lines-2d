@@ -185,6 +185,7 @@ static func get_intersection_point_on_polyline(p1 : Vector2, q1 : Vector2, poly_
 	return closest_result
 
 
+
 static func get_progress_ratio_for_point_on_curve(p : Vector2, c : Curve2D, max_stages := 5,
 		tolerance_degrees := 4.0) -> float:
 	# Heuristic to find progress_ratio of cpc
@@ -222,6 +223,7 @@ static func get_point_on_polyline_at_ratio(pts : PackedVector2Array, ratio : flo
 			return pts[i-1] + pts[i-1].direction_to(pts[i]) * d_abs
 		p1 = pts[i]
 	return Vector2.ZERO
+
 
 static func get_polygon_at_granularity(poly : PackedVector2Array, granularity : float) -> PackedVector2Array:
 	var def_poly := PackedVector2Array()
