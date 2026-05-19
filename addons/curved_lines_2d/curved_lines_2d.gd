@@ -1983,10 +1983,22 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs.curve)).undo()
 						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs)).undo()
 						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs)).undo()
-					if _get_close_pencil_path() and svs.curve.point_count > 2:
-						_add_point_to_curve(svs, svs.curve.get_point_position(0))
+					else:
+						var snap = _get_freehand_draw_granularity() if _get_freehand_draw_granularity() > 10.0 else 10.0
+						var pts := svs.tessellate()
+						var segments := BasicFit.prepare_polyline_segments(pts, snap, 180, 180)
+						var new_curve := BasicFit.fit_curve_to_polyline(pts, segments)
+						if not _get_close_pencil_path():
+							new_curve.remove_point(new_curve.point_count-1)
+						undo_redo.create_action("optimize curve")
+						undo_redo.add_do_property(svs, 'curve', new_curve)
+						undo_redo.add_undo_property(svs, 'curve', svs.curve.duplicate())
+						undo_redo.commit_action()
+
+
 					if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 						select_node_reversibly(current_selection.get_parent())
+
 					else:
 						pencil_draw_toggle_button.button_pressed = false
 				update_overlays()
@@ -2003,7 +2015,6 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 
 
 func _set_curve_from_polygon(svs : ScalableVectorShape2D, pts : PackedVector2Array) -> void:
-	print("BasicFit.prepare_polyline_segments")
 	undo_redo.create_action("reposition to brush start pos %s" % str(svs))
 	undo_redo.add_do_property(svs, 'global_position', _brush_start_pos)
 	undo_redo.add_undo_reference(svs)
@@ -2011,17 +2022,7 @@ func _set_curve_from_polygon(svs : ScalableVectorShape2D, pts : PackedVector2Arr
 	var poly := PackedVector2Array(Array(pts).map(func(p): return svs.to_local(p)))
 	var fitness_prep := BasicFit.prepare_polyline_segments(poly, 0.5 * (_get_brush_size_x() + _get_brush_size_y()))
 	svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
-	var poly_ref := Line2D.new()
-	poly_ref.points = poly
-	poly_ref.name = "Reference"
-	poly_ref.width = 1
-	poly_ref.closed = true
-	undo_redo.create_action("add ref to %s" % str(svs))
-	undo_redo.add_do_method(svs, 'add_child', poly_ref, true)
-	undo_redo.add_undo_method(svs, 'remove_child', poly_ref)
-	undo_redo.add_do_property(poly_ref, 'owner', EditorInterface.get_edited_scene_root())
-	undo_redo.add_undo_reference(poly_ref)
-	undo_redo.commit_action()
+
 
 func _handle_brush_draw_input(event : InputEvent) -> bool:
 	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
