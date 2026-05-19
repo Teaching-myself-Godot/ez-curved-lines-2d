@@ -217,12 +217,12 @@ static func get_point_on_polyline_at_ratio(pts : PackedVector2Array, ratio : flo
 	for i in range(1, pts.size()):
 		var prev_d := d
 		d += p1.distance_to(pts[i])
-		if d >= tot_d * ratio:
+		if d >= tot_d * ratio or is_equal_approx(d, tot_d):
 			var d_ratio := ratio - (prev_d / tot_d) if prev_d > 0.0 else ratio
 			var d_abs := tot_d * d_ratio
 			return pts[i-1] + pts[i-1].direction_to(pts[i]) * d_abs
 		p1 = pts[i]
-	return Vector2.ZERO
+	return pts[-1]
 
 
 static func get_polygon_at_granularity(poly : PackedVector2Array, granularity : float) -> PackedVector2Array:
