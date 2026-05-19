@@ -1992,7 +1992,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 							new_curve.remove_point(new_curve.point_count-1)
 						undo_redo.create_action("optimize curve")
 						undo_redo.add_do_property(svs, 'curve', new_curve)
-						undo_redo.add_undo_property(svs, 'curve', svs.curve.duplicate())
+						undo_redo.add_undo_property(svs, 'curve', svs.curve)
 						undo_redo.commit_action()
 
 
