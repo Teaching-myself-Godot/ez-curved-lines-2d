@@ -58,7 +58,7 @@ static func sum_distances(d_sum : Dictionary, point : Vector2) -> Dictionary:
 	}
 
 
-static func get_speculative_quadratic_control_point(polyline : PackedVector2Array) -> Vector2:
+static func get_speculative_quadratic_control_point(polyline : PackedVector2Array, d : float) -> Vector2:
 	if polyline.size() < 2:
 		return polyline[0]
 	if is_zero_approx(polyline[0].distance_to(polyline[-1])):
@@ -66,15 +66,14 @@ static func get_speculative_quadratic_control_point(polyline : PackedVector2Arra
 	var segment_start_point := polyline[0]
 	var segment_end_point := polyline[-1]
 	var halfway_point := (segment_start_point + segment_end_point) / 2.0
-	var d : float = Array(polyline).reduce(sum_distances, {"prev": polyline[0], "sum": 0.0})["sum"]
 	var polyline_halfway_point := Geometry2DUtil.get_point_on_polyline_at_ratio(polyline, 0.5, d)
 	var dir := halfway_point.direction_to(polyline_halfway_point)
 	var distance := halfway_point.distance_to(polyline_halfway_point)
 	return halfway_point + (distance * 2.422 * dir)
 
 
-static func conjecture_curve_for_polyline(polyline : PackedVector2Array) -> Curve2D:
-	var q := get_speculative_quadratic_control_point(polyline)
+static func conjecture_curve_for_polyline(polyline : PackedVector2Array, poly_line_length : float) -> Curve2D:
+	var q := get_speculative_quadratic_control_point(polyline, poly_line_length)
 	var c := Curve2D.new()
 	c.add_point(polyline[0])
 	c.add_point(polyline[-1])
@@ -84,6 +83,15 @@ static func conjecture_curve_for_polyline(polyline : PackedVector2Array) -> Curv
 	c.set_point_in(1, (q - polyline[-1]) * (2.0 / (1.1*PI)))
 	return c
 
+
+static func evaluate_curve_for_polyline(c : Curve2D, pts : PackedVector2Array, d_tot : float) -> float:
+	var d := 0.0
+	var deltas : Array[float] = [Geometry2DUtil.get_point_on_bezier_at_ratio(c, 0.0).distance_to(pts[0])]
+	for i in range(1, pts.size()):
+		d += pts[i-1].distance_to(pts[i])
+		deltas.append(Geometry2DUtil.get_point_on_bezier_at_ratio(c, d / d_tot).distance_to(pts[i]))
+	print(deltas.reduce(func(a,b): return  a + b, 0) / deltas.size())
+	return 0.0
 
 
 static func fit_curve_to_polyline(poly : PackedVector2Array, splits : Array[int]) -> Curve2D:
@@ -95,8 +103,9 @@ static func fit_curve_to_polyline(poly : PackedVector2Array, splits : Array[int]
 		var segment := poly.slice(s_idx, next + 1)
 		if next < 0:
 			segment.append(poly[0])
-		var cs := conjecture_curve_for_polyline(segment)
-		#var score := evaluate_curve_for_segement(cs, segment)
+		var d : float = Array(segment).reduce(sum_distances, {"prev": segment[0], "sum": 0.0})["sum"]
+		var cs := conjecture_curve_for_polyline(segment, d)
+		var score := evaluate_curve_for_polyline(cs, segment, d)
 		c.set_point_out(c.point_count - 1, cs.get_point_out(0))
 		c.add_point(cs.get_point_position(1))
 		c.set_point_in(c.point_count - 1, cs.get_point_in(1))
