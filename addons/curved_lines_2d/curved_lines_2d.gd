@@ -2004,16 +2004,24 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 
 func _set_curve_from_polygon(svs : ScalableVectorShape2D, pts : PackedVector2Array) -> void:
 	print("BasicFit.prepare_polyline_segments")
-
 	undo_redo.create_action("reposition to brush start pos %s" % str(svs))
 	undo_redo.add_do_property(svs, 'global_position', _brush_start_pos)
 	undo_redo.add_undo_reference(svs)
 	undo_redo.commit_action()
-	svs.curve.clear_points()
 	var poly := PackedVector2Array(Array(pts).map(func(p): return svs.to_local(p)))
 	var fitness_prep := BasicFit.prepare_polyline_segments(poly, 0.5 * (_get_brush_size_x() + _get_brush_size_y()))
-	svs.curve = BasicFit.conjecture_curves_for_polyline_segments(poly, fitness_prep)
-
+	svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
+	var poly_ref := Line2D.new()
+	poly_ref.points = poly
+	poly_ref.name = "Reference"
+	poly_ref.width = 1
+	poly_ref.closed = true
+	undo_redo.create_action("add ref to %s" % str(svs))
+	undo_redo.add_do_method(svs, 'add_child', poly_ref, true)
+	undo_redo.add_undo_method(svs, 'remove_child', poly_ref)
+	undo_redo.add_do_property(poly_ref, 'owner', EditorInterface.get_edited_scene_root())
+	undo_redo.add_undo_reference(poly_ref)
+	undo_redo.commit_action()
 
 func _handle_brush_draw_input(event : InputEvent) -> bool:
 	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()

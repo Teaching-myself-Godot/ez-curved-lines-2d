@@ -11,8 +11,8 @@ static func prepare_polyline_segments(pts : PackedVector2Array, snap := 10.0) ->
 		return [0]
 
 	var splits : Array[int] = [0]
-	# any point p of which the angle between the inbound and outbound line p_a exceeds 30.0° will
-	# become the start of a new segment
+	## any point p of which the angle between the inbound and outbound line p_a exceeds 30.0° will
+	## become the start of a new segment
 	for i in range(1, pts.size()):
 		var prev_p := pts[i - 1]
 		var p := pts[i]
@@ -78,13 +78,15 @@ static func conjecture_curve_for_polyline(polyline : PackedVector2Array) -> Curv
 	var c := Curve2D.new()
 	c.add_point(polyline[0])
 	c.add_point(polyline[-1])
-	if polyline[0].direction_to(q).rotated(2*PI).is_equal_approx(polyline[-1].direction_to(q)):
+	if polyline[0].direction_to(q).rotated(PI).is_equal_approx(polyline[-1].direction_to(q)):
 		return c
 	c.set_point_out(0, (q - polyline[0]) * (2.0 / (1.1*PI)))
 	c.set_point_in(1, (q - polyline[-1]) * (2.0 / (1.1*PI)))
 	return c
 
-static func conjecture_curves_for_polyline_segments(poly : PackedVector2Array, splits : Array[int]) -> Curve2D:
+
+
+static func fit_curve_to_polyline(poly : PackedVector2Array, splits : Array[int]) -> Curve2D:
 	var c := Curve2D.new()
 	c.add_point(poly[0])
 	for i in splits.size():
@@ -94,6 +96,7 @@ static func conjecture_curves_for_polyline_segments(poly : PackedVector2Array, s
 		if next < 0:
 			segment.append(poly[0])
 		var cs := conjecture_curve_for_polyline(segment)
+		#var score := evaluate_curve_for_segement(cs, segment)
 		c.set_point_out(c.point_count - 1, cs.get_point_out(0))
 		c.add_point(cs.get_point_position(1))
 		c.set_point_in(c.point_count - 1, cs.get_point_in(1))
