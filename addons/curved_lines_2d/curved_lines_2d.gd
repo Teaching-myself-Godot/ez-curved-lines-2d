@@ -84,7 +84,10 @@ const OPERATION_NAME_MAP := {
 	Geometry2D.OPERATION_UNION: { "verb": "merge with", "noun": "merged shape" }
 }
 
-enum UniformTransformMode { NONE, TRANSLATE, ROTATE, SCALE }
+enum SVSEditMode {
+	NONE, TRANSLATE, ROTATE, SCALE,
+	MERGE, BRUSH, PENCIL
+}
 
 var plugin : Line2DGeneratorInspectorPlugin
 var scalable_vector_shapes_2d_dock
@@ -113,20 +116,20 @@ var _vp_vertical_scrollbar_locked_value := 0.0
 var _locking_vp_vertical_scrollbar := false
 
 
-var uniform_transform_edit_buttons : Control
-var _uniform_transform_mode := UniformTransformMode.NONE
+var svs_edit_buttons : Control
+var _svs_edit_mode := SVSEditMode.NONE
 var _drag_start := Vector2.ZERO
 var _prev_uniform_rotate_angle := 0.0
 var _stored_natural_center := Vector2.ZERO
 var _lmb_is_down_inside_viewport := false
 
-var merge_node_toggle_button : Button
+#var merge_node_toggle_button : Button
 var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
 
-var pencil_draw_toggle_button : CheckBox
+#var pencil_draw_toggle_button : CheckBox
 var _drawing_pencil_line := false
 
-var brush_draw_toggle_button : CheckBox
+#var brush_draw_toggle_button : CheckBox
 var _current_brush_shape := PackedVector2Array()
 var _current_brush_stroke := PackedVector2Array()
 var _brush_start_pos := Vector2.ZERO
@@ -181,63 +184,22 @@ func _enter_tree():
 		scalable_vector_shapes_2d_dock.brush_changed.connect(_update_brush)
 	scene_changed.connect(_on_scene_changed)
 
-	uniform_transform_edit_buttons = load("res://addons/curved_lines_2d/uniform_transform_edit_buttons.tscn").instantiate()
+	svs_edit_buttons = load("res://addons/curved_lines_2d/svs_edit_buttons.tscn").instantiate()
 	var canvas_editor_buttons_container = EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*").find_child("*HFlowContainer*", true, false)
-	canvas_editor_buttons_container.add_child(uniform_transform_edit_buttons)
-
-	merge_node_toggle_button = Button.new()
-	merge_node_toggle_button.tooltip_text = "Merge vertices (M)"
-	merge_node_toggle_button.icon = load("res://addons/curved_lines_2d/MergeChain.svg")
-	merge_node_toggle_button.toggle_mode = true
-	merge_node_toggle_button.flat = true
-	merge_node_toggle_button.toggled.connect(_on_merge_node_toggle_button_toggled)
-	canvas_editor_buttons_container.add_child(merge_node_toggle_button)
-
-	pencil_draw_toggle_button = CheckBox.new()
-	pencil_draw_toggle_button.tooltip_text = "Draw strokes and outlines (P)"
-	var pencil_icon : Texture2D = load("res://addons/curved_lines_2d/Pencil.svg")
-	var pencil_icon_checked : Texture2D = load("res://addons/curved_lines_2d/PencilBlue.svg")
-	pencil_draw_toggle_button.flat = true
-	pencil_draw_toggle_button.add_theme_icon_override("checked", pencil_icon_checked)
-	pencil_draw_toggle_button.add_theme_icon_override("unchecked", pencil_icon)
-	pencil_draw_toggle_button.toggled.connect(_on_pencil_draw_toggle_button_toggled)
-	canvas_editor_buttons_container.add_child(pencil_draw_toggle_button)
-
-	brush_draw_toggle_button = CheckBox.new()
-	brush_draw_toggle_button.tooltip_text = "Paint Polygons (B)"
-	var brush_icon : Texture2D = load("res://addons/curved_lines_2d/Brush.svg")
-	var brush_icon_checked : Texture2D = load("res://addons/curved_lines_2d/BrushBlue.svg")
-	brush_draw_toggle_button.flat = true
-	brush_draw_toggle_button.add_theme_icon_override("checked", brush_icon_checked)
-	brush_draw_toggle_button.add_theme_icon_override("unchecked", brush_icon)
-	brush_draw_toggle_button.toggled.connect(_on_brush_draw_toggle_button_toggled)
-	canvas_editor_buttons_container.add_child(brush_draw_toggle_button)
-
+	canvas_editor_buttons_container.add_child(svs_edit_buttons)
 	_update_brush()
 
 	if not _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
 		_get_select_mode_button().toggled.connect(_on_select_mode_toggled)
 	_on_select_mode_toggled(_get_select_mode_button().button_pressed)
-	uniform_transform_edit_buttons.mode_changed.connect(_on_uniform_transform_mode_changed)
-	uniform_transform_edit_buttons.flip_horizontal.connect(_flip_svs_horizontal)
-	uniform_transform_edit_buttons.flip_vertical.connect(_flip_svs_vertical)
+	svs_edit_buttons.mode_changed.connect(_on_svs_edit_mode_changed)
+	svs_edit_buttons.flip_horizontal.connect(_flip_svs_horizontal)
+	svs_edit_buttons.flip_vertical.connect(_flip_svs_vertical)
 
 
 func select_node_reversibly(target_node : Node) -> void:
 	if is_instance_valid(target_node):
 		EditorInterface.edit_node(target_node)
-
-
-func _on_merge_node_toggle_button_toggled(toggled_on : bool) -> void:
-	_merge_box_rect.size = Vector2.ZERO
-	if not toggled_on:
-		return
-	pencil_draw_toggle_button.button_pressed = false
-	brush_draw_toggle_button.button_pressed = false
-	var scene_root := EditorInterface.get_edited_scene_root()
-	if is_instance_valid(scene_root):
-		EditorInterface.edit_node(scene_root)
-	update_overlays()
 
 
 func _select_scene_root_when_nothing_is_selected() -> void:
@@ -248,54 +210,35 @@ func _select_scene_root_when_nothing_is_selected() -> void:
 			EditorInterface.edit_node(scene_root)
 
 
-func _on_pencil_draw_toggle_button_toggled(toggled_on : bool) -> void:
-	update_overlays()
-	if not toggled_on:
-		_drawing_pencil_line = false
-		return
-	uniform_transform_edit_buttons.enable()
-	merge_node_toggle_button.button_pressed = false
-	brush_draw_toggle_button.button_pressed = false
-	_select_scene_root_when_nothing_is_selected()
-
-
-func _on_brush_draw_toggle_button_toggled(toggled_on : bool) -> void:
-	update_overlays()
-	if not toggled_on:
-		return
-	uniform_transform_edit_buttons.enable()
-	merge_node_toggle_button.button_pressed = false
-	pencil_draw_toggle_button.button_pressed = false
-	_select_scene_root_when_nothing_is_selected()
-
-
 func _on_select_mode_toggled(toggled_on : bool) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if toggled_on and _is_svs_valid(current_selection):
-		uniform_transform_edit_buttons.enable()
-		merge_node_toggle_button.show()
-		pencil_draw_toggle_button.show()
-		brush_draw_toggle_button.show()
-	elif toggled_on:
-		uniform_transform_edit_buttons.hide()
-		merge_node_toggle_button.show()
-		pencil_draw_toggle_button.show()
-		brush_draw_toggle_button.show()
+		svs_edit_buttons.show()
+		svs_edit_buttons.show_svs_editors()
+		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
+				_svs_edit_mode == SVSEditMode.BRUSH or _svs_edit_mode == SVSEditMode.PENCIL) and
+				not Input.is_key_pressed(KEY_Q)):
+					return
+		svs_edit_buttons.set_default_mode()
+	elif toggled_on and current_selection:
+		svs_edit_buttons.show()
+		svs_edit_buttons.hide_svs_editors()
+		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
+				_svs_edit_mode == SVSEditMode.BRUSH or _svs_edit_mode == SVSEditMode.PENCIL) and
+				not Input.is_key_pressed(KEY_Q)):
+					return
+		svs_edit_buttons.set_default_mode()
 	else:
-		uniform_transform_edit_buttons.hide()
-		merge_node_toggle_button.hide()
-		pencil_draw_toggle_button.hide()
-		brush_draw_toggle_button.hide()
-		pencil_draw_toggle_button.button_pressed = false
-		merge_node_toggle_button.button_pressed = false
-		brush_draw_toggle_button.button_pressed = false
+		svs_edit_buttons.set_default_mode()
+		svs_edit_buttons.hide()
 
 
-func _on_uniform_transform_mode_changed(new_mode : UniformTransformMode) -> void:
-	_uniform_transform_mode = new_mode
-	if new_mode != UniformTransformMode.NONE:
-		pencil_draw_toggle_button.button_pressed = false
-		brush_draw_toggle_button.button_pressed = false
+func _on_svs_edit_mode_changed(new_mode : SVSEditMode) -> void:
+	if _svs_edit_mode == SVSEditMode.MERGE and new_mode != SVSEditMode.MERGE:
+		_merge_box_rect.size = Vector2.ZERO
+	if new_mode != SVSEditMode.PENCIL:
+		_drawing_pencil_line = false
+	_svs_edit_mode = new_mode
 	update_overlays()
 
 
@@ -316,6 +259,7 @@ func _update_brush(via_hotkey := false) -> void:
 	_current_brush_shape = current_brush_curve.tessellate(_get_default_max_stages(), _get_default_tolerance_degrees())
 	if via_hotkey:
 		scalable_vector_shapes_2d_dock.sync_draw_settings()
+
 
 func _on_shape_preview(curve : Curve2D):
 	shape_preview = curve
@@ -1006,7 +950,7 @@ func _draw_outline_for_uniform_transforms(viewport_control : Control, svs : Scal
 		var p := svs.to_global(svs.curve.get_point_position(idx))
 		_draw_crosshair(viewport_control, _vp_transform(p), 2.0, 4.0, Color.WHITE)
 	var natural_center := svs.to_global(svs.get_center())
-	if (_uniform_transform_mode == UniformTransformMode.ROTATE
+	if (_svs_edit_mode == SVSEditMode.ROTATE
 				and _lmb_is_down_inside_viewport
 				and Input.is_key_pressed(KEY_SHIFT)
 	):
@@ -1230,20 +1174,20 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		return
 	if not is_instance_valid(EditorInterface.get_edited_scene_root()):
 		return
-	if merge_node_toggle_button.button_pressed:
+	if _svs_edit_mode == SVSEditMode.MERGE:
 		return _handle_draw_vertex_merge_box(viewport_control)
-	elif pencil_draw_toggle_button.button_pressed:
+	elif _svs_edit_mode == SVSEditMode.PENCIL:
 		return _handle_pencil_draw(viewport_control)
-	elif brush_draw_toggle_button.button_pressed:
+	elif _svs_edit_mode == SVSEditMode.BRUSH:
 		return _handle_brush_draw(viewport_control)
 
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
-		if _uniform_transform_mode == UniformTransformMode.TRANSLATE:
+		if _svs_edit_mode == SVSEditMode.TRANSLATE:
 			return _draw_canvas_for_uniform_translate(viewport_control, current_selection)
-		elif _uniform_transform_mode == UniformTransformMode.SCALE:
+		elif _svs_edit_mode == SVSEditMode.SCALE:
 			return _draw_canvas_for_uniform_scale(viewport_control, current_selection)
-		elif _uniform_transform_mode == UniformTransformMode.ROTATE:
+		elif _svs_edit_mode == SVSEditMode.ROTATE:
 			return _draw_canvas_for_uniform_rotate(viewport_control, current_selection)
 
 	var all_valid_svs_nodes := _find_scalable_vector_shape_2d_nodes().filter(_is_svs_valid)
@@ -1837,6 +1781,7 @@ func _flip_svs_horizontal():
 		undo_redo.add_do_method(svs, 'flip_points')
 		undo_redo.add_undo_method(svs, 'flip_points')
 		undo_redo.commit_action()
+		update_overlays()
 
 
 func _flip_svs_vertical():
@@ -1846,7 +1791,7 @@ func _flip_svs_vertical():
 		undo_redo.add_do_method(svs, 'flip_points', Vector2(1, -1))
 		undo_redo.add_undo_method(svs, 'flip_points', Vector2(1, -1))
 		undo_redo.commit_action()
-
+		update_overlays()
 
 
 func _handle_input_for_uniform_scale(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
@@ -1921,7 +1866,7 @@ func _handle_draw_merge_box_input(event) -> bool:
 			_merge_box_rect.position = _vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position())
 		else:
 			_create_svs_vertex_merge_2d()
-			merge_node_toggle_button.button_pressed = false
+			svs_edit_buttons.set_default_mode()
 			update_overlays()
 			return true
 	if event is InputEventMouseMotion:
@@ -1974,6 +1919,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 				return true
 			if event.is_pressed() and not _drawing_pencil_line:
 				_start_freehand_shape("PencilDrawing", true)
+				_drawing_pencil_line = true
 				return true
 			if not event.is_pressed():
 				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
@@ -1983,12 +1929,23 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs.curve)).undo()
 						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs)).undo()
 						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs)).undo()
-					if _get_close_pencil_path() and svs.curve.point_count > 2:
-						_add_point_to_curve(svs, svs.curve.get_point_position(0))
+					else:
+						var snap = _get_freehand_draw_granularity() if _get_freehand_draw_granularity() > 10.0 else 10.0
+						var pts := svs.tessellate()
+						var segments := BasicFit.prepare_polyline_segments(pts, snap, 180, 180)
+						var new_curve := BasicFit.fit_curve_to_polyline(pts, segments)
+						if not _get_close_pencil_path():
+							new_curve.remove_point(new_curve.point_count-1)
+						undo_redo.create_action("optimize curve")
+						undo_redo.add_do_property(svs, 'curve', new_curve)
+						undo_redo.add_undo_property(svs, 'curve', svs.curve)
+						undo_redo.commit_action()
+
+
 					if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 						select_node_reversibly(current_selection.get_parent())
 					else:
-						pencil_draw_toggle_button.button_pressed = false
+						svs_edit_buttons.set_default_mode(true)
 				update_overlays()
 				_drawing_pencil_line = false
 				return true
@@ -2002,23 +1959,14 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 	return false
 
 
-func _set_curve_from_polygon(svs : ScalableVectorShape2D, poly : PackedVector2Array) -> void:
+func _set_curve_from_polygon(svs : ScalableVectorShape2D, pts : PackedVector2Array) -> void:
 	undo_redo.create_action("reposition to brush start pos %s" % str(svs))
 	undo_redo.add_do_property(svs, 'global_position', _brush_start_pos)
 	undo_redo.add_undo_reference(svs)
 	undo_redo.commit_action()
-	svs.curve.set_block_signals(true)
-	svs.curve.clear_points()
-	svs.curve.add_point(svs.to_local(poly[0]))
-	for i in range(1, poly.size()):
-		var prev_p := poly[i - 1]
-		var p := poly[i]
-		var next_p := poly[i + 1] if i < poly.size() - 1 else poly[0]
-		if not prev_p.direction_to(next_p).is_equal_approx(p.direction_to(next_p)):
-			svs.curve.add_point(svs.to_local(p))
-	svs.curve.add_point(svs.to_local(poly[0]))
-	svs.curve.set_block_signals(false)
-	svs.curve.changed.emit()
+	var poly := PackedVector2Array(Array(pts).map(func(p): return svs.to_local(p)))
+	var fitness_prep := BasicFit.prepare_polyline_segments(poly, 0.5 * (_get_brush_size_x() + _get_brush_size_y()))
+	svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
 
 
 func _handle_brush_draw_input(event : InputEvent) -> bool:
@@ -2044,7 +1992,7 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 				if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 					select_node_reversibly(svs.get_parent())
 				else:
-					brush_draw_toggle_button.button_pressed = false
+					svs_edit_buttons.set_default_mode(true)
 				update_overlays()
 		return true
 	else:
@@ -2147,25 +2095,12 @@ func _lock_vp_scroll():
 
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
-	if (
-		event is InputEventKey and
-		(event as InputEventKey).pressed and
-		_get_select_mode_button().button_pressed
-	):
-		if (event as InputEventKey).keycode == KEY_M:
-			merge_node_toggle_button.button_pressed = not merge_node_toggle_button.button_pressed
-		elif (event as InputEventKey).keycode == KEY_P:
-			pencil_draw_toggle_button.button_pressed = not pencil_draw_toggle_button.button_pressed
-			if not pencil_draw_toggle_button.button_pressed:
-				_drawing_pencil_line = false
-		elif (event as InputEventKey).keycode == KEY_B:
-			brush_draw_toggle_button.button_pressed = not brush_draw_toggle_button.button_pressed
 
-	if merge_node_toggle_button.button_pressed:
+	if _svs_edit_mode == SVSEditMode.MERGE:
 		return _handle_draw_merge_box_input(event)
-	elif pencil_draw_toggle_button.button_pressed:
+	elif _svs_edit_mode == SVSEditMode.PENCIL:
 		return _handle_pencil_draw_input(event)
-	elif brush_draw_toggle_button.button_pressed:
+	elif _svs_edit_mode == SVSEditMode.BRUSH:
 		return _handle_brush_draw_input(event)
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
@@ -2186,11 +2121,11 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return false
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
-		if _uniform_transform_mode == UniformTransformMode.TRANSLATE:
+		if _svs_edit_mode == SVSEditMode.TRANSLATE:
 			return _handle_input_for_uniform_translate(event, current_selection)
-		elif _uniform_transform_mode == UniformTransformMode.SCALE:
+		elif _svs_edit_mode == SVSEditMode.SCALE:
 			return _handle_input_for_uniform_scale(event, current_selection)
-		elif _uniform_transform_mode == UniformTransformMode.ROTATE:
+		elif _svs_edit_mode == SVSEditMode.ROTATE:
 			return _handle_input_for_uniform_rotate(event, current_selection)
 
 	if _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
@@ -2551,10 +2486,7 @@ func _exit_tree():
 	if _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
 		_get_select_mode_button().toggled.disconnect(_on_select_mode_toggled)
 
-	uniform_transform_edit_buttons.queue_free()
-	merge_node_toggle_button.queue_free()
-	pencil_draw_toggle_button.queue_free()
-	brush_draw_toggle_button.queue_free()
+	svs_edit_buttons.queue_free()
 	remove_inspector_plugin(plugin)
 	remove_custom_type("DrawablePath2D")
 	remove_custom_type("ScalableVectorShape2D")
