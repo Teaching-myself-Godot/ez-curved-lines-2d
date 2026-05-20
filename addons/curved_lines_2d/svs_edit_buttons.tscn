@@ -1,0 +1,122 @@
+[gd_scene load_steps=12 format=3 uid="uid://jwgf6ni22kes"]
+
+[ext_resource type="Script" uid="uid://cligefu5bwmld" path="res://addons/curved_lines_2d/svs_edit_buttons.gd" id="1_ui2xk"]
+[ext_resource type="Texture2D" uid="uid://daemvs3ws7fpk" path="res://addons/curved_lines_2d/DefaultMode.svg" id="2_8dhsk"]
+[ext_resource type="Texture2D" uid="uid://chojkn0i6ngam" path="res://addons/curved_lines_2d/UniformTranslate.svg" id="3_ojxsm"]
+[ext_resource type="Texture2D" uid="uid://d1uok4qb3xets" path="res://addons/curved_lines_2d/UniformRotate.svg" id="4_sl6t4"]
+[ext_resource type="Texture2D" uid="uid://do5uut1a4xvqf" path="res://addons/curved_lines_2d/UniformScale.svg" id="5_1qgur"]
+[ext_resource type="Texture2D" uid="uid://dvrgy7r2fvcxk" path="res://addons/curved_lines_2d/FlipHorizontal.svg" id="6_ojxsm"]
+[ext_resource type="Texture2D" uid="uid://dgssn5fp75sqx" path="res://addons/curved_lines_2d/Brush.svg" id="6_rxvdi"]
+[ext_resource type="Texture2D" uid="uid://bxxtceujf66ws" path="res://addons/curved_lines_2d/Pencil.svg" id="7_i6df8"]
+[ext_resource type="Texture2D" uid="uid://ly2rtvkn6ush" path="res://addons/curved_lines_2d/FlipVertical.svg" id="7_sl6t4"]
+[ext_resource type="Texture2D" uid="uid://6mmxldln6pdn" path="res://addons/curved_lines_2d/MergeChain.svg" id="8_fsls0"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_rxvdi"]
+
+[node name="svs_edit_buttons" type="HBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ui2xk")
+
+[node name="DefaultEdit" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Edit the points normally (Q)"
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_rxvdi")
+icon = ExtResource("2_8dhsk")
+flat = true
+
+[node name="Brush" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Resize all the points without resizing the node (C)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_rxvdi")
+icon = ExtResource("6_rxvdi")
+flat = true
+
+[node name="Pencil" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Resize all the points without resizing the node (C)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_rxvdi")
+icon = ExtResource("7_i6df8")
+flat = true
+
+[node name="VSeparator1" type="VSeparator" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="UniformTranslate" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Move all the points without moving the node (Z)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_rxvdi")
+icon = ExtResource("3_ojxsm")
+flat = true
+
+[node name="UniformRotate" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Rotate all the points without rotating the node (X)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_rxvdi")
+icon = ExtResource("4_sl6t4")
+flat = true
+
+[node name="UniformScale" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Resize all the points without resizing the node (C)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_rxvdi")
+icon = ExtResource("5_1qgur")
+flat = true
+
+[node name="VSeparator2" type="VSeparator" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="FlipHorizontal" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Flip Shape Horizontally"
+icon = ExtResource("6_ojxsm")
+flat = true
+
+[node name="FlipVertical" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Flip Shape Vertically"
+icon = ExtResource("7_sl6t4")
+flat = true
+
+[node name="VSeparator3" type="VSeparator" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Merge" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Resize all the points without resizing the node (C)"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_rxvdi")
+icon = ExtResource("8_fsls0")
+flat = true
+
+[connection signal="toggled" from="DefaultEdit" to="." method="_on_default_edit_toggled"]
+[connection signal="toggled" from="Brush" to="." method="_on_brush_toggled"]
+[connection signal="toggled" from="Pencil" to="." method="_on_pencil_toggled"]
+[connection signal="toggled" from="UniformTranslate" to="." method="_on_uniform_translate_toggled"]
+[connection signal="toggled" from="UniformRotate" to="." method="_on_uniform_rotate_toggled"]
+[connection signal="toggled" from="UniformScale" to="." method="_on_uniform_scale_toggled"]
+[connection signal="pressed" from="FlipHorizontal" to="." method="_on_flip_horizontal_pressed"]
+[connection signal="pressed" from="FlipVertical" to="." method="_on_flip_vertical_pressed"]
+[connection signal="toggled" from="Merge" to="." method="_on_merge_toggled"]
