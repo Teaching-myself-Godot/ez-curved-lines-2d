@@ -1,5 +1,17 @@
 # Changelog
 
+
+## 2.22.0
+
+## Added
+
+- Curve fitting algorithm to greatly reduce the number of points after using the polygon brush
+
+## Changed
+
+- Reorganized the 2D editor buttons to make more sense.
+
+
 ## 2.21.3
 
 ### Added

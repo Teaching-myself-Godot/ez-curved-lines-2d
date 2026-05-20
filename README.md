@@ -73,6 +73,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 	- [Sticking two or more shapes together by vertex merge](#sticking-two-or-more-shapes-together-by-vertex-merge)
 - [Free-hand Drawing](#free-hand-drawing)
 	- [Drawing strokes and outlines with the Pencil Tool](#drawing-strokes-and-outlines-with-the-pencil-tool)
+	- [Drawing polygons using the Brush Tool](#drawing-polygons-using-the-brush-tool)
 - [Manipulating 2D Shapes in the 3D export](#manipulating-2d-shapes-in-the-3d-export)
 	- [Animating 3D curves](#animating-3d-curves)
 - [Manipulating gradients](#manipulating-gradients)
@@ -258,6 +259,7 @@ Since release 2.21, free hand drawing tools are being added. Settings for these 
     - edit its points and curve handles (toggling off the current draw mode)
 - Pencil / Outline draw granularity: the distance between points expressed as pixels at the active zoom level of the 2D Editor Viewport
 - Close curve of newly drawn paths
+- Brush shape settings (ellipse or rect, size and rotation)
 
 # The Advanced Tab
 
@@ -508,6 +510,18 @@ Clicking and dragging the mouse draws a line with points of configurable granula
 By holding shift and left-clicking, straight lines can be drawn: 
 
 ![pencil draw straight](./addons/curved_lines_2d/screenshots/pencil-draw-straight.gif)
+
+
+## Drawing polygons using the Brush Tool
+
+Click and drag the mouse to draw polygons.
+
+![the brush tool](./addons/curved_lines_2d/screenshots/brush_tool.gif)
+
+Using the mousewheel you can change the brush shape while holding command keys:
+- `Ctrl/Cmd`: toggle between rect and ellipse
+- `Shift`: increase and decrease brush size
+- `Ctr+Shift`: rotate the brush
 
 
 Configuration options for this tool are described under [The Draw Settings tab](#the-draw-settings-tab)
