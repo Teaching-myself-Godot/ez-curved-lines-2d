@@ -5,7 +5,6 @@ extends Object
 const MAX_ANGLE_INBOUND_TO_OUTBOUND := deg_to_rad(30.0)
 const MAX_CUMULATIVE_ANGLE_PER_SEGMENT := deg_to_rad(90.0)
 
-
 static func prepare_polyline_segments(pts : PackedVector2Array, snap := 10.0,
 		max_ang := MAX_ANGLE_INBOUND_TO_OUTBOUND, max_cum_ang := MAX_CUMULATIVE_ANGLE_PER_SEGMENT) -> Array[int]:
 	if pts.size() < 4:
@@ -47,14 +46,13 @@ static func prepare_polyline_segments(pts : PackedVector2Array, snap := 10.0,
 			and prev_p.distance_to(p) > snap * 4.0
 		)):
 			splits.append(i)
-
 		if i in splits:
 			cumulative_angle = 0.0
 			cumulative_distance = 0.0
 		last_angle = cur_angle
-
 	splits.sort()
 	return splits
+
 
 static func get_speculative_quadratic_control_point(polyline : PackedVector2Array, d : float) -> Vector2:
 	if polyline.size() < 2:
