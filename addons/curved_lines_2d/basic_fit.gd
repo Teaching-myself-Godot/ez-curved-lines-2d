@@ -56,15 +56,6 @@ static func prepare_polyline_segments(pts : PackedVector2Array, snap := 10.0,
 	splits.sort()
 	return splits
 
-
-static func sum_distances(d_sum : Dictionary, point : Vector2) -> Dictionary:
-	var d := point.distance_to(d_sum["prev"])
-	return {
-		"prev": point,
-		"sum": d + d_sum["sum"]
-	}
-
-
 static func get_speculative_quadratic_control_point(polyline : PackedVector2Array, d : float) -> Vector2:
 	if polyline.size() < 2:
 		return polyline[0]
@@ -115,19 +106,18 @@ static func rotate_p1_in(cs1 : Curve2D, unit : float) -> Curve2D:
 
 
 static func fit_curve_segment_to_polyline_segment(segment : PackedVector2Array) -> Curve2D:
-	var d : float = Array(segment).reduce(sum_distances, {"prev": segment[0], "sum": 0.0})["sum"]
+	var d : float = Geometry2DUtil.get_polyline_length(segment)
 	var cs := conjecture_curve_for_polyline(segment, d)
 	var baseline_score := evaluate_curve_for_polyline(cs, segment, d)
-	var tm := Time.get_ticks_msec()
 	var lambdas : Array[Callable] = [
 		rotate_p0_out, rotate_p0_out, rotate_p1_in,  rotate_p1_in
 	]
 	var lambda_idx : int = 0
 	var unit : float = 3.0
-	var sample_count = 1
 	var best := baseline_score
 	var score_before := baseline_score
 	var best_fit := cs.duplicate()
+
 	while unit > 0.05 and baseline_score > 0.3:
 		var cs1 := lambdas[lambda_idx].call(cs, unit)
 		var cs2 := lambdas[lambda_idx].call(cs, -unit)
@@ -145,7 +135,6 @@ static func fit_curve_segment_to_polyline_segment(segment : PackedVector2Array) 
 				lambda_idx = 0
 			else:
 				lambda_idx += 1
-		sample_count += 1
 		if baseline_score < best:
 			best_fit = cs.duplicate()
 			best = baseline_score

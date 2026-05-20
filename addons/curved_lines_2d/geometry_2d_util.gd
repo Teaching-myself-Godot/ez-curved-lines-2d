@@ -211,6 +211,13 @@ static func get_point_on_bezier_at_ratio(c : Curve2D, ratio : float, max_stages 
 	return get_point_on_polyline_at_ratio(pts, ratio, tot_d)
 
 
+static func get_polyline_length(pts : PackedVector2Array) -> float:
+	var d := 0.0
+	for i in range(1, pts.size()):
+		d += pts[i-1].distance_to(pts[i])
+	return d
+
+
 static func get_point_on_polyline_at_ratio(pts : PackedVector2Array, ratio : float, tot_d : float) -> Vector2:
 	var d := 0.0
 	var p1 := pts[0]
