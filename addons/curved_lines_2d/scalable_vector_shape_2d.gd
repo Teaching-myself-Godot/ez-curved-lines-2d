@@ -1106,16 +1106,28 @@ func is_arc_start(p_idx) -> bool:
 	return  arc_list.get_arc_for_point(p_idx) != null
 
 
-func _get_closest_point_on_curve_segment(p : Vector2, segment_p1_idx : int) -> Vector2:
+func _get_tessellated_curve_segment(segment_p1_idx : int) -> PackedVector2Array:
 	var arc := arc_list.get_arc_for_point(segment_p1_idx)
 	var seg := _get_curve_segment(segment_p1_idx)
-	var poly_points := (
+	return (
 			tessellate_arc_segment(seg.get_point_position(0), arc.radius, arc.rotation_deg,
 				arc.large_arc_flag, arc.sweep_flag, seg.get_point_position(1))
 		if arc else
 			seg.tessellate(max_stages, tolerance_degrees)
 	)
-	return Geometry2DUtil.get_closest_point_on_polyline(p, poly_points)
+
+
+func _get_closest_point_on_curve_segment(p : Vector2, segment_p1_idx : int) -> Vector2:
+	return Geometry2DUtil.get_closest_point_on_polyline(
+			p, _get_tessellated_curve_segment(segment_p1_idx)
+	)
+
+
+func get_curve_segment_rotation(p : Vector2, segment_p1_idx : int) -> float:
+	var poly_points := _get_tessellated_curve_segment(segment_p1_idx - 1)
+	return Geometry2DUtil.get_rotation_of_polyline_segment_at_point(
+			p, poly_points
+	)
 
 
 func get_closest_point_on_curve(global_pos : Vector2) -> ClosestPointOnCurveMeta:

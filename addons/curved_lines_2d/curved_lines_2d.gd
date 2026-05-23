@@ -858,6 +858,14 @@ func _draw_crosshair(viewport_control : Control, p : Vector2, orbit := 2.0, oute
 	viewport_control.draw_line(p - line_len * Vector2.LEFT, p - orbit * Vector2.LEFT, color, width)
 
 
+func _draw_line_resize_icon(viewport_control : Control, p : Vector2, segment_rotation : float) -> void:
+	viewport_control.draw_polygon(PackedVector2Array(
+			[14 * Vector2.UP, Vector2(10, -4), Vector2(-10, -4)].map(
+					func(p1 : Vector2): return p + p1.rotated(segment_rotation)
+			)
+	), [Color.WHITE])
+
+
 func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2D, only_cutout_hints : bool) -> void:
 	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if _is_snapped_to_pixel():
@@ -904,9 +912,9 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 
 
 func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
-	if _is_ctrl_or_cmd_pressed() or Input.is_key_pressed(KEY_SHIFT):
-		_draw_add_point_hint(viewport_control, svs, false)
-		return
+	#if _is_ctrl_or_cmd_pressed() or Input.is_key_pressed(KEY_SHIFT):
+		#_draw_add_point_hint(viewport_control, svs, false)
+		#return
 
 	if svs.has_meta(META_NAME_HOVER_CLOSEST_POINT):
 		var hint := ""
@@ -925,15 +933,24 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 		else:
 			if Input.is_key_pressed(KEY_ALT):
 				_draw_crosshair(viewport_control, _vp_transform(svs.to_global(svs.get_curve_segment_halfway_point(md_p.before_segment))), 3.0, 8, Color.ANTIQUE_WHITE, 2)
+			elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line):
+				_draw_line_resize_icon(viewport_control, _vp_transform(md_p.point_position),
+						svs.global_rotation + svs.get_curve_segment_rotation(
+								svs.to_local(md_p.point_position), md_p.before_segment)
+				)
 			else:
 				_draw_crosshair(viewport_control, _vp_transform(md_p.point_position))
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 				if svs.curve.point_count > 1:
 					if Input.is_key_pressed(KEY_ALT):
 						hint += "\n- Left Click to add point halfway the line (Alt held)"
+					elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line):
+						hint += "\n- Use mousewheel to thin/thicken the stroke line (Ctrl held)"
 					else:
 						hint = "- Double click to add point on the line"
 						hint += "\n- Alt + Click to add point halfway the line"
+						if is_instance_valid(svs.line):
+							hint += "\n- Use Ctrl+mousewheel to thin/thicken the stroke Line2D"
 						if md_p.before_segment < svs.curve.point_count:
 							hint += "\n- Drag to change curve"
 							hint += "\n- Right click to convert line segment to arc"
@@ -1511,6 +1528,10 @@ func _set_shape_origin(current_selection : ScalableVectorShape2D, mouse_pos : Ve
 
 func _get_curve_backup(curve_in : Curve2D) -> Curve2D:
 	return curve_in.duplicate()
+
+
+func _change_width_curve(svs : ScalableVectorShape2D, make_thicker : bool) -> void:
+	print("TODO: make ", ("thicker" if make_thicker else "thinner"))
 
 
 func _resize_shape(svs : ScalableVectorShape2D, s : float) -> void:
@@ -2128,7 +2149,10 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		elif _svs_edit_mode == SVSEditMode.ROTATE:
 			return _handle_input_for_uniform_rotate(event, current_selection)
 
-	if _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
+	if ((_is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT))
+			or
+		(_is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and current_selection.has_meta(META_NAME_HOVER_CLOSEST_POINT))
+	):
 		_lock_vp_scroll()
 	else:
 		_locking_vp_horizontal_scrollbar = false
@@ -2251,6 +2275,12 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				_resize_shape(current_selection, 1.01)
 			return true
 
+	if (event is InputEventMouseButton and _is_ctrl_or_cmd_pressed() and
+				_is_svs_valid(current_selection) and
+				current_selection.has_meta(META_NAME_HOVER_CLOSEST_POINT) and
+				event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]):
+		_change_width_curve(current_selection, event.button_index == MOUSE_BUTTON_WHEEL_UP)
+		return true
 
 	if event is InputEventMouseMotion:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
