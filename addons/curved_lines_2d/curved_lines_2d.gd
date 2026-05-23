@@ -858,12 +858,18 @@ func _draw_crosshair(viewport_control : Control, p : Vector2, orbit := 2.0, oute
 	viewport_control.draw_line(p - line_len * Vector2.LEFT, p - orbit * Vector2.LEFT, color, width)
 
 
-func _draw_line_resize_icon(viewport_control : Control, p : Vector2, segment_rotation : float) -> void:
-	viewport_control.draw_polygon(PackedVector2Array(
-			[14 * Vector2.UP, Vector2(10, -4), Vector2(-10, -4)].map(
-					func(p1 : Vector2): return p + p1.rotated(segment_rotation)
-			)
-	), [Color.WHITE])
+func _draw_change_width_curve_icon(viewport_control : Control, p : Vector2, segment_rotation : float,
+		line_width := 8.0) -> void:
+	var triangle := [14 * Vector2.UP, Vector2(10, -(line_width * 0.5)), Vector2(-10, -(line_width * 0.5))].map(
+			func(p1 : Vector2): return p + p1.rotated(segment_rotation)
+	)
+	var triangle2 := [14 * Vector2.UP, Vector2(10, -(line_width * 0.5)), Vector2(-10, -(line_width * 0.5))].map(
+			func(p1 : Vector2): return p + p1.rotated(segment_rotation + PI)
+	)
+	viewport_control.draw_polygon(Geometry2D.offset_polygon(triangle, 0.5)[0], [Color.BLACK])
+	viewport_control.draw_polygon(triangle, [Color.WHITE])
+	viewport_control.draw_polygon(Geometry2D.offset_polygon(triangle2, 0.5)[0], [Color.BLACK])
+	viewport_control.draw_polygon(triangle2, [Color.WHITE])
 
 
 func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2D, only_cutout_hints : bool) -> void:
@@ -934,9 +940,9 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 			if Input.is_key_pressed(KEY_ALT):
 				_draw_crosshair(viewport_control, _vp_transform(svs.to_global(svs.get_curve_segment_halfway_point(md_p.before_segment))), 3.0, 8, Color.ANTIQUE_WHITE, 2)
 			elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line):
-				_draw_line_resize_icon(viewport_control, _vp_transform(md_p.point_position),
+				_draw_change_width_curve_icon(viewport_control, _vp_transform(md_p.point_position),
 						svs.global_rotation + svs.get_curve_segment_rotation(
-								svs.to_local(md_p.point_position), md_p.before_segment)
+								md_p.local_point_position, md_p.before_segment)
 				)
 			else:
 				_draw_crosshair(viewport_control, _vp_transform(md_p.point_position))
@@ -1531,7 +1537,40 @@ func _get_curve_backup(curve_in : Curve2D) -> Curve2D:
 
 
 func _change_width_curve(svs : ScalableVectorShape2D, make_thicker : bool) -> void:
-	print("TODO: make ", ("thicker" if make_thicker else "thinner"))
+	if not is_instance_valid(svs.line):
+		return
+	var md_p : ClosestPointOnCurveMeta = svs.get_meta(META_NAME_HOVER_CLOSEST_POINT)
+	var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
+			md_p.local_point_position, svs.curve, svs.max_stages, svs.tolerance_degrees
+	)
+	var width_curve := Curve.new()
+	if svs.line.width_curve == null:
+		width_curve.add_point(Vector2(0, 1.0))
+		width_curve.add_point(Vector2(1.0, 1.0))
+	else:
+		var p_added := false
+		var new_width_at_point := (
+				svs.line.width_curve.sample(progress_ratio) + 0.05
+					if make_thicker else
+				svs.line.width_curve.sample(progress_ratio) - 0.05
+		)
+		if new_width_at_point < 0.0:
+			new_width_at_point = 0.0
+		for i in svs.line.width_curve.point_count:
+			var p := svs.line.width_curve.get_point_position(i)
+			if p.x < progress_ratio:
+				width_curve.add_point(p)
+			elif not p_added:
+				p_added = true
+				width_curve.add_point(Vector2(progress_ratio, new_width_at_point))
+		if not p_added:
+			width_curve.add_point(Vector2(progress_ratio, new_width_at_point))
+	if svs.is_curve_closed():
+		width_curve.set_point_value(0, width_curve.sample(1.0))
+	undo_redo.create_action("Edit width curve: %s " % str(svs))
+	undo_redo.add_do_property(svs.line, 'width_curve', width_curve)
+	undo_redo.add_undo_property(svs.line, 'width_curve', svs.line.width_curve.duplicate(true) if svs.line.width_curve else null)
+	undo_redo.commit_action()
 
 
 func _resize_shape(svs : ScalableVectorShape2D, s : float) -> void:
