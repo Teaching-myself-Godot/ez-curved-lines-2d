@@ -944,6 +944,14 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 						svs.global_rotation + svs.get_curve_segment_rotation(
 								md_p.local_point_position, md_p.before_segment)
 				)
+				if svs.line.width_curve:
+					for i in svs.line.width_curve.point_count:
+						var p := svs.line.width_curve.get_point_position(i)
+						_draw_crosshair(viewport_control, _vp_transform(svs.to_global(
+								Geometry2DUtil.get_point_on_bezier_at_ratio(
+									svs.curve, p.x, svs.max_stages, svs.tolerance_degrees
+								))), 5.0, 13.0, Color.GREEN_YELLOW, 2
+						)
 			else:
 				_draw_crosshair(viewport_control, _vp_transform(md_p.point_position))
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
@@ -1548,6 +1556,7 @@ func _change_width_curve(svs : ScalableVectorShape2D, make_thicker : bool) -> vo
 		width_curve.add_point(Vector2(0, 1.0))
 		width_curve.add_point(Vector2(1.0, 1.0))
 	else:
+		width_curve = svs.line.width_curve.duplicate(true)
 		var p_added := false
 		var new_width_at_point := (
 				svs.line.width_curve.sample(progress_ratio) + 0.05
@@ -1556,15 +1565,8 @@ func _change_width_curve(svs : ScalableVectorShape2D, make_thicker : bool) -> vo
 		)
 		if new_width_at_point < 0.0:
 			new_width_at_point = 0.0
-		for i in svs.line.width_curve.point_count:
-			var p := svs.line.width_curve.get_point_position(i)
-			if p.x < progress_ratio:
-				width_curve.add_point(p)
-			elif not p_added:
-				p_added = true
-				width_curve.add_point(Vector2(progress_ratio, new_width_at_point))
-		if not p_added:
-			width_curve.add_point(Vector2(progress_ratio, new_width_at_point))
+		width_curve.add_point(Vector2(progress_ratio, new_width_at_point))
+
 	if svs.is_curve_closed():
 		width_curve.set_point_value(0, width_curve.sample(1.0))
 	undo_redo.create_action("Edit width curve: %s " % str(svs))
