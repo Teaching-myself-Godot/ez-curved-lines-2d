@@ -1142,7 +1142,10 @@ func get_closest_point_on_curve(global_pos : Vector2) -> ClosestPointOnCurveMeta
 		if p.distance_to(c_p) < p.distance_to(closest_result):
 			closest_result = c_p
 			before_segment = i + 1
-	return ClosestPointOnCurveMeta.new(before_segment, to_global(closest_result), closest_result)
+	return ClosestPointOnCurveMeta.new(
+			before_segment, to_global(closest_result), closest_result,
+			global_rotation + get_curve_segment_rotation(p, before_segment)
+	)
 
 
 func get_sliced_curve_segment(before_segment : int, point_position : Vector2) -> Curve2D:

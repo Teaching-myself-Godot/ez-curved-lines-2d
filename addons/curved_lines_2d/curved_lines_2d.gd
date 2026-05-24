@@ -48,6 +48,7 @@ const META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE := "_hover_closest_point_on
 const META_NAME_SELECT_HINT := "_select_hint_"
 
 const VIEWPORT_ORANGE := Color(0.737, 0.463, 0.337)
+const WIDTH_CURVE_EDIT_CLAMP_DISTANCE := 25.0
 
 enum KeepDrawingBehavior {
 	KEEP_DRAWING_ON_SAME_PARENT,
@@ -940,18 +941,22 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 			if Input.is_key_pressed(KEY_ALT):
 				_draw_crosshair(viewport_control, _vp_transform(svs.to_global(svs.get_curve_segment_halfway_point(md_p.before_segment))), 3.0, 8, Color.ANTIQUE_WHITE, 2)
 			elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line):
-				_draw_change_width_curve_icon(viewport_control, _vp_transform(md_p.point_position),
-						svs.global_rotation + svs.get_curve_segment_rotation(
-								md_p.local_point_position, md_p.before_segment)
-				)
+				var clamped_to_existing := false
 				if svs.line.width_curve:
 					for i in svs.line.width_curve.point_count:
 						var p := svs.line.width_curve.get_point_position(i)
-						_draw_crosshair(viewport_control, _vp_transform(svs.to_global(
-								Geometry2DUtil.get_point_on_bezier_at_ratio(
+						var cp := svs.get_closest_point_on_curve(
+							svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
 									svs.curve, p.x, svs.max_stages, svs.tolerance_degrees
-								))), 5.0, 13.0, Color.GREEN_YELLOW, 2
-						)
+						)))
+						_draw_change_width_curve_icon(viewport_control, _vp_transform(cp.point_position), cp.segment_rotation)
+						if _vp_transform(cp.point_position).distance_to(_vp_transform(md_p.point_position)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
+							clamped_to_existing = true
+				if not clamped_to_existing:
+					_draw_change_width_curve_icon(viewport_control,
+							_vp_transform(md_p.point_position),
+							md_p.segment_rotation
+					)
 			else:
 				_draw_crosshair(viewport_control, _vp_transform(md_p.point_position))
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
@@ -1553,22 +1558,36 @@ func _change_width_curve(svs : ScalableVectorShape2D, make_thicker : bool) -> vo
 	)
 	var width_curve := Curve.new()
 	if svs.line.width_curve == null:
-		width_curve.add_point(Vector2(0, 1.0))
-		width_curve.add_point(Vector2(1.0, 1.0))
+		width_curve.add_point(Vector2(progress_ratio, 1.0))
 	else:
 		width_curve = svs.line.width_curve.duplicate(true)
-		var p_added := false
-		var new_width_at_point := (
-				svs.line.width_curve.sample(progress_ratio) + 0.05
-					if make_thicker else
-				svs.line.width_curve.sample(progress_ratio) - 0.05
-		)
-		if new_width_at_point < 0.0:
-			new_width_at_point = 0.0
-		width_curve.add_point(Vector2(progress_ratio, new_width_at_point))
-
-	if svs.is_curve_closed():
-		width_curve.set_point_value(0, width_curve.sample(1.0))
+		width_curve.max_value = 2.0
+		var clamped_to_existing := -1
+		for i in width_curve.point_count:
+			var p := width_curve.get_point_position(i)
+			var cp := svs.get_closest_point_on_curve(
+				svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
+						svs.curve, p.x, svs.max_stages, svs.tolerance_degrees
+			)))
+			if _vp_transform(cp.point_position).distance_to(_vp_transform(md_p.point_position)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
+				clamped_to_existing = i
+				break
+		if clamped_to_existing > -1:
+			var new_value := (
+				width_curve.get_point_position(clamped_to_existing).y +
+					(0.1 if make_thicker else -0.1)
+			)
+			if new_value < 0.0:
+				new_value = 0.0
+			width_curve.set_point_value(clamped_to_existing, new_value)
+		else:
+			var new_value := (
+					width_curve.sample(progress_ratio) +
+						(0.1 if make_thicker else -0.1)
+			)
+			if new_value < 0.0:
+				new_value = 0.0
+			width_curve.add_point(Vector2(progress_ratio, new_value))
 	undo_redo.create_action("Edit width curve: %s " % str(svs))
 	undo_redo.add_do_property(svs.line, 'width_curve', width_curve)
 	undo_redo.add_undo_property(svs.line, 'width_curve', svs.line.width_curve.duplicate(true) if svs.line.width_curve else null)
