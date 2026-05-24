@@ -938,10 +938,10 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 			hint = "- Left click to open arc settings"
 			hint += "\n- Right click to remove arc (straighten this line segment)"
 		else:
+			var clamped_to_existing := false
 			if Input.is_key_pressed(KEY_ALT):
 				_draw_crosshair(viewport_control, _vp_transform(svs.to_global(svs.get_curve_segment_halfway_point(md_p.before_segment))), 3.0, 8, Color.ANTIQUE_WHITE, 2)
 			elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line):
-				var clamped_to_existing := false
 				if svs.line.width_curve:
 					for i in svs.line.width_curve.point_count:
 						var p := svs.line.width_curve.get_point_position(i)
@@ -953,7 +953,7 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 							clamped_to_existing = true
 							_draw_change_width_curve_icon(viewport_control, _vp_transform(cp.point_position), cp.segment_rotation)
 						else:
-							_draw_change_width_curve_icon(viewport_control, _vp_transform(cp.point_position), cp.segment_rotation, Color.GRAY)
+							_draw_change_width_curve_icon(viewport_control, _vp_transform(cp.point_position), cp.segment_rotation, Color.DIM_GRAY)
 				if not clamped_to_existing:
 					_draw_change_width_curve_icon(viewport_control,
 							_vp_transform(md_p.point_position),
@@ -967,6 +967,8 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 						hint += "\n- Left Click to add point halfway the line (Alt held)"
 					elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line):
 						hint += "\n- Use mousewheel to thin/thicken the stroke line (Ctrl held)"
+						if clamped_to_existing:
+							hint += "\n- Right click to remove this width curve control point (Ctrl held)"
 					else:
 						hint = "- Double click to add point on the line"
 						hint += "\n- Alt + Click to add point halfway the line"
@@ -1549,6 +1551,34 @@ func _set_shape_origin(current_selection : ScalableVectorShape2D, mouse_pos : Ve
 
 func _get_curve_backup(curve_in : Curve2D) -> Curve2D:
 	return curve_in.duplicate()
+
+
+func _remove_width_curve_point(svs : ScalableVectorShape2D) -> void:
+	if not is_instance_valid(svs.line):
+		return
+	if svs.line.width_curve == null:
+		return
+	var md_p : ClosestPointOnCurveMeta = svs.get_meta(META_NAME_HOVER_CLOSEST_POINT)
+	var clamped_to_existing := -1
+	for i in svs.line.width_curve.point_count:
+		var p := svs.line.width_curve.get_point_position(i)
+		var cp := svs.get_closest_point_on_curve(
+			svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
+					svs.curve, p.x, svs.max_stages, svs.tolerance_degrees
+		)))
+		if _vp_transform(cp.point_position).distance_to(_vp_transform(md_p.point_position)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
+			clamped_to_existing = i
+			break
+	if clamped_to_existing < 0:
+		return
+	var width_curve : Curve = svs.line.width_curve.duplicate(true)
+	width_curve.remove_point(clamped_to_existing)
+	if width_curve.point_count == 0:
+		width_curve = null
+	undo_redo.create_action("remove width curve handle: " + str(svs))
+	undo_redo.add_do_property(svs.line, 'width_curve', width_curve)
+	undo_redo.add_undo_property(svs.line, 'width_curve', svs.line.width_curve.duplicate(true) if svs.line.width_curve else null)
+	undo_redo.commit_action()
 
 
 func _change_width_curve(svs : ScalableVectorShape2D, make_thicker : bool) -> void:
@@ -2297,7 +2327,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				current_clip_operation = 0 if current_clip_operation > 2 else current_clip_operation
 			return true
 		if _is_svs_valid(current_selection) and _handle_has_hover(current_selection):
-			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) and not _is_ctrl_or_cmd_pressed():
 				if current_selection.has_meta(META_NAME_HOVER_POINT_IDX) and current_selection.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 					_remove_point_from_curve(current_selection, current_selection.get_meta(META_NAME_HOVER_POINT_IDX))
 				elif current_selection.has_meta(META_NAME_HOVER_CP_IN_IDX):
@@ -2315,11 +2345,14 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			return true
 		if _is_svs_valid(current_selection) and current_selection.has_meta(META_NAME_HOVER_CLOSEST_POINT) and not _handle_has_hover(current_selection):
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
-				var cp_md = current_selection.get_meta(META_NAME_HOVER_CLOSEST_POINT)
-				if current_selection.is_arc_start(cp_md.before_segment - 1):
-					_remove_arc(current_selection, cp_md.before_segment - 1)
+				if _is_ctrl_or_cmd_pressed():
+					_remove_width_curve_point(current_selection)
 				else:
-					_create_arc(current_selection, cp_md.before_segment - 1)
+					var cp_md = current_selection.get_meta(META_NAME_HOVER_CLOSEST_POINT)
+					if current_selection.is_arc_start(cp_md.before_segment - 1):
+						_remove_arc(current_selection, cp_md.before_segment - 1)
+					else:
+						_create_arc(current_selection, cp_md.before_segment - 1)
 			return true
 
 	if (event is InputEventMouseButton and Input.is_key_pressed(KEY_SHIFT) and
