@@ -860,17 +860,17 @@ func _draw_crosshair(viewport_control : Control, p : Vector2, orbit := 2.0, oute
 
 
 func _draw_change_width_curve_icon(viewport_control : Control, p : Vector2, segment_rotation : float,
-		line_width := 8.0) -> void:
-	var triangle := [14 * Vector2.UP, Vector2(10, -(line_width * 0.5)), Vector2(-10, -(line_width * 0.5))].map(
+		fill_color := Color.WHITE) -> void:
+	var triangle := [14 * Vector2.UP, Vector2(10, -4), Vector2(-10, -4)].map(
 			func(p1 : Vector2): return p + p1.rotated(segment_rotation)
 	)
-	var triangle2 := [14 * Vector2.UP, Vector2(10, -(line_width * 0.5)), Vector2(-10, -(line_width * 0.5))].map(
+	var triangle2 := [14 * Vector2.UP, Vector2(10, -4), Vector2(-10, -4)].map(
 			func(p1 : Vector2): return p + p1.rotated(segment_rotation + PI)
 	)
 	viewport_control.draw_polygon(Geometry2D.offset_polygon(triangle, 0.5)[0], [Color.BLACK])
-	viewport_control.draw_polygon(triangle, [Color.WHITE])
+	viewport_control.draw_polygon(triangle, [fill_color])
 	viewport_control.draw_polygon(Geometry2D.offset_polygon(triangle2, 0.5)[0], [Color.BLACK])
-	viewport_control.draw_polygon(triangle2, [Color.WHITE])
+	viewport_control.draw_polygon(triangle2, [fill_color])
 
 
 func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2D, only_cutout_hints : bool) -> void:
@@ -949,9 +949,11 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 							svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
 									svs.curve, p.x, svs.max_stages, svs.tolerance_degrees
 						)))
-						_draw_change_width_curve_icon(viewport_control, _vp_transform(cp.point_position), cp.segment_rotation)
 						if _vp_transform(cp.point_position).distance_to(_vp_transform(md_p.point_position)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
 							clamped_to_existing = true
+							_draw_change_width_curve_icon(viewport_control, _vp_transform(cp.point_position), cp.segment_rotation)
+						else:
+							_draw_change_width_curve_icon(viewport_control, _vp_transform(cp.point_position), cp.segment_rotation, Color.GRAY)
 				if not clamped_to_existing:
 					_draw_change_width_curve_icon(viewport_control,
 							_vp_transform(md_p.point_position),
