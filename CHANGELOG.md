@@ -1,13 +1,20 @@
 # Changelog
 
 
+## 2.23.0
+
+### Added
+
+- Width curve edit with ctrl+mousewheel for `Line2D` strokes
+
+
 ## 2.22.0
 
-## Added
+### Added
 
 - Curve fitting algorithm to greatly reduce the number of points after using the polygon brush
 
-## Changed
+### Changed
 
 - Reorganized the 2D editor buttons to make more sense.
 
