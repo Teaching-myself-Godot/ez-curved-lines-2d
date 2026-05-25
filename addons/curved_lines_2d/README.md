@@ -69,6 +69,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
     - [Cutting out an empty shape](#cutting-out-an-empty-shape)
   - [Converting a line segment into an arc-segment](#converting-a-line-segment-into-an-arc-segment)
   - [Editing arc properties](#editing-arc-properties)
+  - [Changing the width curve of a Stroke (`Line2D`-Stroke only)](#changing-the-width-curve-of-a-stroke-line2d-stroke-only)
   - [Setting the pivot of your shape](#setting-the-pivot-of-your-shape)
   - [Sticking two or more shapes together by vertex merge](#sticking-two-or-more-shapes-together-by-vertex-merge)
 - [Free-hand Drawing](#free-hand-drawing)
@@ -466,6 +467,17 @@ Using `Left click` on an arc segment opens a popup form to edit the properties o
 
 
 [^3]: Arcs are implemented the same way as specified by the [w3c for scalable vecor graphics](https://www.w3.org/TR/SVG/paths.html#PathDataEllipticalArcCommands).
+
+
+## Changing the width curve of a Stroke (`Line2D`-Stroke only)
+
+Hold `Ctrl+Mousehweel` while hovering over a stroke to change the width. This changes the `ScalableVectorShape2D.line.width_curve` `property
+
+![width curve edit](./screenshots/width_curve_edit.gif)
+
+Press `Right click` while holding `Ctrl` to remove a width curve control point:
+
+![width curve point remove ](./screenshots/width_curve_pt_remove.gif)
 
 ## Setting the pivot of your shape
 

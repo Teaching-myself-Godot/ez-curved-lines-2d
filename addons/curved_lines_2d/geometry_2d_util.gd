@@ -160,6 +160,20 @@ static func is_point_on_segment(p : Vector2, s1 : Vector2, s2: Vector2) -> bool:
 	return Geometry2D.segment_intersects_circle(s1, s2, p, 0.01) > -1
 
 
+static func get_rotation_of_polyline_segment_at_point(p : Vector2, poly_points : PackedVector2Array) -> float:
+	var closest_result := Vector2.INF
+	var segment_idx := 0
+	for i in range(1, poly_points.size()):
+		var p_a := poly_points[i - 1]
+		var p_b := poly_points[i]
+		var c_p := Geometry2D.get_closest_point_to_segment(p, p_a, p_b)
+
+		if p.distance_to(c_p) < p.distance_to(closest_result):
+			closest_result = c_p
+			segment_idx = i - 1
+	return poly_points[segment_idx].angle_to_point(poly_points[segment_idx + 1])
+
+
 static func get_closest_point_on_polyline(p : Vector2, poly_points : PackedVector2Array) -> Vector2:
 	var closest_result := Vector2.INF
 	for i in range(1, poly_points.size()):
