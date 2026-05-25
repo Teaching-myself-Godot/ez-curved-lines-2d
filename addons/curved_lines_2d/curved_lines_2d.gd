@@ -137,26 +137,26 @@ var _brush_start_pos := Vector2.ZERO
 var _last_brush_pos := Vector2.ZERO
 
 func _enter_tree():
-	scalable_vector_shapes_2d_dock = preload("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
-	plugin = preload("res://addons/curved_lines_2d/line_2d_generator_inspector_plugin.gd").new()
+	scalable_vector_shapes_2d_dock = load("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
+	plugin = load("res://addons/curved_lines_2d/line_2d_generator_inspector_plugin.gd").new()
 	add_inspector_plugin(plugin)
 	add_custom_type(
 		"DrawablePath2D",
 		"Path2D",
-		preload("res://addons/curved_lines_2d/drawable_path_2d.gd"),
-		preload("res://addons/curved_lines_2d/DrawablePath2D.svg")
+		load("res://addons/curved_lines_2d/drawable_path_2d.gd"),
+		load("res://addons/curved_lines_2d/DrawablePath2D.svg")
 	)
 	add_custom_type(
 		"ScalableVectorShape2D",
 		"Node2D",
-		preload("res://addons/curved_lines_2d/scalable_vector_shape_2d.gd"),
-		preload("res://addons/curved_lines_2d/DrawablePath2D.svg")
+		load("res://addons/curved_lines_2d/scalable_vector_shape_2d.gd"),
+		load("res://addons/curved_lines_2d/DrawablePath2D.svg")
 	)
 	add_custom_type(
 		"AdaptableVectorShape3D",
 		"Node3D",
-		preload("res://addons/curved_lines_2d/adaptable_vector_shape_3d.gd"),
-		preload("res://addons/curved_lines_2d/AdaptableVectorShape3D.svg")
+		load("res://addons/curved_lines_2d/adaptable_vector_shape_3d.gd"),
+		load("res://addons/curved_lines_2d/AdaptableVectorShape3D.svg")
 	)
 	undo_redo = get_undo_redo()
 	add_control_to_bottom_panel(scalable_vector_shapes_2d_dock as Control, "Scalable Vector Shapes 2D")
@@ -164,8 +164,8 @@ func _enter_tree():
 	undo_redo.version_changed.connect(update_overlays)
 	make_bottom_panel_item_visible(scalable_vector_shapes_2d_dock)
 
-	set_global_position_popup_panel = preload("res://addons/curved_lines_2d/set_global_position_popup_panel.tscn").instantiate()
-	arc_settings_popup_panel = preload("res://addons/curved_lines_2d/arc_settings_popup_panel.tscn").instantiate()
+	set_global_position_popup_panel = load("res://addons/curved_lines_2d/set_global_position_popup_panel.tscn").instantiate()
+	arc_settings_popup_panel = load("res://addons/curved_lines_2d/arc_settings_popup_panel.tscn").instantiate()
 	EditorInterface.get_base_control().add_child(set_global_position_popup_panel)
 	EditorInterface.get_base_control().add_child(arc_settings_popup_panel)
 	if not set_global_position_popup_panel.value_changed.is_connected(_on_global_position_for_handle_changed):
@@ -919,10 +919,6 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 
 
 func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
-	#if _is_ctrl_or_cmd_pressed() or Input.is_key_pressed(KEY_SHIFT):
-		#_draw_add_point_hint(viewport_control, svs, false)
-		#return
-
 	if svs.has_meta(META_NAME_HOVER_CLOSEST_POINT):
 		var hint := ""
 		var md_p : ClosestPointOnCurveMeta = svs.get_meta(META_NAME_HOVER_CLOSEST_POINT)
