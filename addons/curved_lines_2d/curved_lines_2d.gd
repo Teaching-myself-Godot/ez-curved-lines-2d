@@ -941,7 +941,7 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 			var clamped_to_existing := false
 			if Input.is_key_pressed(KEY_ALT):
 				_draw_crosshair(viewport_control, _vp_transform(svs.to_global(svs.get_curve_segment_halfway_point(md_p.before_segment))), 3.0, 8, Color.ANTIQUE_WHITE, 2)
-			elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line):
+			elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line) and md_p.before_segment < svs.curve.point_count:
 				if svs.line.width_curve:
 					for i in svs.line.width_curve.point_count:
 						var p := svs.line.width_curve.get_point_position(i)
@@ -1209,6 +1209,14 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 		_draw_curve(viewport_control, sel)
 
 
+func _is_editing_width_curve(svs : ScalableVectorShape2D) -> bool:
+	return (
+			_is_ctrl_or_cmd_pressed() and
+			svs.has_meta(META_NAME_HOVER_CLOSEST_POINT) and
+			is_instance_valid(svs.line)
+	)
+
+
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 	if not _is_editing_enabled():
 		return
@@ -1236,8 +1244,9 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 			viewport_control.draw_polyline(result.get_bounding_box().map(_vp_transform),
 					VIEWPORT_ORANGE, 2.0)
 			_draw_curve(viewport_control, result)
-			_draw_handles(viewport_control, result)
-			if not _handle_has_hover(result):
+			if not _is_editing_width_curve(result):
+				_draw_handles(viewport_control, result)
+			if (not _handle_has_hover(result)) or _is_ctrl_or_cmd_pressed():
 				if result.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 					if result.has_meta(META_NAME_HOVER_CLOSEST_POINT):
 						_draw_closest_point_on_curve(viewport_control, result)
@@ -1585,9 +1594,12 @@ func _change_width_curve(svs : ScalableVectorShape2D, make_thicker : bool) -> vo
 	if not is_instance_valid(svs.line):
 		return
 	var md_p : ClosestPointOnCurveMeta = svs.get_meta(META_NAME_HOVER_CLOSEST_POINT)
+	if md_p.before_segment >= svs.curve.point_count:
+		return
 	var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
 			md_p.local_point_position, svs.curve, svs.max_stages, svs.tolerance_degrees
 	)
+
 	var width_curve := Curve.new()
 	if svs.line.width_curve == null:
 		width_curve.add_point(Vector2(progress_ratio, 1.0))
@@ -2053,8 +2065,6 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 						undo_redo.add_do_property(svs, 'curve', new_curve)
 						undo_redo.add_undo_property(svs, 'curve', svs.curve)
 						undo_redo.commit_action()
-
-
 					if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 						select_node_reversibly(current_selection.get_parent())
 					else:
@@ -2326,7 +2336,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				current_clip_operation = 2 if current_clip_operation < 0 else current_clip_operation
 				current_clip_operation = 0 if current_clip_operation > 2 else current_clip_operation
 			return true
-		if _is_svs_valid(current_selection) and _handle_has_hover(current_selection):
+		if _is_svs_valid(current_selection) and _handle_has_hover(current_selection) and not _is_editing_width_curve(current_selection):
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) and not _is_ctrl_or_cmd_pressed():
 				if current_selection.has_meta(META_NAME_HOVER_POINT_IDX) and current_selection.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 					_remove_point_from_curve(current_selection, current_selection.get_meta(META_NAME_HOVER_POINT_IDX))
@@ -2343,7 +2353,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				elif current_selection.has_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX):
 					_remove_color_stop(current_selection, current_selection.get_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX))
 			return true
-		if _is_svs_valid(current_selection) and current_selection.has_meta(META_NAME_HOVER_CLOSEST_POINT) and not _handle_has_hover(current_selection):
+		if _is_svs_valid(current_selection) and current_selection.has_meta(META_NAME_HOVER_CLOSEST_POINT):
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
 				if _is_ctrl_or_cmd_pressed():
 					_remove_width_curve_point(current_selection)
