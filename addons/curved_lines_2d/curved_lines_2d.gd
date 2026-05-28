@@ -132,7 +132,7 @@ var _drawing_pencil_line := false
 
 #var brush_draw_toggle_button : CheckBox
 var _current_brush_shape := PackedVector2Array()
-var _current_brush_stroke := PackedVector2Array()
+var _current_brush_strokes : Array[PackedVector2Array] = []
 var _brush_start_pos := Vector2.ZERO
 var _last_brush_pos := Vector2.ZERO
 
@@ -1166,23 +1166,23 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 			("\n" + ctr_shift_hint)
 	)
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		if not _current_brush_stroke.is_empty():
-			var pts := Array(_current_brush_stroke).map(func(p): return _vp_transform(p))
-			pts.append(pts[0])
-			match _get_default_paint_order():
-				PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
-					if _is_add_stroke_enabled():
-						viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
-					if _is_add_fill_enabled():
-						viewport_control.draw_polygon(pts, [_get_default_fill_color()])
-				PaintOrder.MARKERS_FILL_STROKE, PaintOrder.FILL_STROKE_MARKERS, PaintOrder.FILL_MARKERS_STROKE, _:
-					if _is_add_fill_enabled():
-						viewport_control.draw_polygon(pts, [_get_default_fill_color()])
-					if _is_add_stroke_enabled():
-						viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
-			if not _is_add_fill_enabled() and not _is_add_stroke_enabled():
-				viewport_control.draw_polyline(pts, Color.LIME, 1.0, true)
-
+		if not _current_brush_strokes.is_empty():
+			for _current_brush_stroke in _current_brush_strokes:
+				var pts := Array(_current_brush_stroke).map(func(p): return _vp_transform(p))
+				pts.append(pts[0])
+				match _get_default_paint_order():
+					PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
+						if _is_add_stroke_enabled():
+							viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
+						if _is_add_fill_enabled():
+							viewport_control.draw_polygon(pts, [_get_default_fill_color()])
+					PaintOrder.MARKERS_FILL_STROKE, PaintOrder.FILL_STROKE_MARKERS, PaintOrder.FILL_MARKERS_STROKE, _:
+						if _is_add_fill_enabled():
+							viewport_control.draw_polygon(pts, [_get_default_fill_color()])
+						if _is_add_stroke_enabled():
+							viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
+				if not _is_add_fill_enabled() and not _is_add_stroke_enabled():
+					viewport_control.draw_polyline(pts, Color.LIME, 1.0, true)
 		_draw_hint(viewport_control, "- Release left mouse button finish drawing" + cmd_key_hints)
 	else:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
@@ -2099,15 +2099,16 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 			_brush_start_pos = pos
 			_last_brush_pos = pos
 			var new_stroke := PackedVector2Array(Array(_current_brush_shape.duplicate()).map(func(p): return p + pos))
-			_current_brush_stroke = Geometry2DUtil.get_polygon_at_granularity(new_stroke,
-					_get_guarded_brush_granularity())
+			_current_brush_strokes = [Geometry2DUtil.get_polygon_at_granularity(new_stroke,
+					_get_guarded_brush_granularity())]
 
 		else:
 			var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 			if is_instance_valid(current_selection):
 				var svs := _start_freehand_shape("BrushStroke", false)
-				_set_curve_from_polygon(svs, _current_brush_stroke)
-				_current_brush_stroke.clear()
+				printerr("FIXME, handle all the strokes")
+				_set_curve_from_polygon(svs, _current_brush_strokes[0])
+				_current_brush_strokes.clear()
 				if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 					select_node_reversibly(svs.get_parent())
 				else:
@@ -2181,7 +2182,7 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 				extreme1 + pos
 			])
 			_last_brush_pos = pos
-			var res0 := Geometry2D.merge_polygons(_current_brush_stroke, stroke_rect_poly)
+			var res0 := Geometry2D.merge_polygons(_current_brush_strokes[0], stroke_rect_poly)
 			var res := Geometry2D.merge_polygons(res0[0], merge_target)
 			if res.size() > 0:
 				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
@@ -2192,8 +2193,8 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 					var res1 := Geometry2D.intersect_polygons(res[0], intersect_target)
 					if res1.size() == 1:
 						new_stroke = res1[0]
-				_current_brush_stroke = Geometry2DUtil.get_polygon_at_granularity(new_stroke,
-						_get_guarded_brush_granularity())
+				_current_brush_strokes = [Geometry2DUtil.get_polygon_at_granularity(new_stroke,
+						_get_guarded_brush_granularity())]
 			return true
 	return false
 
