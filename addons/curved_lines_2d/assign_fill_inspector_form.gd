@@ -26,7 +26,7 @@ func _on_svs_assignment_changed() -> void:
 		%GradientStopColorButtonContainer.show()
 		%CreateFillButton.disabled = true
 		%GotoPolygon2DButton.disabled = false
-		%ColorPickerButton.color = scalable_vector_shape_2d.polygon.color
+		%ColorPickerButton.color = scalable_vector_shape_2d.fill_color
 		%RadialGradientToggleButton.disabled = false
 		%LinearGradientToggleButton.disabled = false
 		%RemoveGradientToggleButton.disabled = false
@@ -59,7 +59,7 @@ func _on_svs_assignment_changed() -> void:
 func _on_color_picker_button_color_changed(color: Color) -> void:
 	if not is_instance_valid(scalable_vector_shape_2d.polygon):
 		return
-	scalable_vector_shape_2d.polygon.color = color
+	scalable_vector_shape_2d.fill_color = color
 
 
 func _on_goto_polygon_2d_button_pressed() -> void:
@@ -239,7 +239,7 @@ func _on_color_picker_button_toggled(toggled_on: bool) -> void:
 	var undo_redo = EditorInterface.get_editor_undo_redo()
 	if toggled_on:
 		undo_redo.create_action("Adjust Polygon2D color for %s" % str(scalable_vector_shape_2d))
-		undo_redo.add_undo_property(scalable_vector_shape_2d.polygon, 'color', scalable_vector_shape_2d.polygon.color)
+		undo_redo.add_undo_property(scalable_vector_shape_2d.polygon, 'color', scalable_vector_shape_2d.fill_color)
 	else:
 		undo_redo.add_do_property(scalable_vector_shape_2d.polygon, 'color', %ColorPickerButton.color)
 		undo_redo.commit_action(false)

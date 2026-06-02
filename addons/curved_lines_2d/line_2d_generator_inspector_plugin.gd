@@ -284,7 +284,7 @@ func _add_guide_svs(avs_3d : AdaptableVectorShape3D) -> void:
 		guide_svs.polygon.name = avs_3d.fill_polygons[0].name
 		guide_svs.add_child(guide_svs.polygon, true)
 		guide_svs.polygon.owner = avs_3d.owner
-		guide_svs.polygon.color = avs_3d.fill_polygons[0].material.albedo_color
+		guide_svs.fill_color = avs_3d.fill_polygons[0].material.albedo_color
 		guide_svs.polygon.texture = avs_3d.fill_polygons[0].material.albedo_texture
 	if not avs_3d.stroke_polygons.is_empty():
 		guide_svs.poly_stroke = Polygon2D.new()

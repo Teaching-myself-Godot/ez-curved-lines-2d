@@ -108,7 +108,7 @@ static func extract_csg_polygons_from_scalable_vector_shapes(svs : ScalableVecto
 				csg_polygon.material.albedo_texture = svs.poly_stroke.texture
 		else:
 			csg_polygon.name = svs.polygon.name
-			csg_polygon.material.albedo_color = svs.polygon.color
+			csg_polygon.material.albedo_color = svs.fill_color
 			csg_polygon.material.albedo_texture = svs.polygon.texture
 		result.append(csg_polygon)
 	return result

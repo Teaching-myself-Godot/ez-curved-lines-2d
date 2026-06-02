@@ -25,7 +25,7 @@ func _on_rat_place_shape(global_pos: Vector2, curve: Curve2D) -> void:
 	new_shape.curve = curve
 	new_shape.position = global_pos
 	new_shape.polygon = Polygon2D.new()
-	new_shape.polygon.color = Color(0.402, 0.207, 0.0)
+	new_shape.fill_color = Color(0.402, 0.207, 0.0)
 	new_shape.polygon.texture = NoiseTexture2D.new()
 	(new_shape.polygon.texture as NoiseTexture2D).noise = FastNoiseLite.new()
 	(new_shape.polygon.texture as NoiseTexture2D).seamless = true
