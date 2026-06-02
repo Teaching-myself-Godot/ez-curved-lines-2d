@@ -358,11 +358,12 @@ func _add_fill_to_created_shape(new_shape : ScalableVectorShape2D, scene_root : 
 	if _is_add_fill_enabled():
 		var polygon := Polygon2D.new()
 		polygon.name = "Fill"
-		polygon.color = _get_default_fill_color()
 		undo_redo.add_do_property(new_shape, 'polygon', polygon)
 		undo_redo.add_do_method(new_shape, 'add_child', polygon, true)
+		undo_redo.add_do_property(new_shape, 'fill_color', _get_default_fill_color())
 		undo_redo.add_do_method(polygon, 'set_owner', scene_root)
 		undo_redo.add_do_reference(polygon)
+		undo_redo.add_undo_reference(new_shape)
 		undo_redo.add_undo_method(new_shape, 'remove_child', polygon)
 
 

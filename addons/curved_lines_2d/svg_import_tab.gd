@@ -787,14 +787,14 @@ func add_fill_to_path(new_path : ScalableVectorShape2D, style: Dictionary, scene
 				add_gradient_to_fill(new_path, svg_gradient, polygon, scene_root, gradients, gradient_point_parent)
 		elif style["fill"].begins_with("rgba"):
 			var parts := _parse_svg_transform_params(style["fill"].replace("rgba", ""))
-			polygon.color = Color.from_rgba8(parts[0], parts[1], parts[2], parts[3])
+			new_path.fill_color = Color.from_rgba8(parts[0], parts[1], parts[2], parts[3])
 		elif style["fill"].begins_with("rgb"):
 			var parts := _parse_svg_transform_params(style["fill"].replace("rgb", ""))
-			polygon.color = Color.from_rgba8(parts[0], parts[1], parts[2])
+			new_path.fill_color = Color.from_rgba8(parts[0], parts[1], parts[2])
 		else:
-			polygon.color = Color(style["fill"])
+			new_path.fill_color = Color(style["fill"])
 			if style.has("fill-opacity"):
-				polygon.color.a = float(style["fill-opacity"])
+				new_path.fill_color.a = float(style["fill-opacity"])
 
 
 func add_collision_to_path(new_path : ScalableVectorShape2D, style : Dictionary, scene_root : Node,

@@ -56,7 +56,7 @@ func add_ellipse(at_pos: Vector2):
 	if draw_fills:
 		# assign a Polygon2D as fill
 		ellipse.polygon = Polygon2D.new()
-		ellipse.polygon.color = Color.WHITE
+		ellipse.fill_color = Color.SKY_BLUE
 		ellipse.add_child(ellipse.polygon)
 
 	if draw_strokes:

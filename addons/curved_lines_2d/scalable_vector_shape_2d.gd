@@ -75,6 +75,14 @@ enum CollisionObjectType {
 }
 
 @export_group("Fill")
+## The color of the fill, also sets the [member Polygon2D.color] of the [member polygon]
+@export var fill_color := Color.WHITE:
+	set(_c):
+		fill_color = _c
+		if is_instance_valid(polygon):
+			polygon.color = _c
+		assigned_node_changed.emit()
+
 ## The 'Fill' of a [ScalableVectorShape2D] is simply an instance of a [Polygon2D] node
 ## assigned to the `polygon` property.
 ## If you remove that [Polygon2D] node, you need to unassign it here as well, before
@@ -380,6 +388,10 @@ func _enter_tree():
 			end_cap_mode = line.end_cap_mode
 		if line_joint_mode != line.joint_mode:
 			line_joint_mode = line.joint_mode
+	# ensure backward compatibility by assigning fill_color to polygon's color
+	if is_instance_valid(polygon):
+		if fill_color != polygon.color:
+			fill_color = polygon.color
 	# ensure forward compatibility by assigning the default ShapeType
 	if shape_type == null:
 		shape_type = ShapeType.PATH

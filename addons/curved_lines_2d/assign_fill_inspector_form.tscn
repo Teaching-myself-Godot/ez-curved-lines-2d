@@ -1,16 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://53oqf8j7uyuu"]
+[gd_scene load_steps=10 format=3 uid="uid://53oqf8j7uyuu"]
 
 [ext_resource type="Script" uid="uid://b1ii4843yuwkw" path="res://addons/curved_lines_2d/assign_fill_inspector_form.gd" id="1_ogtsd"]
 [ext_resource type="StyleBox" uid="uid://v0ueesjbdyrk" path="res://addons/curved_lines_2d/snazzy_toggle_button.stylebox" id="3_alhox"]
 [ext_resource type="Texture2D" uid="uid://31qakec1dm6y" path="res://addons/curved_lines_2d/Key.svg" id="3_d26vq"]
 [ext_resource type="Texture2D" uid="uid://caqsvv6rdxkm4" path="res://addons/curved_lines_2d/Gradients.svg" id="4_d26vq"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ogtsd"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.0823529, 0.0941176, 0.117647, 1)
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_6uned"]
 
@@ -37,37 +30,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ogtsd")
-
-[node name="FillColorFieldContainer" type="HBoxContainer" parent="."]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="FillColorFieldContainer"]
-clip_contents = true
-custom_minimum_size = Vector2(80, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "This will set the color of the assigned Polygon2D."
-mouse_filter = 0
-text = "Fill Color*"
-
-[node name="HBoxContainer" type="HBoxContainer" parent="FillColorFieldContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ColorPickerButton" type="ColorPickerButton" parent="FillColorFieldContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "This will set the color of the assigned Polygon2D."
-theme_override_styles/normal = SubResource("StyleBoxFlat_ogtsd")
-text = "Fill"
-color = Color(1, 1, 1, 1)
-
-[node name="AddFillKeyFrameButton" type="Button" parent="FillColorFieldContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-tooltip_text = "Add key frame for Polygon2D's color property"
-icon = ExtResource("3_d26vq")
 
 [node name="GradientFieldContainer" type="HBoxContainer" parent="."]
 unique_name_in_owner = true
@@ -242,9 +204,6 @@ tooltip_text = "Click on this button to select the Polygon2D node that is assign
 Use this for advanced features which are already built-in into godot, like gradients and repeating textures."
 text = "Edit Polygon2D"
 
-[connection signal="color_changed" from="FillColorFieldContainer/HBoxContainer/ColorPickerButton" to="." method="_on_color_picker_button_color_changed"]
-[connection signal="toggled" from="FillColorFieldContainer/HBoxContainer/ColorPickerButton" to="." method="_on_color_picker_button_toggled"]
-[connection signal="pressed" from="FillColorFieldContainer/HBoxContainer/AddFillKeyFrameButton" to="." method="_on_add_fill_key_frame_button_pressed"]
 [connection signal="button_down" from="GradientFieldContainer/HBoxContainer/RemoveGradientToggleButton" to="." method="_on_remove_gradient_toggle_button_button_down"]
 [connection signal="button_down" from="GradientFieldContainer/HBoxContainer/LinearGradientToggleButton" to="." method="_on_linear_gradient_toggle_button_button_down"]
 [connection signal="button_down" from="GradientFieldContainer/HBoxContainer/RadialGradientToggleButton" to="." method="_on_radial_gradient_toggle_button_button_down"]

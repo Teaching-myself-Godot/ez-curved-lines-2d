@@ -14,7 +14,6 @@ func _enter_tree() -> void:
 
 
 func _on_key_frame_capabilities_changed():
-	%AddFillKeyFrameButton.visible = _is_key_frame_capable()
 	%BatchInsertGradientKeyFrameButton.visible = _is_key_frame_capable()
 
 
@@ -26,7 +25,6 @@ func _on_svs_assignment_changed() -> void:
 		%GradientStopColorButtonContainer.show()
 		%CreateFillButton.disabled = true
 		%GotoPolygon2DButton.disabled = false
-		%ColorPickerButton.color = scalable_vector_shape_2d.polygon.color
 		%RadialGradientToggleButton.disabled = false
 		%LinearGradientToggleButton.disabled = false
 		%RemoveGradientToggleButton.disabled = false
@@ -49,18 +47,10 @@ func _on_svs_assignment_changed() -> void:
 		%GradientStopColorButtonContainer.hide()
 		%CreateFillButton.disabled = false
 		%GotoPolygon2DButton.disabled = true
-		%ColorPickerButton.color = CurvedLines2D._get_default_fill_color()
 		%RadialGradientToggleButton.disabled = true
 		%LinearGradientToggleButton.disabled = true
 		%RemoveGradientToggleButton.disabled = true
 		%RemoveGradientToggleButton.button_pressed = true
-
-
-func _on_color_picker_button_color_changed(color: Color) -> void:
-	if not is_instance_valid(scalable_vector_shape_2d.polygon):
-		return
-	scalable_vector_shape_2d.polygon.color = color
-
 
 func _on_goto_polygon_2d_button_pressed() -> void:
 	if not is_instance_valid(scalable_vector_shape_2d):
@@ -79,7 +69,7 @@ func _on_create_fill_button_pressed():
 	var polygon_2d := Polygon2D.new()
 	var root := EditorInterface.get_edited_scene_root()
 	var undo_redo = EditorInterface.get_editor_undo_redo()
-	polygon_2d.color = %ColorPickerButton.color
+	polygon_2d.color = scalable_vector_shape_2d.fill_color
 	undo_redo.create_action("Add Polygon2D to %s " % str(scalable_vector_shape_2d))
 	undo_redo.add_do_method(scalable_vector_shape_2d, 'add_child', polygon_2d, true)
 	undo_redo.add_do_method(polygon_2d, 'set_owner', root)
@@ -196,13 +186,6 @@ static func _initialize_gradient(box : Rect2) -> GradientTexture2D:
 	return texture
 
 
-func _on_add_fill_key_frame_button_pressed() -> void:
-	if is_instance_valid(scalable_vector_shape_2d.polygon):
-		add_key_frame(
-			scalable_vector_shape_2d.polygon, "color", %ColorPickerButton.color
-		)
-
-
 func _on_batch_insert_gradient_key_frame_button_pressed() -> void:
 	if not is_instance_valid(scalable_vector_shape_2d.polygon):
 		return
@@ -231,15 +214,3 @@ func _on_batch_insert_gradient_key_frame_button_pressed() -> void:
 		track_position, p2d.texture.fill_to)
 
 	undo_redo.commit_action()
-
-
-func _on_color_picker_button_toggled(toggled_on: bool) -> void:
-	if not is_instance_valid(scalable_vector_shape_2d.polygon):
-		return
-	var undo_redo = EditorInterface.get_editor_undo_redo()
-	if toggled_on:
-		undo_redo.create_action("Adjust Polygon2D color for %s" % str(scalable_vector_shape_2d))
-		undo_redo.add_undo_property(scalable_vector_shape_2d.polygon, 'color', scalable_vector_shape_2d.polygon.color)
-	else:
-		undo_redo.add_do_property(scalable_vector_shape_2d.polygon, 'color', %ColorPickerButton.color)
-		undo_redo.commit_action(false)
