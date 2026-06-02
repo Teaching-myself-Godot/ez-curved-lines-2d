@@ -1,11 +1,14 @@
 # Changelog
 
 
-## 2.23.0
+## 2.23.1
 
 ### Added
 
 - Width curve edit with ctrl+mousewheel for `Line2D` strokes
+
+### Changed
+- `ScalableVectorShape2D.fill_color` sets the polygon color on multiple selected shapes at the same time.
 
 
 ## 2.22.0
