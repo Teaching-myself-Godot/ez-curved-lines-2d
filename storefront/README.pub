@@ -2,12 +2,12 @@
 
 Ask questions on [discord](https://discord.gg/CDdkVvT2Ff)
 
-Scalable Vector Shapes 2D lets you do 3 things:
+## With Scalable Vector Shapes 2D you can do 3 things
+
 1. Draw seamless vector shapes using a Path Editor inspired by the awesome [Inkscape](https://inkscape.org/) with a new node type: [`ScalableVectorShape2D`](https://raw.githubusercontent.com/Teaching-myself-Godot/ez-curved-lines-2d/master/addons/curved_lines_2d/scalable_vector_shape_2d.gd)[^1]
 2. Animate the shape of the curve using keyframes on a [property-track](https://docs.godotengine.org/en/stable/tutorials/animation/introduction.html#doc-introduction-animation)  in an [`AnimationPlayer`](https://docs.godotengine.org/en/stable/classes/class_animationplayer.html#class-animationplayer)
 3. Import [.svg](https://www.w3.org/TR/SVG/) files as seamless vector shapes in stead of as raster images[^2]
 
-[^2]: __Important sidenote__: _This plugin only supports a small - yet relevant - subset of the huge [SVG Specification](https://www.w3.org/TR/SVG/struct.html)_
 
 ## Watch the A-Z explainer on Youtube
 
