@@ -1,6 +1,6 @@
 # Scalable Vector Shapes 2D plugin for Godot 4
 
-Ask questions on [discord[(https://discord.gg/CDdkVvT2Ff)
+Ask questions on [discord](https://discord.gg/CDdkVvT2Ff)
 
 Scalable Vector Shapes 2D lets you do 3 things:
 1. Draw seamless vector shapes using a Path Editor inspired by the awesome [Inkscape](https://inkscape.org/) with a new node type: [`ScalableVectorShape2D`](./addons/curved_lines_2d/scalable_vector_shape_2d.gd)[^1]
