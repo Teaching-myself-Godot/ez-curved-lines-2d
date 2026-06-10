@@ -345,6 +345,13 @@ var stroke_width := 10.0:
 
 @export_group("Skeleton")
 @export var skeleton : Skeleton2D: set = _on_skeleton_changed
+@export var deformation_map : Dictionary[int, Bone2D] = {}:
+	set(_map):
+		deformation_map = _map
+		for p_idx in deformation_map.keys():
+			if p_idx < 0 or p_idx >= curve.point_count:
+				printerr("Warning: point index key for deformation_map not present in curve: ", p_idx)
+		assigned_node_changed.emit()
 
 
 @export_group("Editor settings")
@@ -409,6 +416,9 @@ func _enter_tree():
 	# ensure forward compatibility by assigning an empty dict to glue_map
 	if glue_map == null:
 		glue_map = {}
+	# ensure forward compatibility by assigning an empty dict to deformation_map
+	if deformation_map == null:
+		deformation_map = {}
 
 	if is_instance_valid(skeleton):
 		_connect_to_bone_signals()
@@ -456,8 +466,8 @@ func _disconnect_bone_signals(current_bone_node : Node = null) -> void:
 		current_bone_node = skeleton
 	if current_bone_node is Bone2D:
 		var bone = current_bone_node as Bone2D
-		if bone.draw.is_connected(_on_bone_transform_changed):
-			bone.draw.disconnect(_on_bone_transform_changed)
+		if bone.draw.is_connected(curve_changed):
+			bone.draw.disconnect(curve_changed)
 	for bone in current_bone_node.get_children():
 		if bone is Bone2D:
 			_disconnect_bone_signals(bone)
@@ -470,23 +480,12 @@ func _connect_to_bone_signals(current_bone_node : Node = null) -> void:
 		#current_bone_node.set_script(load("res://addons/curved_lines_2d/svs_bone_2d.gd"))
 	if current_bone_node is Bone2D:
 		var bone = current_bone_node as Bone2D
-		if not bone.draw.is_connected(_on_bone_transform_changed):
-			bone.draw.connect(_on_bone_transform_changed)
+		if not bone.draw.is_connected(curve_changed):
+			bone.draw.connect(curve_changed)
 	for bone in current_bone_node.get_children():
 		if bone is Bone2D:
 			_connect_to_bone_signals(bone)
 
-
-func _on_bone_transform_changed(current_bone_node : Node2D = null) -> void:
-	if current_bone_node == null:
-		current_bone_node = skeleton
-	#if current_bone_node is Bone2D and not current_bone_node is SVSBone2D:
-		#current_bone_node.set_script(load("res://addons/curved_lines_2d/svs_bone_2d.gd"))
-	if current_bone_node is Bone2D:
-		print(current_bone_node, ": ", current_bone_node.global_position, ", ", current_bone_node.global_rotation)
-	for bone in current_bone_node.get_children():
-		if bone is Bone2D:
-			_on_bone_transform_changed(bone)
 
 # Clean up signals (ie. when closing scene) to prevent error messages in the editor
 func _exit_tree():
@@ -561,11 +560,29 @@ func notify_assigned_node_change():
 	assigned_node_changed.emit()
 
 
+func _get_full_bone_deform_transform(bone : Bone2D, trans := Transform2D.IDENTITY) -> Transform2D:
+	if bone.get_parent() is Bone2D:
+		return _get_full_bone_deform_transform(bone.get_parent(), bone.transform * trans)
+	return bone.transform * trans
+
+
 func tessellate() -> PackedVector2Array:
 	if not cached_outline.is_empty():
 		return cached_outline
+	var the_curve = curve.duplicate(true) if skeleton else curve
+	if skeleton:
+		for pt_idx in deformation_map.keys():
+			var bone : Bone2D = deformation_map[pt_idx]
+			var rest := bone.get_skeleton_rest()
+			var full_deform := _get_full_bone_deform_transform(bone)
+			var pos_delta := full_deform.get_origin() - rest.get_origin()
+			var angle_delta := full_deform.get_rotation() - rest.get_rotation()
+			print(bone.name, ": ", angle_delta)
+			the_curve.set_point_position(pt_idx, curve.get_point_position(pt_idx) + pos_delta)
+
+
 	if not arc_list or arc_list.arcs.is_empty():
-		return curve.tessellate(max_stages, tolerance_degrees)
+		return the_curve.tessellate(max_stages, tolerance_degrees)
 	var poly_points = []
 	var arc_starts := (arc_list.arcs
 		.filter(func(a): return a != null)
@@ -573,7 +590,7 @@ func tessellate() -> PackedVector2Array:
 	)
 	for p_idx in curve.point_count - 1:
 		if p_idx in arc_starts:
-			var seg := _get_curve_segment(p_idx)
+			var seg := _get_curve_segment(p_idx, the_curve)
 			var arc = arc_list.get_arc_for_point(p_idx)
 			if arc:
 				var seg_points := tessellate_arc_segment(seg.get_point_position(0), arc.radius,
@@ -588,7 +605,7 @@ func tessellate() -> PackedVector2Array:
 					poly_points.append(seg.get_point_position(0))
 				poly_points.append(seg.get_point_position(1))
 		else:
-			var seg_points := _get_curve_segment(p_idx).tessellate(max_stages, tolerance_degrees)
+			var seg_points := _get_curve_segment(p_idx, the_curve).tessellate(max_stages, tolerance_degrees)
 			for i in seg_points.size():
 				if i == 0 and not poly_points.is_empty():
 					continue
@@ -1151,23 +1168,23 @@ func replace_curve_points(curve_in : Curve2D) -> void:
 
 
 func add_arc(segment_p1_idx : int) -> void:
-	var seg := _get_curve_segment(segment_p1_idx)
+	var seg := _get_curve_segment(segment_p1_idx, curve)
 	var r := seg.get_point_position(0).distance_to(seg.get_point_position(1)) * 0.5
 	arc_list.add_arc(ScalableArc.new(segment_p1_idx, Vector2.ONE * r, 0.0))
 
 
-func _get_curve_segment(segment_p1_idx : int) -> Curve2D:
+func _get_curve_segment(segment_p1_idx : int, _curve : Curve2D) -> Curve2D:
 	var curve_segment := Curve2D.new()
 	curve_segment.add_point(
-		curve.get_point_position(segment_p1_idx),
+		_curve.get_point_position(segment_p1_idx),
 		Vector2.ZERO,
-		curve.get_point_out(segment_p1_idx)
+		_curve.get_point_out(segment_p1_idx)
 	)
-	var segment_p2_idx = (0 if segment_p1_idx == curve.point_count - 1
+	var segment_p2_idx = (0 if segment_p1_idx == _curve.point_count - 1
 			else segment_p1_idx + 1)
 	curve_segment.add_point(
-		curve.get_point_position(segment_p2_idx),
-		curve.get_point_in(segment_p2_idx)
+		_curve.get_point_position(segment_p2_idx),
+		_curve.get_point_in(segment_p2_idx)
 	)
 	return curve_segment
 
@@ -1178,7 +1195,7 @@ func is_arc_start(p_idx) -> bool:
 
 func _get_tessellated_curve_segment(segment_p1_idx : int) -> PackedVector2Array:
 	var arc := arc_list.get_arc_for_point(segment_p1_idx)
-	var seg := _get_curve_segment(segment_p1_idx)
+	var seg := _get_curve_segment(segment_p1_idx, curve)
 	return (
 			tessellate_arc_segment(seg.get_point_position(0), arc.radius, arc.rotation_deg,
 				arc.large_arc_flag, arc.sweep_flag, seg.get_point_position(1))
