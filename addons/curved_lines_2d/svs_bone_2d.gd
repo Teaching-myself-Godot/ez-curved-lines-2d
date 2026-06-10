@@ -5,7 +5,7 @@ class_name SVSBone2D
 
 signal transform_changed(ref : SVSBone2D)
 
-func _enter_tree() -> void:
+func _init() -> void:
 	set_notify_transform(true)
 
 
