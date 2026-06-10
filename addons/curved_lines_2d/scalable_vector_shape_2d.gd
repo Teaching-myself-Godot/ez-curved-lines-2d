@@ -454,32 +454,39 @@ func _on_skeleton_changed(_skel : Skeleton2D) -> void:
 func _disconnect_bone_signals(current_bone_node : Node = null) -> void:
 	if current_bone_node == null:
 		current_bone_node = skeleton
-	if current_bone_node is SVSBone2D:
-		var bone = current_bone_node as SVSBone2D
-		if bone.transform_changed.is_connected(_on_bone_transform_changed):
-			bone.transform_changed.disconnect(_on_bone_transform_changed)
+	if current_bone_node is Bone2D:
+		var bone = current_bone_node as Bone2D
+		if bone.draw.is_connected(_on_bone_transform_changed):
+			bone.draw.disconnect(_on_bone_transform_changed)
 	for bone in current_bone_node.get_children():
-		if bone is SVSBone2D:
+		if bone is Bone2D:
 			_disconnect_bone_signals(bone)
 
 
 func _connect_to_bone_signals(current_bone_node : Node = null) -> void:
 	if current_bone_node == null:
 		current_bone_node = skeleton
-	if current_bone_node is Bone2D and not current_bone_node is SVSBone2D:
-		current_bone_node.set_script(load("res://addons/curved_lines_2d/svs_bone_2d.gd"))
-	if current_bone_node is SVSBone2D:
-		var bone = current_bone_node as SVSBone2D
-		if not bone.transform_changed.is_connected(_on_bone_transform_changed):
-			bone.transform_changed.connect(_on_bone_transform_changed)
+	#if current_bone_node is Bone2D and not current_bone_node is SVSBone2D:
+		#current_bone_node.set_script(load("res://addons/curved_lines_2d/svs_bone_2d.gd"))
+	if current_bone_node is Bone2D:
+		var bone = current_bone_node as Bone2D
+		if not bone.draw.is_connected(_on_bone_transform_changed):
+			bone.draw.connect(_on_bone_transform_changed)
 	for bone in current_bone_node.get_children():
 		if bone is Bone2D:
 			_connect_to_bone_signals(bone)
 
 
-func _on_bone_transform_changed(bone : SVSBone2D) -> void:
-	print(bone, ": pos=", bone.global_position)
-
+func _on_bone_transform_changed(current_bone_node : Node2D = null) -> void:
+	if current_bone_node == null:
+		current_bone_node = skeleton
+	#if current_bone_node is Bone2D and not current_bone_node is SVSBone2D:
+		#current_bone_node.set_script(load("res://addons/curved_lines_2d/svs_bone_2d.gd"))
+	if current_bone_node is Bone2D:
+		print(current_bone_node, ": ", current_bone_node.global_position, ", ", current_bone_node.global_rotation)
+	for bone in current_bone_node.get_children():
+		if bone is Bone2D:
+			_on_bone_transform_changed(bone)
 
 # Clean up signals (ie. when closing scene) to prevent error messages in the editor
 func _exit_tree():
