@@ -2,130 +2,24 @@
 
 Ask questions on [discord](https://discord.gg/CDdkVvT2Ff)
 
-## With Scalable Vector Shapes 2D you can do 3 things
-
-1. Draw seamless vector shapes using a Path Editor inspired by the awesome [Inkscape](https://inkscape.org/) with a new node type: [`ScalableVectorShape2D`](https://raw.githubusercontent.com/Teaching-myself-Godot/ez-curved-lines-2d/master/addons/curved_lines_2d/scalable_vector_shape_2d.gd)[^1]
-2. Animate the shape of the curve using keyframes on a [property-track](https://docs.godotengine.org/en/stable/tutorials/animation/introduction.html#doc-introduction-animation)  in an [`AnimationPlayer`](https://docs.godotengine.org/en/stable/classes/class_animationplayer.html#class-animationplayer)
-3. Import [.svg](https://www.w3.org/TR/SVG/) files as seamless vector shapes in stead of as raster images[^2]
-
 
 ## Watch the A-Z explainer on Youtube
 
-In this 10 minute video I explain how to use all the features of Scalable Vector Shapes 2D in short succession:
+Learn how to draw and animate seamless vector graphics directly in the 2D Editor
 
-[![link to the explainer](https://raw.githubusercontent.com/Teaching-myself-Godot/ez-curved-lines-2d/master/addons/curved_lines_2d/video_thumbnails/a_z_deep_dive.png)](https://youtu.be/z8Y1e-TehoE)
+[A to Z Explainer Deep Dive Edition](https://youtu.be/z8Y1e-TehoE)
 
-[^1]: Looking for EZ Curved Lines 2D? The renamed plugin deprecates the old [`DrawablePath2D`](https://raw.githubusercontent.com/Teaching-myself-Godot/ez-curved-lines-2d/master/addons/curved_lines_2d/drawable_path_2d.gd) custom node in favor of `ScalableVectorShape2D`. A Conversion button is provided: [converter button](https://raw.githubusercontent.com/Teaching-myself-Godot/ez-curved-lines-2d/master/addons/curved_lines_2d/screenshots/00-converter.png). The reason is that [`ScalableVectorShape2D`](https://raw.githubusercontent.com/Teaching-myself-Godot/ez-curved-lines-2d/master/addons/curved_lines_2d/scalable_vector_shape_2d.gd) inherits directly from `Node2D` giving much more control to the plugin over how you can draw.
+### Other videos
+
+I have published a growing playlist of explainer videos on youtube dedicate to stuff like the SVG importer, animating curves and applying clip paths:
+
+[Take a look at the full playlist on youtube](https://www.youtube.com/playlist?list=PL5lf_BvgORcg1YndZOi9wR_GaAbxqsujh)
 
 
-# Table of Contents
+## With Scalable Vector Shapes 2D you can do 3 things
 
-- [Scalable Vector Shapes 2D plugin for Godot 4](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#scalable-vector-shapes-2d-plugin-for-godot-4)
-	- [Watch the A-Z explainer on Youtube](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#watch-the-a-z-explainer-on-youtube)
-- [Table of Contents](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#table-of-contents)
-- [Drawing Shapes in the Godot 2D Viewport](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#drawing-shapes-in-the-godot-2d-viewport)
-	- [Basic Drawing Explainer on youtube](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#basic-drawing-explainer-on-youtube)
-	- [Quick Start](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#quick-start)
-- [The Create Shapes Dock](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-create-shapes-dock)
-	- [Creating Paths based on Bézier curves](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#creating-paths-based-on-bézier-curves)
-	- [Creating 'primitive' shapes: Rectangle and Ellipse](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#creating-primitive-shapes-rectangle-and-ellipse)
-	- [Draw Settings](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#draw-settings)
-	- [Futher reading](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#futher-reading)
-- [The Import SVG File Dock](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-import-svg-file-dock)
-	- [Watch an explainer on Youtube](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#watch-an-explainer-on-youtube)
-	- [Using the Import SVG File Dock](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#using-the-import-svg-file-dock)
-	- [`Line2D` Stroke versus `Polygon2D` Stroke](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#line2d-stroke-versus-polygon2d-stroke)
-	- [The import log](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-import-log)
-- [The Project Settings Dock](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-project-settings-dock)
-	- [Editor Settings (how the 2D Viewport should behave):](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#editor-settings-how-the-2d-viewport-should-behave)
-	- [Curve Settings](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#curve-settings)
-	- [Extra's: Line2D antialiasing for Compatibility Mode](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#extras-line2d-antialiasing-for-compatibility-mode)
-- [The Draw Settings Tab](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-draw-settings-tab)
-- [The Advanced Tab](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-advanced-tab)
-	- [Basic export options](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#basic-export-options)
-	- [Bake Animations](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#bake-animations)
-- [Moving, Rotating and Resizing the Points of a Shape](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#moving-rotating-and-resizing-the-points-of-a-shape)
-	- [Moving (Translating) all the points](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#moving-translating-all-the-points)
-		- [Translating Ellipses and Rectangles](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#translating-ellipses-and-rectangles)
-		- [Translating Paths](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#translating-paths)
-	- [Rotating all the Points](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#rotating-all-the-points)
-		- [Rotating Ellipses and Rectangles](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#rotating-ellipses-and-rectangles)
-		- [Rotating Paths](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#rotating-paths)
-	- [Resizing all the Points](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#resizing-all-the-points)
-		- [Resizing Ellipses and Rectangles](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#resizing-ellipses-and-rectangles)
-		- [Resizing Paths](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#resizing-paths)
-	- [Flipping your shapes](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#flipping-your-shapes)
-		- [Flipping primitive shapes](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#flipping-primitive-shapes)
-		- [Flipping paths](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#flipping-paths)
-- [Manipulating shapes](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#manipulating-shapes)
-	- [Adding a point to a shape](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#adding-a-point-to-a-shape)
-	- [Subdividing a shape](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#subdividing-a-shape)
-	- [Bending a curve](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#bending-a-curve)
-	- [Creating, mirroring and dragging control point handles](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#creating-mirroring-and-dragging-control-point-handles)
-	- [Closing the loop and breaking the loop](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#closing-the-loop-and-breaking-the-loop)
-	- [Deleting points and control points](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#deleting-points-and-control-points)
-	- [Setting the global position of a point / curve handle manually](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#setting-the-global-position-of-a-point--curve-handle-manually)
-	- [Create a cutout/clip/merge shape (a hole, a clipped frame, ...)](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#create-a-cutoutclipmerge-shape-a-hole-a-clipped-frame-)
-		- [Cutting out an empty shape](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#cutting-out-an-empty-shape)
-	- [Converting a line segment into an arc-segment](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#converting-a-line-segment-into-an-arc-segment)
-	- [Editing arc properties](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#editing-arc-properties)
-	- [Changing the width curve of a Stroke (`Line2D`-Stroke only)](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#changing-the-width-curve-of-a-stroke-line2d-stroke-only)
-	- [Setting the pivot of your shape](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#setting-the-pivot-of-your-shape)
-	- [Sticking two or more shapes together by vertex merge](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#sticking-two-or-more-shapes-together-by-vertex-merge)
-- [Free-hand Drawing](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#free-hand-drawing)
-	- [Drawing strokes and outlines with the Pencil Tool](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#drawing-strokes-and-outlines-with-the-pencil-tool)
-	- [Drawing polygons using the Brush Tool](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#drawing-polygons-using-the-brush-tool)
-- [Manipulating 2D Shapes in the 3D export](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#manipulating-2d-shapes-in-the-3d-export)
-	- [Animating 3D curves](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#animating-3d-curves)
-- [Manipulating gradients](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#manipulating-gradients)
-	- [Changing the start- and endpoint of the gradient](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#changing-the-start--and-endpoint-of-the-gradient)
-	- [Changing the color stop positions](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#changing-the-color-stop-positions)
-	- [Add new color stops](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#add-new-color-stops)
-- [Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#ways-to-prevent-over-selecting-scalablevectorshape2d-nodes)
-- [Using the Inspector Form for `ScalableVectorShape2D`](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#using-the-inspector-form-for-scalablevectorshape2d)
-	- [Inspector Form](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#inspector-form)
-		- [Convert to Path button](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#convert-to-path-button)
-	- [The Fill inspector form](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-fill-inspector-form)
-	- [The Stroke inspector form](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-stroke-inspector-form)
-		- [Creating new Strokes](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#creating-new-strokes)
-	- [The Collision inspector form](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-collision-inspector-form)
-	- [The Navigation inspector form](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-navigation-inspector-form)
-	- [The Curve settings inspector form](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-curve-settings-inspector-form)
-		- [The Glue Map property](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-glue-map-property)
-	- [The Masking Inspector form](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-masking-inspector-form)
-	- [The Shape type inspector form](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-shape-type-inspector-form)
-	- [The Editor settings inspector form](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-editor-settings-inspector-form)
-	- [The Export Options inspector form](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-export-options-inspector-form)
-		- [Export as PNG button](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#export-as-png-button)
-		- [Export as 'baked' scene button](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#export-as-baked-scene-button)
-			- [Caveats when 'Baking'](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#caveats-when-baking)
-- [More about assigned `Line2D`, `Polygon2D` and `CollisionObject2D`](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#more-about-assigned-line2d-polygon2d-and-collisionobject2d)
-	- [Watch the chapter about working with collisions, paint order and the node hierarchy on youtube](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#watch-the-chapter-about-working-with-collisions-paint-order-and-the-node-hierarchy-on-youtube)
-- [Animating / Changing shapes at runtime](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#animating--changing-shapes-at-runtime)
-	- [Youtube explainer on animating](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#youtube-explainer-on-animating)
-	- [A note up front (this being said)](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#a-note-up-front-this-being-said)
-	- [Animating the shape and gradients at Runtime](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#animating-the-shape-and-gradients-at-runtime)
-	- [Add keyframes in an animation player](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#add-keyframes-in-an-animation-player)
-	- [Don't duplicate `ScalableVectorShape2D`, use the `path_changed` signal in stead](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#dont-duplicate-scalablevectorshape2d-use-the-path_changed-signal-in-stead)
-	- [Performance impact](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#performance-impact)
-- [Autoscaling SVG Textures for GUI Controls](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#autoscaling-svg-textures-for-gui-controls)
-	- [Adding Autoscaling SVG Textures via the Inspector](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#adding-autoscaling-svg-textures-via-the-inspector)
-		- [Example of Autoscaling GUI](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#example-of-autoscaling-gui)
-	- [Removing an Automatically Scaled Texture](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#removing-an-automatically-scaled-texture)
-	- [Advanced use of `SVGTextureHelper`](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#advanced-use-of-svgtexturehelper)
-- [FAQ's](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#faqs)
-	- [The curve of my `ScalableVectorShape2D` won't animate at runtime, what do I do?](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#the-curve-of-my-scalablevectorshape2d-wont-animate-at-runtime-what-do-i-do)
-	- [I want to change shapes while debugging my game. Is this even possible?](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#i-want-to-change-shapes-while-debugging-my-game-is-this-even-possible)
-	- [When I animate the curve of an imported scene, it animates all the other curves as well](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#when-i-animate-the-curve-of-an-imported-scene-it-animates-all-the-other-curves-as-well)
-	- [When I duplicate a `ScalableVectorShape2D` and change its shape, the original `ScalableVectorShape2D` shape also changes](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#when-i-duplicate-a-scalablevectorshape2d-and-change-its-shape-the-original-scalablevectorshape2d-shape-also-changes)
-	- [Can I draw shapes programmatically?](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#can-i-draw-shapes-programmatically)
-	- [Should I draw shapes programmatically?](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#should-i-draw-shapes-programmatically)
-	- [When should I draw shapes programmatically?](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#when-should-i-draw-shapes-programmatically)
-	- [Can I change shapes in the 2D editor while running the game?](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#can-i-change-shapes-in-the-2d-editor-while-running-the-game)
-- [Attributions](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#attributions)
-	- [Lots of thanks go out to those who helped me out getting started:](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#lots-of-thanks-go-out-to-those-who-helped-me-out-getting-started)
-	- [And a big thank you goes to to @MewPurPur](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#and-a-big-thank-you-goes-to-to-mewpurpur)
-	- [Many thanks to @HannesParth/Permotion](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#many-thanks-to-hannesparthpermotion)
-	- [And of course everyone who helped test and review the code thus far](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#and-of-course-everyone-who-helped-test-and-review-the-code-thus-far)
-- [Reaching out / Contributing](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#reaching-out--contributing)
+One: draw seamless vector shapes using a Path Editor inspired by the awesome [Inkscape](https://inkscape.org/) with a new node type: [`ScalableVectorShape2D`](https://raw.githubusercontent.com/Teaching-myself-Godot/ez-curved-lines-2d/master/addons/curved_lines_2d/scalable_vector_shape_2d.gd)
 
+Two: Animate the shape of the curve using keyframes on a [property-track](https://docs.godotengine.org/en/stable/tutorials/animation/introduction.html#doc-introduction-animation)  in an [`AnimationPlayer`](https://docs.godotengine.org/en/stable/classes/class_animationplayer.html#class-animationplayer)
+
+Three: Import [.svg](https://www.w3.org/TR/SVG/) files as seamless vector shapes in stead of as raster images
