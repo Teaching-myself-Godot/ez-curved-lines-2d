@@ -476,8 +476,6 @@ func _disconnect_bone_signals(current_bone_node : Node = null) -> void:
 func _connect_to_bone_signals(current_bone_node : Node = null) -> void:
 	if current_bone_node == null:
 		current_bone_node = skeleton
-	#if current_bone_node is Bone2D and not current_bone_node is SVSBone2D:
-		#current_bone_node.set_script(load("res://addons/curved_lines_2d/svs_bone_2d.gd"))
 	if current_bone_node is Bone2D:
 		var bone = current_bone_node as Bone2D
 		if not bone.draw.is_connected(curve_changed):
@@ -566,10 +564,17 @@ func _get_full_bone_deform_transform(bone : Bone2D, trans := Transform2D.IDENTIT
 	return bone.transform * trans
 
 
+func _get_bone_chain(bone : Bone2D, bones : Array[Bone2D] = []) -> Array[Bone2D]:
+	bones.push_front(bone)
+	if bone.get_parent() is Bone2D:
+		return _get_bone_chain(bone.get_parent(), bones)
+	return bones
+
+
 func tessellate() -> PackedVector2Array:
 	if not cached_outline.is_empty():
 		return cached_outline
-	var the_curve = curve.duplicate(true) if skeleton else curve
+	var the_curve : Curve2D = curve.duplicate(true) if skeleton else curve
 	if skeleton:
 		for pt_idx in deformation_map.keys():
 			var bone : Bone2D = deformation_map[pt_idx]
@@ -577,8 +582,16 @@ func tessellate() -> PackedVector2Array:
 			var full_deform := _get_full_bone_deform_transform(bone)
 			var pos_delta := full_deform.get_origin() - rest.get_origin()
 			var angle_delta := full_deform.get_rotation() - rest.get_rotation()
-			print(bone.name, ": ", angle_delta)
-			the_curve.set_point_position(pt_idx, curve.get_point_position(pt_idx) + pos_delta)
+			var p := curve.get_point_position(pt_idx) + pos_delta
+			var cp_in_abs := curve.get_point_in(pt_idx) + p
+			var cp_out_abs := curve.get_point_out(pt_idx) + p
+			var local_bone_origin := to_local(bone.global_position)
+			p = (p - local_bone_origin).rotated(angle_delta) + local_bone_origin
+			cp_in_abs = (cp_in_abs - local_bone_origin).rotated(angle_delta) + local_bone_origin
+			cp_out_abs = (cp_out_abs - local_bone_origin).rotated(angle_delta) + local_bone_origin
+			the_curve.set_point_position(pt_idx, p)
+			the_curve.set_point_in(pt_idx, cp_in_abs - p)
+			the_curve.set_point_out(pt_idx, cp_out_abs - p)
 
 
 	if not arc_list or arc_list.arcs.is_empty():
