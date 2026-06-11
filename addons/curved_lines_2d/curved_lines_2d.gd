@@ -2280,11 +2280,10 @@ func _handle_bone_paint_input(event : InputEvent) -> bool:
 				_current_bone_idx = svs.skeleton.get_bone_count() - 1
 			elif _current_bone_idx > svs.skeleton.get_bone_count() - 1:
 				_current_bone_idx = 0
-			return true
 	else:
 		_locking_vp_horizontal_scrollbar = false
 		_locking_vp_vertical_scrollbar = false
-	return false
+	return true
 
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
