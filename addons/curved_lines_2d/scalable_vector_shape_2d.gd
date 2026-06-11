@@ -459,6 +459,7 @@ func _on_skeleton_changed(_skel : Skeleton2D) -> void:
 		skeleton = _skel
 		skeleton.bone_setup_changed.connect(_connect_to_bone_signals)
 		_connect_to_bone_signals()
+	assigned_node_changed.emit()
 
 
 func _disconnect_bone_signals(current_bone_node : Node = null) -> void:

@@ -5,12 +5,13 @@ signal mode_changed(mode : CurvedLines2D.SVSEditMode)
 signal flip_horizontal()
 signal flip_vertical()
 
-func show_svs_editors() -> void:
+func show_svs_editors(has_skeleton) -> void:
 	%UniformRotate.show()
 	%UniformTranslate.show()
 	%UniformScale.show()
 	%FlipHorizontal.show()
 	%FlipVertical.show()
+	%PaintBone.show()
 	%VSeparator1.show()
 	%VSeparator2.show()
 
@@ -21,6 +22,7 @@ func hide_svs_editors() -> void:
 	%UniformScale.hide()
 	%FlipHorizontal.hide()
 	%FlipVertical.hide()
+	%PaintBone.hide()
 	%VSeparator1.hide()
 	%VSeparator2.hide()
 
@@ -64,6 +66,11 @@ func _on_pencil_toggled(toggled_on: bool) -> void:
 func _on_merge_toggled(toggled_on: bool) -> void:
 	if toggled_on:
 		mode_changed.emit(CurvedLines2D.SVSEditMode.MERGE)
+
+
+func _on_paint_bone_toggled(toggled_on: bool) -> void:
+	if toggled_on:
+		mode_changed.emit(CurvedLines2D.SVSEditMode.PAINT_BONE)
 
 
 func _on_flip_horizontal_pressed() -> void:
