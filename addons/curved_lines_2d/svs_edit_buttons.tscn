@@ -105,7 +105,7 @@ layout_mode = 2
 [node name="Merge" type="Button" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Resize all the points without resizing the node (C)"
+tooltip_text = "Merge Points (M)"
 toggle_mode = true
 button_group = SubResource("ButtonGroup_rxvdi")
 icon = ExtResource("8_fsls0")
