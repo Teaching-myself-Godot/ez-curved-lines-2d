@@ -463,7 +463,6 @@ func _process(_delta: float) -> void:
 			deformation_cache[bone] = bone.transform
 	if should_update_curve:
 		_update_curve()
-		print("updateing")
 		should_update_curve = false
 
 
