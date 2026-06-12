@@ -372,6 +372,9 @@ var cached_poly_strokes : Array[PackedVector2Array] = []
 
 var should_update_curve := false
 
+var _bone_transform_emit_script : Script = load("res://addons/curved_lines_2d/svs_bone_2d.gd")
+
+
 # Wire up signals at runtime
 func _ready():
 	if update_curve_at_runtime:
@@ -384,7 +387,9 @@ func _ready():
 			_on_clip_paths_changed()
 	if not dimensions_changed.is_connected(_on_dimensions_changed):
 		dimensions_changed.connect(_on_dimensions_changed)
-
+	if is_instance_valid(skeleton):
+		for i in skeleton.get_bone_count():
+			skeleton.get_bone(i).set_script(_bone_transform_emit_script)
 
 # Wire up signals on enter tree for the editor
 func _enter_tree():
