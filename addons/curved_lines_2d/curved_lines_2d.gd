@@ -49,6 +49,7 @@ const META_NAME_SELECT_HINT := "_select_hint_"
 
 const VIEWPORT_ORANGE := Color(0.737, 0.463, 0.337)
 const WIDTH_CURVE_EDIT_CLAMP_DISTANCE := 25.0
+const CLOSE_TO_MOUSE_RADIUS := 20.0
 
 enum KeepDrawingBehavior {
 	KEEP_DRAWING_ON_SAME_PARENT,
@@ -812,9 +813,9 @@ func _set_handle_hover(g_mouse_pos : Vector2, svs : ScalableVectorShape2D) -> vo
 					return mouse_pos.distance_to(_vp_transform(p)) < 6)
 		if stop_idx > -1:
 			svs.set_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX, stop_idx)
-		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_from_pos'])) < 20:
+		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_from_pos'])) < CLOSE_TO_MOUSE_RADIUS:
 			svs.set_meta(META_NAME_HOVER_GRADIENT_FROM, true)
-		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_to_pos'])) < 20:
+		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_to_pos'])) < CLOSE_TO_MOUSE_RADIUS:
 			svs.set_meta(META_NAME_HOVER_GRADIENT_TO, true)
 		else:
 			var p := Geometry2D.get_closest_point_to_segment(mouse_pos,
@@ -1243,7 +1244,8 @@ func _handle_paint_bone_draw(viewport_control : Control) -> void:
 		else:
 			_draw_crosshair(viewport_control, _vp_transform(p), 1.0, 6.0, Color.BLACK, 4)
 			_draw_crosshair(viewport_control, _vp_transform(p), 1.0, 6.0, VIEWPORT_ORANGE, 2)
-	viewport_control.draw_circle(viewport_control.get_local_mouse_position(), 20, Color.GRAY, false)
+	viewport_control.draw_circle(viewport_control.get_local_mouse_position(), CLOSE_TO_MOUSE_RADIUS, Color.GRAY, false)
+	viewport_control.draw_circle(_vp_transform(current_bone.global_position), 5, Color.RED)
 
 
 func _is_editing_width_curve(svs : ScalableVectorShape2D) -> bool:
@@ -2264,7 +2266,7 @@ func _handle_bone_paint_input(event : InputEvent) -> bool:
 	var svs := current_selection as ScalableVectorShape2D
 	if not is_instance_valid(svs.skeleton):
 		return false
-	if svs.skeleton.get_bone_count() == 0:
+	if svs.skeleton.get_bone_count() == 0 or svs.skeleton.get_bone_count() <= _current_bone_idx:
 		return false
 	if _is_ctrl_or_cmd_pressed():
 		_lock_vp_scroll()
@@ -2280,10 +2282,20 @@ func _handle_bone_paint_input(event : InputEvent) -> bool:
 				_current_bone_idx = svs.skeleton.get_bone_count() - 1
 			elif _current_bone_idx > svs.skeleton.get_bone_count() - 1:
 				_current_bone_idx = 0
+			return true
 	else:
 		_locking_vp_horizontal_scrollbar = false
 		_locking_vp_vertical_scrollbar = false
-	return true
+
+	if ((event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT)
+			or (event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT))):
+		for p_idx in svs.curve.point_count:
+			var p := _vp_transform(svs.to_global(svs.curve.get_point_position(p_idx)))
+			var mp := _vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position())
+			if p.distance_to(mp) < CLOSE_TO_MOUSE_RADIUS:
+				svs.deformation_map[p_idx] = svs.skeleton.get_bone(_current_bone_idx)
+		return true
+	return false
 
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:

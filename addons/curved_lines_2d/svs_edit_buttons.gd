@@ -33,7 +33,6 @@ func set_default_mode(svs_is_selected := false) -> void:
 
 func _on_default_edit_toggled(toggled_on: bool) -> void:
 	if toggled_on:
-		print("TODO: make distinction between point edit and no point edit")
 		mode_changed.emit(CurvedLines2D.SVSEditMode.NONE)
 
 
