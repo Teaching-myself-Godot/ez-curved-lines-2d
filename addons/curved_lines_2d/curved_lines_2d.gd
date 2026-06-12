@@ -221,7 +221,7 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if toggled_on and _is_svs_valid(current_selection):
 		svs_edit_buttons.show()
-		svs_edit_buttons.show_svs_editors(is_instance_valid(current_selection.skeleton))
+		svs_edit_buttons.show_svs_editors()
 		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
 				_svs_edit_mode == SVSEditMode.BRUSH or _svs_edit_mode == SVSEditMode.PENCIL) and
 				not Input.is_key_pressed(KEY_Q)):

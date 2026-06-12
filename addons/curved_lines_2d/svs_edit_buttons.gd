@@ -5,7 +5,7 @@ signal mode_changed(mode : CurvedLines2D.SVSEditMode)
 signal flip_horizontal()
 signal flip_vertical()
 
-func show_svs_editors(has_skeleton) -> void:
+func show_svs_editors() -> void:
 	%UniformRotate.show()
 	%UniformTranslate.show()
 	%UniformScale.show()
