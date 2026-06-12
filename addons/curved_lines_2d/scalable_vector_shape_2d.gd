@@ -387,7 +387,7 @@ func _ready():
 			_on_clip_paths_changed()
 	if not dimensions_changed.is_connected(_on_dimensions_changed):
 		dimensions_changed.connect(_on_dimensions_changed)
-	if is_instance_valid(skeleton):
+	if is_instance_valid(skeleton) and not Engine.is_editor_hint():
 		for i in skeleton.get_bone_count():
 			skeleton.get_bone(i).set_script(_bone_transform_emit_script)
 
