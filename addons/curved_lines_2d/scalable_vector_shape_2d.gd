@@ -344,7 +344,7 @@ var stroke_width := 10.0:
 
 
 @export_group("Skeleton")
-@export var skeleton : Skeleton2D: set = _on_skeleton_changed
+@export var skeleton : Skeleton2D = null
 @export var deformation_map : Dictionary[int, Bone2D] = {}:
 	set(_map):
 		deformation_map = _map
@@ -369,11 +369,8 @@ var stroke_width := 10.0:
 var cached_outline : PackedVector2Array = []
 var cached_clipped_polygons : Array[PackedVector2Array] = []
 var cached_poly_strokes : Array[PackedVector2Array] = []
-
+var deformation_cache : Dictionary[Bone2D, Transform2D] = {}
 var should_update_curve := false
-
-var _bone_transform_emit_script : Script = load("res://addons/curved_lines_2d/svs_bone_2d.gd")
-
 
 # Wire up signals at runtime
 func _ready():
@@ -387,9 +384,6 @@ func _ready():
 			_on_clip_paths_changed()
 	if not dimensions_changed.is_connected(_on_dimensions_changed):
 		dimensions_changed.connect(_on_dimensions_changed)
-	if is_instance_valid(skeleton) and not Engine.is_editor_hint():
-		for i in skeleton.get_bone_count():
-			skeleton.get_bone(i).set_script(_bone_transform_emit_script)
 
 # Wire up signals on enter tree for the editor
 func _enter_tree():
@@ -425,8 +419,6 @@ func _enter_tree():
 	if deformation_map == null:
 		deformation_map = {}
 
-	if is_instance_valid(skeleton):
-		_connect_to_bone_signals()
 
 	if Engine.is_editor_hint():
 		if not curve.changed.is_connected(curve_changed):
@@ -454,43 +446,6 @@ func _enter_tree():
 	_on_dimensions_changed()
 
 
-func _on_skeleton_changed(_skel : Skeleton2D) -> void:
-	if not is_instance_valid(_skel):
-		if is_instance_valid(skeleton) and skeleton.bone_setup_changed.is_connected(_connect_to_bone_signals):
-			_disconnect_bone_signals()
-			skeleton.bone_setup_changed.disconnect(_connect_to_bone_signals)
-		skeleton = null
-	else:
-		skeleton = _skel
-		skeleton.bone_setup_changed.connect(_connect_to_bone_signals)
-		_connect_to_bone_signals()
-	assigned_node_changed.emit()
-
-
-func _disconnect_bone_signals(current_bone_node : Node = null) -> void:
-	if current_bone_node == null:
-		current_bone_node = skeleton
-	if current_bone_node is Bone2D:
-		var bone = current_bone_node as Bone2D
-		if bone.draw.is_connected(curve_changed):
-			bone.draw.disconnect(curve_changed)
-	for bone in current_bone_node.get_children():
-		if bone is Bone2D:
-			_disconnect_bone_signals(bone)
-
-
-func _connect_to_bone_signals(current_bone_node : Node = null) -> void:
-	if current_bone_node == null:
-		current_bone_node = skeleton
-	if current_bone_node is Bone2D:
-		var bone = current_bone_node as Bone2D
-		if not bone.draw.is_connected(curve_changed):
-			bone.draw.connect(curve_changed)
-	for bone in current_bone_node.get_children():
-		if bone is Bone2D:
-			_connect_to_bone_signals(bone)
-
-
 # Clean up signals (ie. when closing scene) to prevent error messages in the editor
 func _exit_tree():
 	if curve.changed.is_connected(curve_changed):
@@ -500,8 +455,15 @@ func _exit_tree():
 
 
 func _process(_delta: float) -> void:
+	if is_instance_valid(skeleton):
+		for i in skeleton.get_bone_count():
+			var bone := skeleton.get_bone(i)
+			if bone in deformation_cache and not bone.transform.is_equal_approx(deformation_cache[bone]):
+				should_update_curve = true
+			deformation_cache[bone] = bone.transform
 	if should_update_curve:
 		_update_curve()
+		print("updateing")
 		should_update_curve = false
 
 
