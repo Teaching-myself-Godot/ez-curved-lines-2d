@@ -1,10 +1,14 @@
 # Changelog
 
-## 2.24.0
+## 2.24.1
 
 ### Added
 
 - Skeleton rigging (soft launch): deform `ScalableVectorShape2D` points using a `Skeleton2D` and `Bone2D`
+
+### Changed
+
+- Fixed bug where bone vertex paint lost focus when bones were deleted
 
 ## 2.23.2
 
