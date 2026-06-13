@@ -537,13 +537,6 @@ func _get_full_bone_deform_transform(bone : Bone2D, trans := Transform2D.IDENTIT
 	return bone.transform * trans
 
 
-func _get_bone_chain(bone : Bone2D, bones : Array[Bone2D] = []) -> Array[Bone2D]:
-	bones.push_front(bone)
-	if bone.get_parent() is Bone2D:
-		return _get_bone_chain(bone.get_parent(), bones)
-	return bones
-
-
 func tessellate() -> PackedVector2Array:
 	if not cached_outline.is_empty():
 		return cached_outline
