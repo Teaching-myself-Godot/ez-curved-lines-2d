@@ -234,8 +234,8 @@ var stroke_width := 10.0:
 		assigned_node_changed.emit()
 
 
-## You can assign a [class Node2D] to a point in the curve (by point index) in order to control
-## that [class Node2D]'s [member Node2D.position]: it's global position will be set exactly to the
+## You can assign a [Node2D] to a point in the curve (by point index) in order to control
+## that [Node2D]'s [member Node2D.position]: it's global position will be set exactly to the
 ## curve point's global position
 @export var glue_map : Dictionary[int, Node2D] = {}:
 	set(_map):
@@ -344,7 +344,15 @@ var stroke_width := 10.0:
 
 
 @export_group("Skeleton")
+
+## Path to a [Skeleton2D] node used for skeleton-based deformations of this
+## [ScalableVectorShape2D].
+## Curve points must be assigned to [Bone2D] nodes beloning to this skeleton
+## via the [member deformation_map] to enable deforming the shape.
 @export var skeleton : Skeleton2D = null
+
+## Dictionary that holds map the [member curve]'s point indices to the
+## [member skeleton]'s [Bone2D] nodes
 @export var deformation_map : Dictionary[int, Bone2D] = {}:
 	set(_map):
 		deformation_map = _map
