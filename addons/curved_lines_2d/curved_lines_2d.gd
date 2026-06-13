@@ -2289,11 +2289,20 @@ func _handle_bone_paint_input(event : InputEvent) -> bool:
 
 	if ((event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT)
 			or (event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT))):
+
+		if not in_undo_redo_transaction and event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
+			_start_undo_redo_transaction("Paint points to bones")
+			undo_redo_transaction[UndoRedoEntry.UNDO_PROPS] = [[svs, 'deformation_map', svs.deformation_map.duplicate(true)]]
+
 		for p_idx in svs.curve.point_count:
 			var p := _vp_transform(svs.to_global(svs.curve.get_point_position(p_idx)))
 			var mp := _vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position())
 			if p.distance_to(mp) < CLOSE_TO_MOUSE_RADIUS:
 				svs.deformation_map[p_idx] = svs.skeleton.get_bone(_current_bone_idx)
+
+		if in_undo_redo_transaction and event is InputEventMouseButton and not (event as InputEventMouseButton).pressed:
+			undo_redo_transaction[UndoRedoEntry.DO_PROPS] = [[svs, 'deformation_map', svs.deformation_map.duplicate(true)]]
+			_commit_undo_redo_transaction()
 		return true
 	return false
 
