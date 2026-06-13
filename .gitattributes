@@ -5,7 +5,8 @@
 * text=auto eol=lf
 
 # Only include the addons folder when downloading from the Asset Library.
-/**        export-ignore
-/addons !export-ignore
+/**       export-ignore
+/addons   !export-ignore
 /addons/curved_lines_2d    !export-ignore
 /addons/curved_lines_2d/** !export-ignore
+/addons/curved_lines_2d/screenshots    export-ignore
