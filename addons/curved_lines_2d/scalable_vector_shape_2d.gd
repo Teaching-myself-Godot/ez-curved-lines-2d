@@ -352,8 +352,6 @@ var stroke_width := 10.0:
 			if p_idx < 0 or p_idx >= curve.point_count:
 				printerr("Warning: point index key for deformation_map not present in curve: ", p_idx)
 		assigned_node_changed.emit()
-@export var gradient_from_bone : Bone2D
-@export var gradient_to_bone : Bone2D
 
 @export_group("Editor settings")
 ## The [Color] used to draw the this shape's curve in the editor

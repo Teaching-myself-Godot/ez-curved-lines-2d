@@ -1244,24 +1244,6 @@ func _handle_paint_bone_draw(viewport_control : Control) -> void:
 		else:
 			_draw_crosshair(viewport_control, _vp_transform(p), 1.0, 6.0, Color.BLACK, 4)
 			_draw_crosshair(viewport_control, _vp_transform(p), 1.0, 6.0, VIEWPORT_ORANGE, 2)
-	var gradient_handles := svs.get_gradient_handles()
-	if not gradient_handles.is_empty():
-		var p1 := _vp_transform(gradient_handles['fill_from_pos'])
-		var p2 := _vp_transform(gradient_handles['fill_to_pos'])
-		viewport_control.draw_line(p1, p2, Color.DIM_GRAY, 1, true)
-		if svs.gradient_from_bone == current_bone:
-			viewport_control.draw_circle(p1, 5, Color.WHITE)
-			viewport_control.draw_circle(p1, 5, Color.DIM_GRAY, false)
-		else:
-			viewport_control.draw_circle(p1, 5, VIEWPORT_ORANGE)
-			viewport_control.draw_circle(p1, 5, Color.DIM_GRAY, false)
-		if svs.gradient_to_bone == current_bone:
-			viewport_control.draw_circle(p2, 5, Color.WHITE)
-			viewport_control.draw_circle(p2, 5, Color.DIM_GRAY, false)
-		else:
-			viewport_control.draw_circle(p2, 5, VIEWPORT_ORANGE)
-			viewport_control.draw_circle(p2, 5, Color.DIM_GRAY, false)
-
 
 	viewport_control.draw_circle(viewport_control.get_local_mouse_position(), CLOSE_TO_MOUSE_RADIUS, Color.GRAY, false)
 	viewport_control.draw_circle(_vp_transform(current_bone.global_position), 5, Color.RED)
@@ -2312,8 +2294,6 @@ func _handle_bone_paint_input(event : InputEvent) -> bool:
 		if not in_undo_redo_transaction and event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
 			_start_undo_redo_transaction("Paint points to bones")
 			undo_redo_transaction[UndoRedoEntry.UNDO_PROPS] = [[svs, 'deformation_map', svs.deformation_map.duplicate(true)]]
-			undo_redo_transaction[UndoRedoEntry.UNDO_PROPS].append([svs, 'gradient_from_bone', svs.gradient_from_bone])
-			undo_redo_transaction[UndoRedoEntry.UNDO_PROPS].append([svs, 'gradient_to_bone', svs.gradient_to_bone])
 
 		var mp := _vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position())
 		for p_idx in svs.curve.point_count:
@@ -2321,19 +2301,8 @@ func _handle_bone_paint_input(event : InputEvent) -> bool:
 			if p.distance_to(mp) < CLOSE_TO_MOUSE_RADIUS:
 				svs.deformation_map[p_idx] = svs.skeleton.get_bone(_current_bone_idx)
 
-		var gradient_handles := svs.get_gradient_handles()
-		if not gradient_handles.is_empty():
-			var p1 := _vp_transform(gradient_handles['fill_from_pos'])
-			var p2 := _vp_transform(gradient_handles['fill_to_pos'])
-			if p1.distance_to(mp) < CLOSE_TO_MOUSE_RADIUS:
-				svs.gradient_from_bone = svs.skeleton.get_bone(_current_bone_idx)
-			if p2.distance_to(mp) < CLOSE_TO_MOUSE_RADIUS:
-				svs.gradient_to_bone = svs.skeleton.get_bone(_current_bone_idx)
-
 		if in_undo_redo_transaction and event is InputEventMouseButton and not (event as InputEventMouseButton).pressed:
 			undo_redo_transaction[UndoRedoEntry.DO_PROPS] = [[svs, 'deformation_map', svs.deformation_map.duplicate(true)]]
-			undo_redo_transaction[UndoRedoEntry.DO_PROPS].append([svs, 'gradient_from_bone', svs.gradient_from_bone])
-			undo_redo_transaction[UndoRedoEntry.DO_PROPS].append([svs, 'gradient_to_bone', svs.gradient_to_bone])
 			_commit_undo_redo_transaction()
 		return true
 	return false
