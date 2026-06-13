@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.24.0
+
+### Added
+
+- Skeleton rigging (soft launch): deform `ScalableVectorShape2D` points using a `Skeleton2D` and `Bone2D`
 
 ## 2.23.2
 
