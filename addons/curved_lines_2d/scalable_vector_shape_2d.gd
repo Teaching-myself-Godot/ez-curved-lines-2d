@@ -348,8 +348,17 @@ var stroke_width := 10.0:
 ## [ScalableVectorShape2D].
 ## Curve points must be assigned to [Bone2D] nodes beloning to this skeleton
 ## via the [member deformation_map] to enable deforming the shape.
+## The entire [ScalableVectorShape2]'s position and rotation can be set via
+## [member bone].
 @export var skeleton : Skeleton2D = null
 
+## Path to a [Bone2D] node used to set the [member Node2D.rotation] and
+## [member Node2D.position] of this [ScalableVectorShape2D]
+## When [member bone] is assigned, deformation of the [member curve] is disabled
+## and the [member deformation_map] is ignored
+@export var bone : Bone2D = null
+
+@export_subgroup("Deformation Settings")
 ## Dictionary that holds map the [member curve]'s point indices to the
 ## [member skeleton]'s [Bone2D] nodes
 @export var deformation_map : Dictionary[int, Bone2D] = {}:

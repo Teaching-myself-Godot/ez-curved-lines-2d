@@ -1222,6 +1222,8 @@ func _handle_paint_bone_draw(viewport_control : Control) -> void:
 		return _draw_hint(viewport_control, "** No Skeleton2D assigned, cannot assign points to bones! **")
 	if svs.skeleton.get_bone_count() == 0:
 		return _draw_hint(viewport_control, "** Skeleton2D has no bones! **")
+	if is_instance_valid(svs.bone):
+		return _draw_hint(viewport_control, "** A Bone2D is assigned, unassign to enable point deform **")
 	if svs.skeleton != _last_skeleton:
 		_current_bone_idx = 0
 		_last_skeleton = svs.skeleton
@@ -2267,7 +2269,7 @@ func _handle_bone_paint_input(event : InputEvent) -> bool:
 	var svs := current_selection as ScalableVectorShape2D
 	if not is_instance_valid(svs.skeleton):
 		return false
-	if svs.skeleton.get_bone_count() == 0 or svs.skeleton.get_bone_count() <= _current_bone_idx:
+	if svs.skeleton.get_bone_count() == 0:
 		return false
 	if _is_ctrl_or_cmd_pressed():
 		_lock_vp_scroll()
