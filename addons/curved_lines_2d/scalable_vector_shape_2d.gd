@@ -344,7 +344,6 @@ var stroke_width := 10.0:
 
 
 @export_group("Skeleton")
-
 ## Path to a [Skeleton2D] node used for skeleton-based deformations of this
 ## [ScalableVectorShape2D].
 ## Curve points must be assigned to [Bone2D] nodes beloning to this skeleton
