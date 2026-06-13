@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://jwgf6ni22kes"]
+[gd_scene load_steps=13 format=3 uid="uid://jwgf6ni22kes"]
 
 [ext_resource type="Script" uid="uid://cligefu5bwmld" path="res://addons/curved_lines_2d/svs_edit_buttons.gd" id="1_ui2xk"]
 [ext_resource type="Texture2D" uid="uid://daemvs3ws7fpk" path="res://addons/curved_lines_2d/DefaultMode.svg" id="2_8dhsk"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://bxxtceujf66ws" path="res://addons/curved_lines_2d/Pencil.svg" id="7_i6df8"]
 [ext_resource type="Texture2D" uid="uid://ly2rtvkn6ush" path="res://addons/curved_lines_2d/FlipVertical.svg" id="7_sl6t4"]
 [ext_resource type="Texture2D" uid="uid://6mmxldln6pdn" path="res://addons/curved_lines_2d/MergeChain.svg" id="8_fsls0"]
+[ext_resource type="Texture2D" uid="uid://cvplv4mak1uys" path="res://addons/curved_lines_2d/PaintBone.svg" id="11_i6df8"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_rxvdi"]
 
@@ -80,6 +81,15 @@ button_group = SubResource("ButtonGroup_rxvdi")
 icon = ExtResource("5_1qgur")
 flat = true
 
+[node name="PaintBone" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Assign Points to Bones"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_rxvdi")
+icon = ExtResource("11_i6df8")
+flat = true
+
 [node name="VSeparator2" type="VSeparator" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
@@ -117,6 +127,7 @@ flat = true
 [connection signal="toggled" from="UniformTranslate" to="." method="_on_uniform_translate_toggled"]
 [connection signal="toggled" from="UniformRotate" to="." method="_on_uniform_rotate_toggled"]
 [connection signal="toggled" from="UniformScale" to="." method="_on_uniform_scale_toggled"]
+[connection signal="toggled" from="PaintBone" to="." method="_on_paint_bone_toggled"]
 [connection signal="pressed" from="FlipHorizontal" to="." method="_on_flip_horizontal_pressed"]
 [connection signal="pressed" from="FlipVertical" to="." method="_on_flip_vertical_pressed"]
 [connection signal="toggled" from="Merge" to="." method="_on_merge_toggled"]

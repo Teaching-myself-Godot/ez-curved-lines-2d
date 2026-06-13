@@ -234,8 +234,8 @@ var stroke_width := 10.0:
 		assigned_node_changed.emit()
 
 
-## You can assign a [class Node2D] to a point in the curve (by point index) in order to control
-## that [class Node2D]'s [member Node2D.position]: it's global position will be set exactly to the
+## You can assign a [Node2D] to a point in the curve (by point index) in order to control
+## that [Node2D]'s [member Node2D.position]: it's global position will be set exactly to the
 ## curve point's global position
 @export var glue_map : Dictionary[int, Node2D] = {}:
 	set(_map):
@@ -342,6 +342,24 @@ var stroke_width := 10.0:
 				ry = size.y * 0.49
 		dimensions_changed.emit()
 
+
+@export_group("Skeleton")
+## Path to a [Skeleton2D] node used for skeleton-based deformations of this
+## [ScalableVectorShape2D].
+## Curve points must be assigned to [Bone2D] nodes beloning to this skeleton
+## via the [member deformation_map] to enable deforming the shape.
+@export var skeleton : Skeleton2D = null
+
+## Dictionary that holds map the [member curve]'s point indices to the
+## [member skeleton]'s [Bone2D] nodes
+@export var deformation_map : Dictionary[int, Bone2D] = {}:
+	set(_map):
+		deformation_map = _map
+		for p_idx in deformation_map.keys():
+			if p_idx < 0 or p_idx >= curve.point_count:
+				printerr("Warning: point index key for deformation_map not present in curve: ", p_idx)
+		assigned_node_changed.emit()
+
 @export_group("Editor settings")
 ## The [Color] used to draw the this shape's curve in the editor
 @export var shape_hint_color := Color.LIME_GREEN
@@ -357,7 +375,7 @@ var stroke_width := 10.0:
 var cached_outline : PackedVector2Array = []
 var cached_clipped_polygons : Array[PackedVector2Array] = []
 var cached_poly_strokes : Array[PackedVector2Array] = []
-
+var deformation_cache : Dictionary[Bone2D, Transform2D] = {}
 var should_update_curve := false
 
 # Wire up signals at runtime
@@ -372,7 +390,6 @@ func _ready():
 			_on_clip_paths_changed()
 	if not dimensions_changed.is_connected(_on_dimensions_changed):
 		dimensions_changed.connect(_on_dimensions_changed)
-
 
 # Wire up signals on enter tree for the editor
 func _enter_tree():
@@ -404,6 +421,10 @@ func _enter_tree():
 	# ensure forward compatibility by assigning an empty dict to glue_map
 	if glue_map == null:
 		glue_map = {}
+	# ensure forward compatibility by assigning an empty dict to deformation_map
+	if deformation_map == null:
+		deformation_map = {}
+
 
 	if Engine.is_editor_hint():
 		if not curve.changed.is_connected(curve_changed):
@@ -430,6 +451,7 @@ func _enter_tree():
 		dimensions_changed.connect(_on_dimensions_changed)
 	_on_dimensions_changed()
 
+
 # Clean up signals (ie. when closing scene) to prevent error messages in the editor
 func _exit_tree():
 	if curve.changed.is_connected(curve_changed):
@@ -439,6 +461,12 @@ func _exit_tree():
 
 
 func _process(_delta: float) -> void:
+	if is_instance_valid(skeleton):
+		for i in skeleton.get_bone_count():
+			var bone := skeleton.get_bone(i)
+			if bone in deformation_cache and not bone.transform.is_equal_approx(deformation_cache[bone]):
+				should_update_curve = true
+			deformation_cache[bone] = bone.transform
 	if should_update_curve:
 		_update_curve()
 		should_update_curve = false
@@ -503,11 +531,37 @@ func notify_assigned_node_change():
 	assigned_node_changed.emit()
 
 
+func _get_full_bone_deform_transform(bone : Bone2D, trans := Transform2D.IDENTITY) -> Transform2D:
+	if bone.get_parent() is Bone2D:
+		return _get_full_bone_deform_transform(bone.get_parent(), bone.transform * trans)
+	return bone.transform * trans
+
+
 func tessellate() -> PackedVector2Array:
 	if not cached_outline.is_empty():
 		return cached_outline
+	var the_curve : Curve2D = curve.duplicate(true) if skeleton else curve
+	if skeleton:
+		for pt_idx in deformation_map.keys():
+			var bone : Bone2D = deformation_map[pt_idx]
+			var rest := bone.get_skeleton_rest()
+			var full_deform := _get_full_bone_deform_transform(bone)
+			var pos_delta := full_deform.get_origin() - rest.get_origin()
+			var angle_delta := full_deform.get_rotation() - rest.get_rotation()
+			var p := curve.get_point_position(pt_idx) + pos_delta
+			var cp_in_abs := curve.get_point_in(pt_idx) + p
+			var cp_out_abs := curve.get_point_out(pt_idx) + p
+			var local_bone_origin := to_local(bone.global_position)
+			p = (p - local_bone_origin).rotated(angle_delta) + local_bone_origin
+			cp_in_abs = (cp_in_abs - local_bone_origin).rotated(angle_delta) + local_bone_origin
+			cp_out_abs = (cp_out_abs - local_bone_origin).rotated(angle_delta) + local_bone_origin
+			the_curve.set_point_position(pt_idx, p)
+			the_curve.set_point_in(pt_idx, cp_in_abs - p)
+			the_curve.set_point_out(pt_idx, cp_out_abs - p)
+
+
 	if not arc_list or arc_list.arcs.is_empty():
-		return curve.tessellate(max_stages, tolerance_degrees)
+		return the_curve.tessellate(max_stages, tolerance_degrees)
 	var poly_points = []
 	var arc_starts := (arc_list.arcs
 		.filter(func(a): return a != null)
@@ -515,7 +569,7 @@ func tessellate() -> PackedVector2Array:
 	)
 	for p_idx in curve.point_count - 1:
 		if p_idx in arc_starts:
-			var seg := _get_curve_segment(p_idx)
+			var seg := _get_curve_segment(p_idx, the_curve)
 			var arc = arc_list.get_arc_for_point(p_idx)
 			if arc:
 				var seg_points := tessellate_arc_segment(seg.get_point_position(0), arc.radius,
@@ -530,7 +584,7 @@ func tessellate() -> PackedVector2Array:
 					poly_points.append(seg.get_point_position(0))
 				poly_points.append(seg.get_point_position(1))
 		else:
-			var seg_points := _get_curve_segment(p_idx).tessellate(max_stages, tolerance_degrees)
+			var seg_points := _get_curve_segment(p_idx, the_curve).tessellate(max_stages, tolerance_degrees)
 			for i in seg_points.size():
 				if i == 0 and not poly_points.is_empty():
 					continue
@@ -1093,23 +1147,23 @@ func replace_curve_points(curve_in : Curve2D) -> void:
 
 
 func add_arc(segment_p1_idx : int) -> void:
-	var seg := _get_curve_segment(segment_p1_idx)
+	var seg := _get_curve_segment(segment_p1_idx, curve)
 	var r := seg.get_point_position(0).distance_to(seg.get_point_position(1)) * 0.5
 	arc_list.add_arc(ScalableArc.new(segment_p1_idx, Vector2.ONE * r, 0.0))
 
 
-func _get_curve_segment(segment_p1_idx : int) -> Curve2D:
+func _get_curve_segment(segment_p1_idx : int, _curve : Curve2D) -> Curve2D:
 	var curve_segment := Curve2D.new()
 	curve_segment.add_point(
-		curve.get_point_position(segment_p1_idx),
+		_curve.get_point_position(segment_p1_idx),
 		Vector2.ZERO,
-		curve.get_point_out(segment_p1_idx)
+		_curve.get_point_out(segment_p1_idx)
 	)
-	var segment_p2_idx = (0 if segment_p1_idx == curve.point_count - 1
+	var segment_p2_idx = (0 if segment_p1_idx == _curve.point_count - 1
 			else segment_p1_idx + 1)
 	curve_segment.add_point(
-		curve.get_point_position(segment_p2_idx),
-		curve.get_point_in(segment_p2_idx)
+		_curve.get_point_position(segment_p2_idx),
+		_curve.get_point_in(segment_p2_idx)
 	)
 	return curve_segment
 
@@ -1120,7 +1174,7 @@ func is_arc_start(p_idx) -> bool:
 
 func _get_tessellated_curve_segment(segment_p1_idx : int) -> PackedVector2Array:
 	var arc := arc_list.get_arc_for_point(segment_p1_idx)
-	var seg := _get_curve_segment(segment_p1_idx)
+	var seg := _get_curve_segment(segment_p1_idx, curve)
 	return (
 			tessellate_arc_segment(seg.get_point_position(0), arc.radius, arc.rotation_deg,
 				arc.large_arc_flag, arc.sweep_flag, seg.get_point_position(1))

@@ -49,6 +49,7 @@ const META_NAME_SELECT_HINT := "_select_hint_"
 
 const VIEWPORT_ORANGE := Color(0.737, 0.463, 0.337)
 const WIDTH_CURVE_EDIT_CLAMP_DISTANCE := 25.0
+const CLOSE_TO_MOUSE_RADIUS := 20.0
 
 enum KeepDrawingBehavior {
 	KEEP_DRAWING_ON_SAME_PARENT,
@@ -87,7 +88,7 @@ const OPERATION_NAME_MAP := {
 
 enum SVSEditMode {
 	NONE, TRANSLATE, ROTATE, SCALE,
-	MERGE, BRUSH, PENCIL
+	MERGE, BRUSH, PENCIL, PAINT_BONE
 }
 
 var plugin : Line2DGeneratorInspectorPlugin
@@ -124,17 +125,22 @@ var _prev_uniform_rotate_angle := 0.0
 var _stored_natural_center := Vector2.ZERO
 var _lmb_is_down_inside_viewport := false
 
-#var merge_node_toggle_button : Button
+# Merge points helper vars
 var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
 
-#var pencil_draw_toggle_button : CheckBox
+# Pencil draw helper vars
 var _drawing_pencil_line := false
 
-#var brush_draw_toggle_button : CheckBox
+# Brush draw helper vars
 var _current_brush_shape := PackedVector2Array()
 var _current_brush_stroke := PackedVector2Array()
 var _brush_start_pos := Vector2.ZERO
 var _last_brush_pos := Vector2.ZERO
+
+# Bone Paint helper vars
+var _current_bone_idx := 0
+var _last_skeleton : Skeleton2D = null
+
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = load("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -239,6 +245,7 @@ func _on_svs_edit_mode_changed(new_mode : SVSEditMode) -> void:
 		_merge_box_rect.size = Vector2.ZERO
 	if new_mode != SVSEditMode.PENCIL:
 		_drawing_pencil_line = false
+
 	_svs_edit_mode = new_mode
 	update_overlays()
 
@@ -806,9 +813,9 @@ func _set_handle_hover(g_mouse_pos : Vector2, svs : ScalableVectorShape2D) -> vo
 					return mouse_pos.distance_to(_vp_transform(p)) < 6)
 		if stop_idx > -1:
 			svs.set_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX, stop_idx)
-		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_from_pos'])) < 20:
+		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_from_pos'])) < CLOSE_TO_MOUSE_RADIUS:
 			svs.set_meta(META_NAME_HOVER_GRADIENT_FROM, true)
-		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_to_pos'])) < 20:
+		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_to_pos'])) < CLOSE_TO_MOUSE_RADIUS:
 			svs.set_meta(META_NAME_HOVER_GRADIENT_TO, true)
 		else:
 			var p := Geometry2D.get_closest_point_to_segment(mouse_pos,
@@ -1206,6 +1213,42 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 		_draw_curve(viewport_control, sel)
 
 
+func _handle_paint_bone_draw(viewport_control : Control) -> void:
+	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if not sel is ScalableVectorShape2D:
+		return
+	var svs := sel as ScalableVectorShape2D
+	if not is_instance_valid(svs.skeleton):
+		return _draw_hint(viewport_control, "** No Skeleton2D assigned, cannot assign points to bones! **")
+	if svs.skeleton.get_bone_count() == 0:
+		return _draw_hint(viewport_control, "** Skeleton2D has no bones! **")
+	if svs.skeleton != _last_skeleton:
+		_current_bone_idx = 0
+		_last_skeleton = svs.skeleton
+	var current_bone := svs.skeleton.get_bone(_current_bone_idx)
+	var ctrl_hint := "- Click+drag to assign points to Bone2D: %s (%d / %d)" % [
+			current_bone.name, _current_bone_idx + 1, svs.skeleton.get_bone_count()
+	]
+	ctrl_hint += (
+		"\n- Use mousewheel to change bone (Ctrl held)"
+			if _is_ctrl_or_cmd_pressed() else
+		"\n- Ctrl+mousewheel to change bone (Cmd for Mac)"
+	)
+	_draw_hint(viewport_control, ctrl_hint)
+	_draw_curve_def(viewport_control, svs, svs.shape_hint_color, 0.5, true)
+	for idx in svs.curve.point_count:
+		var p := svs.to_global(svs.curve.get_point_position(idx))
+		if idx in svs.deformation_map and svs.deformation_map[idx] == current_bone:
+			_draw_crosshair(viewport_control, _vp_transform(p), 1.0, 6.0, Color.BLACK, 4)
+			_draw_crosshair(viewport_control, _vp_transform(p), 1.0, 6.0, Color.WHITE, 2)
+		else:
+			_draw_crosshair(viewport_control, _vp_transform(p), 1.0, 6.0, Color.BLACK, 4)
+			_draw_crosshair(viewport_control, _vp_transform(p), 1.0, 6.0, VIEWPORT_ORANGE, 2)
+
+	viewport_control.draw_circle(viewport_control.get_local_mouse_position(), CLOSE_TO_MOUSE_RADIUS, Color.GRAY, false)
+	viewport_control.draw_circle(_vp_transform(current_bone.global_position), 5, Color.RED)
+
+
 func _is_editing_width_curve(svs : ScalableVectorShape2D) -> bool:
 	return (
 			_is_ctrl_or_cmd_pressed() and
@@ -1225,6 +1268,8 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		return _handle_pencil_draw(viewport_control)
 	elif _svs_edit_mode == SVSEditMode.BRUSH:
 		return _handle_brush_draw(viewport_control)
+	elif _svs_edit_mode == SVSEditMode.PAINT_BONE:
+		return _handle_paint_bone_draw(viewport_control)
 
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
@@ -1440,7 +1485,7 @@ func _update_gradient_to_position(svs : ScalableVectorShape2D, mouse_pos : Vecto
 	if _is_snapped_to_pixel():
 		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	if not in_undo_redo_transaction:
-		_start_undo_redo_transaction("Move gradient from position for %s" % str(svs))
+		_start_undo_redo_transaction("Move gradient to position for %s" % str(svs))
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS].append([svs.polygon.texture, 'fill_to',
 				svs.polygon.texture.fill_to])
 	var box := svs.get_bounding_rect()
@@ -2214,6 +2259,55 @@ func _lock_vp_scroll():
 		vp_vert_scrollbar.value = _vp_vertical_scrollbar_locked_value
 
 
+func _handle_bone_paint_input(event : InputEvent) -> bool:
+	update_overlays()
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if not _is_svs_valid(current_selection):
+		return false
+	var svs := current_selection as ScalableVectorShape2D
+	if not is_instance_valid(svs.skeleton):
+		return false
+	if svs.skeleton.get_bone_count() == 0 or svs.skeleton.get_bone_count() <= _current_bone_idx:
+		return false
+	if _is_ctrl_or_cmd_pressed():
+		_lock_vp_scroll()
+		if (event is InputEventMouseButton and
+			(event as InputEventMouseButton).button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN] and
+			(event as InputEventMouseButton).pressed
+		):
+			if (event as InputEventMouseButton).button_index == MOUSE_BUTTON_WHEEL_UP:
+				_current_bone_idx += 1
+			else:
+				_current_bone_idx -= 1
+			if _current_bone_idx < 0:
+				_current_bone_idx = svs.skeleton.get_bone_count() - 1
+			elif _current_bone_idx > svs.skeleton.get_bone_count() - 1:
+				_current_bone_idx = 0
+			return true
+	else:
+		_locking_vp_horizontal_scrollbar = false
+		_locking_vp_vertical_scrollbar = false
+
+	if ((event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT)
+			or (event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT))):
+
+		if not in_undo_redo_transaction and event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
+			_start_undo_redo_transaction("Paint points to bones")
+			undo_redo_transaction[UndoRedoEntry.UNDO_PROPS] = [[svs, 'deformation_map', svs.deformation_map.duplicate(true)]]
+
+		var mp := _vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position())
+		for p_idx in svs.curve.point_count:
+			var p := _vp_transform(svs.to_global(svs.curve.get_point_position(p_idx)))
+			if p.distance_to(mp) < CLOSE_TO_MOUSE_RADIUS:
+				svs.deformation_map[p_idx] = svs.skeleton.get_bone(_current_bone_idx)
+
+		if in_undo_redo_transaction and event is InputEventMouseButton and not (event as InputEventMouseButton).pressed:
+			undo_redo_transaction[UndoRedoEntry.DO_PROPS] = [[svs, 'deformation_map', svs.deformation_map.duplicate(true)]]
+			_commit_undo_redo_transaction()
+		return true
+	return false
+
+
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
 
 	if _svs_edit_mode == SVSEditMode.MERGE:
@@ -2222,6 +2316,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return _handle_pencil_draw_input(event)
 	elif _svs_edit_mode == SVSEditMode.BRUSH:
 		return _handle_brush_draw_input(event)
+	elif _svs_edit_mode == SVSEditMode.PAINT_BONE:
+		return _handle_bone_paint_input(event)
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		_lmb_is_down_inside_viewport = (event as InputEventMouseButton).pressed

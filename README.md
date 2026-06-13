@@ -94,6 +94,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 		- [The Glue Map property](#the-glue-map-property)
 	- [The Masking Inspector form](#the-masking-inspector-form)
 	- [The Shape type inspector form](#the-shape-type-inspector-form)
+	- [The Skeleton inspector form](#the-skeleton-inspector-form)
 	- [The Editor settings inspector form](#the-editor-settings-inspector-form)
 	- [The Export Options inspector form](#the-export-options-inspector-form)
 		- [Export as PNG button](#export-as-png-button)
@@ -102,7 +103,8 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 - [More about assigned `Line2D`, `Polygon2D` and `CollisionObject2D`](#more-about-assigned-line2d-polygon2d-and-collisionobject2d)
 	- [Watch the chapter about working with collisions, paint order and the node hierarchy on youtube](#watch-the-chapter-about-working-with-collisions-paint-order-and-the-node-hierarchy-on-youtube)
 - [Animating / Changing shapes at runtime](#animating--changing-shapes-at-runtime)
-	- [Youtube explainer on animating](#youtube-explainer-on-animating)
+	- [Animating using `Skeleton2D`](#animating-using-skeleton2d)
+	- [Youtube explainer on animating curves](#youtube-explainer-on-animating-curves)
 	- [A note up front (this being said)](#a-note-up-front-this-being-said)
 	- [Animating the shape and gradients at Runtime](#animating-the-shape-and-gradients-at-runtime)
 	- [Add keyframes in an animation player](#add-keyframes-in-an-animation-player)
@@ -724,6 +726,11 @@ This form allows manipulation of the properties of primitive shape types (rectan
 
 It is best to change these properties via the handles in the 2D editor. They are, however, quite useful for animating key frames.
 
+## The Skeleton inspector form
+
+This form allows for rigging your shape by assigning a `Skeleton2D` node:
+- Skeleton: the assigned `Skeleton2D` node
+- Deformation Map: a Dictionary telling the shape which point must be deformed by which bone.
 
 ## The Editor settings inspector form
 
@@ -763,7 +770,17 @@ This video gives more context on how `Line2D`, `Polygon2D` and `CollisionPolygon
 
 # Animating / Changing shapes at runtime
 
-## Youtube explainer on animating
+## Animating using `Skeleton2D`
+
+As of release 2.24 you can rig your shapes to a `Skeleton2D`'s bones. Do this by assigning a `Skeleton2D` via the inspector:
+
+![assigning a skeleton](./addons/curved_lines_2d/screenshots/assign_skeleton.png)
+
+Once a skeleton with `Bone2D` nodes is assigned, you can use the `Paint Bone` toggle button to assign individual points to bones by clicking + dragging:
+
+![assigning points to bones](./addons/curved_lines_2d/screenshots/paint_bone.png)
+
+## Youtube explainer on animating curves
 
 Watch this explainer on youtube on animating:
 

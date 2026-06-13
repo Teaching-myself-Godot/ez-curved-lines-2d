@@ -23,7 +23,10 @@ layout_mode = 2
 [node name="Label" type="Label" parent="HBoxContainer"]
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
-tooltip_text = "Exports the entire scene as a PNG spritesheet, or separate PNG files using the selected animation."
+tooltip_text = "Export the selected node and its children:
+- as a static PNG file
+- as a 'Baked' Scene, converting ScalableVectorShape2D to Node2D. Any deforming by skeleton of ScalableVectorShape2D is not converted.
+- a set of AdaptableVectorShape3D nodes (Line2D strokes not supported)"
 mouse_filter = 0
 text = "Export Options*"
 

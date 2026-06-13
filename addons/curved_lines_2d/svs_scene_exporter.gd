@@ -33,6 +33,8 @@ static func export_image(export_root_node : Node, stored_box_ref : Dictionary[St
 			min_y = floori(min_y if min_y1 > min_y else min_y1)
 			max_x = ceili(max_x if max_x1 < max_x else max_x1)
 			max_y = ceili(max_y if max_y1 < max_y else max_y1)
+		if child is Skeleton2D:
+			child.hide()
 	sub_viewport.canvas_transform.origin = -Vector2(min_x, min_y)
 	sub_viewport.size = Vector2(max_x, max_y) - Vector2(min_x, min_y)
 	if forward_aa:
