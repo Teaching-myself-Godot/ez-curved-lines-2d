@@ -556,6 +556,7 @@ func tessellate() -> PackedVector2Array:
 				continue
 			var bone : Bone2D = deformation_map[pt_idx]
 			if not is_instance_valid(bone):
+				deformation_map.erase(pt_idx)
 				continue
 			var rest := bone.get_skeleton_rest()
 			var full_deform := _get_full_bone_deform_transform(bone)
@@ -571,7 +572,6 @@ func tessellate() -> PackedVector2Array:
 			the_curve.set_point_position(pt_idx, p)
 			the_curve.set_point_in(pt_idx, cp_in_abs - p)
 			the_curve.set_point_out(pt_idx, cp_out_abs - p)
-
 
 	if not arc_list or arc_list.arcs.is_empty():
 		return the_curve.tessellate(max_stages, tolerance_degrees)
