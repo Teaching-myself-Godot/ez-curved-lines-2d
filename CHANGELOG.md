@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.24.1
+## 2.24.2
 
 ### Added
 
@@ -9,6 +9,7 @@
 ### Changed
 
 - Fixed bug where bone vertex paint lost focus when bones were deleted
+- Fixe npe bug when bone was deleted, but still referred to in deformation map
 
 ## 2.23.2
 

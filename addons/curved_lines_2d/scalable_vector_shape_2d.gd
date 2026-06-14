@@ -553,6 +553,8 @@ func tessellate() -> PackedVector2Array:
 	if skeleton:
 		for pt_idx in deformation_map.keys():
 			var bone : Bone2D = deformation_map[pt_idx]
+			if not is_instance_valid(bone):
+				continue
 			var rest := bone.get_skeleton_rest()
 			var full_deform := _get_full_bone_deform_transform(bone)
 			var pos_delta := full_deform.get_origin() - rest.get_origin()
