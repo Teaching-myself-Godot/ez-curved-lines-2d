@@ -551,7 +551,9 @@ func tessellate() -> PackedVector2Array:
 		return cached_outline
 	var the_curve : Curve2D = curve.duplicate(true) if skeleton else curve
 	if skeleton:
-		for pt_idx in deformation_map.keys():
+		for pt_idx in curve.point_count:
+			if pt_idx not in deformation_map:
+				continue
 			var bone : Bone2D = deformation_map[pt_idx]
 			if not is_instance_valid(bone):
 				continue
