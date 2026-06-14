@@ -356,7 +356,7 @@ var stroke_width := 10.0:
 ## [member Node2D.position] of this [ScalableVectorShape2D]
 ## When [member bone] is assigned, deformation of the [member curve] is disabled
 ## and the [member deformation_map] is ignored
-@export var bone : Bone2D = null
+@export var bone : Bone2D = null: set = _on_bone_assigned
 
 @export_subgroup("Deformation Settings")
 ## Dictionary that holds map the [member curve]'s point indices to the
@@ -368,6 +368,8 @@ var stroke_width := 10.0:
 			if p_idx < 0 or p_idx >= curve.point_count:
 				printerr("Warning: point index key for deformation_map not present in curve: ", p_idx)
 		assigned_node_changed.emit()
+@export var original_position := Vector2.ZERO
+@export_range(-180.0, 180.0, 0.1, "radians_as_degrees") var original_rotation := 0.0
 
 @export_group("Editor settings")
 ## The [Color] used to draw the this shape's curve in the editor
@@ -535,6 +537,17 @@ func _on_assigned_node_changed(_x : Variant = null):
 	curve_changed()
 
 
+func _on_bone_assigned(new_bone : Bone2D) -> void:
+	if is_instance_valid(bone):
+		position = original_position
+		rotation = original_rotation
+	if is_instance_valid(new_bone):
+		original_position = position
+		original_rotation = rotation
+	bone = new_bone
+	curve_changed()
+
+
 ## Exposes assigned_node_changed signal to outside callers
 func notify_assigned_node_change():
 	assigned_node_changed.emit()
@@ -550,22 +563,35 @@ func tessellate() -> PackedVector2Array:
 	if not cached_outline.is_empty():
 		return cached_outline
 	var the_curve : Curve2D = curve.duplicate(true) if skeleton else curve
-	if skeleton:
+
+	if is_instance_valid(skeleton) and is_instance_valid(bone):
+		var rest := bone.get_skeleton_rest()
+		var full_deform := _get_full_bone_deform_transform(bone)
+		var pos_delta := full_deform.get_origin() - rest.get_origin()
+		var angle_delta := full_deform.get_rotation() - rest.get_rotation()
+
+		rotation = original_rotation + angle_delta
+		position = original_position + pos_delta
+		var bone_origin_delta = global_position - bone.global_position
+		global_position = bone.global_position + bone_origin_delta.rotated(angle_delta)
+		#position = (position - local_bone_origin).rotated(angle_delta) + local_bone_origin
+
+	elif is_instance_valid(skeleton):
 		for pt_idx in curve.point_count:
 			if pt_idx not in deformation_map:
 				continue
-			var bone : Bone2D = deformation_map[pt_idx]
-			if not is_instance_valid(bone):
+			var _bone : Bone2D = deformation_map[pt_idx]
+			if not is_instance_valid(_bone):
 				deformation_map.erase(pt_idx)
 				continue
-			var rest := bone.get_skeleton_rest()
-			var full_deform := _get_full_bone_deform_transform(bone)
+			var rest := _bone.get_skeleton_rest()
+			var full_deform := _get_full_bone_deform_transform(_bone)
 			var pos_delta := full_deform.get_origin() - rest.get_origin()
 			var angle_delta := full_deform.get_rotation() - rest.get_rotation()
 			var p := curve.get_point_position(pt_idx) + pos_delta
 			var cp_in_abs := curve.get_point_in(pt_idx) + p
 			var cp_out_abs := curve.get_point_out(pt_idx) + p
-			var local_bone_origin := to_local(bone.global_position)
+			var local_bone_origin := to_local(_bone.global_position)
 			p = (p - local_bone_origin).rotated(angle_delta) + local_bone_origin
 			cp_in_abs = (cp_in_abs - local_bone_origin).rotated(angle_delta) + local_bone_origin
 			cp_out_abs = (cp_out_abs - local_bone_origin).rotated(angle_delta) + local_bone_origin
