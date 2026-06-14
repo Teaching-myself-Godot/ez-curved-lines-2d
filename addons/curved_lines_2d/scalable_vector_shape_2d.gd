@@ -368,8 +368,8 @@ var stroke_width := 10.0:
 			if p_idx < 0 or p_idx >= curve.point_count:
 				printerr("Warning: point index key for deformation_map not present in curve: ", p_idx)
 		assigned_node_changed.emit()
-@export var original_position := Vector2.ZERO
-@export_range(-180.0, 180.0, 0.1, "radians_as_degrees") var original_rotation := 0.0
+@export var original_position := Vector2.INF
+@export var original_rotation := INF
 
 @export_group("Editor settings")
 ## The [Color] used to draw the this shape's curve in the editor
@@ -501,7 +501,15 @@ func _on_clip_paths_changed():
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_LOCAL_TRANSFORM_CHANGED:
 		transform_changed.emit(self)
-
+	if (what == NOTIFICATION_EDITOR_PRE_SAVE or
+		(what == NOTIFICATION_WM_CLOSE_REQUEST and Engine.is_editor_hint())
+	):
+		if is_instance_valid(bone):
+			position = original_position
+			rotation = original_rotation
+	if what == NOTIFICATION_EDITOR_POST_SAVE:
+		if is_instance_valid(bone):
+			curve_changed()
 
 func _on_dimensions_changed():
 	if shape_type == ShapeType.RECT:
@@ -541,6 +549,8 @@ func _on_bone_assigned(new_bone : Bone2D) -> void:
 	if is_instance_valid(bone):
 		position = original_position
 		rotation = original_rotation
+	original_position = Vector2.INF
+	original_rotation = INF
 	if is_instance_valid(new_bone):
 		original_position = position
 		original_rotation = rotation
@@ -574,7 +584,6 @@ func tessellate() -> PackedVector2Array:
 		position = original_position + pos_delta
 		var bone_origin_delta = global_position - bone.global_position
 		global_position = bone.global_position + bone_origin_delta.rotated(angle_delta)
-		#position = (position - local_bone_origin).rotated(angle_delta) + local_bone_origin
 
 	elif is_instance_valid(skeleton):
 		for pt_idx in curve.point_count:
