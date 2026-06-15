@@ -368,7 +368,13 @@ var stroke_width := 10.0:
 			if p_idx < 0 or p_idx >= curve.point_count:
 				printerr("Warning: point index key for deformation_map not present in curve: ", p_idx)
 		assigned_node_changed.emit()
+## Stores the position this [ScalableVectorShape2D] was at before assigning [member bone], needed
+## for following the bone's position and reverting back to original position
+## after unassigning [member bone]
 @export var original_position := Vector2.INF
+## Stores the rotation this [ScalableVectorShape2D]  was at before assigning [member bone], needed
+## for following the bone's rotation and reverting back to original rotation
+## after unassigning [member bone]
 @export var original_rotation := INF
 
 @export_group("Editor settings")

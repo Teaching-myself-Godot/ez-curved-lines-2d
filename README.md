@@ -104,6 +104,8 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 	- [Watch the chapter about working with collisions, paint order and the node hierarchy on youtube](#watch-the-chapter-about-working-with-collisions-paint-order-and-the-node-hierarchy-on-youtube)
 - [Animating / Changing shapes at runtime](#animating--changing-shapes-at-runtime)
 	- [Animating using `Skeleton2D`](#animating-using-skeleton2d)
+		- [Using deformation of the curve points](#using-deformation-of-the-curve-points)
+		- [Using transformation of the entire shape's position and rotation](#using-transformation-of-the-entire-shapes-position-and-rotation)
 	- [Youtube explainer on animating curves](#youtube-explainer-on-animating-curves)
 	- [A note up front (this being said)](#a-note-up-front-this-being-said)
 	- [Animating the shape and gradients at Runtime](#animating-the-shape-and-gradients-at-runtime)
@@ -730,7 +732,10 @@ It is best to change these properties via the handles in the 2D editor. They are
 
 This form allows for rigging your shape by assigning a `Skeleton2D` node:
 - Skeleton: the assigned `Skeleton2D` node
+- Bone: an optionally assigned `Bone2D` node. If assigned, the bone will control the position and rotation of this shape. In this case the curve will not be deformed by the skeleton.
 - Deformation Map: a Dictionary telling the shape which point must be deformed by which bone.
+- Original position: stores the position the shape was at before assigning a bone, needed for following the bone's position
+- Original rotation: stores the position the shape was at before assigning a bone, needed for following the bone's rotation
 
 ## The Editor settings inspector form
 
@@ -776,9 +781,16 @@ As of release 2.24 you can rig your shapes to a `Skeleton2D`'s bones. Do this by
 
 ![assigning a skeleton](./addons/curved_lines_2d/screenshots/assign_skeleton.png)
 
+### Using deformation of the curve points
+
 Once a skeleton with `Bone2D` nodes is assigned, you can use the `Paint Bone` toggle button to assign individual points to bones by clicking + dragging:
 
 ![assigning points to bones](./addons/curved_lines_2d/screenshots/paint_bone.png)
+
+### Using transformation of the entire shape's position and rotation
+
+If you assign a `Bone2D` to the `bone` property, the entire shape will follow that bone's position and rotation. The `curve` will then not be deformed anymore. 
+
 
 ## Youtube explainer on animating curves
 
