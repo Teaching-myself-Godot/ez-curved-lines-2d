@@ -1,10 +1,11 @@
 # Changelog
 
-## 2.24.2
+## 2.24.4
 
 ### Added
 
 - Skeleton rigging (soft launch): deform `ScalableVectorShape2D` points using a `Skeleton2D` and `Bone2D`
+- Rig entire `ScalableVectorShape2D`'s position and rotation against a single `Bone2D`: this disables curve deform by skeleton for this shape.
 
 ### Changed
 
