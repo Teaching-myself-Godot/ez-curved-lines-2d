@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 2.23.2
+## 2.23.3
 
 ### Added
 
@@ -10,6 +10,7 @@
 ### Changed
 - `ScalableVectorShape2D.fill_color` sets the polygon color on multiple selected shapes at the same time.
 - Fixes Merge Mode toggle button tooltip
+- Drastically reduced package size by leaving out screenshots
 
 ## 2.22.0
 
