@@ -594,6 +594,9 @@ func tessellate() -> PackedVector2Array:
 		global_position = bone.global_position + bone_origin_delta.rotated(angle_delta)
 
 	elif is_instance_valid(skeleton):
+		if not is_zero_approx(rotation):
+			rotate_points_by(rotation)
+			rotation = 0.0
 		for pt_idx in curve.point_count:
 			if pt_idx not in deformation_map:
 				continue
