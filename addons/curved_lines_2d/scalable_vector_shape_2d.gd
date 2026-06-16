@@ -348,7 +348,7 @@ var stroke_width := 10.0:
 ## [ScalableVectorShape2D].
 ## Curve points must be assigned to [Bone2D] nodes beloning to this skeleton
 ## via the [member deformation_map] to enable deforming the shape.
-## The entire [ScalableVectorShape2]'s position and rotation can be set via
+## The entire [ScalableVectorShape2D]'s position and rotation can be set via
 ## [member bone].
 ## ⚠️ Make sure that any [AnimationPlayer]'s RESET track for this shape is removed before
 ## rigging your model to a new skeleton!
