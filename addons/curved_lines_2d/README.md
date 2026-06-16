@@ -104,6 +104,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
   - [Watch the chapter about working with collisions, paint order and the node hierarchy on youtube](#watch-the-chapter-about-working-with-collisions-paint-order-and-the-node-hierarchy-on-youtube)
 - [Animating / Changing shapes at runtime](#animating--changing-shapes-at-runtime)
   - [Animating using `Skeleton2D`](#animating-using-skeleton2d)
+    - [Important notice](#important-notice)
     - [Using deformation of the curve points](#using-deformation-of-the-curve-points)
     - [Using transformation of the entire shape's position and rotation](#using-transformation-of-the-entire-shapes-position-and-rotation)
   - [Youtube explainer on animating curves](#youtube-explainer-on-animating-curves)
@@ -780,6 +781,13 @@ This video gives more context on how `Line2D`, `Polygon2D` and `CollisionPolygon
 As of release 2.24 you can rig your shapes to a `Skeleton2D`'s bones. Do this by assigning a `Skeleton2D` via the inspector:
 
 ![assigning a skeleton](./screenshots/assign_skeleton.png)
+
+
+### Important notice
+⚠️ Make sure that any `AnimationPlayer`'s RESET track for this shape is removed before rigging your model to a new skeleton!
+
+An `AnimationPlayer`'s RESET track takes precedence over the `Skeleton2D`'s reset-pose. When deforming curves this leads to irratic warping because first the `AnimationPlayer`'s RESET track is executed, after which the `skeleton` is executed.
+
 
 ### Using deformation of the curve points
 
