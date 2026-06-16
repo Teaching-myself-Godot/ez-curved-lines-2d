@@ -1,16 +1,19 @@
 # Changelog
 
-## 2.24.4
+## 2.24.5
 
 ### Added
 
 - Skeleton rigging (soft launch): deform `ScalableVectorShape2D` points using a `Skeleton2D` and `Bone2D`
 - Rig entire `ScalableVectorShape2D`'s position and rotation against a single `Bone2D`: this disables curve deform by skeleton for this shape.
+- Added warning: ⚠️ Make sure that any `AnimationPlayer`'s RESET track for this shape is removed before rigging your model to a new skeleton!
 
 ### Changed
 
 - Fixed bug where bone vertex paint lost focus when bones were deleted
-- Fixe npe bug when bone was deleted, but still referred to in deformation map
+- Fixed npe bug when bone was deleted, but still referred to in deformation map
+- Adds compensation for shape's rotation when first deforming
+- Fixed bug that got `deformation_map` stuck in read-only mode
 
 ## 2.23.2
 
