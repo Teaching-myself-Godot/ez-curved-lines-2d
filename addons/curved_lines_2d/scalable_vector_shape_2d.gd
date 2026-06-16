@@ -361,12 +361,17 @@ var stroke_width := 10.0:
 @export_subgroup("Deformation Settings")
 ## Dictionary that holds map the [member curve]'s point indices to the
 ## [member skeleton]'s [Bone2D] nodes
-@export var deformation_map : Dictionary[int, Bone2D] = {}:
+@export var deformation_map : Dictionary[int, Bone2D]:
 	set(_map):
 		deformation_map = _map
+		if not is_instance_valid(deformation_map):
+			return
+		var invalid_keys : Array[int] = []
 		for p_idx in deformation_map.keys():
 			if p_idx < 0 or p_idx >= curve.point_count:
-				printerr("Warning: point index key for deformation_map not present in curve: ", p_idx)
+				invalid_keys.append(p_idx)
+		for k in invalid_keys:
+			deformation_map.erase(k)
 		assigned_node_changed.emit()
 ## Stores the position this [ScalableVectorShape2D] was at before assigning [member bone], needed
 ## for following the bone's position and reverting back to original position
@@ -438,9 +443,6 @@ func _enter_tree():
 	# ensure forward compatibility by assigning an empty dict to glue_map
 	if glue_map == null:
 		glue_map = {}
-	# ensure forward compatibility by assigning an empty dict to deformation_map
-	if deformation_map == null:
-		deformation_map = {}
 
 
 	if Engine.is_editor_hint():
