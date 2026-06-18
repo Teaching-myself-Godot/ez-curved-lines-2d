@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.24.5
+## 2.24.6
 
 ### Added
 
@@ -14,6 +14,7 @@
 - Fixed npe bug when bone was deleted, but still referred to in deformation map
 - Adds compensation for shape's rotation when first deforming
 - Fixed bug that got `deformation_map` stuck in read-only mode
+- Makes svg importer use `inkscape:label` attribute as node name over `id` attribute
 
 ## 2.23.2
 
