@@ -268,9 +268,17 @@ func parse_gradient(gradient_xml : SVGXMLElement) -> Dictionary:
 	return new_gradient
 
 
+func get_element_label(element: SVGXMLElement, alt_name : String) -> String:
+	if element.has_attribute("inkscape:label"):
+		return element.get_named_attribute_value("inkscape:label")
+	elif element.has_attribute("id"):
+		return element.get_named_attribute_value("id")
+	return alt_name
+
+
 func process_group(element:SVGXMLElement, current_node : Node2D, scene_root : Node, alt_name := "Group") -> Node2D:
 	var new_group = Node2D.new()
-	new_group.name = element.get_named_attribute_value("id") if element.has_attribute("id") else alt_name
+	new_group.name = get_element_label(element, alt_name)
 	new_group.transform = get_svg_transform(element)
 	var style := element.get_merged_styles(log_message)
 	new_group.set_meta(SVG_STYLE_META_NAME, style)
@@ -286,7 +294,7 @@ func process_svg_circle(element:SVGXMLElement, current_node : Node2D, scene_root
 	var cx = float(element.get_named_attribute_value("cx"))
 	var cy = float(element.get_named_attribute_value("cy"))
 	var r = float(element.get_named_attribute_value("r"))
-	var path_name = element.get_named_attribute_value("id") if element.has_attribute("id") else "Circle"
+	var path_name = get_element_label(element, "Circle")
 	create_path_from_ellipse(element, path_name, r, r, Vector2(cx, cy), current_node, scene_root, gradients)
 
 
@@ -296,7 +304,7 @@ func process_svg_ellipse(element:SVGXMLElement, current_node : Node2D, scene_roo
 	var cy = float(element.get_named_attribute_value("cy"))
 	var rx = float(element.get_named_attribute_value("rx"))
 	var ry = float(element.get_named_attribute_value("ry"))
-	var path_name = element.get_named_attribute_value("id") if element.has_attribute("id") else "Ellipse"
+	var path_name = get_element_label(element, "Ellipse")
 	create_path_from_ellipse(element, path_name, rx, ry, Vector2(cx, cy), current_node, scene_root, gradients)
 
 
@@ -321,7 +329,7 @@ func process_svg_image(element:SVGXMLElement, current_node : Node2D, scene_root 
 	new_image_rect.shape_type = ScalableVectorShape2D.ShapeType.RECT
 	new_image_rect.size = Vector2(width, height)
 	new_image_rect.position = Vector2(x, y) + new_image_rect.size * 0.5
-	new_image_rect.name = element.get_named_attribute_value("id") if element.has_attribute("id") else "Image"
+	new_image_rect.name = get_element_label(element, "Image")
 	var image_data : String = (
 		element.get_named_attribute_value("xlink:href")
 			if element.has_attribute("xlink:href") else
@@ -363,7 +371,7 @@ func process_svg_rectangle(element:SVGXMLElement, current_node : Node2D, scene_r
 	new_rect.position = Vector2(x, y) + new_rect.size * 0.5
 	new_rect.rx = rx
 	new_rect.ry = ry
-	new_rect.name = element.get_named_attribute_value("id") if element.has_attribute("id") else "Rectangle"
+	new_rect.name = get_element_label(element, "Rectangle")
 	_post_process_shape(new_rect, current_node, get_svg_transform(element),
 			element.get_merged_styles(log_message), scene_root, gradients)
 
@@ -375,10 +383,7 @@ func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_roo
 	for p in points_split:
 		var values = p.split_floats(",", false)
 		curve.add_point(Vector2(values[0], values[1]))
-	var path_name = (element.get_named_attribute_value("id") if element.has_attribute("id") else
-			"Polygon" if is_closed else
-			"Polyline"
-	)
+	var path_name = get_element_label(element, "Polygon" if is_closed else "Polyline")
 	create_path2d(path_name, current_node, curve, [], get_svg_transform(element),
 			element.get_merged_styles(log_message), scene_root, gradients, is_closed)
 
@@ -389,7 +394,7 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 	# FIXME: implement better parsing here
 	var str_path = parse_attribute_string(
 				element.get_named_attribute_value("d")).replacen(",", " ")
-	var shape_name := element.get_named_attribute_value("id") if element.has_attribute("id") else "Path"
+	var shape_name := get_element_label(element, "Path")
 
 	for symbol in ["m", "M", "v", "V", "h", "H", "l", "L", "c", "C", "s", "S", "a", "A", "q", "Q", "t", "T", "z", "Z"]:
 		str_path = str_path.replace(symbol, " " + symbol + " ")
