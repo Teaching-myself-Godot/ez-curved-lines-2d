@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bvubevn3e1ax2"
-path="res://.godot/imported/part-7.png-ee2cbbb0938afb880cd5b8e2d1110fee.ctex"
+uid="uid://666dhwfxwq28"
+path="res://.godot/imported/rig_svg.webp-e0eb2f6af4013478746e8bf2c63c698c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/curved_lines_2d/video_thumbnails/part-7.png"
-dest_files=["res://.godot/imported/part-7.png-ee2cbbb0938afb880cd5b8e2d1110fee.ctex"]
+source_file="res://addons/curved_lines_2d/video_thumbnails/rig_svg.webp"
+dest_files=["res://.godot/imported/rig_svg.webp-e0eb2f6af4013478746e8bf2c63c698c.ctex"]
 
 [params]
 
