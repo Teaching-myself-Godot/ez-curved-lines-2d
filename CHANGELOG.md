@@ -1,12 +1,13 @@
 # Changelog
 
-## 2.24.6
+## 2.24.7
 
 ### Added
 
 - Skeleton rigging (soft launch): deform `ScalableVectorShape2D` points using a `Skeleton2D` and `Bone2D`
 - Rig entire `ScalableVectorShape2D`'s position and rotation against a single `Bone2D`: this disables curve deform by skeleton for this shape.
 - Added warning: ⚠️ Make sure that any `AnimationPlayer`'s RESET track for this shape is removed before rigging your model to a new skeleton!
+- Video link to new SVG rigging explainer
 
 ### Changed
 
@@ -15,6 +16,11 @@
 - Adds compensation for shape's rotation when first deforming
 - Fixed bug that got `deformation_map` stuck in read-only mode
 - Makes svg importer use `inkscape:label` attribute as node name over `id` attribute
+
+### Removed
+
+- "Plat Tatra!" tab
+- Links to the vlog "Let's make an actual game"
 
 ## 2.23.2
 

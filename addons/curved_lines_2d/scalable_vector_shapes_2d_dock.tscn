@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://drrarjj0668n"]
+[gd_scene load_steps=8 format=3 uid="uid://drrarjj0668n"]
 
 [ext_resource type="Script" uid="uid://dtiys8sevuh65" path="res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.gd" id="1_1mm15"]
 [ext_resource type="PackedScene" uid="uid://cfeemeccrtef7" path="res://addons/curved_lines_2d/svg_import_tab.tscn" id="2_0fwlu"]
@@ -7,7 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://ir0lsf5ikpdl" path="res://addons/curved_lines_2d/draw_settings_tab.tscn" id="4_lgpk4"]
 [ext_resource type="PackedScene" uid="uid://d3j2c8gduqsuu" path="res://addons/curved_lines_2d/project_settings_tab.tscn" id="4_psho1"]
 [ext_resource type="PackedScene" uid="uid://hr7df18ngxmj" path="res://addons/curved_lines_2d/video_explainer_tab.tscn" id="6_mi8vn"]
-[ext_resource type="PackedScene" uid="uid://r23wu41l5ng5" path="res://addons/curved_lines_2d/play_tatra_tab.tscn" id="7_8qxkf"]
 
 [node name="ScalableVectorShapes2DDock" type="TabContainer"]
 custom_minimum_size = Vector2(0, 302)
@@ -59,12 +58,5 @@ visible = false
 layout_mode = 2
 metadata/_tab_index = 5
 metadata/_tab_name = "Video Explainers"
-
-[node name="PlayTatraTab" parent="." instance=ExtResource("7_8qxkf")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-metadata/_tab_index = 6
-metadata/_tab_name = "Play Tatra!"
 
 [connection signal="brush_changed" from="DrawSettingsTab" to="." method="_on_draw_settings_tab_brush_changed"]
