@@ -383,6 +383,20 @@ var stroke_width := 10.0:
 ## for following the bone's rotation and reverting back to original rotation
 ## after unassigning [member bone]
 @export var original_rotation := INF
+## Path to a [Bone2D] node used to set the [member Gradient2D.fill_from] of the
+## assigned [member polygon]
+@export var gradient_fill_from_bone : Bone2D = null: set = _on_bone_assigned_to_gradient_fill_from
+## Path to a [Bone2D] node used to set the [member Gradient2D.fill_to] of the
+## assigned [member polygon]
+@export var gradient_fill_to_bone : Bone2D = null: set = _on_bone_assigned_to_gradient_fill_to
+
+## Stores the [member Gradient.fill_from] position that is being deformed for
+## [member polygon]
+@export var original_gradient_fill_from := Vector2.INF
+## Stores the [member Gradient.fill_to] position that is being deformed for
+## [member polygon]
+@export var original_gradient_fill_to := Vector2.INF
+
 
 @export_group("Editor settings")
 ## The [Color] used to draw the this shape's curve in the editor
@@ -517,8 +531,12 @@ func _notification(what: int) -> void:
 		if is_instance_valid(bone):
 			position = original_position
 			rotation = original_rotation
+		if is_instance_valid(gradient_fill_from_bone) and is_instance_valid(polygon) and polygon.texture is GradientTexture2D:
+			polygon.texture.fill_from = original_gradient_fill_from
+		if is_instance_valid(gradient_fill_to_bone) and is_instance_valid(polygon) and polygon.texture is GradientTexture2D:
+			polygon.texture.fill_to = original_gradient_fill_to
 	if what == NOTIFICATION_EDITOR_POST_SAVE:
-		if is_instance_valid(bone):
+		if is_instance_valid(bone) or is_instance_valid(gradient_fill_from_bone) or is_instance_valid(gradient_fill_to_bone):
 			curve_changed()
 
 func _on_dimensions_changed():
@@ -565,6 +583,34 @@ func _on_bone_assigned(new_bone : Bone2D) -> void:
 		original_position = position
 		original_rotation = rotation
 	bone = new_bone
+	curve_changed()
+
+
+func _on_bone_assigned_to_gradient_fill_from(new_bone : Bone2D) -> void:
+	if not is_instance_valid(polygon):
+		return
+	if not polygon.texture is GradientTexture2D:
+		return
+	if is_instance_valid(gradient_fill_from_bone):
+		polygon.texture.fill_from = original_gradient_fill_from
+	original_gradient_fill_from = Vector2.INF
+	if is_instance_valid(new_bone):
+		original_gradient_fill_from = polygon.texture.fill_from
+	gradient_fill_from_bone = new_bone
+	curve_changed()
+
+
+func _on_bone_assigned_to_gradient_fill_to(new_bone : Bone2D) -> void:
+	if not is_instance_valid(polygon):
+		return
+	if not polygon.texture is GradientTexture2D:
+		return
+	if is_instance_valid(gradient_fill_to_bone):
+		polygon.texture.fill_to = original_gradient_fill_to
+	original_gradient_fill_to = Vector2.INF
+	if is_instance_valid(new_bone):
+		original_gradient_fill_to = polygon.texture.fill_to
+	gradient_fill_to_bone = new_bone
 	curve_changed()
 
 
