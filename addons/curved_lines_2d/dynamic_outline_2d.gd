@@ -1,17 +1,31 @@
 @tool
-extends Line2D
+extends Node2D
 
 class_name DynamicOutline2D
 
+## [Color] of the ouline to draw
+@export var stroke_color := Color.WHITE:
+	set(new_color):
+		stroke_color = new_color
+		queue_redraw()
+
+## Thickness of the outline to draw
+@export var stroke_width := 10.0:
+	set(new_width):
+		stroke_width = new_width
+		queue_redraw()
+
+## Apply basic antialiasing (via [method CanvasItem.draw_polyline] function)
+@export var antialiased := false:
+	set(new_aa):
+		antialiased = new_aa
+		queue_redraw()
+
+## List of [ScalableVectorShape2D]'s to draw outlines around
 @export var shapes : Array[ScalableVectorShape2D]: set = _on_shapes_assigned
-
-var should_update := false
-
 
 func _enter_tree() -> void:
 	set_meta("_edit_lock_", true)
-	global_position = Vector2.ZERO
-	closed = true
 
 
 func _on_shapes_assigned(new_shapes : Array[ScalableVectorShape2D]) -> void:
@@ -31,28 +45,22 @@ func _on_shapes_assigned(new_shapes : Array[ScalableVectorShape2D]) -> void:
 		if not svs.transform_changed.is_connected(_on_path_changed):
 			svs.set_notify_transform(true)
 			svs.transform_changed.connect(_on_path_changed)
-
 	shapes = new_shapes
-	should_update = true
+	queue_redraw()
 
 
 func _on_path_changed(_new_points = null) -> void:
-	should_update = true
+	queue_redraw()
 
 
-func _update_points() -> void:
+func _draw() -> void:
 	var shape_polygons := Array(shapes.filter(func(s): return s is ScalableVectorShape2D)
 			.map(func(s : ScalableVectorShape2D): return Array(s.tessellate()).map(func(p): return s.to_global(p))
 		), TYPE_PACKED_VECTOR2_ARRAY, "", null)
 	if shape_polygons.is_empty():
 		return
 	var result := Geometry2DUtil.calculate_outlines(shape_polygons)
-	if result.size() > 0:
-		points = Array(result[0]).map(func(p): return to_local(p))
+	for poly in result:
+		poly.append(poly[0])
+		draw_polyline(poly, stroke_color, stroke_width, antialiased)
 
-
-func _process(_delta: float) -> void:
-	if not should_update:
-		return
-	_update_points()
-	should_update = false

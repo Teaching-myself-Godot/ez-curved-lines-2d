@@ -154,7 +154,7 @@ func _enter_tree():
 	)
 	add_custom_type(
 		"DynamicOutline2D",
-		"Line2D",
+		"Node2D",
 		load("res://addons/curved_lines_2d/dynamic_outline_2d.gd"),
 		load("res://addons/curved_lines_2d/DynamicOutline2D.svg")
 	)
