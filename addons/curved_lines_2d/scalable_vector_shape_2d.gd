@@ -509,7 +509,7 @@ func _on_clip_paths_changed():
 
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_LOCAL_TRANSFORM_CHANGED:
+	if what == NOTIFICATION_LOCAL_TRANSFORM_CHANGED or what == NOTIFICATION_TRANSFORM_CHANGED:
 		transform_changed.emit(self)
 	if (what == NOTIFICATION_EDITOR_PRE_SAVE or
 		(what == NOTIFICATION_WM_CLOSE_REQUEST and Engine.is_editor_hint())
