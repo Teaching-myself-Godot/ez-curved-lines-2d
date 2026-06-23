@@ -113,8 +113,8 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
   - [Add keyframes in an animation player](#add-keyframes-in-an-animation-player)
   - [Don't duplicate `ScalableVectorShape2D`, use the `path_changed` signal in stead](#dont-duplicate-scalablevectorshape2d-use-the-path_changed-signal-in-stead)
   - [Performance impact](#performance-impact)
+- [Create one Outline for Multiple Shapes with `DynamicOutline2D`](#create-one-outline-for-multiple-shapes-with-dynamicoutline2d)
 - [Autoscaling SVG Textures for GUI Controls](#autoscaling-svg-textures-for-gui-controls)
-  - [Create One Outline for Multiple Shapes with `DynamicOutline2D`](#create-one-outline-for-multiple-shapes-with-dynamicoutline2d)
   - [Adding Autoscaling SVG Textures via the Inspector](#adding-autoscaling-svg-textures-via-the-inspector)
     - [Example of Autoscaling GUI](#example-of-autoscaling-gui)
   - [Removing an Automatically Scaled Texture](#removing-an-automatically-scaled-texture)
@@ -862,14 +862,7 @@ Animating curve points at runtime does, however, impact performance of your game
 
 Under `Tesselation settings` you can lower `Max Stages` or bump up `Tolerance Degrees` to reduce curve smoothness and increase performance (and vice-versa)
 
-# Autoscaling SVG Textures for GUI Controls
-
-Release `2.15` makes it easy to add crisp, autoscaling images for your GUI Control nodes using two new classes:
-
-- `SVGTextureHelper`: a `Node` that manages an SVG image resource when it's a direct child of a `TextureRect`, `Button`, or `TextureButton`
-- `SVGTextureResource`: a `Resource` that holds a reference to the svg file and a base64 encoded string of the file's contents, as well as a baseline scale factor (so you can even keep the image crips and sharp at higher zoom levels)
-
-## Create One Outline for Multiple Shapes with `DynamicOutline2D`
+# Create one Outline for Multiple Shapes with `DynamicOutline2D`
 
 Version 2.25 adds a new `@tool` node `DynamicOutline2D`.
 
@@ -886,6 +879,14 @@ This node does not have all the `Line2D` options, but does have these 3 stroke p
 An `shapes : Array[ScalableVectorShape2D]` holds the shapes which are given an outline (or multiple outlines when they're separate):
 
 ![`DynamicOutline2D` in the inspector](./screenshots/dynamic-outline-2d-inspector.png)
+
+# Autoscaling SVG Textures for GUI Controls
+
+Release `2.15` makes it easy to add crisp, autoscaling images for your GUI Control nodes using two new classes:
+
+- `SVGTextureHelper`: a `Node` that manages an SVG image resource when it's a direct child of a `TextureRect`, `Button`, or `TextureButton`
+- `SVGTextureResource`: a `Resource` that holds a reference to the svg file and a base64 encoded string of the file's contents, as well as a baseline scale factor (so you can even keep the image crips and sharp at higher zoom levels)
+
 
 ## Adding Autoscaling SVG Textures via the Inspector
 
