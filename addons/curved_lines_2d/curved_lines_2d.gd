@@ -153,6 +153,12 @@ func _enter_tree():
 		load("res://addons/curved_lines_2d/DrawablePath2D.svg")
 	)
 	add_custom_type(
+		"DynamicOutline2D",
+		"Node2D",
+		load("res://addons/curved_lines_2d/dynamic_outline_2d.gd"),
+		load("res://addons/curved_lines_2d/DynamicOutline2D.svg")
+	)
+	add_custom_type(
 		"ScalableVectorShape2D",
 		"Node2D",
 		load("res://addons/curved_lines_2d/scalable_vector_shape_2d.gd"),
