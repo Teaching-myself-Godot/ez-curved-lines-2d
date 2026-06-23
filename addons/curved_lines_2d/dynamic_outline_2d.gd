@@ -24,8 +24,14 @@ class_name DynamicOutline2D
 ## List of [ScalableVectorShape2D]'s to draw outlines around
 @export var shapes : Array[ScalableVectorShape2D]: set = _on_shapes_assigned
 
+
+func _init() -> void:
+	top_level = true
+
+
 func _enter_tree() -> void:
-	set_meta("_edit_lock_", true)
+	if Engine.is_editor_hint():
+		set_meta("_edit_lock_", true)
 
 
 func _on_shapes_assigned(new_shapes : Array[ScalableVectorShape2D]) -> void:
