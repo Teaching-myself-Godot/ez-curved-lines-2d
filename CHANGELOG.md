@@ -2,7 +2,7 @@
 
 ## 2.25.0
 
-###
+### Added
 
 - Create one outline for mutiple shapes using [`DynamicOutline2D`](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#create-one-outline-for-multiple-shapes-with-dynamicoutline2d)
 
