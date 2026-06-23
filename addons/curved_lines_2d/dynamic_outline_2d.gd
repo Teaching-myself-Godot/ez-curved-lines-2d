@@ -25,10 +25,6 @@ class_name DynamicOutline2D
 @export var shapes : Array[ScalableVectorShape2D]: set = _on_shapes_assigned
 
 
-func _init() -> void:
-	top_level = true
-
-
 func _enter_tree() -> void:
 	if Engine.is_editor_hint():
 		set_meta("_edit_lock_", true)
@@ -56,7 +52,17 @@ func _on_shapes_assigned(new_shapes : Array[ScalableVectorShape2D]) -> void:
 
 
 func _on_path_changed(_new_points = null) -> void:
+	if global_scale.y < 0.0:
+		scale.y = -scale.y
+
+	if not global_position.is_equal_approx(Vector2.ZERO):
+		global_position = Vector2.ZERO
+	if not is_zero_approx(global_rotation):
+		global_rotation = 0.0
+	if not global_scale.is_equal_approx(Vector2.ONE):
+		global_scale = Vector2.ONE
 	queue_redraw()
+
 
 
 func _draw() -> void:
