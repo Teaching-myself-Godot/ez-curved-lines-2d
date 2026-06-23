@@ -114,6 +114,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 	- [Don't duplicate `ScalableVectorShape2D`, use the `path_changed` signal in stead](#dont-duplicate-scalablevectorshape2d-use-the-path_changed-signal-in-stead)
 	- [Performance impact](#performance-impact)
 - [Autoscaling SVG Textures for GUI Controls](#autoscaling-svg-textures-for-gui-controls)
+	- [Create One Outline for Multiple Shapes with `DynamicOutline2D`](#create-one-outline-for-multiple-shapes-with-dynamicoutline2d)
 	- [Adding Autoscaling SVG Textures via the Inspector](#adding-autoscaling-svg-textures-via-the-inspector)
 		- [Example of Autoscaling GUI](#example-of-autoscaling-gui)
 	- [Removing an Automatically Scaled Texture](#removing-an-automatically-scaled-texture)
@@ -867,6 +868,24 @@ Release `2.15` makes it easy to add crisp, autoscaling images for your GUI Contr
 
 - `SVGTextureHelper`: a `Node` that manages an SVG image resource when it's a direct child of a `TextureRect`, `Button`, or `TextureButton`
 - `SVGTextureResource`: a `Resource` that holds a reference to the svg file and a base64 encoded string of the file's contents, as well as a baseline scale factor (so you can even keep the image crips and sharp at higher zoom levels)
+
+## Create One Outline for Multiple Shapes with `DynamicOutline2D`
+
+Version 2.25 adds a new `@tool` node `DynamicOutline2D`.
+
+With this node you can give multiple shapes _one_ outline that uses `Geometry2D.merge_polygons` under the hood. 
+
+![example of `DynamicOutline2D` in the viewport](./addons/curved_lines_2d/screenshots/dynamic-outline-2d.png)
+
+This node does not have all the `Line2D` options, but does have these 3 stroke properties available:
+
+- `stroke_color`
+- `stroke_width`
+- `antialiased`: which adds a basic antialiasing which is shipped via the builting `CanvasItem.draw_polyline(..)` function
+
+An `shapes : Array[ScalableVectorShape2D]` holds the shapes which are given an outline (or multiple outlines when they're separate):
+
+![`DynamicOutline2D` in the inspector](./addons/curved_lines_2d/screenshots/dynamic-outline-2d-inspector.png)
 
 ## Adding Autoscaling SVG Textures via the Inspector
 
