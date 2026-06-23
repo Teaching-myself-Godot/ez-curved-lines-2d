@@ -1,10 +1,14 @@
 # Changelog
 
-## 2.25.0
+## 2.25.1
 
 ### Added
 
 - Create one outline for mutiple shapes using [`DynamicOutline2D`](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#create-one-outline-for-multiple-shapes-with-dynamicoutline2d)
+
+### Changed
+
+- Patched up transformation issues: reset global transform before `queue_draw` in stead of setting top_level to true (testing with flipping and as imported scene)
 
 ## 2.24.7
 
