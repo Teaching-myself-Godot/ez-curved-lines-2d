@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.25.1
+## 2.25.2
 
 ### Added
 
@@ -9,6 +9,7 @@
 ### Changed
 
 - Patched up transformation issues: reset global transform before `queue_draw` in stead of setting top_level to true (testing with flipping and as imported scene)
+- Fixes wonky transforms when a whole bone is assigned to a shape by applying the same logic as with bone painting points.
 
 ## 2.24.7
 

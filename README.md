@@ -736,8 +736,6 @@ This form allows for rigging your shape by assigning a `Skeleton2D` node:
 - Skeleton: the assigned `Skeleton2D` node
 - Bone: an optionally assigned `Bone2D` node. If assigned, the bone will control the position and rotation of this shape. In this case the curve will not be deformed by the skeleton.
 - Deformation Map: a Dictionary telling the shape which point must be deformed by which bone.
-- Original position: stores the position the shape was at before assigning a bone, needed for following the bone's position
-- Original rotation: stores the position the shape was at before assigning a bone, needed for following the bone's rotation
 
 ## The Editor settings inspector form
 

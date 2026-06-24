@@ -375,14 +375,7 @@ var stroke_width := 10.0:
 		for k in invalid_keys:
 			deformation_map.erase(k)
 		assigned_node_changed.emit()
-## Stores the position this [ScalableVectorShape2D] was at before assigning [member bone], needed
-## for following the bone's position and reverting back to original position
-## after unassigning [member bone]
-@export var original_position := Vector2.INF
-## Stores the rotation this [ScalableVectorShape2D]  was at before assigning [member bone], needed
-## for following the bone's rotation and reverting back to original rotation
-## after unassigning [member bone]
-@export var original_rotation := INF
+
 
 @export_group("Editor settings")
 ## The [Color] used to draw the this shape's curve in the editor
@@ -511,15 +504,7 @@ func _on_clip_paths_changed():
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_LOCAL_TRANSFORM_CHANGED or what == NOTIFICATION_TRANSFORM_CHANGED:
 		transform_changed.emit(self)
-	if (what == NOTIFICATION_EDITOR_PRE_SAVE or
-		(what == NOTIFICATION_WM_CLOSE_REQUEST and Engine.is_editor_hint())
-	):
-		if is_instance_valid(bone):
-			position = original_position
-			rotation = original_rotation
-	if what == NOTIFICATION_EDITOR_POST_SAVE:
-		if is_instance_valid(bone):
-			curve_changed()
+
 
 func _on_dimensions_changed():
 	if shape_type == ShapeType.RECT:
@@ -556,14 +541,6 @@ func _on_assigned_node_changed(_x : Variant = null):
 
 
 func _on_bone_assigned(new_bone : Bone2D) -> void:
-	if is_instance_valid(bone):
-		position = original_position
-		rotation = original_rotation
-	original_position = Vector2.INF
-	original_rotation = INF
-	if is_instance_valid(new_bone):
-		original_position = position
-		original_rotation = rotation
 	bone = new_bone
 	curve_changed()
 
@@ -584,25 +561,14 @@ func tessellate() -> PackedVector2Array:
 		return cached_outline
 	var the_curve : Curve2D = curve.duplicate(true) if skeleton else curve
 
-	if is_instance_valid(skeleton) and is_instance_valid(bone):
-		var rest := bone.get_skeleton_rest()
-		var full_deform := _get_full_bone_deform_transform(bone)
-		var pos_delta := full_deform.get_origin() - rest.get_origin()
-		var angle_delta := full_deform.get_rotation() - rest.get_rotation()
-
-		rotation = original_rotation + angle_delta
-		position = original_position + pos_delta
-		var bone_origin_delta = global_position - bone.global_position
-		global_position = bone.global_position + bone_origin_delta.rotated(angle_delta)
-
-	elif is_instance_valid(skeleton):
+	if is_instance_valid(skeleton):
 		if not is_zero_approx(rotation):
 			rotate_points_by(rotation)
 			rotation = 0.0
 		for pt_idx in curve.point_count:
-			if pt_idx not in deformation_map:
+			if pt_idx not in deformation_map and not is_instance_valid(bone):
 				continue
-			var _bone : Bone2D = deformation_map[pt_idx]
+			var _bone : Bone2D = bone if is_instance_valid(bone) else deformation_map[pt_idx]
 			if not is_instance_valid(_bone):
 				deformation_map.erase(pt_idx)
 				continue
