@@ -1,6 +1,8 @@
 @tool
 extends Control
 
+const MSAA_2D_SETTING_NAME := "rendering/anti_aliasing/quality/msaa_2d"
+
 var _init_hint_label_text := ""
 var _selected_animation_player : AnimationPlayer
 var fps_number_input : EditorSpinSlider
@@ -84,7 +86,8 @@ func _on_animation_file_name_chosen(file_path : String, anim_name : String, dial
 
 	var sprite_frames := await SVSSceneExporter.export_sprite_frames(
 			EditorInterface.get_edited_scene_root(), _selected_animation_player, anim_name, fps,
-			EditorInterface.get_base_control(), func(status_msg : String): %StatusLabel.text = status_msg
+			EditorInterface.get_base_control(), func(status_msg : String): %StatusLabel.text = status_msg,
+			ProjectSettings.has_setting(MSAA_2D_SETTING_NAME) and ProjectSettings.get_setting(MSAA_2D_SETTING_NAME) != Viewport.MSAA_DISABLED
 	)
 
 	if %ExportAsSpritesheetCheckButton.button_pressed:

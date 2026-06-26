@@ -39,8 +39,6 @@ static func export_image(export_root_node : Node, stored_box_ref : Dictionary[St
 	sub_viewport.size = Vector2(max_x, max_y) - Vector2(min_x, min_y)
 	if forward_aa:
 		sub_viewport.msaa_2d = Viewport.MSAA_8X
-	else:
-		sub_viewport.screen_space_aa = Viewport.SCREEN_SPACE_AA_FXAA
 
 	stored_box_ref["tl"] = Vector2(min_x, min_y)
 	stored_box_ref["br"] = Vector2(max_x, max_y)
