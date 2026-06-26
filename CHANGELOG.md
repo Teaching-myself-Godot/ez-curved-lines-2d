@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.25.2
+## 2.25.3
 
 ### Added
 
@@ -8,8 +8,9 @@
 
 ### Changed
 
-- Patched up transformation issues: reset global transform before `queue_draw` in stead of setting top_level to true (testing with flipping and as imported scene)
+- Patched up transformation issues: reset global transform before `queue_draw` in stead of setting top_level to true (tested with flipping and as imported scene)
 - Fixes wonky transforms when a whole bone is assigned to a shape by applying the same logic as with bone painting points.
+- Bugfix: when msaa 2d is enabled, use it for exporting sprite frames too
 
 ## 2.24.7
 
