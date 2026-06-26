@@ -512,9 +512,9 @@ func _notification(what: int) -> void:
 		if is_instance_valid(skeleton):
 			for i in skeleton.get_bone_count():
 				skeleton.get_bone(i).apply_rest()
-				if bone == skeleton.get_bone(i):
-					global_position = bone.global_position
-					global_rotation = bone.global_rotation
+			if is_instance_valid(bone):
+				global_position = bone.global_position
+				global_rotation = bone.global_rotation
 
 func _on_dimensions_changed():
 	if shape_type == ShapeType.RECT:
