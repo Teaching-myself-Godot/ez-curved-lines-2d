@@ -477,10 +477,14 @@ func _exit_tree():
 func _process(_delta: float) -> void:
 	if is_instance_valid(skeleton):
 		for i in skeleton.get_bone_count():
-			var bone := skeleton.get_bone(i)
-			if bone in deformation_cache and not bone.transform.is_equal_approx(deformation_cache[bone]):
-				should_update_curve = true
-			deformation_cache[bone] = bone.transform
+			var mapped_bone := skeleton.get_bone(i)
+			if mapped_bone in deformation_cache and not mapped_bone.global_transform.is_equal_approx(deformation_cache[mapped_bone]):
+				if bone == mapped_bone:
+					global_position = bone.global_position
+					global_rotation = bone.global_rotation
+				else:
+					should_update_curve = true
+			deformation_cache[mapped_bone] = mapped_bone.global_transform
 	if should_update_curve:
 		_update_curve()
 		should_update_curve = false
@@ -504,7 +508,13 @@ func _on_clip_paths_changed():
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_LOCAL_TRANSFORM_CHANGED or what == NOTIFICATION_TRANSFORM_CHANGED:
 		transform_changed.emit(self)
-
+	if what == NOTIFICATION_EDITOR_PRE_SAVE:
+		if is_instance_valid(skeleton):
+			for i in skeleton.get_bone_count():
+				skeleton.get_bone(i).apply_rest()
+				if bone == skeleton.get_bone(i):
+					global_position = bone.global_position
+					global_rotation = bone.global_rotation
 
 func _on_dimensions_changed():
 	if shape_type == ShapeType.RECT:
@@ -542,7 +552,12 @@ func _on_assigned_node_changed(_x : Variant = null):
 
 func _on_bone_assigned(new_bone : Bone2D) -> void:
 	bone = new_bone
-	curve_changed()
+	if Engine.is_editor_hint() and is_instance_valid(new_bone):
+		rotate_points_by(global_rotation - new_bone.global_rotation)
+		global_rotation = new_bone.global_rotation
+		translate_points_by(global_position - new_bone.global_position)
+		global_position = new_bone.global_position
+
 
 
 ## Exposes assigned_node_changed signal to outside callers
@@ -561,14 +576,14 @@ func tessellate() -> PackedVector2Array:
 		return cached_outline
 	var the_curve : Curve2D = curve.duplicate(true) if skeleton else curve
 
-	if is_instance_valid(skeleton):
+	if is_instance_valid(skeleton) and not is_instance_valid(bone):
 		if not is_zero_approx(rotation):
 			rotate_points_by(rotation)
 			rotation = 0.0
 		for pt_idx in curve.point_count:
-			if pt_idx not in deformation_map and not is_instance_valid(bone):
+			if pt_idx not in deformation_map:
 				continue
-			var _bone : Bone2D = bone if is_instance_valid(bone) else deformation_map[pt_idx]
+			var _bone := deformation_map[pt_idx]
 			if not is_instance_valid(_bone):
 				deformation_map.erase(pt_idx)
 				continue
