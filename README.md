@@ -864,6 +864,9 @@ Under `Tesselation settings` you can lower `Max Stages` or bump up `Tolerance De
 
 Version 2.25 adds a new `@tool` node `DynamicOutline2D`.
 
+⚠️ WARNING: this node is too slow to use for animations at any significant scale because it calls `Geometry2D.merge_polygons` multiple times per render. You can draw multiple `Line2D` behind their fills to achieve the same visual effect.
+
+
 With this node you can give multiple shapes _one_ outline that uses `Geometry2D.merge_polygons` under the hood. 
 
 ![example of `DynamicOutline2D` in the viewport](./addons/curved_lines_2d/screenshots/dynamic-outline-2d.png)
