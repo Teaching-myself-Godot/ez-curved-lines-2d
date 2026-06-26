@@ -1,6 +1,9 @@
 @tool
 extends Node2D
 
+## ⚠️ WARNING: this node is too slow to use for animations at any significant scale because it calls
+## [method Geometry2D.merge_polygons] multiple times per render.
+## Experimental node that draws an outline for multiple merged [ScalableVectorShape2D] nodes
 class_name DynamicOutline2D
 
 ## [Color] of the ouline to draw
