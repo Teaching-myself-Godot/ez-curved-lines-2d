@@ -476,15 +476,17 @@ func _exit_tree():
 
 func _process(_delta: float) -> void:
 	if is_instance_valid(skeleton):
-		for i in skeleton.get_bone_count():
-			var mapped_bone := skeleton.get_bone(i)
-			if mapped_bone in deformation_cache and not mapped_bone.global_transform.is_equal_approx(deformation_cache[mapped_bone]):
-				if bone == mapped_bone:
-					global_position = bone.global_position
-					global_rotation = bone.global_rotation
-				else:
+		if is_instance_valid(bone):
+			if bone in deformation_cache and not bone.global_transform.is_equal_approx(deformation_cache[bone]):
+				global_position = bone.global_position
+				global_rotation = bone.global_rotation
+			deformation_cache[bone] = bone.global_transform
+		else:
+			for b : Bone2D in deformation_map.values():
+				if b in deformation_cache and not b.global_transform.is_equal_approx(deformation_cache[b]):
 					should_update_curve = true
-			deformation_cache[mapped_bone] = mapped_bone.global_transform
+				deformation_cache[b] = b.global_transform
+
 	if should_update_curve:
 		_update_curve()
 		should_update_curve = false
