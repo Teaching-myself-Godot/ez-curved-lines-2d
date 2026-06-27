@@ -576,12 +576,14 @@ func _get_full_bone_deform_transform(bone : Bone2D, trans := Transform2D.IDENTIT
 func tessellate() -> PackedVector2Array:
 	if not cached_outline.is_empty():
 		return cached_outline
-	var the_curve : Curve2D = curve.duplicate(true) if skeleton else curve
+	var the_curve : Curve2D = curve.duplicate(true) if skeleton and not bone else curve
 
 	if is_instance_valid(skeleton) and not is_instance_valid(bone):
 		if not is_zero_approx(rotation):
 			rotate_points_by(rotation)
 			rotation = 0.0
+
+		var full_deforms : Dictionary[Bone2D, Transform2D] = {}
 		for pt_idx in curve.point_count:
 			if pt_idx not in deformation_map:
 				continue
@@ -590,7 +592,13 @@ func tessellate() -> PackedVector2Array:
 				deformation_map.erase(pt_idx)
 				continue
 			var rest := _bone.get_skeleton_rest()
-			var full_deform := _get_full_bone_deform_transform(_bone)
+			var full_deform := (
+				full_deforms[_bone]
+					if _bone in full_deforms else
+				_get_full_bone_deform_transform(_bone)
+			)
+			if _bone not in full_deforms:
+				full_deforms[_bone] = full_deform
 			var pos_delta := full_deform.get_origin() - rest.get_origin()
 			var angle_delta := full_deform.get_rotation() - rest.get_rotation()
 			var p := curve.get_point_position(pt_idx) + pos_delta
