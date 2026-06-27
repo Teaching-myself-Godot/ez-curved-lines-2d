@@ -1,18 +1,25 @@
 # Changelog
 
-## 2.25.3
+## 2.25.4
+
+⚠️ Small notice on the new skeleton rigging features: Shapes that have a `Bone2D` assigned for the entire shape may show displacement on an initial run. Saving the scene once (even without the * indicator) should fix this.
+
+Skeleton rigging is getting more stable and more performant fast, but you can help by reporting bugs on github; especially short video's illustrating the behavior are very helpful.
 
 ### Added
 
 - Create one outline for mutiple shapes using [`DynamicOutline2D`](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#create-one-outline-for-multiple-shapes-with-dynamicoutline2d)
-- Added a ⚠️ WARNING: that an animated DynamicOutline2D does not scale for production yet
+- Added a warning that an animated DynamicOutline2D does not scale for production yet
 
 
 ### Changed
 
 - Patched up transformation issues: reset global transform before `queue_draw` in stead of setting top_level to true (tested with flipping and as imported scene)
-- Fixes wonky transforms when a whole bone is assigned to a shape by applying the same logic as with bone painting points.
+- Fixes wonky transforms when a whole bone is assigned to a shape by applying the bone's global transform
 - Bugfix: when msaa 2d is enabled, use it for exporting sprite frames too
+- Performance fix: changes in bone transforms tested once per bone per frame and only for assigned bones
+- Performance fix: recursive func for getting the full transformation delta of a bone called only once per bone-branch per frame
+- Performance fix: do not invoke _update_curve() when bone is assigned
 
 ## 2.24.7
 
