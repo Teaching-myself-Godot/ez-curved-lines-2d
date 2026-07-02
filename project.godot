@@ -43,7 +43,7 @@ curved_lines_2d/brush_rotation=2.0
 [application]
 
 config/name="EZ Curved Lines 2D"
-run/main_scene="uid://gmlmhdf0cxl8"
+run/main_scene="uid://cjc6b0mlk660g"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://b5yxa1e62b0hb"
 
