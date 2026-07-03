@@ -4,9 +4,9 @@ class_name SVSPolygonCacher extends Node
 @export var snap_resolution := 0.01
 
 
-var _caching_locked := false
+var _cache_locks : int = 0
 var _prev_animation := ""
-
+var _have_warned := false
 var _outline_cache : Dictionary[String, PackedVector2Array] = {}
 
 func _ready() -> void:
@@ -26,10 +26,16 @@ func _on_animation_player_assigned(a : AnimationPlayer) -> void:
 
 
 func _on_animation_changed(new_name : String) -> void:
-	if animation_player.get_blend_time(_prev_animation, new_name) > 0.0:
-		_caching_locked = true
-		get_tree().create_timer(animation_player.get_blend_time(_prev_animation, new_name)).timeout.connect(func(): _caching_locked = false)
+	if animation_player.get_blend_time(_prev_animation, new_name) > 0.0 and not _have_warned:
+		push_warning("Caching is unstable when using transitions between animations")
+		_have_warned = true
+	_cache_locks += 1
+	get_tree().create_timer(animation_player.get_blend_time(_prev_animation, new_name) * 2).timeout.connect(_on_cache_lock_timer_timeout)
 	_prev_animation = new_name
+
+
+func _on_cache_lock_timer_timeout() -> void:
+	_cache_locks -= 1
 
 
 func _mk_cache_key() -> String:
@@ -41,7 +47,7 @@ func _mk_cache_key() -> String:
 
 
 func has_outline() -> bool:
-	if _caching_locked:
+	if _cache_locks > 0:
 		return false
 	return _mk_cache_key() in _outline_cache
 
@@ -51,6 +57,6 @@ func get_outline() -> PackedVector2Array:
 
 
 func set_outline(outline : PackedVector2Array) -> void:
-	if _caching_locked:
+	if _cache_locks > 0:
 		return
 	_outline_cache[_mk_cache_key()] = outline.duplicate()
