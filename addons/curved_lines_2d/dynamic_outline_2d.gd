@@ -1,8 +1,6 @@
 @tool
 extends Node2D
 
-## ⚠️ WARNING: this node is too slow to use for animations at any significant scale because it calls
-## [method Geometry2D.merge_polygons] multiple times per render.
 ## Experimental node that draws an outline for multiple merged [ScalableVectorShape2D] nodes
 class_name DynamicOutline2D
 
@@ -23,6 +21,12 @@ class_name DynamicOutline2D
 	set(new_aa):
 		antialiased = new_aa
 		queue_redraw()
+
+## If flagged on the outlines of the assigned [member shapes] are merged into one outline
+## else outlines are drawn over each other even if they intersect.
+## ⚠️ WARNING: flagging this on is slow to use for animations at any significant scale because it calls
+## [method Geometry2D.merge_polygons] multiple times per render.
+@export var merge_shapes := false
 
 ## List of [ScalableVectorShape2D]'s to draw outlines around
 @export var shapes : Array[ScalableVectorShape2D]: set = _on_shapes_assigned
@@ -74,7 +78,12 @@ func _draw() -> void:
 		), TYPE_PACKED_VECTOR2_ARRAY, "", null)
 	if shape_polygons.is_empty():
 		return
-	var result := Geometry2DUtil.calculate_outlines(shape_polygons)
+
+	var result := (
+		Geometry2DUtil.calculate_outlines(shape_polygons)
+			if merge_shapes else
+		shape_polygons
+	)
 	for poly in result:
 		poly.append(poly[0])
 		draw_polyline(poly, stroke_color, stroke_width, antialiased)

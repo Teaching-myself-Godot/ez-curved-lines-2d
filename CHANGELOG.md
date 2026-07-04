@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.26.0
+
+### Added
+
+- You can now toggle off `merge_shapes` in `DynamicOutline2D`, which fixes all performance issues but polylines will simply interect (when drawing behind a shape it's still very useful)
+
 ## 2.25.4
 
 ⚠️ Small notice on the new skeleton rigging features: Shapes that have a `Bone2D` assigned for the entire shape may show displacement on an initial run. Saving the scene once (even without the * indicator) should fix this.
