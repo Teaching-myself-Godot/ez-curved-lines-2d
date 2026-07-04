@@ -1,7 +1,7 @@
 @tool
 extends Node2D
 
-## Experimental node that draws an outline for multiple merged [ScalableVectorShape2D] nodes
+## Node that draws outlines for multiple [ScalableVectorShape2D] nodes in batch
 class_name DynamicOutline2D
 
 ## [Color] of the ouline to draw
