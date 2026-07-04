@@ -864,10 +864,9 @@ Under `Tesselation settings` you can lower `Max Stages` or bump up `Tolerance De
 
 Version 2.25 adds a new `@tool` node `DynamicOutline2D`.
 
-⚠️ WARNING: this node is too slow to use for animations at any significant scale because it calls `Geometry2D.merge_polygons` multiple times per render. You can draw multiple `Line2D` behind their fills to achieve the same visual effect.
+With this tool you can assign multiple shapes and draw their outline strokes in batch.
 
-
-With this node you can give multiple shapes _one_ outline that uses `Geometry2D.merge_polygons` under the hood. 
+When `merge_shapes` is flagged on it uses `Geometry2D.merge_polygons` under the hood to make the strokes not intersect.
 
 ![example of `DynamicOutline2D` in the viewport](./addons/curved_lines_2d/screenshots/dynamic-outline-2d.png)
 
@@ -876,8 +875,8 @@ This node does not have all the `Line2D` options, but does have these 3 stroke p
 - `stroke_color`
 - `stroke_width`
 - `antialiased`: which adds a basic antialiasing which is shipped via the builting `CanvasItem.draw_polyline(..)` function
-
-An `shapes : Array[ScalableVectorShape2D]` holds the shapes which are given an outline (or multiple outlines when they're separate):
+- `merge_shapes`: toggle this on to merge the outlines being drawn ( ⚠️ this will slow down performance significantly. Ideally draw the outline behind the solids without merging)
+- `shapes : Array[ScalableVectorShape2D]` holds the shapes which are given an outline:
 
 ![`DynamicOutline2D` in the inspector](./addons/curved_lines_2d/screenshots/dynamic-outline-2d-inspector.png)
 
