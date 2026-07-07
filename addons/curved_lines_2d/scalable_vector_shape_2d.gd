@@ -394,6 +394,8 @@ var cached_clipped_polygons : Array[PackedVector2Array] = []
 var cached_poly_strokes : Array[PackedVector2Array] = []
 var deformation_cache : Dictionary[Bone2D, Transform2D] = {}
 var should_update_curve := false
+var svs_cache_manager : SVSPolygonCacher
+
 
 # Wire up signals at runtime
 func _ready():
@@ -576,6 +578,9 @@ func _get_full_bone_deform_transform(bone : Bone2D, trans := Transform2D.IDENTIT
 func tessellate() -> PackedVector2Array:
 	if not cached_outline.is_empty():
 		return cached_outline
+	if is_instance_valid(svs_cache_manager):
+		if (svs_cache_manager as SVSPolygonCacher).has_outline():
+			return (svs_cache_manager as SVSPolygonCacher).get_outline()
 	var the_curve : Curve2D = curve.duplicate(true) if skeleton and not bone else curve
 
 	if is_instance_valid(skeleton) and not is_instance_valid(bone):
@@ -613,7 +618,10 @@ func tessellate() -> PackedVector2Array:
 			the_curve.set_point_out(pt_idx, cp_out_abs - p)
 
 	if not arc_list or arc_list.arcs.is_empty():
-		return the_curve.tessellate(max_stages, tolerance_degrees)
+		var poly_points := the_curve.tessellate(max_stages, tolerance_degrees)
+		if is_instance_valid(svs_cache_manager):
+			(svs_cache_manager as SVSPolygonCacher).set_outline(poly_points)
+		return poly_points
 	var poly_points = []
 	var arc_starts := (arc_list.arcs
 		.filter(func(a): return a != null)
@@ -641,6 +649,8 @@ func tessellate() -> PackedVector2Array:
 				if i == 0 and not poly_points.is_empty():
 					continue
 				poly_points.append(seg_points[i])
+	if is_instance_valid(svs_cache_manager):
+		(svs_cache_manager as SVSPolygonCacher).set_outline(poly_points)
 	return poly_points
 
 
