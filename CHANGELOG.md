@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.25.5
+## 2.25.6
 
 ⚠️ Small notice on the new skeleton rigging features: Shapes that have a `Bone2D` assigned for the entire shape may show displacement on an initial run. Saving the scene once (even without the * indicator) should fix this.
 
@@ -21,6 +21,7 @@ Skeleton rigging is getting more stable and more performant fast, but you can he
 - Performance fix: changes in bone transforms tested once per bone per frame and only for assigned bones
 - Performance fix: recursive func for getting the full transformation delta of a bone called only once per bone-branch per frame
 - Performance fix: do not invoke _update_curve() when bone is assigned
+- Bugfix: `SVGTextureHelper._set_svg_resource` now awaits `ready` signal before queueing a render (thx @Sacro).
 
 ## 2.24.7
 

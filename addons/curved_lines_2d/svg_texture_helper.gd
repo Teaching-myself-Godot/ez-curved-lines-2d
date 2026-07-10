@@ -184,6 +184,8 @@ func _has_property(target: Object, prop_name: StringName) -> bool:
 	return false
 
 func _set_svg_resource(new_resource: SVGResource) -> void:
+	if not is_node_ready():
+		await ready
 	if svg_resource == new_resource:
 		return
 
