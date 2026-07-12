@@ -957,7 +957,7 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 						var p := svs.line.width_curve.get_point_position(i)
 						var cp := svs.get_closest_point_on_curve(
 							svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
-									svs.curve, p.x, svs.max_stages, svs.tolerance_degrees
+									svs.get_deformed_curve(), p.x, svs.max_stages, svs.tolerance_degrees
 						)))
 						if _vp_transform(cp.point_position).distance_to(_vp_transform(md_p.point_position)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
 							clamped_to_existing = true
@@ -1626,7 +1626,7 @@ func _remove_width_curve_point(svs : ScalableVectorShape2D) -> void:
 		var p := svs.line.width_curve.get_point_position(i)
 		var cp := svs.get_closest_point_on_curve(
 			svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
-					svs.curve, p.x, svs.max_stages, svs.tolerance_degrees
+					svs.get_deformed_curve(), p.x, svs.max_stages, svs.tolerance_degrees
 		)))
 		if _vp_transform(cp.point_position).distance_to(_vp_transform(md_p.point_position)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
 			clamped_to_existing = i
@@ -1650,7 +1650,7 @@ func _change_width_curve(svs : ScalableVectorShape2D, make_thicker : bool) -> vo
 	if md_p.before_segment >= svs.curve.point_count:
 		return
 	var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
-			md_p.local_point_position, svs.curve, svs.max_stages, svs.tolerance_degrees
+			md_p.local_point_position, svs.get_deformed_curve(), svs.max_stages, svs.tolerance_degrees
 	)
 
 	var width_curve := Curve.new()
@@ -1664,7 +1664,7 @@ func _change_width_curve(svs : ScalableVectorShape2D, make_thicker : bool) -> vo
 			var p := width_curve.get_point_position(i)
 			var cp := svs.get_closest_point_on_curve(
 				svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
-						svs.curve, p.x, svs.max_stages, svs.tolerance_degrees
+						svs.get_deformed_curve(), p.x, svs.max_stages, svs.tolerance_degrees
 			)))
 			if _vp_transform(cp.point_position).distance_to(_vp_transform(md_p.point_position)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
 				clamped_to_existing = i

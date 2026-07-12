@@ -1307,12 +1307,13 @@ func get_sliced_curve_segment(before_segment : int, point_position : Vector2) ->
 
 
 func get_curve_segment_halfway_point(before_segment : int) -> Vector2:
-	var p_idx_1 := before_segment if before_segment < curve.point_count else 0
+	var _curve := get_deformed_curve()
+	var p_idx_1 := before_segment if before_segment < _curve.point_count else 0
 	var curve_segment := Curve2D.new()
-	curve_segment.add_point(curve.get_point_position(before_segment - 1))
-	curve_segment.set_point_out(0, curve.get_point_out(before_segment - 1))
-	curve_segment.add_point(curve.get_point_position(p_idx_1))
-	curve_segment.set_point_in(1, curve.get_point_in(p_idx_1))
+	curve_segment.add_point(_curve.get_point_position(before_segment - 1))
+	curve_segment.set_point_out(0, _curve.get_point_out(before_segment - 1))
+	curve_segment.add_point(_curve.get_point_position(p_idx_1))
+	curve_segment.set_point_in(1, _curve.get_point_in(p_idx_1))
 	return Geometry2DUtil.get_halfway_point_on_bezier(curve_segment, max_stages, tolerance_degrees)
 
 
