@@ -1246,8 +1246,9 @@ func _handle_paint_bone_draw(viewport_control : Control) -> void:
 	)
 	_draw_hint(viewport_control, ctrl_hint)
 	_draw_curve_def(viewport_control, svs, svs.shape_hint_color, 0.5, true)
-	for idx in svs.curve.point_count:
-		var p := svs.to_global(svs.curve.get_point_position(idx))
+	var curve := svs.get_deformed_curve()
+	for idx in curve.point_count:
+		var p := svs.to_global(curve.get_point_position(idx))
 		if idx in svs.deformation_map and svs.deformation_map[idx] == current_bone:
 			_draw_crosshair(viewport_control, _vp_transform(p), 1.0, 6.0, Color.BLACK, 4)
 			_draw_crosshair(viewport_control, _vp_transform(p), 1.0, 6.0, Color.WHITE, 2)
@@ -1831,7 +1832,11 @@ func _add_point_on_curve_segment(svs : ScalableVectorShape2D, subdivide := false
 	var md_closest_point : ClosestPointOnCurveMeta = svs.get_meta(META_NAME_HOVER_CLOSEST_POINT)
 	if svs.is_arc_start(md_closest_point.before_segment - 1):
 		return
-	var placement_point := svs.get_curve_segment_halfway_point(md_closest_point.before_segment) if subdivide else md_closest_point.local_point_position
+	var placement_point := svs.to_undeformed_position(
+			svs.get_curve_segment_halfway_point(md_closest_point.before_segment) if subdivide else md_closest_point.local_point_position,
+			md_closest_point.before_segment,
+			false
+	)
 	if md_closest_point.before_segment >= svs.curve.point_count:
 		_add_point_to_curve(svs, placement_point)
 	else:
@@ -1881,8 +1886,8 @@ func _drag_curve_segment(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> vo
 	var segment_start_point := svs.curve.get_point_position(idx - 1)
 	var segment_end_point := svs.curve.get_point_position(idx)
 	var halfway_point := (segment_start_point + segment_end_point) / 2
-	var dir := halfway_point.direction_to(svs.to_local(mouse_pos))
-	var distance := halfway_point.distance_to(svs.to_local(mouse_pos))
+	var dir := halfway_point.direction_to(svs.to_undeformed_position(mouse_pos, idx))
+	var distance := halfway_point.distance_to(svs.to_undeformed_position(mouse_pos, idx))
 	var quadratic_bezier_control_point := halfway_point + distance * 2 * dir
 	var new_point_out := (quadratic_bezier_control_point - segment_start_point) * (2.0 / 3.0)
 	var new_point_in := (quadratic_bezier_control_point - segment_end_point) * (2.0 / 3.0)
@@ -2310,11 +2315,12 @@ func _handle_bone_paint_input(event : InputEvent) -> bool:
 			undo_redo_transaction[UndoRedoEntry.UNDO_PROPS] = [[svs, 'deformation_map', svs.deformation_map.duplicate(true)]]
 
 		var mp := _vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position())
+		var curve := svs.get_deformed_curve()
 		for p_idx in svs.curve.point_count:
-			var p := _vp_transform(svs.to_global(svs.curve.get_point_position(p_idx)))
+			var p := _vp_transform(svs.to_global(curve.get_point_position(p_idx)))
 			if p.distance_to(mp) < CLOSE_TO_MOUSE_RADIUS:
 				svs.deformation_map[p_idx] = svs.skeleton.get_bone(_current_bone_idx)
-
+		svs.should_update_curve = true
 		if in_undo_redo_transaction and event is InputEventMouseButton and not (event as InputEventMouseButton).pressed:
 			undo_redo_transaction[UndoRedoEntry.DO_PROPS] = [[svs, 'deformation_map', svs.deformation_map.duplicate(true)]]
 			_commit_undo_redo_transaction()
