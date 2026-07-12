@@ -573,12 +573,9 @@ func _get_full_bone_deform_transform(bone : Bone2D, trans := Transform2D.IDENTIT
 	return bone.transform * trans
 
 
-func tessellate() -> PackedVector2Array:
-	if not cached_outline.is_empty():
-		return cached_outline
-	var the_curve : Curve2D = curve.duplicate(true) if skeleton and not bone else curve
-
+func _get_deformed_curve() -> Curve2D:
 	if is_instance_valid(skeleton) and not is_instance_valid(bone):
+		var the_curve : Curve2D = curve.duplicate(true) if skeleton and not bone else curve
 		if not is_zero_approx(rotation):
 			rotate_points_by(rotation)
 			rotation = 0.0
@@ -611,6 +608,14 @@ func tessellate() -> PackedVector2Array:
 			the_curve.set_point_position(pt_idx, p)
 			the_curve.set_point_in(pt_idx, cp_in_abs - p)
 			the_curve.set_point_out(pt_idx, cp_out_abs - p)
+		return the_curve
+	return curve
+
+
+func tessellate() -> PackedVector2Array:
+	if not cached_outline.is_empty():
+		return cached_outline
+	var the_curve := _get_deformed_curve()
 
 	if not arc_list or arc_list.arcs.is_empty():
 		return the_curve.tessellate(max_stages, tolerance_degrees)
@@ -1038,16 +1043,16 @@ func get_curve_handles() -> Array:
 			"is_closed": "",
 		}]
 
-
-	var n = curve.point_count
+	var the_curve := _get_deformed_curve()
+	var n = the_curve.point_count
 	var is_closed := is_curve_closed()
 	var result := []
 	for i in range(n):
-		var p = curve.get_point_position(i)
-		var c_i = curve.get_point_in(i)
-		var c_o = curve.get_point_out(i)
+		var p = the_curve.get_point_position(i)
+		var c_i = the_curve.get_point_in(i)
+		var c_o = the_curve.get_point_out(i)
 		if i == 0 and is_closed:
-			c_i = curve.get_point_in(n - 1)
+			c_i = the_curve.get_point_in(n - 1)
 		elif i == n - 1 and is_closed:
 			continue
 		result.append({
