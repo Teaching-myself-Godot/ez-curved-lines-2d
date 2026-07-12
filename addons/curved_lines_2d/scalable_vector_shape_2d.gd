@@ -1231,7 +1231,7 @@ func is_arc_start(p_idx) -> bool:
 
 func _get_tessellated_curve_segment(segment_p1_idx : int) -> PackedVector2Array:
 	var arc := arc_list.get_arc_for_point(segment_p1_idx)
-	var seg := _get_curve_segment(segment_p1_idx, curve)
+	var seg := _get_curve_segment(segment_p1_idx, _get_deformed_curve())
 	return (
 			tessellate_arc_segment(seg.get_point_position(0), arc.radius, arc.rotation_deg,
 				arc.large_arc_flag, arc.sweep_flag, seg.get_point_position(1))
