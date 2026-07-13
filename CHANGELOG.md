@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.25.7
+## 2.25.8
 
 ⚠️ Small notice on the new skeleton rigging features: Shapes that have a `Bone2D` assigned for the entire shape may show displacement on an initial run. Saving the scene once (even without the * indicator) should fix this.
 
@@ -11,7 +11,7 @@ Skeleton rigging is getting more stable and more performant fast, but you can he
 - Create one outline for mutiple shapes using [`DynamicOutline2D`](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#create-one-outline-for-multiple-shapes-with-dynamicoutline2d)
 - Added a warning that an animated DynamicOutline2D does not scale for production yet
 - You can now toggle off `merge_shapes` in `DynamicOutline2D`, which fixes all performance issues but polylines will simply interect (when drawing behind a shape it's still very useful)
-
+- You can now edit your shape's curve using the handles even while its points are being deformed by bones
 
 ### Changed
 
