@@ -58,6 +58,8 @@ func _on_svs_curve_changed(
 
 
 func _align_vertices(svs : ScalableVectorShape2D):
+	if not is_node_ready():
+		await ready
 	if _vertex_counts[svs] != svs.curve.point_count:
 		for i in svs.curve.point_count:
 			if svs.to_global(svs.curve.get_point_position(i)).is_equal_approx(global_position):
