@@ -1742,7 +1742,8 @@ func _remove_point_from_curve(current_selection : ScalableVectorShape2D, idx : i
 	if current_selection.deformation_map:
 		var new_deformation_map := current_selection.deformation_map.duplicate()
 		for i in range(idx, current_selection.curve.point_count - 1):
-			new_deformation_map[i] = current_selection.deformation_map[i + 1]
+			if i + 1 in current_selection.deformation_map:
+				new_deformation_map[i] = current_selection.deformation_map[i + 1]
 		undo_redo.add_do_property(current_selection, 'deformation_map', new_deformation_map)
 		undo_redo.add_undo_property(current_selection, 'deformation_map', current_selection.deformation_map.duplicate())
 
@@ -1787,6 +1788,15 @@ func _add_point_to_curve(svs : ScalableVectorShape2D, local_pos : Vector2,
 		undo_redo.add_do_method(svs.arc_list, 'handle_point_added_at_index', idx)
 		undo_redo.add_undo_method(svs.curve, 'remove_point', idx)
 		undo_redo.add_undo_method(svs.arc_list, 'handle_point_removed_at_index', idx)
+
+	if svs.deformation_map:
+		var new_deformation_map := svs.deformation_map.duplicate()
+		for i in range(idx, svs.curve.point_count):
+			if i in svs.deformation_map:
+				new_deformation_map[i + 1] = svs.deformation_map[i]
+		undo_redo.add_do_property(svs, 'deformation_map', new_deformation_map)
+		undo_redo.add_undo_property(svs, 'deformation_map', svs.deformation_map.duplicate())
+
 	if not do_commit:
 		return
 	undo_redo.commit_action()
