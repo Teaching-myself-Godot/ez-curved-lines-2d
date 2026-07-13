@@ -1611,10 +1611,6 @@ func _set_shape_origin(current_selection : ScalableVectorShape2D, mouse_pos : Ve
 	undo_redo.commit_action()
 
 
-func _get_curve_backup(curve_in : Curve2D) -> Curve2D:
-	return curve_in.duplicate()
-
-
 func _remove_width_curve_point(svs : ScalableVectorShape2D) -> void:
 	if not is_instance_valid(svs.line):
 		return
@@ -1696,7 +1692,7 @@ func _resize_shape(svs : ScalableVectorShape2D, s : float) -> void:
 		if not in_undo_redo_transaction:
 			_start_undo_redo_transaction("Resize shape %s" % str(svs))
 			undo_redo_transaction[UndoRedoEntry.UNDOS].append([
-					svs, 'replace_curve_points', _get_curve_backup(svs.curve)])
+					svs, 'replace_curve_points', svs.curve.duplicate()])
 
 		undo_redo_transaction[UndoRedoEntry.DOS] = []
 		for idx in range(svs.curve.point_count):
@@ -1722,7 +1718,7 @@ func _remove_point_from_curve(current_selection : ScalableVectorShape2D, idx : i
 	if current_selection.is_curve_closed() and idx == 0:
 		idx = orig_n - 1
 
-	var backup := _get_curve_backup(current_selection.curve)
+	var backup := current_selection.curve.duplicate()
 	undo_redo.create_action("Remove point %d from %s" % [idx, str(current_selection)])
 	undo_redo.add_do_method(current_selection.curve, 'set_point_in', 0, Vector2.ZERO)
 	if orig_n > 2:
@@ -1736,11 +1732,20 @@ func _remove_point_from_curve(current_selection : ScalableVectorShape2D, idx : i
 
 	undo_redo.add_do_method(current_selection.curve, 'remove_point', idx)
 	undo_redo.add_do_method(current_selection.arc_list, 'handle_point_removed_at_index', idx)
+
 	undo_redo.add_undo_method(current_selection, 'replace_curve_points', backup)
 	undo_redo.add_undo_method(current_selection.arc_list, 'handle_point_added_at_index', idx)
 	for a in redo_arcs:
 		undo_redo.add_undo_reference(a)
 		undo_redo.add_undo_method(current_selection.arc_list, 'add_arc', a)
+
+	if current_selection.deformation_map:
+		var new_deformation_map := current_selection.deformation_map.duplicate()
+		for i in range(idx, current_selection.curve.point_count - 1):
+			new_deformation_map[i] = current_selection.deformation_map[i + 1]
+		undo_redo.add_do_property(current_selection, 'deformation_map', new_deformation_map)
+		undo_redo.add_undo_property(current_selection, 'deformation_map', current_selection.deformation_map.duplicate())
+
 	undo_redo.commit_action()
 
 
