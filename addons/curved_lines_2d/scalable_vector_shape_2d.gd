@@ -573,12 +573,25 @@ func _get_full_bone_deform_transform(bone : Bone2D, trans := Transform2D.IDENTIT
 	return bone.transform * trans
 
 
-func tessellate() -> PackedVector2Array:
-	if not cached_outline.is_empty():
-		return cached_outline
-	var the_curve : Curve2D = curve.duplicate(true) if skeleton and not bone else curve
-
+func to_undeformed_position(pos : Vector2, pt_idx : int, from_global := true) -> Vector2:
+	var p := to_local(pos) if from_global else pos
 	if is_instance_valid(skeleton) and not is_instance_valid(bone):
+		if not pt_idx in deformation_map:
+			return p
+		var _bone := deformation_map[pt_idx]
+		var full_deform := _get_full_bone_deform_transform(_bone)
+		var rest := _bone.get_skeleton_rest()
+		var pos_delta := full_deform.get_origin() - rest.get_origin()
+		var angle_delta := full_deform.get_rotation() - rest.get_rotation()
+		var local_bone_origin := to_local(_bone.global_position)
+		p =  (p - local_bone_origin).rotated(-angle_delta) + local_bone_origin
+		return  p - pos_delta
+	return p
+
+
+func get_deformed_curve() -> Curve2D:
+	if is_instance_valid(skeleton) and not is_instance_valid(bone):
+		var the_curve : Curve2D = curve.duplicate(true) if skeleton and not bone else curve
 		if not is_zero_approx(rotation):
 			rotate_points_by(rotation)
 			rotation = 0.0
@@ -611,6 +624,14 @@ func tessellate() -> PackedVector2Array:
 			the_curve.set_point_position(pt_idx, p)
 			the_curve.set_point_in(pt_idx, cp_in_abs - p)
 			the_curve.set_point_out(pt_idx, cp_out_abs - p)
+		return the_curve
+	return curve
+
+
+func tessellate() -> PackedVector2Array:
+	if not cached_outline.is_empty():
+		return cached_outline
+	var the_curve := get_deformed_curve()
 
 	if not arc_list or arc_list.arcs.is_empty():
 		return the_curve.tessellate(max_stages, tolerance_degrees)
@@ -1038,16 +1059,16 @@ func get_curve_handles() -> Array:
 			"is_closed": "",
 		}]
 
-
-	var n = curve.point_count
+	var the_curve := get_deformed_curve()
+	var n = the_curve.point_count
 	var is_closed := is_curve_closed()
 	var result := []
 	for i in range(n):
-		var p = curve.get_point_position(i)
-		var c_i = curve.get_point_in(i)
-		var c_o = curve.get_point_out(i)
+		var p = the_curve.get_point_position(i)
+		var c_i = the_curve.get_point_in(i)
+		var c_o = the_curve.get_point_out(i)
 		if i == 0 and is_closed:
-			c_i = curve.get_point_in(n - 1)
+			c_i = the_curve.get_point_in(n - 1)
 		elif i == n - 1 and is_closed:
 			continue
 		result.append({
@@ -1172,7 +1193,7 @@ func set_global_curve_point_position(global_pos : Vector2, point_idx : int, snap
 	if curve.point_count > point_idx:
 		if snapped:
 			global_pos = snapped(global_pos, Vector2.ONE * snap)
-		curve.set_point_position(point_idx, to_local(global_pos))
+		curve.set_point_position(point_idx, to_undeformed_position(global_pos, point_idx))
 
 
 func set_global_curve_cp_in_position(global_pos : Vector2, point_idx : int, snapped : bool,
@@ -1180,7 +1201,8 @@ func set_global_curve_cp_in_position(global_pos : Vector2, point_idx : int, snap
 	if curve.point_count > point_idx:
 		if snapped:
 			global_pos = snapped(global_pos, Vector2.ONE * snap)
-		curve.set_point_in(point_idx, to_local(global_pos) - curve.get_point_position(point_idx))
+		curve.set_point_in(point_idx,
+			 to_undeformed_position(global_pos, point_idx) - curve.get_point_position(point_idx))
 
 
 func set_global_curve_cp_out_position(global_pos : Vector2, point_idx : int, snapped : bool,
@@ -1188,7 +1210,8 @@ func set_global_curve_cp_out_position(global_pos : Vector2, point_idx : int, sna
 	if curve.point_count > point_idx:
 		if snapped:
 			global_pos = snapped(global_pos, Vector2.ONE * snap)
-		curve.set_point_out(point_idx, to_local(global_pos) - curve.get_point_position(point_idx))
+		curve.set_point_out(point_idx,
+			to_undeformed_position(global_pos, point_idx) - curve.get_point_position(point_idx))
 
 
 func replace_curve_points(curve_in : Curve2D) -> void:
@@ -1226,7 +1249,7 @@ func is_arc_start(p_idx) -> bool:
 
 func _get_tessellated_curve_segment(segment_p1_idx : int) -> PackedVector2Array:
 	var arc := arc_list.get_arc_for_point(segment_p1_idx)
-	var seg := _get_curve_segment(segment_p1_idx, curve)
+	var seg := _get_curve_segment(segment_p1_idx, get_deformed_curve())
 	return (
 			tessellate_arc_segment(seg.get_point_position(0), arc.radius, arc.rotation_deg,
 				arc.large_arc_flag, arc.sweep_flag, seg.get_point_position(1))
@@ -1284,12 +1307,13 @@ func get_sliced_curve_segment(before_segment : int, point_position : Vector2) ->
 
 
 func get_curve_segment_halfway_point(before_segment : int) -> Vector2:
-	var p_idx_1 := before_segment if before_segment < curve.point_count else 0
+	var _curve := get_deformed_curve()
+	var p_idx_1 := before_segment if before_segment < _curve.point_count else 0
 	var curve_segment := Curve2D.new()
-	curve_segment.add_point(curve.get_point_position(before_segment - 1))
-	curve_segment.set_point_out(0, curve.get_point_out(before_segment - 1))
-	curve_segment.add_point(curve.get_point_position(p_idx_1))
-	curve_segment.set_point_in(1, curve.get_point_in(p_idx_1))
+	curve_segment.add_point(_curve.get_point_position(before_segment - 1))
+	curve_segment.set_point_out(0, _curve.get_point_out(before_segment - 1))
+	curve_segment.add_point(_curve.get_point_position(p_idx_1))
+	curve_segment.set_point_in(1, _curve.get_point_in(p_idx_1))
 	return Geometry2DUtil.get_halfway_point_on_bezier(curve_segment, max_stages, tolerance_degrees)
 
 
