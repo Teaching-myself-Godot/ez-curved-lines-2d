@@ -666,7 +666,7 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 	var point_txt := ""
 	var point_pos_txt := ""
 	var point_hint_pos := Vector2.ZERO
-	var handles = svs.get_curve_handles()
+	var handles = svs.get_curve_handles(_get_subviewport_container_transform(svs))
 	for i in range(handles.size()):
 		var handle = handles[i]
 
@@ -794,11 +794,20 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 		_draw_hint(viewport_control, hint_txt)
 
 
+func _get_subviewport_container_transform(svs : ScalableVectorShape2D) -> Transform2D:
+	var n := svs.get_parent()
+	while is_instance_valid(n) and not n == EditorInterface.get_edited_scene_root():
+		if n is SubViewportContainer:
+			var tr : Transform2D = n.get_global_transform_with_canvas().affine_inverse()
+			return Transform2D(tr.get_rotation(), n.scale, 0.0, tr.get_origin())
+		n = n.get_parent()
+	return Transform2D.IDENTITY
+
 
 func _set_handle_hover(g_mouse_pos : Vector2, svs : ScalableVectorShape2D) -> void:
 	var mouse_pos := _vp_transform(g_mouse_pos)
-	var handles = svs.get_curve_handles()
-	var gradient_handles = svs.get_gradient_handles()
+	var handles = svs.get_curve_handles(_get_subviewport_container_transform(svs))
+	var gradient_handles = svs.get_gradient_handles(_get_subviewport_container_transform(svs))
 	svs.remove_meta(META_NAME_HOVER_POINT_IDX)
 	svs.remove_meta(META_NAME_HOVER_CP_IN_IDX)
 	svs.remove_meta(META_NAME_HOVER_CP_OUT_IDX)

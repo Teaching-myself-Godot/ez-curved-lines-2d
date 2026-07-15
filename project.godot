@@ -40,11 +40,15 @@ curved_lines_2d/brush_size_x=183.0
 curved_lines_2d/brush_size_y=183.0
 curved_lines_2d/brush_rotation=2.0
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="EZ Curved Lines 2D"
 run/main_scene="uid://gmlmhdf0cxl8"
-config/features=PackedStringArray("4.4", "GL Compatibility")
+config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="uid://b5yxa1e62b0hb"
 
 [display]

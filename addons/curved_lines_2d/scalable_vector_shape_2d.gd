@@ -1042,20 +1042,20 @@ func is_curve_closed() -> bool:
 	return n > 2 and curve.get_point_position(0).distance_to(curve.get_point_position(n - 1)) < 0.001
 
 
-func get_curve_handles() -> Array:
+func get_curve_handles(mul := Transform2D.IDENTITY) -> Array:
 	if shape_type == ShapeType.RECT or shape_type == ShapeType.ELLIPSE:
 		var size_handle_pos := (size * 0.5).rotated(spin) + offset
 		var top_left := (-size * 0.5).rotated(spin) + offset
 		var rx_handle := ((-size * 0.5) + Vector2(rx, 0)).rotated(spin) + offset
 		var ry_handle := ((-size * 0.5) + Vector2(0, ry)).rotated(spin) + offset
 		return [{
-			"top_left_pos": to_global(top_left),
-			"point_position": to_global(size_handle_pos),
+			"top_left_pos": to_global(top_left) * mul,
+			"point_position": to_global(size_handle_pos) * mul,
 			"mirrored": true,
 			"in": rx_handle,
 			"out": ry_handle,
-			"in_position": to_global(rx_handle),
-			"out_position": to_global(ry_handle),
+			"in_position": to_global(rx_handle) * mul,
+			"out_position": to_global(ry_handle) * mul,
 			"is_closed": "",
 		}]
 
@@ -1072,18 +1072,18 @@ func get_curve_handles() -> Array:
 		elif i == n - 1 and is_closed:
 			continue
 		result.append({
-			'point_position': to_global(p),
+			'point_position': to_global(p) * mul,
 			'in': c_i,
 			'out': c_o,
 			'mirrored': c_i.length() and c_i.distance_to(-c_o) < 0.01,
-			'in_position': to_global(p + c_i),
-			'out_position': to_global(p + c_o),
+			'in_position': to_global(p + c_i) * mul,
+			'out_position': to_global(p + c_o) * mul,
 			'is_closed': (" ∞ " + str(n - 1) if i == 0 and is_closed else "")
 		})
 	return result
 
 
-func get_gradient_handles() -> Dictionary:
+func get_gradient_handles(mul := Transform2D.IDENTITY) -> Dictionary:
 	if not (
 		is_instance_valid(polygon) and polygon.texture is GradientTexture2D
 	):
@@ -1098,13 +1098,13 @@ func get_gradient_handles() -> Dictionary:
 	var stop_positions = Array(gradient_tex.gradient.offsets).map(
 		func(offs): return (gradient_tex.fill_to - gradient_tex.fill_from) * offs
 	).map(func(offs_p): return gradient_tex.fill_from + offs_p
-	).map(func(offs_p1): return to_global((offs_p1 * box.size) + box.position))
+	).map(func(offs_p1): return to_global((offs_p1 * box.size) + box.position) * mul)
 
 	var result := {
 		"fill_from": gradient_tex.fill_from,
 		"fill_to": gradient_tex.fill_to,
-		"fill_from_pos": to_global((gradient_tex.fill_from * box.size) + box.position),
-		"fill_to_pos":  to_global((gradient_tex.fill_to * box.size) + box.position),
+		"fill_from_pos": to_global((gradient_tex.fill_from * box.size) + box.position) * mul,
+		"fill_to_pos":  to_global((gradient_tex.fill_to * box.size) + box.position) * mul,
 		"start_color": stop_colors[0] * polygon.color,
 		"end_color": stop_colors[stop_colors.size() - 1] * polygon.color,
 		"stop_positions": stop_positions,
