@@ -590,12 +590,13 @@ func _handle_has_hover(svs : ScalableVectorShape2D) -> bool:
 func _draw_control_point_handle(viewport_control : Control, svs : ScalableVectorShape2D,
 		handle : Dictionary, prefix : String, is_hovered : bool, self_is_hovered : bool) -> String:
 	if handle[prefix].length():
+		var mul := _get_subviewport_container_transform(svs)
 		var color := VIEWPORT_ORANGE if is_hovered else Color.WHITE
 		var width := 2 if is_hovered else 1
-		viewport_control.draw_line(_vp_transform(handle['point_position']),
-				_vp_transform(handle[prefix + '_position']), Color.WEB_GRAY, 1, true)
-		viewport_control.draw_circle(_vp_transform(handle[prefix + '_position']), 5, Color.DIM_GRAY)
-		viewport_control.draw_circle(_vp_transform(handle[prefix + '_position']), 5, color, false, width)
+		viewport_control.draw_line(_vp_transform(handle['point_position'] * mul),
+				_vp_transform(handle[prefix + '_position'] * mul), Color.WEB_GRAY, 1, true)
+		viewport_control.draw_circle(_vp_transform(handle[prefix + '_position'] * mul), 5, Color.DIM_GRAY)
+		viewport_control.draw_circle(_vp_transform(handle[prefix + '_position'] * mul), 5, color, false, width)
 		if self_is_hovered:
 			var hint_txt := "Control point " + prefix
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
@@ -614,11 +615,13 @@ func _draw_rect_control_point_handle(viewport_control : Control, svs : ScalableV
 	var prop_name := "rx" if prefix == "in" else "ry"
 	var color := VIEWPORT_ORANGE if is_hovered else Color.WHITE
 	var width := 2 if is_hovered else 1
+	var mul := _get_subviewport_container_transform(svs)
+
 	viewport_control.draw_line(
-			_vp_transform(handle['top_left_pos']),
-			_vp_transform(handle[prefix + '_position']), Color.WEB_GRAY, 1, true)
-	viewport_control.draw_circle(_vp_transform(handle[prefix + '_position']), 5, Color.DIM_GRAY)
-	viewport_control.draw_circle(_vp_transform(handle[prefix + '_position']), 5, color, false, width)
+			_vp_transform(handle['top_left_pos'] * mul),
+			_vp_transform(handle[prefix + '_position'] * mul), Color.WEB_GRAY, 1, true)
+	viewport_control.draw_circle(_vp_transform(handle[prefix + '_position'] * mul), 5, Color.DIM_GRAY)
+	viewport_control.draw_circle(_vp_transform(handle[prefix + '_position'] * mul), 5, color, false, width)
 	if is_hovered:
 		var hint_txt := "Control point rounded corners "
 		if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
@@ -666,7 +669,9 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 	var point_txt := ""
 	var point_pos_txt := ""
 	var point_hint_pos := Vector2.ZERO
-	var handles = svs.get_curve_handles(_get_subviewport_container_transform(svs))
+	var handles = svs.get_curve_handles()
+	var mul := _get_subviewport_container_transform(svs)
+
 	for i in range(handles.size()):
 		var handle = handles[i]
 
@@ -698,12 +703,12 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 
 		if handle['mirrored']:
 			# mirrored handles
-			var rect := Rect2(_vp_transform(handle['point_position']) - Vector2(5, 5), Vector2(10, 10))
+			var rect := Rect2(_vp_transform(handle['point_position'] * mul) - Vector2(5, 5), Vector2(10, 10))
 			viewport_control.draw_rect(rect, Color.DIM_GRAY, .5)
 			viewport_control.draw_rect(rect, color, false, width)
 		else:
 			# unmirrored handles / zero length handles
-			var p1 := _vp_transform(handle['point_position'])
+			var p1 := _vp_transform(handle['point_position'] * mul)
 			var pts := PackedVector2Array([
 					Vector2(p1.x - 8, p1.y), Vector2(p1.x, p1.y - 8),
 					Vector2(p1.x + 8, p1.y), Vector2(p1.x, p1.y + 8)
@@ -745,8 +750,8 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 
 	var gradient_handles := svs.get_gradient_handles()
 	if not gradient_handles.is_empty():
-		var p1 := _vp_transform(gradient_handles['fill_from_pos'])
-		var p2 := _vp_transform(gradient_handles['fill_to_pos'])
+		var p1 := _vp_transform(gradient_handles['fill_from_pos'] * mul)
+		var p2 := _vp_transform(gradient_handles['fill_to_pos'] * mul)
 		var hint_color := svs.shape_hint_color if svs.shape_hint_color else Color.LIME_GREEN
 
 		if svs.has_meta(META_NAME_HOVER_GRADIENT_FROM):
@@ -759,12 +764,12 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 			viewport_control.draw_circle(p2, 12, Color.WHITE, false, 0.5, true)
 
 		for p : Vector2 in gradient_handles['stop_positions']:
-			viewport_control.draw_circle(_vp_transform(p) + Vector2(1,1), 5, Color(0.0,0.0,0.0, 0.4), true, -1, true)
+			viewport_control.draw_circle(_vp_transform(p * mul) + Vector2(1,1), 5, Color(0.0,0.0,0.0, 0.4), true, -1, true)
 
 		viewport_control.draw_line(p1, p2, hint_color, .5, true)
 
 		for idx in range(gradient_handles['stop_positions'].size()):
-			var p := _vp_transform(gradient_handles['stop_positions'][idx])
+			var p := _vp_transform(gradient_handles['stop_positions'][idx] * mul)
 			var color := (Color.WHITE
 					if svs.get_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX, -1) == idx
 					else Color.WEB_GRAY)
@@ -783,7 +788,7 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 			_draw_crosshair(viewport_control, svs.get_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE))
 			hint_txt = "- Double click to add color stop here"
 	if not point_txt.is_empty():
-		_draw_point_number(viewport_control, point_hint_pos, point_txt)
+		_draw_point_number(viewport_control, point_hint_pos * mul, point_txt)
 
 	if not _are_hints_enabled() and _am_showing_point_numbers():
 		_draw_hint(viewport_control, point_pos_txt, true)
@@ -806,8 +811,8 @@ func _get_subviewport_container_transform(svs : ScalableVectorShape2D) -> Transf
 
 func _set_handle_hover(g_mouse_pos : Vector2, svs : ScalableVectorShape2D) -> void:
 	var mouse_pos := _vp_transform(g_mouse_pos)
-	var handles = svs.get_curve_handles(_get_subviewport_container_transform(svs))
-	var gradient_handles = svs.get_gradient_handles(_get_subviewport_container_transform(svs))
+	var handles = svs.get_curve_handles()
+	var gradient_handles = svs.get_gradient_handles()
 	svs.remove_meta(META_NAME_HOVER_POINT_IDX)
 	svs.remove_meta(META_NAME_HOVER_CP_IN_IDX)
 	svs.remove_meta(META_NAME_HOVER_CP_OUT_IDX)
@@ -815,27 +820,28 @@ func _set_handle_hover(g_mouse_pos : Vector2, svs : ScalableVectorShape2D) -> vo
 	svs.remove_meta(META_NAME_HOVER_GRADIENT_TO)
 	svs.remove_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX)
 	svs.remove_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE)
+	var mul := _get_subviewport_container_transform(svs)
 	for i in range(handles.size()):
 		var handle = handles[i]
-		if mouse_pos.distance_to(_vp_transform(handle['point_position'])) < 10:
+		if mouse_pos.distance_to(_vp_transform(handle['point_position'] * mul)) < 10:
 			svs.set_meta(META_NAME_HOVER_POINT_IDX, i)
-		elif mouse_pos.distance_to(_vp_transform(handle['in_position'])) < 10:
+		elif mouse_pos.distance_to(_vp_transform(handle['in_position'] * mul)) < 10:
 			svs.set_meta(META_NAME_HOVER_CP_IN_IDX, i)
-		elif mouse_pos.distance_to(_vp_transform(handle['out_position'])) < 10:
+		elif mouse_pos.distance_to(_vp_transform(handle['out_position'] * mul)) < 10:
 			svs.set_meta(META_NAME_HOVER_CP_OUT_IDX, i)
 	if not gradient_handles.is_empty() and not _handle_has_hover(svs):
 		var stop_idx = gradient_handles['stop_positions'].find_custom(func(p):
-					return mouse_pos.distance_to(_vp_transform(p)) < 6)
+					return mouse_pos.distance_to(_vp_transform(p * mul)) < 6)
 		if stop_idx > -1:
 			svs.set_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX, stop_idx)
-		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_from_pos'])) < CLOSE_TO_MOUSE_RADIUS:
+		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_from_pos'] * mul)) < CLOSE_TO_MOUSE_RADIUS:
 			svs.set_meta(META_NAME_HOVER_GRADIENT_FROM, true)
-		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_to_pos'])) < CLOSE_TO_MOUSE_RADIUS:
+		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_to_pos'] * mul)) < CLOSE_TO_MOUSE_RADIUS:
 			svs.set_meta(META_NAME_HOVER_GRADIENT_TO, true)
 		else:
 			var p := Geometry2D.get_closest_point_to_segment(mouse_pos,
-					_vp_transform(gradient_handles['fill_from_pos']),
-					_vp_transform(gradient_handles['fill_to_pos']))
+					_vp_transform(gradient_handles['fill_from_pos'] * mul),
+					_vp_transform(gradient_handles['fill_to_pos'] * mul))
 			if mouse_pos.distance_to(p) < 10:
 				svs.set_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE, p)
 
@@ -856,7 +862,8 @@ func _draw_curve_def(viewport_control : Control, svs : ScalableVectorShape2D, co
 			width : float, antialiased : bool) -> void:
 	if not svs.is_visible_in_tree():
 		return
-	var points = svs.get_poly_points().map(_vp_transform)
+	var mul := _get_subviewport_container_transform(svs)
+	var points = svs.get_poly_points().map(func(p): return p * mul).map(_vp_transform)
 	var last_p := Vector2.INF
 	for p : Vector2 in points:
 		if last_p != Vector2.INF:
@@ -901,6 +908,7 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 	if _is_snapped_to_pixel():
 		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	var p := _vp_transform(mouse_pos)
+
 	if _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
 		if svs.has_fine_point(mouse_pos):
 			_draw_crosshair(viewport_control, p)
