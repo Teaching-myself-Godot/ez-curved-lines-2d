@@ -1985,7 +1985,7 @@ func _get_vp_v_scroll_bar() -> VScrollBar:
 
 
 func _handle_input_for_uniform_translate(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
-	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	var mouse_pos := _get_subviewport_global_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), svs)
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		if (event as InputEventMouseButton).pressed:
 			_drag_start = mouse_pos
@@ -2030,7 +2030,7 @@ func _flip_svs_vertical():
 
 
 func _handle_input_for_uniform_scale(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
-	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	var mouse_pos := _get_subviewport_global_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), svs)
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		if (event as InputEventMouseButton).pressed:
 			_drag_start = mouse_pos
@@ -2055,7 +2055,7 @@ func _handle_input_for_uniform_scale(event : InputEvent, svs : ScalableVectorSha
 
 
 func _handle_input_for_uniform_rotate(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
-	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	var mouse_pos := _get_subviewport_global_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), svs)
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		if (event as InputEventMouseButton).pressed:
 			_drag_start = mouse_pos
@@ -2075,7 +2075,7 @@ func _handle_input_for_uniform_rotate(event : InputEvent, svs : ScalableVectorSh
 						if use_cntr else
 					svs.global_position
 			)
-			var rotation_target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+			var rotation_target := mouse_pos
 			var ang := rotation_origin.angle_to_point(rotation_target) - rotation_origin.angle_to_point(_drag_start)
 			if _is_ctrl_or_cmd_pressed():
 				ang = snappedf(ang, deg_to_rad(5.0))
