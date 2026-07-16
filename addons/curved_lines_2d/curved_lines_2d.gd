@@ -799,7 +799,7 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 		_draw_hint(viewport_control, hint_txt)
 
 
-func _get_subviewport_container_transform(svs : ScalableVectorShape2D) -> Transform2D:
+func _get_subviewport_container_transform(svs : Node) -> Transform2D:
 	var n := svs.get_parent()
 	while is_instance_valid(n) and not n == EditorInterface.get_edited_scene_root():
 		if n is SubViewportContainer:
@@ -1341,6 +1341,8 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 			_draw_curve(viewport_control, result, false)
 
 	if shape_preview:
+		var mul := _get_subviewport_container_transform(current_selection)
+
 		var points := Array(shape_preview.tessellate())
 		var stroke_width = (_get_default_stroke_width() * EditorInterface.get_editor_viewport_2d()
 				.get_final_transform().get_scale().x)
@@ -1350,7 +1352,7 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		elif current_selection is Control:
 			points = points.map(func(p): return current_selection.get_global_transform() * p)
 			stroke_width *= current_selection.get_global_transform().get_scale().x
-		points = points.map(_vp_transform)
+		points = points.map(func(p): return _vp_transform(p * mul))
 		match _get_default_paint_order():
 			PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
 				if _is_add_stroke_enabled():
