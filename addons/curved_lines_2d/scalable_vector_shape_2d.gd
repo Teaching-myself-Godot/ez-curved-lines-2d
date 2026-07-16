@@ -1011,6 +1011,9 @@ func set_origin(global_pos : Vector2) -> void:
 				polygon.texture_offset = -get_bounding_rect().position
 
 
+func get_bounding_box_mul(mul : Transform2D) -> Array[Vector2]:
+	return get_bounding_box().map(func(p): return p * mul)
+
 
 func get_bounding_box() -> Array[Vector2]:
 	var rect = get_bounding_rect().grow(

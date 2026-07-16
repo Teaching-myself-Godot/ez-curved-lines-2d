@@ -1011,7 +1011,9 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 
 
 func _draw_outline_for_uniform_transforms(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
-	viewport_control.draw_polyline(svs.get_bounding_box().map(_vp_transform), VIEWPORT_ORANGE, 2.0)
+	viewport_control.draw_polyline(svs
+			.get_bounding_box_mul(_get_subviewport_container_transform(svs))
+			.map(_vp_transform), VIEWPORT_ORANGE, 2.0)
 	_draw_curve_def(viewport_control, svs, svs.shape_hint_color, 0.5, true)
 	for idx in svs.curve.point_count:
 		var p := svs.to_global(svs.curve.get_point_position(idx))
@@ -1311,8 +1313,9 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 	var all_valid_svs_nodes := _find_scalable_vector_shape_2d_nodes().filter(_is_svs_valid)
 	for result : ScalableVectorShape2D in all_valid_svs_nodes:
 		if result == current_selection:
-			viewport_control.draw_polyline(result.get_bounding_box().map(_vp_transform),
-					VIEWPORT_ORANGE, 2.0)
+			viewport_control.draw_polyline(result
+					.get_bounding_box_mul(_get_subviewport_container_transform(result))
+					.map(_vp_transform), VIEWPORT_ORANGE, 2.0)
 			_draw_curve(viewport_control, result)
 			if not _is_editing_width_curve(result):
 				_draw_handles(viewport_control, result)
@@ -1325,8 +1328,9 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 				else:
 						_draw_add_point_hint(viewport_control, result, true)
 		elif result.has_meta(META_NAME_SELECT_HINT):
-			viewport_control.draw_polyline(result.get_bounding_box().map(_vp_transform),
-					Color.WEB_GRAY, 1.0)
+			viewport_control.draw_polyline(result
+					.get_bounding_box_mul(_get_subviewport_container_transform(result))
+					.map(_vp_transform), Color.WEB_GRAY, 1.0)
 		if not(result.line or result.collision_polygon or result.polygon):
 			_draw_curve(viewport_control, result, false)
 
