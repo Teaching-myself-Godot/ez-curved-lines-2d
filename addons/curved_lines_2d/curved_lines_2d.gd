@@ -799,14 +799,23 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 		_draw_hint(viewport_control, hint_txt)
 
 
-func _get_subviewport_container_transform(svs : Node) -> Transform2D:
-	var n := svs.get_parent()
+func _get_subviewport_container_transform(nd : Node) -> Transform2D:
+	var n := nd.get_parent()
 	while is_instance_valid(n) and not n == EditorInterface.get_edited_scene_root():
 		if n is SubViewportContainer:
 			var tr : Transform2D = n.get_global_transform_with_canvas().affine_inverse()
 			return Transform2D(tr.get_rotation(), n.scale, 0.0, tr.get_origin())
 		n = n.get_parent()
 	return Transform2D.IDENTITY
+
+
+func _get_subviewport_global_mouse_pos(pos : Vector2, nd : Node) -> Vector2:
+	var n := nd.get_parent()
+	while is_instance_valid(n) and not n == EditorInterface.get_edited_scene_root():
+		if n is SubViewport:
+			return (n as SubViewport).get_mouse_position()
+		n = n.get_parent()
+	return pos
 
 
 func _set_handle_hover(g_mouse_pos : Vector2, svs : ScalableVectorShape2D) -> void:
@@ -845,8 +854,8 @@ func _set_handle_hover(g_mouse_pos : Vector2, svs : ScalableVectorShape2D) -> vo
 			if mouse_pos.distance_to(p) < 10:
 				svs.set_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE, p)
 
-	var closest_point_on_curve := svs.get_closest_point_on_curve(g_mouse_pos)
-	if mouse_pos.distance_to(_vp_transform(closest_point_on_curve.point_position)) < 15:
+	var closest_point_on_curve := svs.get_closest_point_on_curve(_get_subviewport_global_mouse_pos(g_mouse_pos, svs))
+	if mouse_pos.distance_to(_vp_transform(closest_point_on_curve.point_position * mul)) < 15:
 		svs.set_meta(META_NAME_HOVER_CLOSEST_POINT, closest_point_on_curve)
 
 
