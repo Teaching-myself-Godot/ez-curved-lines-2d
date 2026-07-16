@@ -961,12 +961,26 @@ func has_point(global_pos : Vector2) -> bool:
 	).has_point(to_local(global_pos))
 
 
+func has_point_mul(global_pos : Vector2, mul : Transform2D) -> bool:
+	return Geometry2D.is_point_in_polygon(global_pos, get_bounding_box_mul(mul))
+
+
 func has_fine_point(global_pos : Vector2) -> bool:
 	var poly_points := self.tessellate()
 	if Geometry2D.is_point_in_polygon(to_local(global_pos), poly_points):
 		return true
 	for poly_points1 in cached_poly_strokes:
 		if Geometry2D.is_point_in_polygon(to_local(global_pos), poly_points1):
+			return true
+	return false
+
+
+func has_fine_point_mul(global_pos : Vector2, mul : Transform2D) -> bool:
+	var poly_points := Array(self.tessellate()).map(func(p): return to_global(p) * mul)
+	if Geometry2D.is_point_in_polygon(global_pos, poly_points):
+		return true
+	for poly_points1 in cached_poly_strokes:
+		if Geometry2D.is_point_in_polygon(global_pos, poly_points1):
 			return true
 	return false
 

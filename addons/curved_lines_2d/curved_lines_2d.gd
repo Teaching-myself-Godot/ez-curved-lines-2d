@@ -484,7 +484,7 @@ func _find_scalable_vector_shape_2d_nodes_at(pos : Vector2) -> Array[Node]:
 					.filter(func(x : ScalableVectorShape2D): return not x.has_meta("_edit_lock_"))
 					.filter(func(x : ScalableVectorShape2D): return x.is_visible_in_tree())
 					.filter(func(x : ScalableVectorShape2D): return x.owner == EditorInterface.get_edited_scene_root())
-					.filter(func(x : ScalableVectorShape2D): return x.has_point(pos))
+					.filter(func(x : ScalableVectorShape2D): return x.has_point_mul(pos, _get_subviewport_container_transform(x)))
 		)
 	return []
 
@@ -910,7 +910,7 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 	var p := _vp_transform(mouse_pos)
 
 	if _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
-		if svs.has_fine_point(mouse_pos):
+		if svs.has_fine_point_mul(mouse_pos, _get_subviewport_container_transform(svs)):
 			_draw_crosshair(viewport_control, p)
 			_draw_hint(viewport_control,
 					"- Click to %s %s here (Ctrl+Shift held)\n" %
@@ -940,7 +940,7 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 				- Hold Shift to resize shape with mousewheel"
 		if only_cutout_hints:
 			hint = "- Hold Shift to resize shape with mousewheel"
-		if svs.has_fine_point(mouse_pos):
+		if svs.has_fine_point_mul(mouse_pos, _get_subviewport_container_transform(svs)):
 			hint += "\n- Double click to subdivide all curve segments
 				- Hold Ctrl+Shift to %s %s here (or Cmd+Shift for mac)\n" % [
 					OPERATION_NAME_MAP[current_clip_operation]["verb"],
@@ -1100,7 +1100,7 @@ func _find_merge_vertices() -> Dictionary[ScalableVectorShape2D, int]:
 		var point_was_found_inside_rect := false
 		for idx in svs.curve.point_count:
 			var p := svs.to_global(svs.curve.get_point_position(idx))
-			var p_inside_rect := _merge_box_rect.abs().has_point(_vp_transform(p))
+			var p_inside_rect := _merge_box_rect.abs().has_point(_vp_transform(p * _get_subviewport_container_transform(svs)))
 			if p_inside_rect and not point_was_found_inside_rect:
 				vertex_map[svs] = idx
 				point_was_found_inside_rect = true
@@ -2431,7 +2431,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				if _is_snapped_to_pixel():
 					mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 				if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and
-							current_selection.has_fine_point(mouse_pos)):
+							current_selection.has_fine_point_mul(mouse_pos,
+									_get_subviewport_container_transform(current_selection))):
 					_start_cutout_shape(current_selection, mouse_pos)
 				return true
 			elif _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed():
@@ -2453,12 +2454,12 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				if event.double_click:
 					_add_color_stop(current_selection, mouse_pos)
 				return true
-			elif _is_svs_valid(current_selection) and current_selection.has_fine_point(mouse_pos) and event.double_click:
+			elif _is_svs_valid(current_selection) and current_selection.has_fine_point_mul(mouse_pos, _get_subviewport_container_transform(current_selection)) and event.double_click:
 				_subdivide_curve(current_selection)
 				return true
 			else:
 				var results := _find_scalable_vector_shape_2d_nodes_at(mouse_pos)
-				var refined_result := results.rfind_custom(func(x): return x.has_fine_point(mouse_pos))
+				var refined_result := results.rfind_custom(func(x): return x.has_fine_point_mul(mouse_pos, _get_subviewport_container_transform(x)))
 				if refined_result > -1 and results[refined_result]:
 					if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 						selection_candidate = results[refined_result]
