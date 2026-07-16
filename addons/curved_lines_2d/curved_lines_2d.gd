@@ -1149,7 +1149,9 @@ func _handle_draw_vertex_merge_box(viewport_control: Control) -> void:
 
 func _handle_pencil_draw(viewport_control : Control) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+
 	if _is_svs_valid(current_selection) and Input.is_key_pressed(KEY_SHIFT) and _drawing_pencil_line:
+		var mul := _get_subviewport_container_transform(current_selection)
 		var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_snapped_to_pixel():
 			pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
@@ -1159,11 +1161,11 @@ func _handle_pencil_draw(viewport_control : Control) -> void:
 		for idx in svs.curve.point_count:
 			_draw_crosshair(
 				viewport_control,
-				_vp_transform(svs.to_global(svs.curve.get_point_position(idx))),
+				_vp_transform(svs.to_global(svs.curve.get_point_position(idx)) * mul),
 				2.0, 4.0, VIEWPORT_ORANGE, 1
 			)
 			viewport_control.draw_line(
-				_vp_transform(svs.to_global(svs.curve.get_point_position(svs.curve.point_count - 1))),
+				_vp_transform(svs.to_global(svs.curve.get_point_position(svs.curve.point_count - 1)) * mul),
 				_vp_transform(pos),
 				Color.RED
 			)
@@ -2121,6 +2123,7 @@ func _start_freehand_shape(name : String, is_pencil := false) -> ScalableVectorS
 	_create_shape(new_shape, EditorInterface.get_edited_scene_root(), name, null, true)
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and is_pencil:
+		pos = _get_subviewport_global_mouse_pos(pos, current_selection)
 		undo_redo.create_action("reposition to mouse position: %s" % str(new_shape))
 		undo_redo.add_do_property(current_selection, 'global_position', pos)
 		undo_redo.add_undo_reference(current_selection)
@@ -2131,10 +2134,10 @@ func _start_freehand_shape(name : String, is_pencil := false) -> ScalableVectorS
 
 
 func _add_point_to_pencil_line() -> void:
-	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	var pos := _get_subviewport_global_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), current_selection)
 	if _is_snapped_to_pixel():
 		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
-	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection):
 		var last_point := (current_selection as ScalableVectorShape2D).curve.get_point_position(current_selection.curve.point_count -1)
 		if current_selection.to_global(last_point).distance_to(pos) > _get_freehand_draw_granularity():
