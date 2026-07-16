@@ -1011,6 +1011,7 @@ func set_origin(global_pos : Vector2) -> void:
 				polygon.texture_offset = -get_bounding_rect().position
 
 
+
 func get_bounding_box() -> Array[Vector2]:
 	var rect = get_bounding_rect().grow(
 		stroke_width / 2.0 if is_instance_valid(line) or is_instance_valid(poly_stroke) else 0
