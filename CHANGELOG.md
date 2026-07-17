@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.26.0
+
+### Added
+
+- Creating and Editing shapes inside of a `SubViewportContainer > SubViewPort` now also works when it has another transform than identity
+- Added a 3D example with an animated curve as `ViewportTexture` via `SubViewportContainer > SubViewPort`
+
 ## 2.25.8
 
 ⚠️ Small notice on the new skeleton rigging features: Shapes that have a `Bone2D` assigned for the entire shape may show displacement on an initial run. Saving the scene once (even without the * indicator) should fix this.

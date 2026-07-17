@@ -484,7 +484,7 @@ func _find_scalable_vector_shape_2d_nodes_at(pos : Vector2) -> Array[Node]:
 					.filter(func(x : ScalableVectorShape2D): return not x.has_meta("_edit_lock_"))
 					.filter(func(x : ScalableVectorShape2D): return x.is_visible_in_tree())
 					.filter(func(x : ScalableVectorShape2D): return x.owner == EditorInterface.get_edited_scene_root())
-					.filter(func(x : ScalableVectorShape2D): return x.has_point(pos))
+					.filter(func(x : ScalableVectorShape2D): return x.has_point(_svp_mouse_pos(pos, x)))
 		)
 	return []
 
@@ -494,8 +494,12 @@ func _is_change_pivot_button_active() -> bool:
 			EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*")
 					.find_children("*Button*", "", true, false)
 	)
-	if results.size() >= 6:
-		return results[5].button_pressed
+	if Engine.get_version_info()["minor"] >= 7:
+		if results.size() >= 7:
+			return results[6].button_pressed
+	else:
+		if results.size() >= 6:
+			return results[5].button_pressed
 	return false
 
 
@@ -590,12 +594,13 @@ func _handle_has_hover(svs : ScalableVectorShape2D) -> bool:
 func _draw_control_point_handle(viewport_control : Control, svs : ScalableVectorShape2D,
 		handle : Dictionary, prefix : String, is_hovered : bool, self_is_hovered : bool) -> String:
 	if handle[prefix].length():
+		var mul := _get_svp_transform(svs)
 		var color := VIEWPORT_ORANGE if is_hovered else Color.WHITE
 		var width := 2 if is_hovered else 1
-		viewport_control.draw_line(_vp_transform(handle['point_position']),
-				_vp_transform(handle[prefix + '_position']), Color.WEB_GRAY, 1, true)
-		viewport_control.draw_circle(_vp_transform(handle[prefix + '_position']), 5, Color.DIM_GRAY)
-		viewport_control.draw_circle(_vp_transform(handle[prefix + '_position']), 5, color, false, width)
+		viewport_control.draw_line(_vp_transform(handle['point_position'] * mul),
+				_vp_transform(handle[prefix + '_position'] * mul), Color.WEB_GRAY, 1, true)
+		viewport_control.draw_circle(_vp_transform(handle[prefix + '_position'] * mul), 5, Color.DIM_GRAY)
+		viewport_control.draw_circle(_vp_transform(handle[prefix + '_position'] * mul), 5, color, false, width)
 		if self_is_hovered:
 			var hint_txt := "Control point " + prefix
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
@@ -614,11 +619,13 @@ func _draw_rect_control_point_handle(viewport_control : Control, svs : ScalableV
 	var prop_name := "rx" if prefix == "in" else "ry"
 	var color := VIEWPORT_ORANGE if is_hovered else Color.WHITE
 	var width := 2 if is_hovered else 1
+	var mul := _get_svp_transform(svs)
+
 	viewport_control.draw_line(
-			_vp_transform(handle['top_left_pos']),
-			_vp_transform(handle[prefix + '_position']), Color.WEB_GRAY, 1, true)
-	viewport_control.draw_circle(_vp_transform(handle[prefix + '_position']), 5, Color.DIM_GRAY)
-	viewport_control.draw_circle(_vp_transform(handle[prefix + '_position']), 5, color, false, width)
+			_vp_transform(handle['top_left_pos'] * mul),
+			_vp_transform(handle[prefix + '_position'] * mul), Color.WEB_GRAY, 1, true)
+	viewport_control.draw_circle(_vp_transform(handle[prefix + '_position'] * mul), 5, Color.DIM_GRAY)
+	viewport_control.draw_circle(_vp_transform(handle[prefix + '_position'] * mul), 5, color, false, width)
 	if is_hovered:
 		var hint_txt := "Control point rounded corners "
 		if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
@@ -667,6 +674,8 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 	var point_pos_txt := ""
 	var point_hint_pos := Vector2.ZERO
 	var handles = svs.get_curve_handles()
+	var mul := _get_svp_transform(svs)
+
 	for i in range(handles.size()):
 		var handle = handles[i]
 
@@ -698,12 +707,12 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 
 		if handle['mirrored']:
 			# mirrored handles
-			var rect := Rect2(_vp_transform(handle['point_position']) - Vector2(5, 5), Vector2(10, 10))
+			var rect := Rect2(_vp_transform(handle['point_position'] * mul) - Vector2(5, 5), Vector2(10, 10))
 			viewport_control.draw_rect(rect, Color.DIM_GRAY, .5)
 			viewport_control.draw_rect(rect, color, false, width)
 		else:
 			# unmirrored handles / zero length handles
-			var p1 := _vp_transform(handle['point_position'])
+			var p1 := _vp_transform(handle['point_position'] * mul)
 			var pts := PackedVector2Array([
 					Vector2(p1.x - 8, p1.y), Vector2(p1.x, p1.y - 8),
 					Vector2(p1.x + 8, p1.y), Vector2(p1.x, p1.y + 8)
@@ -745,8 +754,8 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 
 	var gradient_handles := svs.get_gradient_handles()
 	if not gradient_handles.is_empty():
-		var p1 := _vp_transform(gradient_handles['fill_from_pos'])
-		var p2 := _vp_transform(gradient_handles['fill_to_pos'])
+		var p1 := _vp_transform(gradient_handles['fill_from_pos'] * mul)
+		var p2 := _vp_transform(gradient_handles['fill_to_pos'] * mul)
 		var hint_color := svs.shape_hint_color if svs.shape_hint_color else Color.LIME_GREEN
 
 		if svs.has_meta(META_NAME_HOVER_GRADIENT_FROM):
@@ -759,12 +768,12 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 			viewport_control.draw_circle(p2, 12, Color.WHITE, false, 0.5, true)
 
 		for p : Vector2 in gradient_handles['stop_positions']:
-			viewport_control.draw_circle(_vp_transform(p) + Vector2(1,1), 5, Color(0.0,0.0,0.0, 0.4), true, -1, true)
+			viewport_control.draw_circle(_vp_transform(p * mul) + Vector2(1,1), 5, Color(0.0,0.0,0.0, 0.4), true, -1, true)
 
 		viewport_control.draw_line(p1, p2, hint_color, .5, true)
 
 		for idx in range(gradient_handles['stop_positions'].size()):
-			var p := _vp_transform(gradient_handles['stop_positions'][idx])
+			var p := _vp_transform(gradient_handles['stop_positions'][idx] * mul)
 			var color := (Color.WHITE
 					if svs.get_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX, -1) == idx
 					else Color.WEB_GRAY)
@@ -780,10 +789,11 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 		if (svs.has_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE)
 				and not _is_ctrl_or_cmd_pressed()
 				and not Input.is_key_pressed(KEY_SHIFT)):
-			_draw_crosshair(viewport_control, svs.get_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE))
+			_draw_crosshair(viewport_control,
+					_vp_transform(svs.get_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE) * mul))
 			hint_txt = "- Double click to add color stop here"
 	if not point_txt.is_empty():
-		_draw_point_number(viewport_control, point_hint_pos, point_txt)
+		_draw_point_number(viewport_control, point_hint_pos * mul, point_txt)
 
 	if not _are_hints_enabled() and _am_showing_point_numbers():
 		_draw_hint(viewport_control, point_pos_txt, true)
@@ -793,6 +803,24 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 	if not hint_txt.is_empty():
 		_draw_hint(viewport_control, hint_txt)
 
+
+func _get_svp_transform(nd : Node) -> Transform2D:
+	var n := nd.get_parent()
+	while is_instance_valid(n) and not n == EditorInterface.get_edited_scene_root():
+		if n is SubViewportContainer:
+			var tr : Transform2D = n.get_global_transform_with_canvas().affine_inverse()
+			return Transform2D(tr.get_rotation(), n.scale, 0.0, tr.get_origin())
+		n = n.get_parent()
+	return Transform2D.IDENTITY
+
+
+func _svp_mouse_pos(pos : Vector2, nd : Node) -> Vector2:
+	var n := nd.get_parent()
+	while is_instance_valid(n) and not n == EditorInterface.get_edited_scene_root():
+		if n is SubViewport:
+			return (n as SubViewport).get_mouse_position()
+		n = n.get_parent()
+	return pos
 
 
 func _set_handle_hover(g_mouse_pos : Vector2, svs : ScalableVectorShape2D) -> void:
@@ -806,6 +834,7 @@ func _set_handle_hover(g_mouse_pos : Vector2, svs : ScalableVectorShape2D) -> vo
 	svs.remove_meta(META_NAME_HOVER_GRADIENT_TO)
 	svs.remove_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX)
 	svs.remove_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE)
+	var mul := _get_svp_transform(svs)
 	for i in range(handles.size()):
 		var handle = handles[i]
 		if mouse_pos.distance_to(_vp_transform(handle['point_position'])) < 10:
@@ -824,14 +853,14 @@ func _set_handle_hover(g_mouse_pos : Vector2, svs : ScalableVectorShape2D) -> vo
 		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_to_pos'])) < CLOSE_TO_MOUSE_RADIUS:
 			svs.set_meta(META_NAME_HOVER_GRADIENT_TO, true)
 		else:
-			var p := Geometry2D.get_closest_point_to_segment(mouse_pos,
-					_vp_transform(gradient_handles['fill_from_pos']),
-					_vp_transform(gradient_handles['fill_to_pos']))
-			if mouse_pos.distance_to(p) < 10:
+			var p := Geometry2D.get_closest_point_to_segment(g_mouse_pos,
+					gradient_handles['fill_from_pos'],
+					gradient_handles['fill_to_pos'])
+			if _vp_transform(g_mouse_pos).distance_to(_vp_transform(p)) < 10:
 				svs.set_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE, p)
 
 	var closest_point_on_curve := svs.get_closest_point_on_curve(g_mouse_pos)
-	if mouse_pos.distance_to(_vp_transform(closest_point_on_curve.point_position)) < 15:
+	if _vp_transform(g_mouse_pos).distance_to(_vp_transform(closest_point_on_curve.point_position)) < 15:
 		svs.set_meta(META_NAME_HOVER_CLOSEST_POINT, closest_point_on_curve)
 
 
@@ -847,7 +876,8 @@ func _draw_curve_def(viewport_control : Control, svs : ScalableVectorShape2D, co
 			width : float, antialiased : bool) -> void:
 	if not svs.is_visible_in_tree():
 		return
-	var points = svs.get_poly_points().map(_vp_transform)
+	var mul := _get_svp_transform(svs)
+	var points = svs.get_poly_points().map(func(p): return p * mul).map(_vp_transform)
 	var last_p := Vector2.INF
 	for p : Vector2 in points:
 		if last_p != Vector2.INF:
@@ -892,8 +922,9 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 	if _is_snapped_to_pixel():
 		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	var p := _vp_transform(mouse_pos)
+
 	if _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
-		if svs.has_fine_point(mouse_pos):
+		if svs.has_fine_point(_svp_mouse_pos(mouse_pos, svs)):
 			_draw_crosshair(viewport_control, p)
 			_draw_hint(viewport_control,
 					"- Click to %s %s here (Ctrl+Shift held)\n" %
@@ -923,7 +954,7 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 				- Hold Shift to resize shape with mousewheel"
 		if only_cutout_hints:
 			hint = "- Hold Shift to resize shape with mousewheel"
-		if svs.has_fine_point(mouse_pos):
+		if svs.has_fine_point(_svp_mouse_pos(mouse_pos, svs)):
 			hint += "\n- Double click to subdivide all curve segments
 				- Hold Ctrl+Shift to %s %s here (or Cmd+Shift for mac)\n" % [
 					OPERATION_NAME_MAP[current_clip_operation]["verb"],
@@ -935,6 +966,7 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
 	if svs.has_meta(META_NAME_HOVER_CLOSEST_POINT):
 		var hint := ""
+		var mul := _get_svp_transform(svs)
 		var md_p : ClosestPointOnCurveMeta = svs.get_meta(META_NAME_HOVER_CLOSEST_POINT)
 		if svs.is_arc_start(md_p.before_segment - 1):
 			var arc_start_idx := md_p.before_segment - 1
@@ -943,14 +975,14 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 				svs.curve.get_point_position(arc_start_idx),
 				arc.radius, arc.rotation_deg, arc.large_arc_flag, arc.sweep_flag,
 				svs.curve.get_point_position(arc_start_idx + 1),
-			)).map(func(p): return _vp_transform(svs.to_global(p)))
+			)).map(func(p): return _vp_transform(svs.to_global(p) * mul))
 			viewport_control.draw_polyline(arc_points, Color.RED, 3.0, true)
 			hint = "- Left click to open arc settings"
 			hint += "\n- Right click to remove arc (straighten this line segment)"
 		else:
 			var clamped_to_existing := false
 			if Input.is_key_pressed(KEY_ALT):
-				_draw_crosshair(viewport_control, _vp_transform(svs.to_global(svs.get_curve_segment_halfway_point(md_p.before_segment))), 3.0, 8, Color.ANTIQUE_WHITE, 2)
+				_draw_crosshair(viewport_control, _vp_transform(svs.to_global(svs.get_curve_segment_halfway_point(md_p.before_segment)) * mul), 3.0, 8, Color.ANTIQUE_WHITE, 2)
 			elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line) and md_p.before_segment < svs.curve.point_count:
 				if svs.line.width_curve:
 					for i in svs.line.width_curve.point_count:
@@ -959,18 +991,18 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 							svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
 									svs.get_deformed_curve(), p.x, svs.max_stages, svs.tolerance_degrees
 						)))
-						if _vp_transform(cp.point_position).distance_to(_vp_transform(md_p.point_position)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
+						if _vp_transform(cp.point_position * mul).distance_to(_vp_transform(md_p.point_position * mul)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
 							clamped_to_existing = true
-							_draw_change_width_curve_icon(viewport_control, _vp_transform(cp.point_position), cp.segment_rotation)
+							_draw_change_width_curve_icon(viewport_control, _vp_transform(cp.point_position * mul), cp.segment_rotation - mul.get_rotation())
 						else:
-							_draw_change_width_curve_icon(viewport_control, _vp_transform(cp.point_position), cp.segment_rotation, Color.DIM_GRAY)
+							_draw_change_width_curve_icon(viewport_control, _vp_transform(cp.point_position * mul), cp.segment_rotation - mul.get_rotation(), Color.DIM_GRAY)
 				if not clamped_to_existing:
 					_draw_change_width_curve_icon(viewport_control,
-							_vp_transform(md_p.point_position),
-							md_p.segment_rotation
+							_vp_transform(md_p.point_position * mul),
+							md_p.segment_rotation - mul.get_rotation()
 					)
 			else:
-				_draw_crosshair(viewport_control, _vp_transform(md_p.point_position))
+				_draw_crosshair(viewport_control, _vp_transform(md_p.point_position * mul))
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 				if svs.curve.point_count > 1:
 					if Input.is_key_pressed(KEY_ALT):
@@ -994,11 +1026,15 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 
 
 func _draw_outline_for_uniform_transforms(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
-	viewport_control.draw_polyline(svs.get_bounding_box().map(_vp_transform), VIEWPORT_ORANGE, 2.0)
+	var mul := _get_svp_transform(svs)
+	viewport_control.draw_polyline(svs
+			.get_bounding_box()
+			.map(func(p): return p * mul)
+			.map(_vp_transform), VIEWPORT_ORANGE, 2.0)
 	_draw_curve_def(viewport_control, svs, svs.shape_hint_color, 0.5, true)
 	for idx in svs.curve.point_count:
 		var p := svs.to_global(svs.curve.get_point_position(idx))
-		_draw_crosshair(viewport_control, _vp_transform(p), 2.0, 4.0, Color.WHITE)
+		_draw_crosshair(viewport_control, _vp_transform(p * mul), 2.0, 4.0, Color.WHITE)
 	var natural_center := svs.to_global(svs.get_center())
 	if (_svs_edit_mode == SVSEditMode.ROTATE
 				and _lmb_is_down_inside_viewport
@@ -1006,7 +1042,7 @@ func _draw_outline_for_uniform_transforms(viewport_control : Control, svs : Scal
 	):
 		natural_center = _stored_natural_center
 
-	_draw_crosshair(viewport_control, _vp_transform(natural_center), 2.0, 4.0, Color.WHITE)
+	_draw_crosshair(viewport_control, _vp_transform(natural_center * mul), 2.0, 4.0, Color.WHITE)
 
 
 func _draw_canvas_for_uniform_translate(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
@@ -1046,7 +1082,8 @@ func _draw_canvas_for_uniform_rotate(viewport_control : Control, svs : ScalableV
 			var ang := snapped(rotation_origin.angle_to_point(rotation_target), deg_to_rad(5.0))
 			var dst := rotation_origin.distance_to(rotation_target)
 			rotation_target = rotation_origin + Vector2.RIGHT.rotated(ang) * dst
-		viewport_control.draw_line(_vp_transform(rotation_origin),_vp_transform(rotation_target),
+		var mul := _get_svp_transform(svs)
+		viewport_control.draw_line(_vp_transform(rotation_origin * mul) ,_vp_transform(rotation_target),
 				svs.shape_hint_color, 1, true)
 
 
@@ -1071,7 +1108,8 @@ func _draw_canvas_for_uniform_scale(viewport_control : Control, svs : ScalableVe
 		):
 			origin = svs.to_global(svs.get_center())
 		var target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
-		viewport_control.draw_line(_vp_transform(origin),_vp_transform(target),
+		var mul := _get_svp_transform(svs)
+		viewport_control.draw_line(_vp_transform(origin * mul), _vp_transform(target),
 				svs.shape_hint_color, 1, true)
 
 
@@ -1081,31 +1119,31 @@ func _find_merge_vertices() -> Dictionary[ScalableVectorShape2D, int]:
 		var point_was_found_inside_rect := false
 		for idx in svs.curve.point_count:
 			var p := svs.to_global(svs.curve.get_point_position(idx))
-			var p_inside_rect := _merge_box_rect.abs().has_point(_vp_transform(p))
+			var p_inside_rect := _merge_box_rect.abs().has_point(_vp_transform(p * _get_svp_transform(svs)))
 			if p_inside_rect and not point_was_found_inside_rect:
 				vertex_map[svs] = idx
 				point_was_found_inside_rect = true
-
 	return vertex_map
 
 
 func _handle_draw_vertex_merge_box(viewport_control: Control) -> void:
 	if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		_draw_hint(viewport_control, "Drag box around a point of 2 or more ScalableVectorShape2D to merge them")
-
 	viewport_control.draw_rect(_merge_box_rect, Color.LIME, false, 1)
 	for svs : ScalableVectorShape2D in EditorInterface.get_edited_scene_root().find_children("*", "ScalableVectorShape2D"):
+		var mul := _get_svp_transform(svs)
 		for idx in svs.curve.point_count:
 			_draw_crosshair(
 				viewport_control,
-				_vp_transform(svs.to_global(svs.curve.get_point_position(idx))),
+				_vp_transform(svs.to_global(svs.curve.get_point_position(idx)) * mul),
 				2.0, 4.0, VIEWPORT_ORANGE, 1
 			)
 
 	var vertex_map := _find_merge_vertices()
 	for svs : ScalableVectorShape2D in vertex_map.keys():
+		var mul := _get_svp_transform(svs)
 		_draw_crosshair(viewport_control, _vp_transform(
-			svs.to_global(svs.curve.get_point_position(vertex_map[svs]))
+			svs.to_global(svs.curve.get_point_position(vertex_map[svs])) * mul
 		), 2.0, 5.0, Color.WHITE, 2)
 
 	if vertex_map.size() > 1:
@@ -1117,7 +1155,9 @@ func _handle_draw_vertex_merge_box(viewport_control: Control) -> void:
 
 func _handle_pencil_draw(viewport_control : Control) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+
 	if _is_svs_valid(current_selection) and Input.is_key_pressed(KEY_SHIFT) and _drawing_pencil_line:
+		var mul := _get_svp_transform(current_selection)
 		var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_snapped_to_pixel():
 			pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
@@ -1127,11 +1167,11 @@ func _handle_pencil_draw(viewport_control : Control) -> void:
 		for idx in svs.curve.point_count:
 			_draw_crosshair(
 				viewport_control,
-				_vp_transform(svs.to_global(svs.curve.get_point_position(idx))),
+				_vp_transform(svs.to_global(svs.curve.get_point_position(idx)) * mul),
 				2.0, 4.0, VIEWPORT_ORANGE, 1
 			)
 			viewport_control.draw_line(
-				_vp_transform(svs.to_global(svs.curve.get_point_position(svs.curve.point_count - 1))),
+				_vp_transform(svs.to_global(svs.curve.get_point_position(svs.curve.point_count - 1)) * mul),
 				_vp_transform(pos),
 				Color.RED
 			)
@@ -1179,9 +1219,13 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 			("\n" + shift_hint if not _is_ctrl_or_cmd_pressed() else "") +
 			("\n" + ctr_shift_hint)
 	)
+	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	var mul := _get_svp_transform(
+		sel if sel else EditorInterface.get_edited_scene_root()
+	)
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		if not _current_brush_stroke.is_empty():
-			var pts := Array(_current_brush_stroke).map(func(p): return _vp_transform(p))
+			var pts := Array(_current_brush_stroke).map(func(p): return _vp_transform(p * mul))
 			pts.append(pts[0])
 			match _get_default_paint_order():
 				PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
@@ -1204,7 +1248,7 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 			mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 		var pts := Array(Geometry2DUtil.get_polygon_at_granularity(_current_brush_shape,
 				_get_guarded_brush_granularity()
-		)).map(func(p): return _vp_transform(p + mouse_pos))
+		)).map(func(p): return _vp_transform(p * Transform2D(mul.get_rotation(), mul.get_scale(), 0.0, Vector2.ZERO) + mouse_pos))
 		if _is_add_fill_enabled():
 			viewport_control.draw_polygon(pts, [_get_default_fill_color()])
 		else:
@@ -1214,7 +1258,6 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 				cmd_key_hints
 		)
 
-	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(sel):
 		_draw_curve(viewport_control, sel)
 
@@ -1247,17 +1290,19 @@ func _handle_paint_bone_draw(viewport_control : Control) -> void:
 	_draw_hint(viewport_control, ctrl_hint)
 	_draw_curve_def(viewport_control, svs, svs.shape_hint_color, 0.5, true)
 	var curve := svs.get_deformed_curve()
+	var mul := _get_svp_transform(svs)
+
 	for idx in curve.point_count:
 		var p := svs.to_global(curve.get_point_position(idx))
 		if idx in svs.deformation_map and svs.deformation_map[idx] == current_bone:
-			_draw_crosshair(viewport_control, _vp_transform(p), 1.0, 6.0, Color.BLACK, 4)
-			_draw_crosshair(viewport_control, _vp_transform(p), 1.0, 6.0, Color.WHITE, 2)
+			_draw_crosshair(viewport_control, _vp_transform(p * mul), 1.0, 6.0, Color.BLACK, 4)
+			_draw_crosshair(viewport_control, _vp_transform(p * mul), 1.0, 6.0, Color.WHITE, 2)
 		else:
-			_draw_crosshair(viewport_control, _vp_transform(p), 1.0, 6.0, Color.BLACK, 4)
-			_draw_crosshair(viewport_control, _vp_transform(p), 1.0, 6.0, VIEWPORT_ORANGE, 2)
+			_draw_crosshair(viewport_control, _vp_transform(p * mul), 1.0, 6.0, Color.BLACK, 4)
+			_draw_crosshair(viewport_control, _vp_transform(p * mul), 1.0, 6.0, VIEWPORT_ORANGE, 2)
 
 	viewport_control.draw_circle(viewport_control.get_local_mouse_position(), CLOSE_TO_MOUSE_RADIUS, Color.GRAY, false)
-	viewport_control.draw_circle(_vp_transform(current_bone.global_position), 5, Color.RED)
+	viewport_control.draw_circle(_vp_transform(current_bone.global_position * mul), 5, Color.RED)
 
 
 func _is_editing_width_curve(svs : ScalableVectorShape2D) -> bool:
@@ -1294,8 +1339,11 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 	var all_valid_svs_nodes := _find_scalable_vector_shape_2d_nodes().filter(_is_svs_valid)
 	for result : ScalableVectorShape2D in all_valid_svs_nodes:
 		if result == current_selection:
-			viewport_control.draw_polyline(result.get_bounding_box().map(_vp_transform),
-					VIEWPORT_ORANGE, 2.0)
+			var mul := _get_svp_transform(result)
+			viewport_control.draw_polyline(result
+					.get_bounding_box()
+					.map(func(p): return p * mul)
+					.map(_vp_transform), VIEWPORT_ORANGE, 2.0)
 			_draw_curve(viewport_control, result)
 			if not _is_editing_width_curve(result):
 				_draw_handles(viewport_control, result)
@@ -1308,12 +1356,17 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 				else:
 						_draw_add_point_hint(viewport_control, result, true)
 		elif result.has_meta(META_NAME_SELECT_HINT):
-			viewport_control.draw_polyline(result.get_bounding_box().map(_vp_transform),
-					Color.WEB_GRAY, 1.0)
+			var mul := _get_svp_transform(result)
+			viewport_control.draw_polyline(result
+					.get_bounding_box()
+					.map(func(p): return p * mul)
+					.map(_vp_transform), Color.WEB_GRAY, 1.0)
 		if not(result.line or result.collision_polygon or result.polygon):
 			_draw_curve(viewport_control, result, false)
 
 	if shape_preview:
+		var mul := _get_svp_transform(current_selection)
+
 		var points := Array(shape_preview.tessellate())
 		var stroke_width = (_get_default_stroke_width() * EditorInterface.get_editor_viewport_2d()
 				.get_final_transform().get_scale().x)
@@ -1323,7 +1376,7 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		elif current_selection is Control:
 			points = points.map(func(p): return current_selection.get_global_transform() * p)
 			stroke_width *= current_selection.get_global_transform().get_scale().x
-		points = points.map(_vp_transform)
+		points = points.map(func(p): return _vp_transform(p * mul))
 		match _get_default_paint_order():
 			PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
 				if _is_add_stroke_enabled():
@@ -1828,7 +1881,10 @@ func _add_point_on_position(svs : ScalableVectorShape2D, pos : Vector2) -> void:
 
 func _start_cutout_shape(svs : ScalableVectorShape2D, pos : Vector2) -> void:
 	var new_shape = ScalableVectorShape2D.new()
-	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	var mouse_pos := _svp_mouse_pos(
+			EditorInterface.get_editor_viewport_2d().get_mouse_position(),
+			svs
+	)
 	if _is_snapped_to_pixel():
 		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	new_shape.curve = Curve2D.new()
@@ -1947,7 +2003,7 @@ func _get_vp_v_scroll_bar() -> VScrollBar:
 
 
 func _handle_input_for_uniform_translate(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
-	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	var mouse_pos := _svp_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), svs)
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		if (event as InputEventMouseButton).pressed:
 			_drag_start = mouse_pos
@@ -1992,7 +2048,7 @@ func _flip_svs_vertical():
 
 
 func _handle_input_for_uniform_scale(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
-	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	var mouse_pos := _svp_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), svs)
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		if (event as InputEventMouseButton).pressed:
 			_drag_start = mouse_pos
@@ -2017,7 +2073,7 @@ func _handle_input_for_uniform_scale(event : InputEvent, svs : ScalableVectorSha
 
 
 func _handle_input_for_uniform_rotate(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
-	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	var mouse_pos := _svp_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), svs)
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		if (event as InputEventMouseButton).pressed:
 			_drag_start = mouse_pos
@@ -2037,7 +2093,7 @@ func _handle_input_for_uniform_rotate(event : InputEvent, svs : ScalableVectorSh
 						if use_cntr else
 					svs.global_position
 			)
-			var rotation_target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+			var rotation_target := mouse_pos
 			var ang := rotation_origin.angle_to_point(rotation_target) - rotation_origin.angle_to_point(_drag_start)
 			if _is_ctrl_or_cmd_pressed():
 				ang = snappedf(ang, deg_to_rad(5.0))
@@ -2083,6 +2139,7 @@ func _start_freehand_shape(name : String, is_pencil := false) -> ScalableVectorS
 	_create_shape(new_shape, EditorInterface.get_edited_scene_root(), name, null, true)
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and is_pencil:
+		pos = _svp_mouse_pos(pos, current_selection)
 		undo_redo.create_action("reposition to mouse position: %s" % str(new_shape))
 		undo_redo.add_do_property(current_selection, 'global_position', pos)
 		undo_redo.add_undo_reference(current_selection)
@@ -2093,10 +2150,10 @@ func _start_freehand_shape(name : String, is_pencil := false) -> ScalableVectorS
 
 
 func _add_point_to_pencil_line() -> void:
-	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	var pos := _svp_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), current_selection)
 	if _is_snapped_to_pixel():
 		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
-	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection):
 		var last_point := (current_selection as ScalableVectorShape2D).curve.get_point_position(current_selection.curve.point_count -1)
 		if current_selection.to_global(last_point).distance_to(pos) > _get_freehand_draw_granularity():
@@ -2165,7 +2222,12 @@ func _set_curve_from_polygon(svs : ScalableVectorShape2D, pts : PackedVector2Arr
 
 
 func _handle_brush_draw_input(event : InputEvent) -> bool:
-	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+
+	var pos := _svp_mouse_pos(
+			EditorInterface.get_editor_viewport_2d().get_mouse_position(),
+			current_selection if current_selection else EditorInterface.get_edited_scene_root()
+	)
 	if _is_snapped_to_pixel():
 		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
 
@@ -2179,7 +2241,6 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 					_get_guarded_brush_granularity())
 
 		else:
-			var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 			if is_instance_valid(current_selection):
 				var svs := _start_freehand_shape("BrushStroke", false)
 				_set_curve_from_polygon(svs, _current_brush_stroke)
@@ -2260,7 +2321,6 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 			var res0 := Geometry2D.merge_polygons(_current_brush_stroke, stroke_rect_poly)
 			var res := Geometry2D.merge_polygons(res0[0], merge_target)
 			if res.size() > 0:
-				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 				var new_stroke := res[0]
 				if _is_svs_valid(current_selection):
 					var svs := current_selection as ScalableVectorShape2D
@@ -2329,7 +2389,9 @@ func _handle_bone_paint_input(event : InputEvent) -> bool:
 			_start_undo_redo_transaction("Paint points to bones")
 			undo_redo_transaction[UndoRedoEntry.UNDO_PROPS] = [[svs, 'deformation_map', svs.deformation_map.duplicate(true)]]
 
-		var mp := _vp_transform(EditorInterface.get_editor_viewport_2d().get_mouse_position())
+		var mp := _vp_transform(
+				_svp_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), svs)
+		)
 		var curve := svs.get_deformed_curve()
 		for p_idx in svs.curve.point_count:
 			var p := _vp_transform(svs.to_global(curve.get_point_position(p_idx)))
@@ -2389,7 +2451,9 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		_locking_vp_vertical_scrollbar = false
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
-		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+		var mouse_pos := _svp_mouse_pos(
+				EditorInterface.get_editor_viewport_2d().get_mouse_position(),
+				current_selection)
 		if _is_change_pivot_button_active():
 			if _is_svs_valid(current_selection):
 				_set_shape_origin(current_selection, mouse_pos)
@@ -2410,7 +2474,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				if _is_snapped_to_pixel():
 					mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 				if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and
-							current_selection.has_fine_point(mouse_pos)):
+							current_selection.has_fine_point(
+									_svp_mouse_pos(mouse_pos, current_selection))):
 					_start_cutout_shape(current_selection, mouse_pos)
 				return true
 			elif _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed():
@@ -2432,12 +2497,12 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				if event.double_click:
 					_add_color_stop(current_selection, mouse_pos)
 				return true
-			elif _is_svs_valid(current_selection) and current_selection.has_fine_point(mouse_pos) and event.double_click:
+			elif _is_svs_valid(current_selection) and current_selection.has_fine_point(_svp_mouse_pos(mouse_pos, current_selection)) and event.double_click:
 				_subdivide_curve(current_selection)
 				return true
 			else:
 				var results := _find_scalable_vector_shape_2d_nodes_at(mouse_pos)
-				var refined_result := results.rfind_custom(func(x): return x.has_fine_point(mouse_pos))
+				var refined_result := results.rfind_custom(func(x): return x.has_fine_point(_svp_mouse_pos(mouse_pos, x)))
 				if refined_result > -1 and results[refined_result]:
 					if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 						selection_candidate = results[refined_result]
@@ -2516,7 +2581,9 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return true
 
 	if event is InputEventMouseMotion:
-		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+		var mouse_pos := _svp_mouse_pos(
+				EditorInterface.get_editor_viewport_2d().get_mouse_position(),
+				current_selection)
 		for result in _find_scalable_vector_shape_2d_nodes():
 			result.remove_meta(META_NAME_SELECT_HINT)
 
