@@ -11,9 +11,9 @@ config_version=5
 [addons]
 
 curved_lines_2d/add_collision_enabled=false
-curved_lines_2d/add_stroke_enabled=true
+curved_lines_2d/add_stroke_enabled=false
 curved_lines_2d/add_fill_enabled=true
-curved_lines_2d/stroke_color=Color(1, 1, 1, 1)
+curved_lines_2d/stroke_color=Color(0, 0, 0, 1)
 curved_lines_2d/stroke_width=5.0
 curved_lines_2d/line_joint_mode=2
 curved_lines_2d/line_end_cap=2
@@ -40,15 +40,11 @@ curved_lines_2d/brush_size_x=183.0
 curved_lines_2d/brush_size_y=183.0
 curved_lines_2d/brush_rotation=2.0
 
-[animation]
-
-compatibility/default_parent_skeleton_in_mesh_instance_3d=true
-
 [application]
 
 config/name="EZ Curved Lines 2D"
 run/main_scene="uid://gmlmhdf0cxl8"
-config/features=PackedStringArray("4.7", "GL Compatibility")
+config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://b5yxa1e62b0hb"
 
 [display]
