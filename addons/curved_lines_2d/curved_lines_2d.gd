@@ -494,8 +494,12 @@ func _is_change_pivot_button_active() -> bool:
 			EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*")
 					.find_children("*Button*", "", true, false)
 	)
-	if results.size() >= 6:
-		return results[5].button_pressed
+	if Engine.get_version_info()["minor"] >= 7:
+		if results.size() >= 7:
+			return results[6].button_pressed
+	else:
+		if results.size() >= 6:
+			return results[5].button_pressed
 	return false
 
 
@@ -785,7 +789,8 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 		if (svs.has_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE)
 				and not _is_ctrl_or_cmd_pressed()
 				and not Input.is_key_pressed(KEY_SHIFT)):
-			_draw_crosshair(viewport_control, svs.get_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE))
+			_draw_crosshair(viewport_control,
+					_vp_transform(svs.get_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE) * mul))
 			hint_txt = "- Double click to add color stop here"
 	if not point_txt.is_empty():
 		_draw_point_number(viewport_control, point_hint_pos * mul, point_txt)
@@ -832,30 +837,30 @@ func _set_handle_hover(g_mouse_pos : Vector2, svs : ScalableVectorShape2D) -> vo
 	var mul := _get_subviewport_container_transform(svs)
 	for i in range(handles.size()):
 		var handle = handles[i]
-		if mouse_pos.distance_to(_vp_transform(handle['point_position'] * mul)) < 10:
+		if mouse_pos.distance_to(_vp_transform(handle['point_position'])) < 10:
 			svs.set_meta(META_NAME_HOVER_POINT_IDX, i)
-		elif mouse_pos.distance_to(_vp_transform(handle['in_position'] * mul)) < 10:
+		elif mouse_pos.distance_to(_vp_transform(handle['in_position'])) < 10:
 			svs.set_meta(META_NAME_HOVER_CP_IN_IDX, i)
-		elif mouse_pos.distance_to(_vp_transform(handle['out_position'] * mul)) < 10:
+		elif mouse_pos.distance_to(_vp_transform(handle['out_position'])) < 10:
 			svs.set_meta(META_NAME_HOVER_CP_OUT_IDX, i)
 	if not gradient_handles.is_empty() and not _handle_has_hover(svs):
 		var stop_idx = gradient_handles['stop_positions'].find_custom(func(p):
-					return mouse_pos.distance_to(_vp_transform(p * mul)) < 6)
+					return mouse_pos.distance_to(_vp_transform(p)) < 6)
 		if stop_idx > -1:
 			svs.set_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX, stop_idx)
-		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_from_pos'] * mul)) < CLOSE_TO_MOUSE_RADIUS:
+		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_from_pos'])) < CLOSE_TO_MOUSE_RADIUS:
 			svs.set_meta(META_NAME_HOVER_GRADIENT_FROM, true)
-		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_to_pos'] * mul)) < CLOSE_TO_MOUSE_RADIUS:
+		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_to_pos'])) < CLOSE_TO_MOUSE_RADIUS:
 			svs.set_meta(META_NAME_HOVER_GRADIENT_TO, true)
 		else:
-			var p := Geometry2D.get_closest_point_to_segment(mouse_pos,
-					_vp_transform(gradient_handles['fill_from_pos'] * mul),
-					_vp_transform(gradient_handles['fill_to_pos'] * mul))
-			if mouse_pos.distance_to(p) < 10:
+			var p := Geometry2D.get_closest_point_to_segment(g_mouse_pos,
+					gradient_handles['fill_from_pos'],
+					gradient_handles['fill_to_pos'])
+			if _vp_transform(g_mouse_pos).distance_to(_vp_transform(p)) < 10:
 				svs.set_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE, p)
 
-	var closest_point_on_curve := svs.get_closest_point_on_curve(_get_subviewport_global_mouse_pos(g_mouse_pos, svs))
-	if mouse_pos.distance_to(_vp_transform(closest_point_on_curve.point_position * mul)) < 15:
+	var closest_point_on_curve := svs.get_closest_point_on_curve(g_mouse_pos)
+	if _vp_transform(g_mouse_pos).distance_to(_vp_transform(closest_point_on_curve.point_position)) < 15:
 		svs.set_meta(META_NAME_HOVER_CLOSEST_POINT, closest_point_on_curve)
 
 
@@ -2435,7 +2440,9 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		_locking_vp_vertical_scrollbar = false
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
-		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+		var mouse_pos := _get_subviewport_global_mouse_pos(
+				EditorInterface.get_editor_viewport_2d().get_mouse_position(),
+				current_selection)
 		if _is_change_pivot_button_active():
 			if _is_svs_valid(current_selection):
 				_set_shape_origin(current_selection, mouse_pos)
@@ -2563,7 +2570,9 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return true
 
 	if event is InputEventMouseMotion:
-		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+		var mouse_pos := _get_subviewport_global_mouse_pos(
+				EditorInterface.get_editor_viewport_2d().get_mouse_position(),
+				current_selection)
 		for result in _find_scalable_vector_shape_2d_nodes():
 			result.remove_meta(META_NAME_SELECT_HINT)
 
