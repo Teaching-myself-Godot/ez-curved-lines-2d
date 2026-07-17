@@ -1219,9 +1219,13 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 			("\n" + shift_hint if not _is_ctrl_or_cmd_pressed() else "") +
 			("\n" + ctr_shift_hint)
 	)
+	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	var mul := _get_subviewport_container_transform(
+		sel if sel else EditorInterface.get_edited_scene_root()
+	)
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		if not _current_brush_stroke.is_empty():
-			var pts := Array(_current_brush_stroke).map(func(p): return _vp_transform(p))
+			var pts := Array(_current_brush_stroke).map(func(p): return _vp_transform(p * mul))
 			pts.append(pts[0])
 			match _get_default_paint_order():
 				PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
@@ -1244,7 +1248,7 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 			mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 		var pts := Array(Geometry2DUtil.get_polygon_at_granularity(_current_brush_shape,
 				_get_guarded_brush_granularity()
-		)).map(func(p): return _vp_transform(p + mouse_pos))
+		)).map(func(p): return _vp_transform(p * Transform2D(mul.get_rotation(), mul.get_scale(), 0.0, Vector2.ZERO) + mouse_pos))
 		if _is_add_fill_enabled():
 			viewport_control.draw_polygon(pts, [_get_default_fill_color()])
 		else:
@@ -1254,7 +1258,6 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 				cmd_key_hints
 		)
 
-	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(sel):
 		_draw_curve(viewport_control, sel)
 
@@ -2216,7 +2219,12 @@ func _set_curve_from_polygon(svs : ScalableVectorShape2D, pts : PackedVector2Arr
 
 
 func _handle_brush_draw_input(event : InputEvent) -> bool:
-	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+
+	var pos := _get_subviewport_global_mouse_pos(
+			EditorInterface.get_editor_viewport_2d().get_mouse_position(),
+			current_selection if current_selection else EditorInterface.get_edited_scene_root()
+	)
 	if _is_snapped_to_pixel():
 		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
 
@@ -2230,7 +2238,6 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 					_get_guarded_brush_granularity())
 
 		else:
-			var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 			if is_instance_valid(current_selection):
 				var svs := _start_freehand_shape("BrushStroke", false)
 				_set_curve_from_polygon(svs, _current_brush_stroke)
@@ -2311,7 +2318,6 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 			var res0 := Geometry2D.merge_polygons(_current_brush_stroke, stroke_rect_poly)
 			var res := Geometry2D.merge_polygons(res0[0], merge_target)
 			if res.size() > 0:
-				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 				var new_stroke := res[0]
 				if _is_svs_valid(current_selection):
 					var svs := current_selection as ScalableVectorShape2D
