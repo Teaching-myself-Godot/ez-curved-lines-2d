@@ -1881,7 +1881,10 @@ func _add_point_on_position(svs : ScalableVectorShape2D, pos : Vector2) -> void:
 
 func _start_cutout_shape(svs : ScalableVectorShape2D, pos : Vector2) -> void:
 	var new_shape = ScalableVectorShape2D.new()
-	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	var mouse_pos := _get_subviewport_global_mouse_pos(
+			EditorInterface.get_editor_viewport_2d().get_mouse_position(),
+			svs
+	)
 	if _is_snapped_to_pixel():
 		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
 	new_shape.curve = Curve2D.new()
