@@ -1,0 +1,252 @@
+[gd_scene load_steps=14 format=3 uid="uid://c8n11sl0fn6u1"]
+
+[ext_resource type="Script" uid="uid://de3jpss66xjfh" path="res://addons/curved_lines_2d/scalable_vector_shape_2d.gd" id="1_mjv8w"]
+[ext_resource type="Script" uid="uid://dlbv4pit17dnu" path="res://addons/curved_lines_2d/scalable_arc.gd" id="2_avqba"]
+[ext_resource type="Script" uid="uid://dl1t88tthmwts" path="res://addons/curved_lines_2d/scalable_arc_list.gd" id="3_n8v1c"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_mjv8w"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_avqba"]
+sky_material = SubResource("ProceduralSkyMaterial_mjv8w")
+
+[sub_resource type="Environment" id="Environment_n8v1c"]
+background_mode = 2
+sky = SubResource("Sky_avqba")
+tonemap_mode = 2
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_vm8tb"]
+viewport_path = NodePath("SubViewportContainer/SubViewport")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0ok5s"]
+resource_local_to_scene = true
+albedo_texture = SubResource("ViewportTexture_vm8tb")
+
+[sub_resource type="Curve2D" id="Curve2D_mjv8w"]
+_data = {
+"points": PackedVector2Array(0, 0, 6.35145, 0, 27, -50, -4.16214, -4.16214, 4.16214, 4.16214, 43.2636, -43.2636, 0, -6.35145, 65.6667, -12.8333, 50, -27, -49, -28.1667, 106, -91.3333, 198, 44, 8.66667, -156.667, -81.8333, 7.33333, 344, 142, 52.8333, 15.3333, -52.8333, -15.3333, 142, 130, 23.8333, 38, -1, 41.3333, 27, 50, 9, 0, -9, 7.62939e-06, 12, 112, 17, 41.3333, -6.35145, 0, -27, 50, 4.16214, 4.16214, -4.16214, -4.16214, -43.2636, 43.2636, 0, 6.35145, 10.3333, -6.33333, -50, 27, 0, 9, 0, -9, -34.5, 4, 10.3333, 11.6667, 0, -6.35145, -50, -27, -4.16214, 4.16214, 4.16214, -4.16214, -43.2636, -43.2636, -6.35145, 0, 0, 0, -27, -50, 0, 0, 0, 0, 0, -50, 0, 0, 0, 0, 27, -50)
+}
+point_count = 17
+
+[sub_resource type="Resource" id="Resource_ebmld"]
+resource_local_to_scene = true
+script = ExtResource("3_n8v1c")
+arcs = Array[ExtResource("2_avqba")]([])
+
+[sub_resource type="Animation" id="Animation_mjv8w"]
+resource_name = "new_animation"
+loop_mode = 2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CSGBox3D:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(1, 1, 1), Vector3(1, 2, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SubViewportContainer/SubViewport/Node2D/Skeleton2D/Bone2DA/Bone2DB/Bone2DC:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.63556]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SubViewportContainer/SubViewport/Node2D/Skeleton2D/Bone2DA:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.14149]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SubViewportContainer/SubViewport/Node2D/Skeleton2D/Bone2DA/Bone2DB:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, -1.14796]
+}
+
+[sub_resource type="Animation" id="Animation_avqba"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CSGBox3D:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 2, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SubViewportContainer/SubViewport/Node2D/Skeleton2D/Bone2DA:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.14149]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SubViewportContainer/SubViewport/Node2D/Skeleton2D/Bone2DA/Bone2DB:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-1.14796]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SubViewportContainer/SubViewport/Node2D/Skeleton2D/Bone2DA/Bone2DB/Bone2DC:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.63556]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_n8v1c"]
+_data = {
+&"RESET": SubResource("Animation_avqba"),
+&"new_animation": SubResource("Animation_mjv8w")
+}
+
+[node name="ViewportTexture" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_n8v1c")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.544086, 0.817672, 0.188106, -0.710441, -0.568245, 0.415175, 0.446367, 0.0922528, 0.890082, 0, 1, 3)
+shadow_enabled = true
+directional_shadow_max_distance = 1.0
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+material_override = SubResource("StandardMaterial3D_0ok5s")
+size = Vector3(1, 2, 1)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+offset_left = -516.0
+offset_top = -3.0
+offset_right = -4.0
+offset_bottom = 509.0
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+handle_input_locally = false
+msaa_2d = 3
+render_target_update_mode = 4
+
+[node name="Node2D" type="Node2D" parent="SubViewportContainer/SubViewport"]
+
+[node name="Rectangle" type="Node2D" parent="SubViewportContainer/SubViewport/Node2D" node_paths=PackedStringArray("polygon", "line", "skeleton", "deformation_map")]
+position = Vector2(105, 85)
+script = ExtResource("1_mjv8w")
+fill_color = Color(0.402344, 0, 0, 1)
+polygon = NodePath("Fill")
+stroke_width = 5.0
+begin_cap_mode = 2
+end_cap_mode = 2
+line_joint_mode = 2
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_mjv8w")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_ebmld")
+rx = 23.0
+ry = 23.0
+skeleton = NodePath("../Skeleton2D")
+deformation_map = {
+0: NodePath("../Skeleton2D/Bone2DA"),
+1: NodePath("../Skeleton2D/Bone2DA"),
+2: NodePath("../Skeleton2D/Bone2DA"),
+3: NodePath("../Skeleton2D/Bone2DA/Bone2DB"),
+4: NodePath("../Skeleton2D/Bone2DA/Bone2DB/Bone2DC"),
+5: NodePath("../Skeleton2D/Bone2DA/Bone2DB"),
+6: NodePath("../Skeleton2D/Bone2DA"),
+7: NodePath("../Skeleton2D/Bone2DA"),
+8: NodePath("../Skeleton2D/Bone2DA"),
+9: NodePath("../Skeleton2D/Bone2DA"),
+10: NodePath("../Skeleton2D/Bone2DA"),
+11: NodePath("../Skeleton2D/Bone2DA"),
+12: NodePath("../Skeleton2D/Bone2DA"),
+13: NodePath("../Skeleton2D/Bone2DA"),
+14: NodePath("../Skeleton2D/Bone2DA"),
+15: NodePath("../Skeleton2D/Bone2DA"),
+16: NodePath("../Skeleton2D/Bone2DA")
+}
+metadata/_select_hint_ = true
+
+[node name="Fill" type="Polygon2D" parent="SubViewportContainer/SubViewport/Node2D/Rectangle"]
+color = Color(0.402344, 0, 0, 1)
+polygon = PackedVector2Array(27, -50, 29.3517, -49.8813, 31.6354, -49.5327, 33.8396, -48.966, 35.9528, -48.1926, 37.9633, -47.2241, 39.8597, -46.0721, 41.6303, -44.748, 43.2636, -43.2636, 44.748, -41.6303, 46.0721, -39.8597, 47.2241, -37.9633, 48.1926, -35.9528, 48.966, -33.8396, 49.5327, -31.6354, 49.8813, -29.3517, 50, -27, 61.9453, -28.627, 73.2031, -28.7891, 83.8438, -27.627, 93.9375, -25.2813, 103.555, -21.8926, 112.766, -17.6016, 130.25, -6.875, 180.266, 32.3359, 198, 44, 235.063, 15.5625, 251.578, 5.70312, 266.75, -1.25, 273.832, -3.63672, 280.578, -5.29688, 286.988, -6.23047, 293.063, -6.4375, 298.801, -5.91797, 301.544, -5.38575, 304.203, -4.67188, 306.778, -3.77637, 309.27, -2.69922, 311.677, -1.44043, 314, -1.90735e-06, 316.239, 1.62207, 318.395, 3.42578, 322.453, 7.57812, 326.176, 12.457, 329.563, 18.0625, 332.613, 24.3945, 335.328, 31.4531, 339.75, 47.75, 342.828, 66.9531, 344.563, 89.0625, 344, 142, 285.344, 145.375, 232.125, 144.5, 184.344, 139.375, 142, 130, 122.867, 123.719, 105.094, 116.375, 88.6797, 107.969, 73.625, 98.5, 59.9297, 87.9688, 47.5938, 76.375, 36.6172, 63.7188, 27, 50, 25.5, 77.125, 22.5, 96.5, 20.4375, 103.281, 19.2656, 105.945, 18, 108.125, 17.332, 109.033, 16.6406, 109.82, 15.9258, 110.486, 15.1875, 111.031, 14.4258, 111.455, 14.0361, 111.622, 13.6406, 111.758, 13.2393, 111.864, 12.832, 111.939, 12.4189, 111.985, 12, 112, 11.1445, 111.939, 10.2656, 111.758, 9.36328, 111.455, 8.4375, 111.031, 7.48828, 110.486, 6.51563, 109.82, 4.5, 108.125, 2.39063, 105.945, 0.1875, 103.281, -4.5, 96.5, -15, 77.125, -27, 50, -29.3517, 49.8813, -31.6354, 49.5327, -33.8396, 48.966, -35.9528, 48.1926, -37.9633, 47.2241, -39.8597, 46.0721, -41.6303, 44.748, -43.2636, 43.2636, -44.748, 41.6303, -46.0721, 39.8597, -47.2241, 37.9633, -48.1926, 35.9528, -48.966, 33.8396, -49.5327, 31.6354, -49.8813, 29.3517, -50, 27, -46.3672, 24.5625, -43.2188, 22, -40.5547, 19.3125, -38.375, 16.5, -37.4668, 15.0469, -36.6797, 13.5625, -36.0137, 12.0469, -35.4688, 10.5, -35.0449, 8.92188, -34.7422, 7.3125, -34.5605, 5.67188, -34.5, 4, -34.7422, 0.5625, -35.4688, -3, -36.6797, -6.6875, -38.375, -10.5, -40.5547, -14.4375, -43.2188, -18.5, -50, -27, -49.8813, -29.3517, -49.5327, -31.6354, -48.966, -33.8396, -48.1926, -35.9528, -47.2241, -37.9633, -46.0721, -39.8597, -44.748, -41.6303, -43.2636, -43.2636, -41.6303, -44.748, -39.8597, -46.0721, -37.9633, -47.2241, -35.9528, -48.1926, -33.8396, -48.966, -31.6354, -49.5327, -29.3517, -49.8813, -27, -50, 0, -50)
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="SubViewportContainer/SubViewport/Node2D/Rectangle"]
+points = PackedVector2Array(27, -50, 29.3517, -49.8813, 31.6354, -49.5327, 33.8396, -48.966, 35.9528, -48.1926, 37.9633, -47.2241, 39.8597, -46.0721, 41.6303, -44.748, 43.2636, -43.2636, 44.748, -41.6303, 46.0721, -39.8597, 47.2241, -37.9633, 48.1926, -35.9528, 48.966, -33.8396, 49.5327, -31.6354, 49.8813, -29.3517, 50, -27, 61.9453, -28.627, 73.2031, -28.7891, 83.8438, -27.627, 93.9375, -25.2813, 103.555, -21.8926, 112.766, -17.6016, 130.25, -6.875, 180.266, 32.3359, 198, 44, 235.063, 15.5625, 251.578, 5.70312, 266.75, -1.25, 273.832, -3.63672, 280.578, -5.29688, 286.988, -6.23047, 293.063, -6.4375, 298.801, -5.91797, 301.544, -5.38575, 304.203, -4.67188, 306.778, -3.77637, 309.27, -2.69922, 311.677, -1.44043, 314, -1.90735e-06, 316.239, 1.62207, 318.395, 3.42578, 322.453, 7.57812, 326.176, 12.457, 329.563, 18.0625, 332.613, 24.3945, 335.328, 31.4531, 339.75, 47.75, 342.828, 66.9531, 344.563, 89.0625, 344, 142, 285.344, 145.375, 232.125, 144.5, 184.344, 139.375, 142, 130, 122.867, 123.719, 105.094, 116.375, 88.6797, 107.969, 73.625, 98.5, 59.9297, 87.9688, 47.5938, 76.375, 36.6172, 63.7188, 27, 50, 25.5, 77.125, 22.5, 96.5, 20.4375, 103.281, 19.2656, 105.945, 18, 108.125, 17.332, 109.033, 16.6406, 109.82, 15.9258, 110.486, 15.1875, 111.031, 14.4258, 111.455, 14.0361, 111.622, 13.6406, 111.758, 13.2393, 111.864, 12.832, 111.939, 12.4189, 111.985, 12, 112, 11.1445, 111.939, 10.2656, 111.758, 9.36328, 111.455, 8.4375, 111.031, 7.48828, 110.486, 6.51563, 109.82, 4.5, 108.125, 2.39063, 105.945, 0.1875, 103.281, -4.5, 96.5, -15, 77.125, -27, 50, -29.3517, 49.8813, -31.6354, 49.5327, -33.8396, 48.966, -35.9528, 48.1926, -37.9633, 47.2241, -39.8597, 46.0721, -41.6303, 44.748, -43.2636, 43.2636, -44.748, 41.6303, -46.0721, 39.8597, -47.2241, 37.9633, -48.1926, 35.9528, -48.966, 33.8396, -49.5327, 31.6354, -49.8813, 29.3517, -50, 27, -46.3672, 24.5625, -43.2188, 22, -40.5547, 19.3125, -38.375, 16.5, -37.4668, 15.0469, -36.6797, 13.5625, -36.0137, 12.0469, -35.4688, 10.5, -35.0449, 8.92188, -34.7422, 7.3125, -34.5605, 5.67188, -34.5, 4, -34.7422, 0.5625, -35.4688, -3, -36.6797, -6.6875, -38.375, -10.5, -40.5547, -14.4375, -43.2188, -18.5, -50, -27, -49.8813, -29.3517, -49.5327, -31.6354, -48.966, -33.8396, -48.1926, -35.9528, -47.2241, -37.9633, -46.0721, -39.8597, -44.748, -41.6303, -43.2636, -43.2636, -41.6303, -44.748, -39.8597, -46.0721, -37.9633, -47.2241, -35.9528, -48.1926, -33.8396, -48.966, -31.6354, -49.5327, -29.3517, -49.8813, -27, -50, 0, -50)
+closed = true
+width = 5.0
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Skeleton2D" type="Skeleton2D" parent="SubViewportContainer/SubViewport/Node2D"]
+position = Vector2(110, 88)
+
+[node name="Bone2DA" type="Bone2D" parent="SubViewportContainer/SubViewport/Node2D/Skeleton2D"]
+rotation = 1.14149
+rest = Transform2D(1, 0, 0, 1, 0, 0)
+
+[node name="Bone2DB" type="Bone2D" parent="SubViewportContainer/SubViewport/Node2D/Skeleton2D/Bone2DA"]
+position = Vector2(36, 18)
+rotation = -1.14796
+rest = Transform2D(1, 0, 0, 1, 36, 18)
+
+[node name="Bone2DC" type="Bone2D" parent="SubViewportContainer/SubViewport/Node2D/Skeleton2D/Bone2DA/Bone2DB"]
+position = Vector2(144, 77)
+rotation = 1.63556
+rest = Transform2D(1, 0, 0, 1, 144, 77)
+auto_calculate_length_and_angle = false
+length = 120.635
+bone_angle = 0.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_n8v1c")
+}
+autoplay = "new_animation"
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.698467, -0.335029, 0.632376, -0.201205, 0.756071, 0.622795, -0.686775, -0.562239, 0.460681, 1.05691, 1.44704, 1.13571)
