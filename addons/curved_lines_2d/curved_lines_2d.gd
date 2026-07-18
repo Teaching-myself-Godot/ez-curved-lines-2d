@@ -804,8 +804,7 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 		_draw_hint(viewport_control, hint_txt)
 
 
-func _get_svp_transform(nd : Node) -> Transform2D:
-	var n := nd.get_parent()
+func _get_svp_transform(n : Node) -> Transform2D:
 	while is_instance_valid(n) and not n == EditorInterface.get_edited_scene_root():
 		if n is SubViewportContainer:
 			var tr : Transform2D = n.get_global_transform_with_canvas().affine_inverse()
@@ -814,8 +813,7 @@ func _get_svp_transform(nd : Node) -> Transform2D:
 	return Transform2D.IDENTITY
 
 
-func _svp_mouse_pos(pos : Vector2, nd : Node) -> Vector2:
-	var n := nd.get_parent()
+func _svp_mouse_pos(pos : Vector2, n : Node) -> Vector2:
 	while is_instance_valid(n) and not n == EditorInterface.get_edited_scene_root():
 		if n is SubViewport:
 			return (n as SubViewport).get_mouse_position()

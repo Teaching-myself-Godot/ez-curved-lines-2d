@@ -94,7 +94,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			%UniformScale.button_pressed = true
 		if (event as InputEventKey).keycode == KEY_M:
 			%Merge.button_pressed = true
-		if (event as InputEventKey).keycode == KEY_P:
+		if (event as InputEventKey).keycode == KEY_N and Input.is_key_pressed(KEY_SHIFT):
 			%Pencil.button_pressed = true
-		if (event as InputEventKey).keycode == KEY_B:
+		if (event as InputEventKey).keycode == KEY_B and Input.is_key_pressed(KEY_SHIFT):
 			%Brush.button_pressed = true

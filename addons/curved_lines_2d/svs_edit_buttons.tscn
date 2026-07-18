@@ -35,7 +35,7 @@ flat = true
 [node name="Brush" type="Button" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Resize all the points without resizing the node (C)"
+tooltip_text = "Polygon Brush (Shift+B)"
 toggle_mode = true
 button_group = SubResource("ButtonGroup_rxvdi")
 icon = ExtResource("6_rxvdi")
@@ -44,7 +44,7 @@ flat = true
 [node name="Pencil" type="Button" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Resize all the points without resizing the node (C)"
+tooltip_text = "Pencil tool (Shift+N)"
 toggle_mode = true
 button_group = SubResource("ButtonGroup_rxvdi")
 icon = ExtResource("7_i6df8")
