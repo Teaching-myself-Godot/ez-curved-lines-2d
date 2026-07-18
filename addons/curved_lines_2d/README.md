@@ -517,7 +517,7 @@ From release 2.21 upward, you can now use the pencil button to draw shapes by ha
 
 ## Drawing strokes and outlines with the Pencil Tool
 
-Using this pencil tool toggle button, or by pressing the `P`-key you start drawing strokes and outlines:
+Using this pencil tool toggle button, or by pressing `Shift+N` you start drawing strokes and outlines:
 
 ![pencil tool](./screenshots/pencil-toggle.png)
 
@@ -532,7 +532,7 @@ By holding shift and left-clicking, straight lines can be drawn:
 
 ## Drawing polygons using the Brush Tool
 
-Click and drag the mouse to draw polygons.
+Click and drag the mouse to draw polygons with the brush tool button, or by pressing `Shift+B`.
 
 ![the brush tool](./screenshots/brush_tool.gif)
 

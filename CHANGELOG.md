@@ -1,11 +1,18 @@
 # Changelog
 
-## 2.26.0
+## 2.26.1
 
 ### Added
 
 - Creating and Editing shapes inside of a `SubViewportContainer > SubViewPort` now also works when it has another transform than identity
 - Added a 3D example with an animated curve as `ViewportTexture` via `SubViewportContainer > SubViewPort`
+
+### Changed
+
+- Fix: pencil tool now toggles on using `Shift + N` in stead of `P`
+- Fix: brush tool now toggles on using `Shift + B` in stead of `B`
+- Bugfix: fixed misplacing a new shape on the root node in the subviewport detection recursion
+- Bugfix: fixed misplacing the cursor on the root node in the subviewport detection recursion
 
 ## 2.25.8
 
