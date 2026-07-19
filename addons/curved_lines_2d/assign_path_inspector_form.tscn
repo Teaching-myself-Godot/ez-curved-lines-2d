@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://bl1bn3in0n8dw"]
+
+[ext_resource type="Script" uid="uid://bltvcgvd1j437" path="res://addons/curved_lines_2d/assign_path_inspector_form.gd" id="1_apd1v"]
+
+[node name="AssignPathInspectorForm" type="VBoxContainer" unique_id=2143448357]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_apd1v")
+
+[node name="ButtonContainer" type="HBoxContainer" parent="." unique_id=1876187221]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ButtonContainer" unique_id=973596628]
+custom_minimum_size = Vector2(80, 0)
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "⚠️ Assigning a CollisionPolygon2D directly will at some point be deprecated in favour of assigning a CollisionObject2D: a clipped ScalableVectorShape2D can result in multiple CollisionPolygon2D"
+mouse_filter = 0
+text = "Path2D"
+
+[node name="GotoPathButton" type="Button" parent="ButtonContainer" unique_id=1305497761]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 2
+tooltip_text = "Click on this button to select the CollisionPolygon2D node that is assigned to this shape  in the Scene Tree.
+
+Use this for advanced features which are already built-in into godot."
+text = "Go To Node"
+
+[node name="CreatePathButton" type="Button" parent="ButtonContainer" unique_id=1764986877]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Create Path2D"
+
+[connection signal="pressed" from="ButtonContainer/GotoPathButton" to="." method="_on_goto_path_button_pressed"]
+[connection signal="pressed" from="ButtonContainer/CreatePathButton" to="." method="_on_create_path_button_pressed"]
