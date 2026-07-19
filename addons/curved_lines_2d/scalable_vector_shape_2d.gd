@@ -41,8 +41,6 @@ const JOINT_MODE_MAP : Dictionary[Line2D.LineJointMode, Geometry2D.PolyJoinType]
 	Line2D.LINE_JOINT_ROUND: Geometry2D.JOIN_ROUND,
 }
 
-
-
 enum ShapeType {
 	## Gives every point in the [member curve] a handle, as well as their in- and out- control points.
 	## Ignores the [member size], [member offset], [member rx] and [member ry] properties when
@@ -62,7 +60,6 @@ enum ShapeType {
 		## The [member offset] can change by using the pivot-tool in the 2D Editor
 	ELLIPSE
 }
-
 
 enum CollisionObjectType {
 	NONE,
@@ -95,7 +92,6 @@ enum CollisionObjectType {
 		assigned_node_changed.emit()
 
 @export_group("Stroke")
-
 ## The color of the stroke, also sets the [member Line2D.default_color] of the
 ## [member line] and the [member Polygon2D.color] of the [member poly_stroke]
 @export var stroke_color := Color.WHITE:
@@ -181,7 +177,6 @@ var stroke_width := 10.0:
 		collision_object = _coll
 		assigned_node_changed.emit()
 
-
 @export_subgroup("Collision Polygon2D*")
 ## The CollisionPolygon2D controlled by this node's curve property
 ## @deprecated: Use [member collision_object] instead.
@@ -190,12 +185,25 @@ var stroke_width := 10.0:
 		collision_polygon = _poly
 		assigned_node_changed.emit()
 
+@export_group("Path")
+## The [Path2D] controlled by this node's [member curve] property. Optionally the path's
+## [member Path2D.curve] can be the reversed direction of this shape's [member curve]
+@export var path: Path2D:
+	set(_path):
+		path = _path
+		assigned_node_changed.emit()
+## Sets the direction of the assigned [member path]
+@export var reversed_direction := false:
+	set(_rev):
+		reversed_direction = _rev
+		assigned_node_changed.emit()
+
 @export_group("Navigation")
+## The [NavigationRegion2D] controlled by this node's curve property
 @export var navigation_region: NavigationRegion2D:
 	set(_nav):
 		navigation_region = _nav
 		assigned_node_changed.emit()
-
 
 ## Controls the paramaters used to divide up the line  in segments.
 ## These settings are prefilled with the default values.
@@ -549,6 +557,8 @@ func _on_assigned_node_changed(_x : Variant = null):
 			collision_object.set_meta("_edit_lock_", true)
 		if is_instance_valid(navigation_region):
 			navigation_region.set_meta("_edit_lock_", true)
+		if is_instance_valid(path):
+			path.set_meta("_edit_lock_", true)
 	curve_changed()
 
 
@@ -672,6 +682,7 @@ func curve_changed():
 			and not is_instance_valid(collision_polygon)
 			and not is_instance_valid(collision_object)
 			and not is_instance_valid(navigation_region)
+			and not is_instance_valid(path)
 			and not path_changed.has_connections()
 			and not polygons_updated.has_connections()):
 		# guard against needlessly invoking expensive tessellate operation
@@ -679,7 +690,17 @@ func curve_changed():
 	should_update_curve = true
 
 
+func _reversed_curve() -> Curve2D:
+	var new_curve := Curve2D.new()
+	for i in range(curve.point_count - 1, -1, -1):
+		new_curve.add_point(curve.get_point_position(i), curve.get_point_out(i), curve.get_point_in(i))
+	return new_curve
+
+
 func _update_curve():
+	if is_instance_valid(path):
+		path.curve = _reversed_curve() if reversed_direction else curve.duplicate()
+
 	# recalculate the polygon points for this shape based on curve and arc_list
 	cached_outline.clear()
 	cached_poly_strokes.clear()
