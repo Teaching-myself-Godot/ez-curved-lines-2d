@@ -18,7 +18,6 @@ custom_minimum_size = Vector2(80, 0)
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "⚠️ Assigning a CollisionPolygon2D directly will at some point be deprecated in favour of assigning a CollisionObject2D: a clipped ScalableVectorShape2D can result in multiple CollisionPolygon2D"
 mouse_filter = 0
 text = "Path2D"
 
