@@ -89,6 +89,7 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
   - [The Stroke inspector form](#the-stroke-inspector-form)
     - [Creating new Strokes](#creating-new-strokes)
   - [The Collision inspector form](#the-collision-inspector-form)
+  - [The Path inspector form](#the-path-inspector-form)
   - [The Navigation inspector form](#the-navigation-inspector-form)
   - [The Curve settings inspector form](#the-curve-settings-inspector-form)
     - [The Glue Map property](#the-glue-map-property)
@@ -611,6 +612,7 @@ The following custom forms were added, with extensive tooltips to help explain t
 - [Fill](#the-fill-inspector-form) (actually the assigned `Polygon2D`)
 - [Stroke](#the-stroke-inspector-form) (actually the assigned `Line2D` or `Polygon2D`)
 - [Collision](#the-collision-inspector-form) (manages an assigned `CollisionObject2D`)
+- [Path](#the-path-inspector-form) (manages an assigned `Path2D`)
 - [Navigation](#the-navigation-inspector-form) (manages an assigned `NavigationRegion2D`)
 - [Curve Settings](#the-curve-settings-inspector-form)
 - [Masking](#the-masking-inspector-form)
@@ -683,6 +685,15 @@ Every time the shape is changed, one or more `Polygon2D` nodes will be added/upd
 - `RigidBody2D`
 - `CharacterBody2D`
 - `PhysicalBone2D`
+
+## The Path inspector form
+
+This form can hold a reference to an assigned `Path2D`. That `Path2D`'s curve is kept as a duplicate of the `ScalableVectorShape2D`.
+
+When `reversed_direction` is turned on, the `Path2D`'s curve goes the other way around.
+
+![The Path inspector form](./screenshots/path-inspector-form.png)
+
 
 ## The Navigation inspector form
 

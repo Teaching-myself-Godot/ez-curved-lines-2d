@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.27.0
+
+### Added
+
+- Assign and manage a `Path2D` node
+- Quickly reverse the direction of the `Path2D` curve with the `reversed_direction` property
+
 ## 2.26.1
 
 ### Added
