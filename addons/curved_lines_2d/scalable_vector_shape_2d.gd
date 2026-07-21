@@ -708,9 +708,11 @@ func _update_curve():
 	# emit updated path to listeners
 	path_changed.emit(cached_outline)
 
-	for p_idx in glue_map.keys():
-		if p_idx > -1 and p_idx < curve.point_count and is_instance_valid(glue_map[p_idx]):
-			glue_map[p_idx].global_position = to_global(curve.get_point_position(p_idx))
+	if not glue_map.is_empty():
+		var _curve := get_deformed_curve()
+		for p_idx in glue_map.keys():
+			if p_idx > -1 and p_idx < _curve.point_count and is_instance_valid(glue_map[p_idx]):
+				glue_map[p_idx].global_position = to_global(_curve.get_point_position(p_idx))
 
 
 	var polygon_points := cached_outline.duplicate()
