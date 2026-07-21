@@ -1,12 +1,16 @@
 # Changelog
 
-## 2.27.1
+## 2.27.2
 
 ### Added
 
 - Assign and manage a `Path2D` node
 - Quickly reverse the direction of the `Path2D` curve with the `reversed_direction` property
 - Video link and thumbnail to "Rigoberto - Drawing and Rigging" on youtube
+
+### Changed
+
+- Fix: nodes assigned via the glue map are now also moved by the curve when it is deformed by a skeleton
 
 ## 2.26.1
 

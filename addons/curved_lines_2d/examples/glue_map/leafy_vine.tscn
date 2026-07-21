@@ -1,0 +1,163 @@
+[gd_scene load_steps=8 format=3 uid="uid://ff21vjlacmvt"]
+
+[ext_resource type="PackedScene" uid="uid://bonrw0yjqixh0" path="res://addons/curved_lines_2d/examples/glue_map/leaf.tscn" id="1_nk0xg"]
+[ext_resource type="Script" uid="uid://de3jpss66xjfh" path="res://addons/curved_lines_2d/scalable_vector_shape_2d.gd" id="2_ha3r5"]
+[ext_resource type="Script" uid="uid://dlbv4pit17dnu" path="res://addons/curved_lines_2d/scalable_arc.gd" id="3_fvspu"]
+[ext_resource type="Script" uid="uid://dl1t88tthmwts" path="res://addons/curved_lines_2d/scalable_arc_list.gd" id="4_g0mo6"]
+
+[sub_resource type="Curve2D" id="Curve2D_yv6yr"]
+_data = {
+"points": PackedVector2Array(0, 0, -2.2, 10.2, 0, 0, 1.40001, -8.6, -1.40001, 8.6, -2, 31, 0.28569, -9, -0.28569, 9, -3, 63, -0.142838, -11, 0.142838, 11, -3, 95, 2, -6.25, -2, 6.25, -11, 125, -1, -9, 1, 9, -17, 156, -0.727272, -8.81815, 0.727272, 8.81815, -7, 192, -4.5, -9.75, 4.5, 9.75, 7, 221, 2.45454, -5.72723, -2.45454, 5.72723, 7, 255, -2, -11, 2, 11, 7, 290, 1.66667, -6.66669, -1.66667, 6.66669, 0, 321, 2, -9, -2, 9, -6.5, 351, 1.66666, -10.3333, -1.66666, 10.3333, -16.5, 379.667, -2, -7.66663, 2, 7.66663, -6.66666, 412.667, 3.66666, -10.6666, 0, 0, -10, 442)
+}
+point_count = 15
+
+[sub_resource type="Resource" id="Resource_a74py"]
+resource_local_to_scene = true
+script = ExtResource("4_g0mo6")
+arcs = Array[ExtResource("3_fvspu")]([])
+
+[sub_resource type="Curve" id="Curve_fvspu"]
+_limits = [0.0, 2.5, 0.0, 1.0]
+_data = [Vector2(0.00132926, 2.5), 0.0, 0.0, 0, 0, Vector2(0.0336611, 2.3), 0.0, 0.0, 0, 0, Vector2(0.925128, 0.507046), 0.0, 0.0, 0, 0, Vector2(0.986023, 0.0999999), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[node name="LeafyVine" type="Node2D"]
+
+[node name="Leaf2" parent="." instance=ExtResource("1_nk0xg")]
+position = Vector2(-12, 123)
+scale = Vector2(-1, 1)
+metadata/_scene_painted = true
+metadata/_edit_lock_ = true
+
+[node name="Leaf3" parent="." instance=ExtResource("1_nk0xg")]
+position = Vector2(-18, 154)
+metadata/_scene_painted = true
+metadata/_edit_lock_ = true
+
+[node name="Leaf4" parent="." instance=ExtResource("1_nk0xg")]
+position = Vector2(-8, 190)
+scale = Vector2(-1, 1)
+metadata/_scene_painted = true
+metadata/_edit_lock_ = true
+
+[node name="Leaf5" parent="." instance=ExtResource("1_nk0xg")]
+position = Vector2(6, 219)
+metadata/_scene_painted = true
+metadata/_edit_lock_ = true
+
+[node name="Leaf6" parent="." instance=ExtResource("1_nk0xg")]
+position = Vector2(6, 253)
+scale = Vector2(-1, 1)
+metadata/_scene_painted = true
+metadata/_edit_lock_ = true
+
+[node name="Leaf7" parent="." instance=ExtResource("1_nk0xg")]
+position = Vector2(6, 288)
+metadata/_scene_painted = true
+metadata/_edit_lock_ = true
+
+[node name="Leaf8" parent="." instance=ExtResource("1_nk0xg")]
+position = Vector2(-1, 319)
+scale = Vector2(-1, 1)
+metadata/_scene_painted = true
+metadata/_edit_lock_ = true
+
+[node name="Leaf9" parent="." instance=ExtResource("1_nk0xg")]
+position = Vector2(-7.5, 349)
+metadata/_scene_painted = true
+metadata/_edit_lock_ = true
+
+[node name="Leaf10" parent="." instance=ExtResource("1_nk0xg")]
+position = Vector2(-17.5, 377.667)
+scale = Vector2(-1, 1)
+metadata/_scene_painted = true
+metadata/_edit_lock_ = true
+
+[node name="Leaf11" parent="." instance=ExtResource("1_nk0xg")]
+position = Vector2(-7.66666, 410.667)
+metadata/_scene_painted = true
+metadata/_edit_lock_ = true
+
+[node name="Leaf" parent="." instance=ExtResource("1_nk0xg")]
+position = Vector2(-4, 93)
+rotation = -0.288284
+metadata/_scene_painted = true
+metadata/_edit_lock_ = true
+
+[node name="PencilDrawing" type="Node2D" parent="." node_paths=PackedStringArray("line", "glue_map", "skeleton", "deformation_map")]
+position = Vector2(-1, -2)
+script = ExtResource("2_ha3r5")
+stroke_color = Color(0.439216, 0.227451, 0.196078, 1)
+stroke_width = 8.0
+begin_cap_mode = 2
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_yv6yr")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_a74py")
+glue_map = {
+3: NodePath("../Leaf"),
+4: NodePath("../Leaf2"),
+5: NodePath("../Leaf3"),
+6: NodePath("../Leaf4"),
+7: NodePath("../Leaf5"),
+8: NodePath("../Leaf6"),
+9: NodePath("../Leaf7"),
+10: NodePath("../Leaf8"),
+11: NodePath("../Leaf9"),
+12: NodePath("../Leaf10"),
+13: NodePath("../Leaf11")
+}
+skeleton = NodePath("../Skeleton2D")
+deformation_map = {
+0: NodePath("../Skeleton2D/Bone2D"),
+1: NodePath("../Skeleton2D/Bone2D"),
+2: NodePath("../Skeleton2D/Bone2D"),
+3: NodePath("../Skeleton2D/Bone2D"),
+4: NodePath("../Skeleton2D/Bone2D"),
+5: NodePath("../Skeleton2D/Bone2D"),
+6: NodePath("../Skeleton2D/Bone2D/Bone2D"),
+7: NodePath("../Skeleton2D/Bone2D/Bone2D"),
+8: NodePath("../Skeleton2D/Bone2D/Bone2D"),
+9: NodePath("../Skeleton2D/Bone2D/Bone2D/Bone2D"),
+10: NodePath("../Skeleton2D/Bone2D/Bone2D/Bone2D"),
+11: NodePath("../Skeleton2D/Bone2D/Bone2D/Bone2D"),
+12: NodePath("../Skeleton2D/Bone2D/Bone2D/Bone2D/Bone2D"),
+13: NodePath("../Skeleton2D/Bone2D/Bone2D/Bone2D/Bone2D/Bone2D"),
+14: NodePath("../Skeleton2D/Bone2D/Bone2D/Bone2D/Bone2D/Bone2D")
+}
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="PencilDrawing"]
+points = PackedVector2Array(0, 0, -0.660155, 3.90781, -1.04375, 7.9375, -1.40625, 23.9625, -2, 31, -2.7067, 38.3625, -3, 63, -3, 95, -3.22071, 99.1909, -3.90849, 103.449, -6.19644, 111.781, -11, 125, -15.125, 139.469, -16.7656, 148.238, -17.1113, 152.34, -17.1194, 154.237, -17, 156, -16.313, 159.769, -15.1179, 164.182, -8.72869, 183.92, -7.59748, 188.29, -7, 192, -6.77236, 193.672, -6.3742, 195.378, -5.13849, 198.88, -1.41477, 206.151, 7, 221, 7.76854, 222.926, 8.39267, 225.025, 9.24361, 229.62, 9.62473, 234.532, 9.60795, 239.509, 8.66832, 248.642, 7.88929, 252.295, 7.45393, 253.781, 7, 255, 6.57353, 256.216, 6.21325, 257.697, 5.68324, 261.338, 5.32955, 270.523, 5.81108, 280.696, 7, 290, 7.26929, 292.088, 7.3418, 294.217, 6.98438, 298.547, 6.10352, 302.885, 4.875, 307.125, 0, 321, -6.5, 351, -7.43555, 354.392, -8.67188, 357.823, -14.5156, 372.094, -15.6738, 375.837, -16.5, 379.667, -16.6862, 381.656, -16.638, 383.737, -16.3828, 385.892, -15.9479, 388.104, -14.6484, 392.628, -12.9583, 397.167, -7.73176, 409.471, -6.66666, 412.667, -6.08528, 415.691, -5.82812, 418.984, -5.87565, 422.505, -6.20833, 426.208, -7.65104, 433.995, -10, 442)
+width = 8.0
+width_curve = SubResource("Curve_fvspu")
+default_color = Color(0.439216, 0.227451, 0.196078, 1)
+begin_cap_mode = 2
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Skeleton2D" type="Skeleton2D" parent="."]
+
+[node name="Bone2D" type="Bone2D" parent="Skeleton2D"]
+rest = Transform2D(1, 0, 0, 1, 0, 0)
+
+[node name="Bone2D" type="Bone2D" parent="Skeleton2D/Bone2D"]
+position = Vector2(-18, 155)
+rest = Transform2D(1, 0, 0, 1, -18, 155)
+
+[node name="Bone2D" type="Bone2D" parent="Skeleton2D/Bone2D/Bone2D"]
+position = Vector2(27, 110)
+rest = Transform2D(1, 0, 0, 1, 27, 110)
+
+[node name="Bone2D" type="Bone2D" parent="Skeleton2D/Bone2D/Bone2D/Bone2D"]
+position = Vector2(-18, 83)
+rest = Transform2D(1, 0, 0, 1, -18, 83)
+
+[node name="Bone2D" type="Bone2D" parent="Skeleton2D/Bone2D/Bone2D/Bone2D/Bone2D"]
+position = Vector2(-6, 40)
+rotation = 1.41415
+scale = Vector2(1, 1)
+rest = Transform2D(0.156003, 0.987756, -0.987756, 0.156003, -6, 40)
+auto_calculate_length_and_angle = false
+length = 49.62
+bone_angle = 0.0
