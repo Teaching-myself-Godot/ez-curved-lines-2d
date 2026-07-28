@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.27.2
+## 2.27.3
 
 ### Added
 
@@ -11,6 +11,7 @@
 ### Changed
 
 - Fix: nodes assigned via the glue map are now also moved by the curve when it is deformed by a skeleton
+- Bugfix: Fixes Error when closing a GUI scene in 4.7 and up
 
 ## 2.26.1
 

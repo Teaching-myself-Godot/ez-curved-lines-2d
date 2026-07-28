@@ -446,7 +446,8 @@ func _on_selection_changed():
 		# inelegant fix to always keep an instance of Node selected, so
 		# _forward_canvas_gui_input will still be called upon losing focus
 		if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
-				and EditorInterface.get_selection().get_selected_nodes().is_empty()):
+				and EditorInterface.get_selection().get_selected_nodes().is_empty()
+				and not scene_root is Control):
 			EditorInterface.edit_node(scene_root)
 	if current_selection is AnimationPlayer and _scene_can_export_animations():
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(current_selection)
