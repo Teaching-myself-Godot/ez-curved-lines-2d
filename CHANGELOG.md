@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.27.3
+## 2.27.4
 
 ### Added
 
@@ -12,6 +12,11 @@
 
 - Fix: nodes assigned via the glue map are now also moved by the curve when it is deformed by a skeleton
 - Bugfix: Fixes Error when closing a GUI scene in 4.7 and up
+- Bugfix: Pencil tool no longer insta-cancels on mouse move when this mode is active: "When I am done drawing, I want to select the shape I drew to edit the points and bézier curve handles"
+- Bugfix: Godot no longer freezes after creating a pencil drawing with zero points and then using undo
+- Bugfix: Alt+Click on a line segment now works after releasing the left mouse button (so you're not dragging one of the curve segments instantly)
+- Bugfix: No more index out of bound errors after creating an invalid arc in thin air for a shape with 0 or one point with right mouse button
+- Bugfix: Godot 4.7+ no longer shows errors and (occasionally) crashes when closing a UI scene with a Control node root
 
 ## 2.26.1
 
