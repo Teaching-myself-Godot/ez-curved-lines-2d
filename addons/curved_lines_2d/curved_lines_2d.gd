@@ -1855,6 +1855,8 @@ func _add_point_to_curve(svs : ScalableVectorShape2D, local_pos : Vector2,
 
 
 func _create_arc(svs :  ScalableVectorShape2D, start_point_idx : int) -> void:
+	if svs.curve.point_count < 2:
+		return
 	undo_redo.create_action("Remove arc for segment %d on %s " % [start_point_idx, str(svs)])
 	undo_redo.add_do_method(svs, 'add_arc', start_point_idx)
 	undo_redo.add_undo_method(svs.arc_list, 'remove_arc_for_point', start_point_idx)
