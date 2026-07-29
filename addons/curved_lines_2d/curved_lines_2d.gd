@@ -2489,7 +2489,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				var cp_md : ClosestPointOnCurveMeta = current_selection.get_meta(META_NAME_HOVER_CLOSEST_POINT)
 				if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and current_selection.is_arc_start(cp_md.before_segment - 1):
 					arc_settings_popup_panel.popup_with_value(current_selection.arc_list.get_arc_for_point(cp_md.before_segment - 1))
-				elif Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and Input.is_key_pressed(KEY_ALT):
+				elif not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and Input.is_key_pressed(KEY_ALT):
 					_add_point_on_curve_segment(current_selection, true)
 				elif event.double_click:
 					_add_point_on_curve_segment(current_selection)
