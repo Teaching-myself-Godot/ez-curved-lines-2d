@@ -2180,11 +2180,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 				if _is_svs_valid(current_selection):
 					var svs := current_selection as ScalableVectorShape2D
-					if svs.curve.point_count <= 1:
-						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs.curve)).undo()
-						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs)).undo()
-						undo_redo.get_history_undo_redo(undo_redo.get_object_history_id(svs)).undo()
-					else:
+					if svs.curve.point_count > 1:
 						var snap = _get_freehand_draw_granularity() if _get_freehand_draw_granularity() > 10.0 else 10.0
 						var pts := svs.tessellate()
 						var segments := BasicFit.prepare_polyline_segments(pts, snap, 180, 180)
