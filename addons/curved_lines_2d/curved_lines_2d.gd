@@ -225,6 +225,8 @@ func _select_scene_root_when_nothing_is_selected() -> void:
 
 func _on_select_mode_toggled(toggled_on : bool) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if _drawing_pencil_line:
+		return
 	if toggled_on and _is_svs_valid(current_selection):
 		svs_edit_buttons.show()
 		svs_edit_buttons.show_svs_editors()
