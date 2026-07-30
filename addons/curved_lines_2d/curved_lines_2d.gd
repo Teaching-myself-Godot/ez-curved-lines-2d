@@ -2144,12 +2144,8 @@ func _start_freehand_shape(name : String, is_pencil := false) -> ScalableVectorS
 	_create_shape(new_shape, EditorInterface.get_edited_scene_root(), name, null, true)
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and is_pencil:
-		pos = _svp_mouse_pos(pos, current_selection)
-		undo_redo.create_action("reposition to mouse position: %s" % str(new_shape))
-		undo_redo.add_do_property(current_selection, 'global_position', pos)
-		undo_redo.add_undo_reference(current_selection)
-		undo_redo.commit_action()
-		_add_point_to_curve(current_selection, Vector2.ZERO)
+		current_selection.global_position = _svp_mouse_pos(pos, current_selection)
+		current_selection.curve.add_point(Vector2.ZERO)
 	_drawing_pencil_line = is_pencil
 	return current_selection
 
@@ -2162,7 +2158,7 @@ func _add_point_to_pencil_line() -> void:
 	if _is_svs_valid(current_selection):
 		var last_point := (current_selection as ScalableVectorShape2D).curve.get_point_position(current_selection.curve.point_count -1)
 		if current_selection.to_global(last_point).distance_to(pos) > _get_freehand_draw_granularity():
-			_add_point_to_curve(current_selection, current_selection.to_local(pos))
+			current_selection.curve.add_point(current_selection.to_local(pos))
 
 
 func _handle_pencil_draw_input(event : InputEvent) -> bool:
@@ -2185,15 +2181,9 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 				if _is_svs_valid(current_selection):
 					var svs := current_selection as ScalableVectorShape2D
 					if svs.curve.point_count > 1:
-						var snap = _get_freehand_draw_granularity() if _get_freehand_draw_granularity() > 10.0 else 10.0
-						var pts := svs.tessellate()
-						var segments := BasicFit.prepare_polyline_segments(pts, snap, 180, 180)
-						var new_curve := BasicFit.fit_curve_to_polyline(pts, segments)
-						if not _get_close_pencil_path():
-							new_curve.remove_point(new_curve.point_count-1)
-						undo_redo.create_action("optimize curve")
-						undo_redo.add_do_property(svs, 'curve', new_curve)
-						undo_redo.add_undo_property(svs, 'curve', svs.curve)
+						undo_redo.create_action("Finalize Pencil Drawing")
+						undo_redo.add_do_property(svs, 'curve', svs.curve.duplicate())
+						undo_redo.add_undo_property(svs, 'curve', Curve2D.new())
 						undo_redo.commit_action()
 					if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 						select_node_reversibly(current_selection.get_parent())
@@ -2213,10 +2203,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 
 
 func _set_curve_from_polygon(svs : ScalableVectorShape2D, pts : PackedVector2Array) -> void:
-	undo_redo.create_action("reposition to brush start pos %s" % str(svs))
-	undo_redo.add_do_property(svs, 'global_position', _brush_start_pos)
-	undo_redo.add_undo_reference(svs)
-	undo_redo.commit_action()
+	svs.global_position = _brush_start_pos
 	var poly := PackedVector2Array(Array(pts).map(func(p): return svs.to_local(p)))
 	var fitness_prep := BasicFit.prepare_polyline_segments(poly, 0.5 * (_get_brush_size_x() + _get_brush_size_y()))
 	svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
