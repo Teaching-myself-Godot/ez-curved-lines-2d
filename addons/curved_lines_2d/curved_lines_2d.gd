@@ -1937,9 +1937,11 @@ func _add_point_on_curve_segment(svs : ScalableVectorShape2D, subdivide := false
 
 
 func _subdivide_curve(svs : ScalableVectorShape2D) -> void:
+	var orig_curve := svs.curve
+	svs.curve = svs.curve.duplicate()
 	undo_redo.create_action("Subdivide shape %s" % str(svs))
 	undo_redo.add_do_property(svs, 'curve', svs.get_subdivided_curve())
-	undo_redo.add_undo_property(svs, 'curve', svs.curve.duplicate())
+	undo_redo.add_undo_property(svs, 'curve', orig_curve)
 	undo_redo.commit_action()
 
 
