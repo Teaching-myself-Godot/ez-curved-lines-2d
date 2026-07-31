@@ -1,24 +1,25 @@
-[gd_scene load_steps=14 format=3 uid="uid://hr7df18ngxmj"]
+[gd_scene format=3 uid="uid://hr7df18ngxmj"]
 
 [ext_resource type="PackedScene" uid="uid://bhpmwhbdlsp1g" path="res://addons/curved_lines_2d/external_video_button.tscn" id="1_xhvii"]
-[ext_resource type="Texture2D" uid="uid://be2xpq0unu641" path="res://addons/curved_lines_2d/video_thumbnails/animations_to_sprite_frames.png" id="2_7bvyv"]
-[ext_resource type="Texture2D" uid="uid://dl2umd602n020" path="res://addons/curved_lines_2d/video_thumbnails/a_z_deep_dive.png" id="2_p1tlt"]
+[ext_resource type="Texture2D" uid="uid://bx6ppagarsjuc" path="res://addons/curved_lines_2d/video_thumbnails/a_z_deep_dive.webp" id="2_bmv75"]
+[ext_resource type="Texture2D" uid="uid://d3srqek2l3vbr" path="res://addons/curved_lines_2d/video_thumbnails/importing-svg-files-splash.webp" id="3_7txnu"]
 [ext_resource type="Texture2D" uid="uid://cybtin0ayniuw" path="res://addons/curved_lines_2d/video_thumbnails/pinball_release_notes.webp" id="3_68r4x"]
 [ext_resource type="Texture2D" uid="uid://666dhwfxwq28" path="res://addons/curved_lines_2d/video_thumbnails/rig_svg.webp" id="3_ld6je"]
-[ext_resource type="Texture2D" uid="uid://ca207yddnm1qr" path="res://addons/curved_lines_2d/video_thumbnails/my_little_pony.png" id="3_mc1gr"]
-[ext_resource type="Texture2D" uid="uid://c8up2an21ixt4" path="res://addons/curved_lines_2d/video_thumbnails/msaa.png" id="3_vmvt3"]
-[ext_resource type="Texture2D" uid="uid://b3plsn7lvo8au" path="res://addons/curved_lines_2d/video_thumbnails/animating_curves.png" id="3_xvhpr"]
-[ext_resource type="Texture2D" uid="uid://bvwovr0nk7psu" path="res://addons/curved_lines_2d/video_thumbnails/importing-svg-files-splash.png" id="4_oh1j2"]
-[ext_resource type="Texture2D" uid="uid://cab1fy78sc831" path="res://addons/curved_lines_2d/video_thumbnails/gluing.png" id="6_5flco"]
 [ext_resource type="Texture2D" uid="uid://da4p2p44x1uxp" path="res://addons/curved_lines_2d/video_thumbnails/rigoberto.webp" id="6_db0v2"]
-[ext_resource type="Texture2D" uid="uid://bpdkxmo43c2eo" path="res://addons/curved_lines_2d/video_thumbnails/merging_vertices.png" id="8_xvhpr"]
+[ext_resource type="Texture2D" uid="uid://d0vjf8talro3u" path="res://addons/curved_lines_2d/video_thumbnails/animating_clip_paths.webp" id="7_dx0lu"]
+[ext_resource type="Texture2D" uid="uid://bw5o0vuns12aa" path="res://addons/curved_lines_2d/video_thumbnails/animating_curves.webp" id="8_db0v2"]
+[ext_resource type="Texture2D" uid="uid://c1cjsc75decfe" path="res://addons/curved_lines_2d/video_thumbnails/animations_to_sprite_frames.webp" id="8_xvhpr"]
+[ext_resource type="Texture2D" uid="uid://1eojktl4w61e" path="res://addons/curved_lines_2d/video_thumbnails/my_little_pony.webp" id="9_vmvt3"]
+[ext_resource type="Texture2D" uid="uid://bngr6ks37b65o" path="res://addons/curved_lines_2d/video_thumbnails/msaa.webp" id="11_mc1gr"]
+[ext_resource type="Texture2D" uid="uid://cpmnpvi0ipklp" path="res://addons/curved_lines_2d/video_thumbnails/gluing.webp" id="12_ld6je"]
+[ext_resource type="Texture2D" uid="uid://770bato4out7" path="res://addons/curved_lines_2d/video_thumbnails/merging_vertices.webp" id="13_w252m"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_h2vt0"]
 content_margin_left = 20.0
 content_margin_top = 20.0
 content_margin_right = 20.0
 
-[node name="VideoExplainerTab" type="ScrollContainer"]
+[node name="VideoExplainerTab" type="ScrollContainer" unique_id=1204278518]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -26,29 +27,29 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_h2vt0")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=781132693]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 20
 
-[node name="ExternalVideoButton5" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
+[node name="AZDeepDive" parent="HBoxContainer" unique_id=1395816239 instance=ExtResource("1_xhvii")]
 layout_mode = 2
 tooltip_text = "This link will open a webpage in your browser: https://youtu.be/z8Y1e-TehoE
 Right click to copy this link"
-img = ExtResource("2_p1tlt")
+img = ExtResource("2_bmv75")
 uri = "https://youtu.be/z8Y1e-TehoE"
 text = "A-Z Explainer Deep Dive"
 
-[node name="ExternalVideoButton6" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
+[node name="ImportingSVGFiles" parent="HBoxContainer" unique_id=1218741548 instance=ExtResource("1_xhvii")]
 layout_mode = 2
 tooltip_text = "This link will open a webpage in your browser: https://youtu.be/5PIVoQcm8QE
 Right click to copy this link"
-img = ExtResource("4_oh1j2")
+img = ExtResource("3_7txnu")
 uri = "https://youtu.be/5PIVoQcm8QE"
 text = "Importing SVG Files"
 
-[node name="ExternalVideoButton11" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
+[node name="RigSVG" parent="HBoxContainer" unique_id=127527835 instance=ExtResource("1_xhvii")]
 layout_mode = 2
 tooltip_text = "This link will open a webpage in your browser: https://youtu.be/e6dNBL8AAOQ
 Right click to copy this link"
@@ -56,7 +57,7 @@ img = ExtResource("3_ld6je")
 uri = "https://youtu.be/e6dNBL8AAOQ"
 text = "Rigging SVG Images to a Skeleton2D"
 
-[node name="ExternalVideoButton4" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
+[node name="Pinball" parent="HBoxContainer" unique_id=1904488629 instance=ExtResource("1_xhvii")]
 layout_mode = 2
 tooltip_text = "This link will open a webpage in your browser: https://youtu.be/pP0CYEvU2uQ
 Right click to copy this link"
@@ -64,7 +65,7 @@ img = ExtResource("3_68r4x")
 uri = "https://youtu.be/pP0CYEvU2uQ"
 text = "Building a Pinball Case"
 
-[node name="ExternalVideoButton12" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
+[node name="Rigoberto" parent="HBoxContainer" unique_id=543640992 instance=ExtResource("1_xhvii")]
 layout_mode = 2
 tooltip_text = "This link will open a webpage in your browser: https://youtu.be/Q4AM3ea4Yg8
 Right click to copy this link"
@@ -72,57 +73,58 @@ img = ExtResource("6_db0v2")
 uri = "https://youtu.be/Q4AM3ea4Yg8"
 text = "Rigoberto - Drawing and Rigging"
 
-[node name="ExternalVideoButton2" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
+[node name="ClipPaths" parent="HBoxContainer" unique_id=409103761 instance=ExtResource("1_xhvii")]
 layout_mode = 2
 tooltip_text = "This link will open a webpage in your browser: https://youtu.be/rT5FTg60GiY
 Right click to copy this link"
+img = ExtResource("7_dx0lu")
 uri = "https://youtu.be/rT5FTg60GiY"
 text = "Animating SVG Clip-Paths"
 
-[node name="ExternalVideoButton10" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
-layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/I2yh2y9mGRA
-Right click to copy this link"
-img = ExtResource("3_mc1gr")
-uri = "https://youtu.be/I2yh2y9mGRA"
-text = "How to draw a My Little Pony"
-
-[node name="ExternalVideoButton8" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
-layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/p_QI5lKM44A
-Right click to copy this link"
-img = ExtResource("3_xvhpr")
-uri = "https://youtu.be/p_QI5lKM44A"
-text = "Animating Curves"
-
-[node name="ExternalVideoButton9" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
-layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/X85A-XVUIHU
-Right click to copy this link"
-img = ExtResource("3_vmvt3")
-uri = "https://youtu.be/X85A-XVUIHU"
-text = "Add Anti Aliasing to your Webgame"
-
-[node name="ExternalVideoButton7" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
-layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/OBNPTFZA2Q0
-Right click to copy this link"
-img = ExtResource("6_5flco")
-uri = "https://youtu.be/OBNPTFZA2Q0"
-text = "Gluing a Node2D to a Point"
-
-[node name="ExternalVideoButton3" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
-layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/dUSJZ7WAIto
-Right click to copy this link"
-img = ExtResource("8_xvhpr")
-uri = "https://youtu.be/dUSJZ7WAIto"
-text = "Merging Vertices"
-
-[node name="ExternalVideoButton" parent="HBoxContainer" instance=ExtResource("1_xhvii")]
+[node name="SpriteFrames" parent="HBoxContainer" unique_id=1258372284 instance=ExtResource("1_xhvii")]
 layout_mode = 2
 tooltip_text = "This link will open a webpage in your browser: https://youtu.be/RrusSXAiCK8
 Right click to copy this link"
-img = ExtResource("2_7bvyv")
+img = ExtResource("8_xvhpr")
 uri = "https://youtu.be/RrusSXAiCK8"
 text = "Bake Spritesheets and Sprite Frames"
+
+[node name="MyLittlePony" parent="HBoxContainer" unique_id=1748145545 instance=ExtResource("1_xhvii")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/I2yh2y9mGRA
+Right click to copy this link"
+img = ExtResource("9_vmvt3")
+uri = "https://youtu.be/I2yh2y9mGRA"
+text = "How to draw a My Little Pony"
+
+[node name="AnimatingCurves" parent="HBoxContainer" unique_id=708592046 instance=ExtResource("1_xhvii")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/p_QI5lKM44A
+Right click to copy this link"
+img = ExtResource("8_db0v2")
+uri = "https://youtu.be/p_QI5lKM44A"
+text = "Animating Curves"
+
+[node name="MSAA" parent="HBoxContainer" unique_id=691979444 instance=ExtResource("1_xhvii")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/X85A-XVUIHU
+Right click to copy this link"
+img = ExtResource("11_mc1gr")
+uri = "https://youtu.be/X85A-XVUIHU"
+text = "Add Anti Aliasing to your Webgame"
+
+[node name="Gluing" parent="HBoxContainer" unique_id=2130750332 instance=ExtResource("1_xhvii")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/OBNPTFZA2Q0
+Right click to copy this link"
+img = ExtResource("12_ld6je")
+uri = "https://youtu.be/OBNPTFZA2Q0"
+text = "Gluing a Node2D to a Point"
+
+[node name="Merging" parent="HBoxContainer" unique_id=948188656 instance=ExtResource("1_xhvii")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/dUSJZ7WAIto
+Right click to copy this link"
+img = ExtResource("13_w252m")
+uri = "https://youtu.be/dUSJZ7WAIto"
+text = "Merging Vertices"
