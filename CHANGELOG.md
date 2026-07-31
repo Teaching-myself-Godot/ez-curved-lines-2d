@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.27.4
+## 2.27.5
 
 ### Added
 
@@ -17,6 +17,10 @@
 - Bugfix: Alt+Click on a line segment now works after releasing the left mouse button (so you're not dragging one of the curve segments instantly)
 - Bugfix: No more index out of bound errors after creating an invalid arc in thin air for a shape with 0 or one point with right mouse button
 - Bugfix: Godot 4.7+ no longer shows errors and (occasionally) crashes when closing a UI scene with a Control node root
+- Use `viewport_control.draw_poly*(..)` for pencil edit while drawing in stead of a `ScalableVectorShape2D` node under edit
+- Make brush stroke and pencil stroke undoable with one single undo (Ctrl+Z)
+- Stop trying to optimize the pencil stroke's curve (never had any effect)
+- Bugfix: line no longer disappears after using pencil tool when it has less than 3 points
 
 ## 2.26.1
 
