@@ -2,22 +2,24 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://blj26cry4ov1b"
-path="res://.godot/imported/a_z_explainer.png-13739717d4ca2162d533c62d29a7fbd1.ctex"
+uid="uid://d3srqek2l3vbr"
+path="res://.godot/imported/importing-svg-files-splash.webp-cce3f723445cde3c11e6757fe16915a8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/curved_lines_2d/video_thumbnails/a_z_explainer.png"
-dest_files=["res://.godot/imported/a_z_explainer.png-13739717d4ca2162d533c62d29a7fbd1.ctex"]
+source_file="res://addons/curved_lines_2d/video_thumbnails/importing-svg-files-splash.webp"
+dest_files=["res://.godot/imported/importing-svg-files-splash.webp-cce3f723445cde3c11e6757fe16915a8.ctex"]
 
 [params]
 
 compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
+compress/uastc_level=0
+compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
@@ -25,6 +27,10 @@ mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
+process/channel_remap/red=0
+process/channel_remap/green=1
+process/channel_remap/blue=2
+process/channel_remap/alpha=3
 process/fix_alpha_border=true
 process/premult_alpha=false
 process/normal_map_invert_y=false
