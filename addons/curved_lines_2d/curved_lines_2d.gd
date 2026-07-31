@@ -130,6 +130,8 @@ var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
 
 # Pencil draw helper vars
 var _drawing_pencil_line := false
+var _pencil_start_pos := Vector2.ZERO
+var _pencil_stroke : Array[Vector2] = []
 
 # Brush draw helper vars
 var _current_brush_shape := PackedVector2Array()
@@ -1156,26 +1158,44 @@ func _handle_draw_vertex_merge_box(viewport_control: Control) -> void:
 
 func _handle_pencil_draw(viewport_control : Control) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	var mul := _get_svp_transform(current_selection)
 
-	if _is_svs_valid(current_selection) and Input.is_key_pressed(KEY_SHIFT) and _drawing_pencil_line:
-		var mul := _get_svp_transform(current_selection)
+	if is_instance_valid(current_selection) and Input.is_key_pressed(KEY_SHIFT) and _drawing_pencil_line:
 		var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_snapped_to_pixel():
 			pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
 
-		var svs := current_selection as ScalableVectorShape2D
-		_draw_curve(viewport_control, svs)
-		for idx in svs.curve.point_count:
+		for p in _pencil_stroke:
 			_draw_crosshair(
 				viewport_control,
-				_vp_transform(svs.to_global(svs.curve.get_point_position(idx)) * mul),
+				_vp_transform(p * mul),
 				2.0, 4.0, VIEWPORT_ORANGE, 1
 			)
+		if not _pencil_stroke.is_empty():
 			viewport_control.draw_line(
-				_vp_transform(svs.to_global(svs.curve.get_point_position(svs.curve.point_count - 1)) * mul),
+				_vp_transform(_pencil_stroke[-1] * mul),
 				_vp_transform(pos),
 				Color.RED
 			)
+
+	if _pencil_stroke.size() > 1:
+		var pts := Array(_pencil_stroke).map(func(p): return _vp_transform(p * mul))
+		if _get_close_pencil_path():
+			pts.append(pts[0])
+		match _get_default_paint_order():
+			PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
+				if _is_add_stroke_enabled():
+					viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
+				if _is_add_fill_enabled() and Geometry2D.triangulate_polygon(_pencil_stroke).size() > 0:
+					viewport_control.draw_polygon(pts, [_get_default_fill_color()])
+			PaintOrder.MARKERS_FILL_STROKE, PaintOrder.FILL_STROKE_MARKERS, PaintOrder.FILL_MARKERS_STROKE, _:
+				if _is_add_fill_enabled() and Geometry2D.triangulate_polygon(_pencil_stroke).size() > 0:
+					viewport_control.draw_polygon(pts, [_get_default_fill_color()])
+				if _is_add_stroke_enabled():
+					viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
+		if not _is_add_fill_enabled() and not _is_add_stroke_enabled():
+			viewport_control.draw_polyline(pts, Color.LIME, 1.0, true)
+
 
 	if Input.is_key_pressed(KEY_SHIFT):
 		if _drawing_pencil_line:
@@ -2134,7 +2154,7 @@ func _handle_draw_merge_box_input(event) -> bool:
 	return true
 
 
-func _start_freehand_shape(name : String, is_pencil := false) -> ScalableVectorShape2D:
+func _create_freehand_shape(name : String) -> ScalableVectorShape2D:
 	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if _is_snapped_to_pixel():
 		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
@@ -2143,15 +2163,21 @@ func _start_freehand_shape(name : String, is_pencil := false) -> ScalableVectorS
 	new_shape.curve = Curve2D.new()
 	_create_shape(new_shape, EditorInterface.get_edited_scene_root(), name, null, true)
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-	if _is_svs_valid(current_selection) and is_pencil:
-		pos = _svp_mouse_pos(pos, current_selection)
-		undo_redo.create_action("reposition to mouse position: %s" % str(new_shape))
-		undo_redo.add_do_property(current_selection, 'global_position', pos)
-		undo_redo.add_undo_reference(current_selection)
-		undo_redo.commit_action()
-		_add_point_to_curve(current_selection, Vector2.ZERO)
-	_drawing_pencil_line = is_pencil
 	return current_selection
+
+
+func _start_pencil_draw():
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	var pos := _svp_mouse_pos(
+			EditorInterface.get_editor_viewport_2d().get_mouse_position(),
+			current_selection if current_selection else EditorInterface.get_edited_scene_root()
+	)
+	if _is_snapped_to_pixel():
+		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+	_pencil_start_pos = pos
+	_pencil_stroke = [pos]
+	_drawing_pencil_line = true
+
 
 
 func _add_point_to_pencil_line() -> void:
@@ -2159,17 +2185,16 @@ func _add_point_to_pencil_line() -> void:
 	var pos := _svp_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), current_selection)
 	if _is_snapped_to_pixel():
 		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
-	if _is_svs_valid(current_selection):
-		var last_point := (current_selection as ScalableVectorShape2D).curve.get_point_position(current_selection.curve.point_count -1)
-		if current_selection.to_global(last_point).distance_to(pos) > _get_freehand_draw_granularity():
-			_add_point_to_curve(current_selection, current_selection.to_local(pos))
+
+	if not _pencil_stroke.is_empty() and _pencil_stroke[-1].distance_to(pos) > _get_freehand_draw_granularity():
+		_pencil_stroke.append(pos)
 
 
 func _handle_pencil_draw_input(event : InputEvent) -> bool:
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		if Input.is_key_pressed(KEY_SHIFT):
 			if event.is_pressed() and not _drawing_pencil_line:
-				_start_freehand_shape("PencilDrawing", true)
+				_start_pencil_draw()
 				return true
 			elif not event.is_pressed() and _drawing_pencil_line:
 				_add_point_to_pencil_line()
@@ -2177,31 +2202,27 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 			if event.is_pressed() and _drawing_pencil_line:
 				return true
 			if event.is_pressed() and not _drawing_pencil_line:
-				_start_freehand_shape("PencilDrawing", true)
+				_start_pencil_draw()
 				_drawing_pencil_line = true
 				return true
 			if not event.is_pressed():
 				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-				if _is_svs_valid(current_selection):
-					var svs := current_selection as ScalableVectorShape2D
-					if svs.curve.point_count > 1:
-						var snap = _get_freehand_draw_granularity() if _get_freehand_draw_granularity() > 10.0 else 10.0
-						var pts := svs.tessellate()
-						var segments := BasicFit.prepare_polyline_segments(pts, snap, 180, 180)
-						var new_curve := BasicFit.fit_curve_to_polyline(pts, segments)
-						if not _get_close_pencil_path():
-							new_curve.remove_point(new_curve.point_count-1)
-						undo_redo.create_action("optimize curve")
-						undo_redo.add_do_property(svs, 'curve', new_curve)
-						undo_redo.add_undo_property(svs, 'curve', svs.curve)
-						undo_redo.commit_action()
+				if is_instance_valid(current_selection):
+					var svs := _create_freehand_shape("PencilDrawing")
+					svs.global_position = _pencil_start_pos
+					for p in _pencil_stroke:
+						svs.curve.add_point(svs.to_local(p))
+					if _get_close_pencil_path() and _pencil_stroke.size() > 1:
+						svs.curve.add_point(svs.to_local(_pencil_stroke[0]))
+					_pencil_stroke.clear()
 					if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
-						select_node_reversibly(current_selection.get_parent())
+						select_node_reversibly(svs.get_parent())
 					else:
 						svs_edit_buttons.set_default_mode(true)
 				update_overlays()
 				_drawing_pencil_line = false
 				return true
+
 
 	if event is InputEventMouseMotion:
 		update_overlays()
@@ -2213,10 +2234,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 
 
 func _set_curve_from_polygon(svs : ScalableVectorShape2D, pts : PackedVector2Array) -> void:
-	undo_redo.create_action("reposition to brush start pos %s" % str(svs))
-	undo_redo.add_do_property(svs, 'global_position', _brush_start_pos)
-	undo_redo.add_undo_reference(svs)
-	undo_redo.commit_action()
+	svs.global_position = _brush_start_pos
 	var poly := PackedVector2Array(Array(pts).map(func(p): return svs.to_local(p)))
 	var fitness_prep := BasicFit.prepare_polyline_segments(poly, 0.5 * (_get_brush_size_x() + _get_brush_size_y()))
 	svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
@@ -2243,7 +2261,7 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 
 		else:
 			if is_instance_valid(current_selection):
-				var svs := _start_freehand_shape("BrushStroke", false)
+				var svs := _create_freehand_shape("BrushStroke")
 				_set_curve_from_polygon(svs, _current_brush_stroke)
 				_current_brush_stroke.clear()
 				if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
