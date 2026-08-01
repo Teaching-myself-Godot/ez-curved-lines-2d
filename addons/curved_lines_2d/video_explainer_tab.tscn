@@ -4,9 +4,9 @@
 [ext_resource type="Texture2D" uid="uid://bx6ppagarsjuc" path="res://addons/curved_lines_2d/video_thumbnails/a_z_deep_dive.webp" id="2_bmv75"]
 [ext_resource type="Texture2D" uid="uid://d3srqek2l3vbr" path="res://addons/curved_lines_2d/video_thumbnails/importing-svg-files-splash.webp" id="3_7txnu"]
 [ext_resource type="Texture2D" uid="uid://cybtin0ayniuw" path="res://addons/curved_lines_2d/video_thumbnails/pinball_release_notes.webp" id="3_68r4x"]
+[ext_resource type="Texture2D" uid="uid://maaagvgl7c6h" path="res://addons/curved_lines_2d/video_thumbnails/splash-new-features.webp" id="3_bmv75"]
 [ext_resource type="Texture2D" uid="uid://666dhwfxwq28" path="res://addons/curved_lines_2d/video_thumbnails/rig_svg.webp" id="3_ld6je"]
 [ext_resource type="Texture2D" uid="uid://da4p2p44x1uxp" path="res://addons/curved_lines_2d/video_thumbnails/rigoberto.webp" id="6_db0v2"]
-[ext_resource type="Texture2D" uid="uid://d0vjf8talro3u" path="res://addons/curved_lines_2d/video_thumbnails/animating_clip_paths.webp" id="7_dx0lu"]
 [ext_resource type="Texture2D" uid="uid://bw5o0vuns12aa" path="res://addons/curved_lines_2d/video_thumbnails/animating_curves.webp" id="8_db0v2"]
 [ext_resource type="Texture2D" uid="uid://c1cjsc75decfe" path="res://addons/curved_lines_2d/video_thumbnails/animations_to_sprite_frames.webp" id="8_xvhpr"]
 [ext_resource type="Texture2D" uid="uid://1eojktl4w61e" path="res://addons/curved_lines_2d/video_thumbnails/my_little_pony.webp" id="9_vmvt3"]
@@ -41,13 +41,13 @@ img = ExtResource("2_bmv75")
 uri = "https://youtu.be/z8Y1e-TehoE"
 text = "A-Z Explainer Deep Dive"
 
-[node name="ImportingSVGFiles" parent="HBoxContainer" unique_id=1218741548 instance=ExtResource("1_xhvii")]
+[node name="NewFeatures" parent="HBoxContainer" unique_id=1316356210 instance=ExtResource("1_xhvii")]
 layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/5PIVoQcm8QE
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/Pj-g_WFQvHA
 Right click to copy this link"
-img = ExtResource("3_7txnu")
-uri = "https://youtu.be/5PIVoQcm8QE"
-text = "Importing SVG Files"
+img = ExtResource("3_bmv75")
+uri = "https://youtu.be/Pj-g_WFQvHA"
+text = "New Features Since A - Z"
 
 [node name="RigSVG" parent="HBoxContainer" unique_id=127527835 instance=ExtResource("1_xhvii")]
 layout_mode = 2
@@ -56,14 +56,6 @@ Right click to copy this link"
 img = ExtResource("3_ld6je")
 uri = "https://youtu.be/e6dNBL8AAOQ"
 text = "Rigging SVG Images to a Skeleton2D"
-
-[node name="Pinball" parent="HBoxContainer" unique_id=1904488629 instance=ExtResource("1_xhvii")]
-layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/pP0CYEvU2uQ
-Right click to copy this link"
-img = ExtResource("3_68r4x")
-uri = "https://youtu.be/pP0CYEvU2uQ"
-text = "Building a Pinball Case"
 
 [node name="Rigoberto" parent="HBoxContainer" unique_id=543640992 instance=ExtResource("1_xhvii")]
 layout_mode = 2
@@ -77,17 +69,16 @@ text = "Rigoberto - Drawing and Rigging"
 layout_mode = 2
 tooltip_text = "This link will open a webpage in your browser: https://youtu.be/rT5FTg60GiY
 Right click to copy this link"
-img = ExtResource("7_dx0lu")
 uri = "https://youtu.be/rT5FTg60GiY"
 text = "Animating SVG Clip-Paths"
 
-[node name="SpriteFrames" parent="HBoxContainer" unique_id=1258372284 instance=ExtResource("1_xhvii")]
+[node name="Pinball" parent="HBoxContainer" unique_id=1904488629 instance=ExtResource("1_xhvii")]
 layout_mode = 2
-tooltip_text = "This link will open a webpage in your browser: https://youtu.be/RrusSXAiCK8
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/pP0CYEvU2uQ
 Right click to copy this link"
-img = ExtResource("8_xvhpr")
-uri = "https://youtu.be/RrusSXAiCK8"
-text = "Bake Spritesheets and Sprite Frames"
+img = ExtResource("3_68r4x")
+uri = "https://youtu.be/pP0CYEvU2uQ"
+text = "Building a Pinball Case"
 
 [node name="MyLittlePony" parent="HBoxContainer" unique_id=1748145545 instance=ExtResource("1_xhvii")]
 layout_mode = 2
@@ -96,6 +87,22 @@ Right click to copy this link"
 img = ExtResource("9_vmvt3")
 uri = "https://youtu.be/I2yh2y9mGRA"
 text = "How to draw a My Little Pony"
+
+[node name="ImportingSVGFiles" parent="HBoxContainer" unique_id=1218741548 instance=ExtResource("1_xhvii")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/5PIVoQcm8QE
+Right click to copy this link"
+img = ExtResource("3_7txnu")
+uri = "https://youtu.be/5PIVoQcm8QE"
+text = "Importing SVG Files"
+
+[node name="SpriteFrames" parent="HBoxContainer" unique_id=1258372284 instance=ExtResource("1_xhvii")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/RrusSXAiCK8
+Right click to copy this link"
+img = ExtResource("8_xvhpr")
+uri = "https://youtu.be/RrusSXAiCK8"
+text = "Bake Spritesheets and Sprite Frames"
 
 [node name="AnimatingCurves" parent="HBoxContainer" unique_id=708592046 instance=ExtResource("1_xhvii")]
 layout_mode = 2
