@@ -378,11 +378,13 @@ func process_svg_rectangle(element:SVGXMLElement, current_node : Node2D, scene_r
 
 func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_root : Node, is_closed : bool,
 		gradients : Array[Dictionary]) -> void:
-	var points_split = element.get_named_attribute_value("points").split(" ", false)
+	var points_split = (element.get_named_attribute_value("points")
+			.replacen(",", " ")
+			.split(" ", false)
+	)
 	var curve = Curve2D.new()
-	for p in points_split:
-		var values = p.split_floats(",", false)
-		curve.add_point(Vector2(values[0], values[1]))
+	for p_idx in range(0, points_split.size(), 2):
+		curve.add_point(Vector2(float(points_split[p_idx]), float(points_split[p_idx + 1])))
 	var path_name = get_element_label(element, "Polygon" if is_closed else "Polyline")
 	create_path2d(path_name, current_node, curve, [], get_svg_transform(element),
 			element.get_merged_styles(log_message), scene_root, gradients, is_closed)
@@ -743,6 +745,8 @@ func add_stroke_to_path(new_path : ScalableVectorShape2D, style: Dictionary, sce
 			new_path.stroke_color = Color(style["stroke"])
 		if style.has("stroke-width"):
 			new_path.stroke_width = float(style['stroke-width'])
+		else:
+			new_path.stroke_width = 1.0
 		if style.has("stroke-opacity"):
 			new_path.stroke_color.a = float(style["stroke-opacity"])
 
