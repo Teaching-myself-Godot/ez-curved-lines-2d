@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.27.6
+## 2.27.7
 
 ### Added
 
@@ -10,6 +10,7 @@
 
 ### Changed
 
+- Bugfix: SVG importer now supports polygons and polylines using a `point`-attribute without commas
 - Fix: nodes assigned via the glue map are now also moved by the curve when it is deformed by a skeleton
 - Bugfix: Fixes Error when closing a GUI scene in 4.7 and up
 - Bugfix: Pencil tool no longer insta-cancels on mouse move when this mode is active: "When I am done drawing, I want to select the shape I drew to edit the points and bézier curve handles"
@@ -23,6 +24,7 @@
 - Bugfix: line no longer disappears after using pencil tool when it has less than 3 points
 - Reduced package size by converting video thumbnails to `webp` format
 - Add links to the "New Features" video and to the discord in multiple places
+- Fix: Better mousewheel handling when changing a stroke's `width_curve` 
 
 ## 2.26.1
 

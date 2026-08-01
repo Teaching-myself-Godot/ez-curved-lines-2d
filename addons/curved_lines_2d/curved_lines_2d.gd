@@ -2595,7 +2595,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if (event is InputEventMouseButton and _is_ctrl_or_cmd_pressed() and
 				_is_svs_valid(current_selection) and
 				current_selection.has_meta(META_NAME_HOVER_CLOSEST_POINT) and
-				event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]):
+				event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN] and
+				event.is_pressed()):
 		_change_width_curve(current_selection, event.button_index == MOUSE_BUTTON_WHEEL_UP)
 		return true
 
