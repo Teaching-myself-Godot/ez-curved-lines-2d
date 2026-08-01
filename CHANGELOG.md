@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.27.5
+## 2.27.6
 
 ### Added
 
@@ -21,6 +21,8 @@
 - Make brush stroke and pencil stroke undoable with one single undo (Ctrl+Z)
 - Stop trying to optimize the pencil stroke's curve (never had any effect)
 - Bugfix: line no longer disappears after using pencil tool when it has less than 3 points
+- Reduced package size by converting video thumbnails to `webp` format
+- Add links to the "New Features" video and to the discord in multiple places
 
 ## 2.26.1
 
