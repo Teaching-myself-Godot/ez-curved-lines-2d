@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://dwns40mbgt82s"]
+[gd_scene format=3 uid="uid://dwns40mbgt82s"]
 
 [ext_resource type="Script" uid="uid://tl3hcapnk7lb" path="res://addons/curved_lines_2d/svs_edit_tab.gd" id="1_nt5in"]
 [ext_resource type="StyleBox" uid="uid://v0ueesjbdyrk" path="res://addons/curved_lines_2d/snazzy_toggle_button.stylebox" id="2_3cgh6"]
@@ -76,7 +76,7 @@ region = Rect2(0, 32, 32, 32)
 atlas = ExtResource("4_xku8w")
 region = Rect2(32, 32, 32, 32)
 
-[node name="SVSEditTab" type="ScrollContainer"]
+[node name="SVSEditTab" type="ScrollContainer" unique_id=640426920]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -85,7 +85,7 @@ grow_vertical = 2
 script = ExtResource("1_nt5in")
 metadata/_edit_vertical_guides_ = [176.0]
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1874431114]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -93,17 +93,17 @@ theme_override_constants/separation = 8
 metadata/_tab_index = 1
 metadata/_edit_vertical_guides_ = [170.0]
 
-[node name="DrawSettingsContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="DrawSettingsContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=2129177264]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="VBoxContainer/DrawSettingsContainer"]
+[node name="Label2" type="Label" parent="VBoxContainer/DrawSettingsContainer" unique_id=410230614]
 custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
 tooltip_text = "These settings apply to all new shapes created via the buttons in this dock."
 mouse_filter = 0
 text = "Draw Settings*"
 
-[node name="FillCheckButton" type="CheckButton" parent="VBoxContainer/DrawSettingsContainer"]
+[node name="FillCheckButton" type="CheckButton" parent="VBoxContainer/DrawSettingsContainer" unique_id=496946038]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 8
@@ -114,37 +114,36 @@ button_pressed = true
 text = "Fill*"
 alignment = 2
 
-[node name="FillPickerButton" type="ColorPickerButton" parent="VBoxContainer/DrawSettingsContainer"]
+[node name="FillPickerButton" type="ColorPickerButton" parent="VBoxContainer/DrawSettingsContainer" unique_id=1344057009]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(42, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 text = "Fill"
-color = Color(1, 1, 1, 1)
+color = Color(0.402344, 0, 0, 1)
 
-[node name="StrokeCheckButton" type="CheckButton" parent="VBoxContainer/DrawSettingsContainer"]
+[node name="StrokeCheckButton" type="CheckButton" parent="VBoxContainer/DrawSettingsContainer" unique_id=548959189]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "- Toggled On: when creating a new shape via this panel, a Stroke (Line2D) of this color will be automatically added
 - When a new ScalableVectorShape2D is generated via the Scene Tree or the 2D Viewport using add node, a Stroke will _not_ be automatically assigned.
 - When generating a Stroke via the Inspector button for ScalableVectorShape2D, the color configured here will be automatically picked."
-button_pressed = true
 text = "Stroke*"
 alignment = 2
 
-[node name="StrokePickerButton" type="ColorPickerButton" parent="VBoxContainer/DrawSettingsContainer"]
+[node name="StrokePickerButton" type="ColorPickerButton" parent="VBoxContainer/DrawSettingsContainer" unique_id=634290996]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(42, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 text = "Fill"
 
-[node name="CollisionObjectTypeOptionButton" parent="VBoxContainer/DrawSettingsContainer" instance=ExtResource("2_kh00m")]
+[node name="CollisionObjectTypeOptionButton" parent="VBoxContainer/DrawSettingsContainer" unique_id=1516514360 instance=ExtResource("2_kh00m")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/DrawSettingsContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/DrawSettingsContainer" unique_id=1198606807]
 layout_mode = 2
 tooltip_text = "- This toggle determines in what order 'Fills', 'Strokes' and 'Markers' are drawn when creating a new shape using this panel
 - This plugin treats CollisionPolygon2D as a marker, Line2D as stroke and Polygon2D as fill.
@@ -152,15 +151,15 @@ tooltip_text = "- This toggle determines in what order 'Fills', 'Strokes' and 'M
 mouse_filter = 0
 text = "Paint Order*"
 
-[node name="PaintOrderButton0" type="Button" parent="VBoxContainer/DrawSettingsContainer"]
+[node name="PaintOrderButton0" type="Button" parent="VBoxContainer/DrawSettingsContainer" unique_id=1432874730]
 layout_mode = 2
 tooltip_text = "Use Paint Order:
 Fills, Strokes, Collision"
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
 button_pressed = true
@@ -168,112 +167,112 @@ keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_qgati")
 icon = SubResource("AtlasTexture_3cgh6")
 
-[node name="PaintOrderButton1" type="Button" parent="VBoxContainer/DrawSettingsContainer"]
+[node name="PaintOrderButton1" type="Button" parent="VBoxContainer/DrawSettingsContainer" unique_id=546700217]
 layout_mode = 2
 tooltip_text = "Use Paint Order:
 Strokes, Fills, Collision"
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
 keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_qgati")
 icon = SubResource("AtlasTexture_xku8w")
 
-[node name="PaintOrderButton2" type="Button" parent="VBoxContainer/DrawSettingsContainer"]
+[node name="PaintOrderButton2" type="Button" parent="VBoxContainer/DrawSettingsContainer" unique_id=320076706]
 layout_mode = 2
 tooltip_text = "Use Paint Order:
 Fills, Collision, Strokes"
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
 keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_qgati")
 icon = SubResource("AtlasTexture_kh00m")
 
-[node name="PaintOrderButton3" type="Button" parent="VBoxContainer/DrawSettingsContainer"]
+[node name="PaintOrderButton3" type="Button" parent="VBoxContainer/DrawSettingsContainer" unique_id=781712636]
 layout_mode = 2
 tooltip_text = "Use Paint Order:
 Collision, Fills, Strokes"
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
 keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_qgati")
 icon = SubResource("AtlasTexture_4mj77")
 
-[node name="PaintOrderButton4" type="Button" parent="VBoxContainer/DrawSettingsContainer"]
+[node name="PaintOrderButton4" type="Button" parent="VBoxContainer/DrawSettingsContainer" unique_id=1559694575]
 layout_mode = 2
 tooltip_text = "Use Paint Order:
 Strokes, Collision, Fills"
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
 keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_qgati")
 icon = SubResource("AtlasTexture_jq58x")
 
-[node name="PaintOrderButton5" type="Button" parent="VBoxContainer/DrawSettingsContainer"]
+[node name="PaintOrderButton5" type="Button" parent="VBoxContainer/DrawSettingsContainer" unique_id=991147386]
 layout_mode = 2
 tooltip_text = "Use Paint Order:
 Collision, Strokes, Fills"
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
 keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_qgati")
 icon = SubResource("AtlasTexture_hip06")
 
-[node name="CreateEmptyShapeButton" type="Button" parent="VBoxContainer/DrawSettingsContainer"]
+[node name="CreateEmptyShapeButton" type="Button" parent="VBoxContainer/DrawSettingsContainer" unique_id=29597688]
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 size_flags_horizontal = 10
 tooltip_text = "Will create a ScalableVectorShape2D with zero points"
 text = "Create Empty Path"
 
-[node name="HSeparator5" type="HSeparator" parent="VBoxContainer"]
+[node name="HSeparator5" type="HSeparator" parent="VBoxContainer" unique_id=397515585]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="StrokeSettingsContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="StrokeSettingsContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1345835173]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="VBoxContainer/StrokeSettingsContainer"]
+[node name="Label2" type="Label" parent="VBoxContainer/StrokeSettingsContainer" unique_id=1601670005]
 custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
 tooltip_text = "These settings apply to the Line2D assigned to a new node created via the buttons in this dock."
 mouse_filter = 0
 text = "Stroke Settings*"
 
-[node name="StrokeWidthContainer" type="PanelContainer" parent="VBoxContainer/StrokeSettingsContainer"]
+[node name="StrokeWidthContainer" type="PanelContainer" parent="VBoxContainer/StrokeSettingsContainer" unique_id=390893354]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/StrokeSettingsContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/StrokeSettingsContainer" unique_id=8397574]
 layout_mode = 2
 size_flags_horizontal = 0
 
-[node name="UseLine2DCheckButton" type="CheckButton" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer"]
+[node name="UseLine2DCheckButton" type="CheckButton" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer" unique_id=1848147833]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
@@ -287,7 +286,7 @@ tooltip_text = "Use a Line2D node to represent the stroke with in stead of a Pol
 button_pressed = true
 text = "Use Line2D*"
 
-[node name="Label2" type="Label" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer"]
+[node name="Label2" type="Label" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer" unique_id=954910674]
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -301,7 +300,7 @@ mouse_filter = 0
 text = "Begin Cap Mode*"
 horizontal_alignment = 2
 
-[node name="BeginNoCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer"]
+[node name="BeginNoCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer" unique_id=353030120]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
@@ -309,19 +308,18 @@ size_flags_horizontal = 0
 tooltip_text = "This will set the begin_cap_mode of the assigned Line2D node to:
 - Line Cap None
 "
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
-button_pressed = true
 keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_kh00m")
 icon = SubResource("AtlasTexture_85hwe")
 
-[node name="BeginBoxCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer"]
+[node name="BeginBoxCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer" unique_id=1196030995]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
@@ -330,18 +328,18 @@ tooltip_text = "This will set the begin_cap_mode of the assigned Line2D node to:
 - Line Cap Box
 
 "
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
 keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_kh00m")
 icon = SubResource("AtlasTexture_nh347")
 
-[node name="BeginRoundCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer"]
+[node name="BeginRoundCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer" unique_id=455123227]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
@@ -350,23 +348,24 @@ tooltip_text = "This will set the begin_cap_mode of the assigned Line2D node to:
 - Line Cap Round
 
 "
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
+button_pressed = true
 keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_kh00m")
 icon = SubResource("AtlasTexture_exygk")
 
-[node name="EndCapForm" type="HBoxContainer" parent="VBoxContainer/StrokeSettingsContainer"]
+[node name="EndCapForm" type="HBoxContainer" parent="VBoxContainer/StrokeSettingsContainer" unique_id=1468693581]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 
-[node name="Label3" type="Label" parent="VBoxContainer/StrokeSettingsContainer/EndCapForm"]
+[node name="Label3" type="Label" parent="VBoxContainer/StrokeSettingsContainer/EndCapForm" unique_id=750479739]
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -380,7 +379,7 @@ mouse_filter = 0
 text = "End Cap Mode *"
 horizontal_alignment = 2
 
-[node name="EndNoCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/EndCapForm"]
+[node name="EndNoCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/EndCapForm" unique_id=241614489]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
@@ -388,19 +387,18 @@ size_flags_horizontal = 0
 tooltip_text = "This will set the end_cap_mode of the assigned Line2D node to:
 - Line Cap None
 "
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
-button_pressed = true
 keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_k2toy")
 icon = SubResource("AtlasTexture_2t4g6")
 
-[node name="EndBoxCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/EndCapForm"]
+[node name="EndBoxCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/EndCapForm" unique_id=863438764]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
@@ -409,18 +407,18 @@ tooltip_text = "This will set the end_cap_mode of the assigned Line2D node to:
 - Line Cap Box
 
 "
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
 keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_k2toy")
 icon = SubResource("AtlasTexture_pf6gx")
 
-[node name="EndRoundCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/EndCapForm"]
+[node name="EndRoundCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/EndCapForm" unique_id=328062618]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
@@ -429,22 +427,23 @@ tooltip_text = "This will set the end_cap_mode of the assigned Line2D node to:
 - Line Cap Round
 
 "
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
+button_pressed = true
 keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_k2toy")
 icon = SubResource("AtlasTexture_jph0d")
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/StrokeSettingsContainer"]
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/StrokeSettingsContainer" unique_id=1647651525]
 layout_mode = 2
 size_flags_horizontal = 0
 
-[node name="Label" type="Label" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer3"]
+[node name="Label" type="Label" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer3" unique_id=2066194823]
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -456,68 +455,68 @@ mouse_filter = 0
 text = "Joint Mode*"
 horizontal_alignment = 2
 
-[node name="LineJointSharpToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer3"]
+[node name="LineJointSharpToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer3" unique_id=1498596706]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "This will set the joint_mode of the assigned Line2D node to:
 - Sharp"
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
-button_pressed = true
 keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_xku8w")
 icon = SubResource("AtlasTexture_k2toy")
 
-[node name="LineJointBevelToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer3"]
+[node name="LineJointBevelToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer3" unique_id=588540189]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "This will set the joint_mode of the assigned Line2D node to:
 - Bevel"
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
 keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_xku8w")
 icon = SubResource("AtlasTexture_em7di")
 
-[node name="LineJointRoundToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer3"]
+[node name="LineJointRoundToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer3" unique_id=505861698]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "This will set the joint_mode of the assigned Line2D node to:
 - Round"
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = ExtResource("2_3cgh6")
 toggle_mode = true
+button_pressed = true
 keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_xku8w")
 icon = SubResource("AtlasTexture_84wj1")
 
-[node name="HSeparator4" type="HSeparator" parent="VBoxContainer"]
+[node name="HSeparator4" type="HSeparator" parent="VBoxContainer" unique_id=1889496376]
 layout_mode = 2
 
-[node name="RectBuilderContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="RectBuilderContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1113702923]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/RectBuilderContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/RectBuilderContainer" unique_id=2098793824]
 custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
 tooltip_text = "Create a Rectangle as:
@@ -526,49 +525,49 @@ tooltip_text = "Create a Rectangle as:
 mouse_filter = 0
 text = "Create Rectangle*"
 
-[node name="WidthSliderContainer" type="PanelContainer" parent="VBoxContainer/RectBuilderContainer"]
+[node name="WidthSliderContainer" type="PanelContainer" parent="VBoxContainer/RectBuilderContainer" unique_id=217195658]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(30, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HeightSliderContainer" type="PanelContainer" parent="VBoxContainer/RectBuilderContainer"]
+[node name="HeightSliderContainer" type="PanelContainer" parent="VBoxContainer/RectBuilderContainer" unique_id=1762654763]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="XRadiusSliderContainer" type="PanelContainer" parent="VBoxContainer/RectBuilderContainer"]
+[node name="XRadiusSliderContainer" type="PanelContainer" parent="VBoxContainer/RectBuilderContainer" unique_id=177832719]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(30, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="YRadiusSliderContainer" type="PanelContainer" parent="VBoxContainer/RectBuilderContainer"]
+[node name="YRadiusSliderContainer" type="PanelContainer" parent="VBoxContainer/RectBuilderContainer" unique_id=865391987]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CreateRectButton" type="Button" parent="VBoxContainer/RectBuilderContainer"]
+[node name="CreateRectButton" type="Button" parent="VBoxContainer/RectBuilderContainer" unique_id=1111340992]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Create a new ScalableRect2D"
 text = "Create Rectangle"
 
-[node name="CreateRectAsPathButton" type="Button" parent="VBoxContainer/RectBuilderContainer"]
+[node name="CreateRectAsPathButton" type="Button" parent="VBoxContainer/RectBuilderContainer" unique_id=361487138]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Create a new Rectangle as a ScalableVectorShape2D"
 text = "Create Path"
 
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer" unique_id=224476460]
 layout_mode = 2
 
-[node name="EllipseBuilderContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="EllipseBuilderContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=250169879]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/EllipseBuilderContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/EllipseBuilderContainer" unique_id=931032815]
 custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
 tooltip_text = "Create an Ellipse as:
@@ -577,38 +576,66 @@ tooltip_text = "Create an Ellipse as:
 mouse_filter = 0
 text = "Create Ellipse*"
 
-[node name="EllipseXRadiusSliderContainer" type="PanelContainer" parent="VBoxContainer/EllipseBuilderContainer"]
+[node name="EllipseXRadiusSliderContainer" type="PanelContainer" parent="VBoxContainer/EllipseBuilderContainer" unique_id=1156878948]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="EllipseYRadiusSliderContainer" type="PanelContainer" parent="VBoxContainer/EllipseBuilderContainer"]
+[node name="EllipseYRadiusSliderContainer" type="PanelContainer" parent="VBoxContainer/EllipseBuilderContainer" unique_id=119082709]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CreateEllipseButton" type="Button" parent="VBoxContainer/EllipseBuilderContainer"]
+[node name="CreateEllipseButton" type="Button" parent="VBoxContainer/EllipseBuilderContainer" unique_id=1724532628]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 text = "Create Ellipse"
 
-[node name="CreateCircleButton" type="Button" parent="VBoxContainer/EllipseBuilderContainer"]
+[node name="CreateCircleButton" type="Button" parent="VBoxContainer/EllipseBuilderContainer" unique_id=374701615]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 text = "Create Path"
 
-[node name="HSeparator3" type="HSeparator" parent="VBoxContainer"]
+[node name="HSeparator3" type="HSeparator" parent="VBoxContainer" unique_id=1321921574]
 layout_mode = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=2082235567]
 layout_mode = 2
-size_flags_vertical = 3
 
-[node name="LinkButton" parent="VBoxContainer/CenterContainer" instance=ExtResource("2_xxhaf")]
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1913520253]
+custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
+text = "Links"
+
+[node name="LinkButton" parent="VBoxContainer/HBoxContainer" unique_id=2007707676 instance=ExtResource("2_xxhaf")]
+layout_mode = 2
+size_flags_vertical = 4
 tooltip_text = "This link will open a webpage in your browser: https://youtu.be/gaug5zv57IE
 Right click to copy this link"
 uri = "https://youtu.be/gaug5zv57IE"
+
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer/HBoxContainer" unique_id=973592339]
+layout_mode = 2
+
+[node name="LinkButton3" parent="VBoxContainer/HBoxContainer" unique_id=47590112 instance=ExtResource("2_xxhaf")]
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/z8Y1e-TehoE
+Right click to copy this link"
+text = "Watch the Full A-Z Explainer on Youtube"
+uri = "https://youtu.be/z8Y1e-TehoE"
+
+[node name="VSeparator2" type="VSeparator" parent="VBoxContainer/HBoxContainer" unique_id=1698234501]
+layout_mode = 2
+
+[node name="LinkButton2" parent="VBoxContainer/HBoxContainer" unique_id=1694379931 instance=ExtResource("2_xxhaf")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+tooltip_text = "This link will open a webpage in your browser: https://discord.com/invite/CDdkVvT2Ff
+Right click to copy this link"
+text = "Ask Questions on Discord"
+uri = "https://discord.com/invite/CDdkVvT2Ff"
 
 [connection signal="toggled" from="VBoxContainer/DrawSettingsContainer/FillCheckButton" to="." method="_on_fill_check_button_toggled"]
 [connection signal="color_changed" from="VBoxContainer/DrawSettingsContainer/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]

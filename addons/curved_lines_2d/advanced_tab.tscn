@@ -1,13 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://3r7rlhrwfmfe"]
+[gd_scene format=3 uid="uid://3r7rlhrwfmfe"]
 
 [ext_resource type="Script" uid="uid://duyq57sg3jn7q" path="res://addons/curved_lines_2d/advanced_tab.gd" id="1_h55kp"]
+[ext_resource type="PackedScene" uid="uid://cmoxkoulpd7so" path="res://addons/curved_lines_2d/link_button_with_copy_hint.tscn" id="2_3mjpc"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_h55kp"]
 line_spacing = 0.0
 font_size = 14
 font_color = Color(0.73, 0.73, 0.73, 1)
 
-[node name="AdvancedTab" type="VBoxContainer"]
+[node name="AdvancedTab" type="VBoxContainer" unique_id=1576656196]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -17,10 +18,10 @@ theme_override_constants/separation = 8
 script = ExtResource("1_h55kp")
 metadata/_tab_index = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1779931088]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="HBoxContainer"]
+[node name="Label" type="Label" parent="HBoxContainer" unique_id=867247774]
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 tooltip_text = "Export the selected node and its children:
@@ -30,69 +31,111 @@ tooltip_text = "Export the selected node and its children:
 mouse_filter = 0
 text = "Export Options*"
 
-[node name="ExportAsPNGButton" type="Button" parent="HBoxContainer"]
+[node name="ExportAsPNGButton" type="Button" parent="HBoxContainer" unique_id=484925064]
 layout_mode = 2
 text = "PNG Image"
 
-[node name="ExportAsBakedSceneButton" type="Button" parent="HBoxContainer"]
+[node name="ExportAsBakedSceneButton" type="Button" parent="HBoxContainer" unique_id=894993405]
 layout_mode = 2
 text = "'Baked' Scene
 "
 
-[node name="ExportAs3DSceneButton" type="Button" parent="HBoxContainer"]
+[node name="ExportAs3DSceneButton" type="Button" parent="HBoxContainer" unique_id=487244196]
 layout_mode = 2
 text = "3D Scene"
 
-[node name="HSeparator" type="HSeparator" parent="."]
+[node name="HSeparator" type="HSeparator" parent="." unique_id=1473870105]
 layout_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="."]
+[node name="HBoxContainer2" type="HBoxContainer" parent="." unique_id=1431123638]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="HBoxContainer2"]
+[node name="Label" type="Label" parent="HBoxContainer2" unique_id=1830982110]
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 tooltip_text = "Exports the entire scene as a PNG spritesheet, or separate PNG files using the selected animation."
 mouse_filter = 0
 text = "Bake Sprite Frames*"
 
-[node name="HintLabel" type="Label" parent="HBoxContainer2"]
+[node name="HintLabel" type="Label" parent="HBoxContainer2" unique_id=1543463045]
 unique_name_in_owner = true
 layout_mode = 2
 text = "- Select a 2D scene with at least an AnimationPlayer and one ScalableVectorShape2D -"
 label_settings = SubResource("LabelSettings_h55kp")
 
-[node name="SelectAnimationOptionButton" type="OptionButton" parent="HBoxContainer2"]
+[node name="SelectAnimationOptionButton" type="OptionButton" parent="HBoxContainer2" unique_id=1147085319]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 
-[node name="FpsInputContainer" type="PanelContainer" parent="HBoxContainer2"]
+[node name="FpsInputContainer" type="PanelContainer" parent="HBoxContainer2" unique_id=2049306395]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ExportAsSpritesheetCheckButton" type="CheckButton" parent="HBoxContainer2"]
+[node name="ExportAsSpritesheetCheckButton" type="CheckButton" parent="HBoxContainer2" unique_id=1690823016]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 text = "Export as Spritesheet"
 
-[node name="StatusLabel" type="Label" parent="HBoxContainer2"]
+[node name="StatusLabel" type="Label" parent="HBoxContainer2" unique_id=1329846642]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
-[node name="CreateSpriteSheetButton" type="Button" parent="HBoxContainer2"]
+[node name="CreateSpriteSheetButton" type="Button" parent="HBoxContainer2" unique_id=779963029]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 8
 text = "Create"
 
-[node name="HSeparator2" type="HSeparator" parent="."]
+[node name="HSeparator2" type="HSeparator" parent="." unique_id=1273928255]
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="." unique_id=1125644659]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer3" unique_id=575070412]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "Links"
+
+[node name="LinkButton" parent="HBoxContainer3" unique_id=1442362674 instance=ExtResource("2_3mjpc")]
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/RrusSXAiCK8
+Right click to copy this link"
+text = "Exporting Spritesheets Explained on Youtube"
+uri = "https://youtu.be/RrusSXAiCK8"
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer3" unique_id=164813137]
+layout_mode = 2
+
+[node name="LinkButton3" parent="HBoxContainer3" unique_id=136983315 instance=ExtResource("2_3mjpc")]
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/z8Y1e-TehoE
+Right click to copy this link"
+text = "Watch the Full A-Z Explainer on Youtube"
+uri = "https://youtu.be/z8Y1e-TehoE"
+
+[node name="VSeparator2" type="VSeparator" parent="HBoxContainer3" unique_id=1909264770]
+layout_mode = 2
+
+[node name="LinkButton2" parent="HBoxContainer3" unique_id=1625367980 instance=ExtResource("2_3mjpc")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+tooltip_text = "This link will open a webpage in your browser: https://discord.com/invite/CDdkVvT2Ff
+Right click to copy this link"
+text = "Ask Questions on Discord"
+uri = "https://discord.com/invite/CDdkVvT2Ff"
+
+[node name="HSeparator3" type="HSeparator" parent="." unique_id=1512737295]
 layout_mode = 2
 
 [connection signal="pressed" from="HBoxContainer/ExportAsPNGButton" to="." method="_on_export_as_png_button_pressed"]

@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://d3j2c8gduqsuu"]
+[gd_scene format=3 uid="uid://d3j2c8gduqsuu"]
 
 [ext_resource type="Script" uid="uid://xijifdpi2kw" path="res://addons/curved_lines_2d/project_settings_tab.gd" id="1_q4g58"]
 [ext_resource type="PackedScene" uid="uid://cmoxkoulpd7so" path="res://addons/curved_lines_2d/link_button_with_copy_hint.tscn" id="2_mgx58"]
 
-[node name="ProjectSettingsTab" type="ScrollContainer"]
+[node name="ProjectSettingsTab" type="ScrollContainer" unique_id=139653357]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -11,38 +11,38 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_q4g58")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=2089852419]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 metadata/_tab_index = 2
 
-[node name="EditorSettingsContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="EditorSettingsContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1762180414]
 layout_mode = 2
 theme_override_constants/separation = 13
 
-[node name="Label" type="Label" parent="VBoxContainer/EditorSettingsContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/EditorSettingsContainer" unique_id=1552110937]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 tooltip_text = "Determines what settings apply to the 2D Editor Viewport."
 mouse_filter = 0
 text = "Editor Settings*"
 
-[node name="EnableEditingCheckbox" type="CheckBox" parent="VBoxContainer/EditorSettingsContainer"]
+[node name="EnableEditingCheckbox" type="CheckBox" parent="VBoxContainer/EditorSettingsContainer" unique_id=981386692]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 button_pressed = true
 text = "Enable ScalableVectorShape2D Editing"
 
-[node name="EnableHintsCheckbox" type="CheckBox" parent="VBoxContainer/EditorSettingsContainer"]
+[node name="EnableHintsCheckbox" type="CheckBox" parent="VBoxContainer/EditorSettingsContainer" unique_id=724678117]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 button_pressed = true
 text = "Show Edit Hints"
 
-[node name="EnablePointNumbersCheckbox" type="CheckBox" parent="VBoxContainer/EditorSettingsContainer"]
+[node name="EnablePointNumbersCheckbox" type="CheckBox" parent="VBoxContainer/EditorSettingsContainer" unique_id=567082755]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
@@ -52,7 +52,7 @@ tooltip_text = "When active, when hovering over a point / handle in the curve
 button_pressed = true
 text = "Show Point Details*"
 
-[node name="SnapToPixelCheckBox" type="CheckBox" parent="VBoxContainer/EditorSettingsContainer"]
+[node name="SnapToPixelCheckBox" type="CheckBox" parent="VBoxContainer/EditorSettingsContainer" unique_id=2040304014]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
@@ -61,20 +61,20 @@ tooltip_text = "When active, points you move will snap to whole numbers:
 - .. so if any parent is not snapped to pixel, the local position of this point is also still not snapped"
 text = "Snap to pixel*"
 
-[node name="SnapResolutionInputContainer" type="PanelContainer" parent="VBoxContainer/EditorSettingsContainer"]
+[node name="SnapResolutionInputContainer" type="PanelContainer" parent="VBoxContainer/EditorSettingsContainer" unique_id=614125882]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer" unique_id=1663946612]
 layout_mode = 2
 
-[node name="CurveSettingsContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="CurveSettingsContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=238381511]
 layout_mode = 2
 theme_override_constants/separation = 13
 
-[node name="Label" type="Label" parent="VBoxContainer/CurveSettingsContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/CurveSettingsContainer" unique_id=1187225730]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 tooltip_text = "These are the default properties that will apply to the `curve : Curve2D`  property of all the shapes created via this bottom dock and shortcuts:
@@ -84,7 +84,7 @@ tooltip_text = "These are the default properties that will apply to the `curve :
 mouse_filter = 0
 text = "Curve Settings*"
 
-[node name="UpdateCurveAtRuntimeCheckbox" type="CheckBox" parent="VBoxContainer/CurveSettingsContainer"]
+[node name="UpdateCurveAtRuntimeCheckbox" type="CheckBox" parent="VBoxContainer/CurveSettingsContainer" unique_id=779861396]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "When toggled On, shape changes to the curve will also take effect at runtime, not only while editing. 
@@ -93,43 +93,43 @@ This needs to be flagged On for animated curves to work, but should be used with
 button_pressed = true
 text = "Update Curve at Runtime"
 
-[node name="MakeResourcesLocalToSceneCheckBox" type="CheckBox" parent="VBoxContainer/CurveSettingsContainer"]
+[node name="MakeResourcesLocalToSceneCheckBox" type="CheckBox" parent="VBoxContainer/CurveSettingsContainer" unique_id=900682503]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 text = "Make Curve Local to Scene"
 
-[node name="ToleranceDegreesInputContainer" type="PanelContainer" parent="VBoxContainer/CurveSettingsContainer"]
+[node name="ToleranceDegreesInputContainer" type="PanelContainer" parent="VBoxContainer/CurveSettingsContainer" unique_id=1214982101]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MaxStagesInputContainer" type="PanelContainer" parent="VBoxContainer/CurveSettingsContainer"]
+[node name="MaxStagesInputContainer" type="PanelContainer" parent="VBoxContainer/CurveSettingsContainer" unique_id=2135781635]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HSeparator3" type="HSeparator" parent="VBoxContainer"]
+[node name="HSeparator3" type="HSeparator" parent="VBoxContainer" unique_id=1960288084]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1235138984]
 layout_mode = 2
 theme_override_constants/separation = 13
 
-[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=517384730]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 mouse_filter = 0
 text = "Extra's"
 
-[node name="AddAntialiasedLine2DCheckbox" type="CheckBox" parent="VBoxContainer/HBoxContainer"]
+[node name="AddAntialiasedLine2DCheckbox" type="CheckBox" parent="VBoxContainer/HBoxContainer" unique_id=1473147030]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Add Line2D antialiasing texture for Compatibility mode"
 
-[node name="LinkButton" parent="VBoxContainer/HBoxContainer" instance=ExtResource("2_mgx58")]
+[node name="LinkButton" parent="VBoxContainer/HBoxContainer" unique_id=952291150 instance=ExtResource("2_mgx58")]
 layout_mode = 2
 size_flags_vertical = 4
 tooltip_text = "This link will open a webpage in your browser: https://godotengine.org/asset-library/asset/3103
@@ -137,7 +137,49 @@ Right click to copy this link"
 text = "Inspired by Calinou's Antialiased Line2D plugin"
 uri = "https://godotengine.org/asset-library/asset/3103"
 
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer" unique_id=1195507186]
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer" unique_id=1392522898]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer3" unique_id=1139026490]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "Links"
+
+[node name="LinkButton" parent="VBoxContainer/HBoxContainer3" unique_id=1397965073 instance=ExtResource("2_mgx58")]
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/Pj-g_WFQvHA
+Right click to copy this link"
+text = "Watch new Features on Youtube"
+uri = "https://youtu.be/Pj-g_WFQvHA"
+
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer/HBoxContainer3" unique_id=1394892548]
+layout_mode = 2
+
+[node name="LinkButton3" parent="VBoxContainer/HBoxContainer3" unique_id=401589606 instance=ExtResource("2_mgx58")]
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/z8Y1e-TehoE
+Right click to copy this link"
+text = "Watch the Full A-Z Explainer on Youtube"
+uri = "https://youtu.be/z8Y1e-TehoE"
+
+[node name="VSeparator2" type="VSeparator" parent="VBoxContainer/HBoxContainer3" unique_id=1084774582]
+layout_mode = 2
+
+[node name="LinkButton2" parent="VBoxContainer/HBoxContainer3" unique_id=1620236448 instance=ExtResource("2_mgx58")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+tooltip_text = "This link will open a webpage in your browser: https://discord.com/invite/CDdkVvT2Ff
+Right click to copy this link"
+text = "Ask Questions on Discord"
+uri = "https://discord.com/invite/CDdkVvT2Ff"
+
+[node name="HSeparator4" type="HSeparator" parent="VBoxContainer" unique_id=749590566]
 layout_mode = 2
 
 [connection signal="toggled" from="VBoxContainer/EditorSettingsContainer/EnableEditingCheckbox" to="." method="_on_enable_editing_checkbox_toggled"]

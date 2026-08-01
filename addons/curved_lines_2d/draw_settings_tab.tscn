@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://ir0lsf5ikpdl"]
+[gd_scene format=3 uid="uid://ir0lsf5ikpdl"]
 
 [ext_resource type="Script" uid="uid://2gwqgaeywun8" path="res://addons/curved_lines_2d/draw_settings_tab.gd" id="1_6abb2"]
+[ext_resource type="PackedScene" uid="uid://cmoxkoulpd7so" path="res://addons/curved_lines_2d/link_button_with_copy_hint.tscn" id="2_m7yno"]
 
-[node name="DrawSettingsTab" type="ScrollContainer"]
+[node name="DrawSettingsTab" type="ScrollContainer" unique_id=1538270979]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -12,17 +13,17 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_6abb2")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1681393011]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 16
 metadata/_tab_index = 2
 
-[node name="SelectionBehaviourContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="SelectionBehaviourContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=154075476]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Label" type="Label" parent="VBoxContainer/SelectionBehaviourContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/SelectionBehaviourContainer" unique_id=808157238]
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 size_flags_vertical = 8
@@ -32,12 +33,12 @@ tooltip_text = "Determine what to do once you are done drawing:
 mouse_filter = 0
 text = "Selection Behavior*"
 
-[node name="KeepDrawingOptionButton" type="OptionButton" parent="VBoxContainer/SelectionBehaviourContainer"]
+[node name="KeepDrawingOptionButton" type="OptionButton" parent="VBoxContainer/SelectionBehaviourContainer" unique_id=1285016288]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 8
-selected = 0
+selected = 1
 fit_to_longest_item = false
 item_count = 2
 popup/item_0/text = "When I am done drawing a shape I want to draw another one for the same parent"
@@ -45,48 +46,49 @@ popup/item_0/id = 0
 popup/item_1/text = "When I am done drawing, I want to select the shape I drew to edit the points and bézier curve handles"
 popup/item_1/id = 1
 
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer" unique_id=1183437030]
 layout_mode = 2
 
-[node name="PencilSettingsContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="PencilSettingsContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1373810091]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/separation = 8
 
-[node name="Label" type="Label" parent="VBoxContainer/PencilSettingsContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/PencilSettingsContainer" unique_id=968181478]
 custom_minimum_size = Vector2(152, 0)
 layout_mode = 2
 mouse_filter = 0
 text = "Misc Behavior"
 
-[node name="Granularity" type="PanelContainer" parent="VBoxContainer/PencilSettingsContainer"]
+[node name="Granularity" type="PanelContainer" parent="VBoxContainer/PencilSettingsContainer" unique_id=784178391]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ClosePathCheckBox" type="CheckBox" parent="VBoxContainer/PencilSettingsContainer"]
+[node name="ClosePathCheckBox" type="CheckBox" parent="VBoxContainer/PencilSettingsContainer" unique_id=1137117269]
 unique_name_in_owner = true
 layout_mode = 2
+button_pressed = true
 text = "Close curve of newly drawn path"
 
-[node name="HSeparator3" type="HSeparator" parent="VBoxContainer"]
+[node name="HSeparator3" type="HSeparator" parent="VBoxContainer" unique_id=434643037]
 layout_mode = 2
 
-[node name="BrushSettingsContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="BrushSettingsContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=129730142]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/separation = 8
 
-[node name="Label" type="Label" parent="VBoxContainer/BrushSettingsContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/BrushSettingsContainer" unique_id=1566980839]
 custom_minimum_size = Vector2(152, 0)
 layout_mode = 2
 tooltip_text = "Draw polygons in a brush style. Clipped off by a parent shape if a parent shape is selected."
 mouse_filter = 0
 text = "Brush / Polygons*"
 
-[node name="BrushShapeOptionButton" type="OptionButton" parent="VBoxContainer/BrushSettingsContainer"]
+[node name="BrushShapeOptionButton" type="OptionButton" parent="VBoxContainer/BrushSettingsContainer" unique_id=1954145326]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 4
@@ -97,26 +99,65 @@ popup/item_0/id = 0
 popup/item_1/text = "Rectangle Brush"
 popup/item_1/id = 1
 
-[node name="BrushSizeXContainer" type="PanelContainer" parent="VBoxContainer/BrushSettingsContainer"]
+[node name="BrushSizeXContainer" type="PanelContainer" parent="VBoxContainer/BrushSettingsContainer" unique_id=1298483623]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="BrushSizeYContainer" type="PanelContainer" parent="VBoxContainer/BrushSettingsContainer"]
+[node name="BrushSizeYContainer" type="PanelContainer" parent="VBoxContainer/BrushSettingsContainer" unique_id=1974736307]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="BrushRotationContainer" type="PanelContainer" parent="VBoxContainer/BrushSettingsContainer"]
+[node name="BrushRotationContainer" type="PanelContainer" parent="VBoxContainer/BrushSettingsContainer" unique_id=506410703]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer" unique_id=653559213]
 layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer" unique_id=697732109]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer3" unique_id=1388315138]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "Links"
+
+[node name="LinkButton" parent="VBoxContainer/HBoxContainer3" unique_id=1858007351 instance=ExtResource("2_m7yno")]
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/Pj-g_WFQvHA
+Right click to copy this link"
+text = "Watch new Features on Youtube"
+uri = "https://youtu.be/Pj-g_WFQvHA"
+
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer/HBoxContainer3" unique_id=1908839728]
+layout_mode = 2
+
+[node name="LinkButton3" parent="VBoxContainer/HBoxContainer3" unique_id=339645154 instance=ExtResource("2_m7yno")]
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/z8Y1e-TehoE
+Right click to copy this link"
+text = "Watch the Full A-Z Explainer on Youtube"
+uri = "https://youtu.be/z8Y1e-TehoE"
+
+[node name="VSeparator2" type="VSeparator" parent="VBoxContainer/HBoxContainer3" unique_id=673879799]
+layout_mode = 2
+
+[node name="LinkButton2" parent="VBoxContainer/HBoxContainer3" unique_id=1947841347 instance=ExtResource("2_m7yno")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+tooltip_text = "This link will open a webpage in your browser: https://discord.com/invite/CDdkVvT2Ff
+Right click to copy this link"
+text = "Ask Questions on Discord"
+uri = "https://discord.com/invite/CDdkVvT2Ff"
 
 [connection signal="item_selected" from="VBoxContainer/SelectionBehaviourContainer/KeepDrawingOptionButton" to="." method="_on_keep_drawing_option_button_item_selected"]
 [connection signal="toggled" from="VBoxContainer/PencilSettingsContainer/ClosePathCheckBox" to="." method="_on_close_path_check_box_toggled"]

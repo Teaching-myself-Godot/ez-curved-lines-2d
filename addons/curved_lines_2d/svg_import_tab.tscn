@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cfeemeccrtef7"]
+[gd_scene format=3 uid="uid://cfeemeccrtef7"]
 
 [ext_resource type="Script" uid="uid://bp5vvj23w57js" path="res://addons/curved_lines_2d/svg_import_tab.gd" id="1_dlf5g"]
 [ext_resource type="Texture2D" uid="uid://b8ludy6aqsejg" path="res://addons/curved_lines_2d/LockViewport.svg" id="2_v8p2q"]
@@ -28,7 +28,7 @@ border_width_bottom = 4
 border_color = Color(0.439216, 0.729412, 0.980392, 1)
 border_blend = true
 
-[node name="SVGImportTab" type="HBoxContainer"]
+[node name="SVGImportTab" type="HBoxContainer" unique_id=1623113116]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -38,32 +38,32 @@ theme_override_constants/separation = 20
 script = ExtResource("1_dlf5g")
 metadata/_tab_index = 0
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="."]
+[node name="VBoxContainer2" type="VBoxContainer" parent="." unique_id=121249160]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="VBoxContainer2"]
+[node name="Label" type="Label" parent="VBoxContainer2" unique_id=1690418130]
 layout_mode = 2
 text = "Import Settings"
 
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer2"]
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer2" unique_id=666101575]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_rycm0")
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer2/PanelContainer"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer2/PanelContainer" unique_id=1487564080]
 layout_mode = 2
 
-[node name="SettingsScrollContainer" type="ScrollContainer" parent="VBoxContainer2/PanelContainer/VBoxContainer2"]
+[node name="SettingsScrollContainer" type="ScrollContainer" parent="VBoxContainer2/PanelContainer/VBoxContainer2" unique_id=44359869]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 10.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer" unique_id=550337677]
 layout_mode = 2
 
-[node name="KeepDrawablePath2DNodeCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer"]
+[node name="KeepDrawablePath2DNodeCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=1756831126]
 layout_mode = 2
 tooltip_text = "- When checked on, all shapes in the SVG file will be imported as ScalableVectorShape2D (this is advised)
 - Checking this off will only add builtin nodes the scene (Line2D, Polygon2D, CollisionPolygon2D as child of Node2D). It will print errors, because of missing references.
@@ -71,7 +71,7 @@ tooltip_text = "- When checked on, all shapes in the SVG file will be imported a
 button_pressed = true
 text = "Import as ScalableVectorShape2D*"
 
-[node name="LockShapesCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer"]
+[node name="LockShapesCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=1380672106]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "- Adds a lock to the Line2D, Polygon2D and CollisionPolygon2D assigned to the ScalableVectorShape2D
@@ -80,12 +80,12 @@ button_pressed = true
 text = "Lock imported shapes in editor *"
 icon = ExtResource("2_v8p2q")
 
-[node name="AntialiasedCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer"]
+[node name="AntialiasedCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=1468204944]
 layout_mode = 2
 tooltip_text = "It's probably better to use project settings for this, but checking this on will ensure that the antialised property is checked on for imported Line2D and Polygon2D"
 text = "Flag on antialiased for Polygon2D and Line2D*"
 
-[node name="UseLine2DCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer"]
+[node name="UseLine2DCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=45145165]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
@@ -99,43 +99,55 @@ tooltip_text = "Use a Line2D node to represent the stroke with in stead of a Pol
 button_pressed = true
 text = "Use Line2D for Strokes*"
 
-[node name="CollisionObjectTypeOptionButton" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" instance=ExtResource("3_tqnmm")]
+[node name="CollisionObjectTypeOptionButton" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=1316342792 instance=ExtResource("3_tqnmm")]
 layout_mode = 2
 
-[node name="OpenFileDialogButton" type="Button" parent="VBoxContainer2/PanelContainer/VBoxContainer2"]
+[node name="OpenFileDialogButton" type="Button" parent="VBoxContainer2/PanelContainer/VBoxContainer2" unique_id=594246102]
 layout_mode = 2
 size_flags_vertical = 10
 text = "Pick a file to import"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=989466812]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=228654041]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=76392878]
 layout_mode = 2
 text = "SVG Import Log"
 
-[node name="LogScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+[node name="LinkButton" parent="VBoxContainer/HBoxContainer" unique_id=1767673017 instance=ExtResource("5_wpk81")]
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 4
+tooltip_text = "This link will open a webpage in your browser: https://discord.com/invite/CDdkVvT2Ff
+Right click to copy this link"
+text = "Ask Questions on Discord"
+uri = "https://discord.com/invite/CDdkVvT2Ff"
+
+[node name="LogScrollContainer" type="ScrollContainer" parent="VBoxContainer" unique_id=270661504]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_gt4al")
 
-[node name="ImportLogContainer" type="VBoxContainer" parent="VBoxContainer/LogScrollContainer"]
+[node name="ImportLogContainer" type="VBoxContainer" parent="VBoxContainer/LogScrollContainer" unique_id=1049609963]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = -5
 
-[node name="Label" type="Label" parent="VBoxContainer/LogScrollContainer/ImportLogContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/LogScrollContainer/ImportLogContainer" unique_id=590790250]
 layout_mode = 2
 size_flags_vertical = 10
 text = " - Drag/Drop an svg-file here to start import -"
 label_settings = ExtResource("4_4seqe")
 horizontal_alignment = 1
 
-[node name="LinkButton2" parent="VBoxContainer/LogScrollContainer/ImportLogContainer" instance=ExtResource("5_wpk81")]
+[node name="LinkButton2" parent="VBoxContainer/LogScrollContainer/ImportLogContainer" unique_id=1776685394 instance=ExtResource("5_wpk81")]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 2
