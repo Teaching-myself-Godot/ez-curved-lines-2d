@@ -13,15 +13,28 @@ Scalable Vector Shapes 2D lets you do 3 things:
 
 In this 10 minute video I explain how to use all the features of Scalable Vector Shapes 2D in short succession:
 
-[![link to the explainer](./addons/curved_lines_2d/video_thumbnails/a_z_deep_dive.png)](https://youtu.be/z8Y1e-TehoE)
+[![link to the explainer](./addons/curved_lines_2d/video_thumbnails/a_z_deep_dive.webp)](https://youtu.be/z8Y1e-TehoE)
 
 [^1]: Looking for EZ Curved Lines 2D? The renamed plugin deprecates the old [`DrawablePath2D`](./addons/curved_lines_2d/drawable_path_2d.gd) custom node in favor of `ScalableVectorShape2D`. A Conversion button is provided: [converter button](./addons/curved_lines_2d/screenshots/00-converter.png). The reason is that [`ScalableVectorShape2D`](./addons/curved_lines_2d/scalable_vector_shape_2d.gd) inherits directly from `Node2D` giving much more control to the plugin over how you can draw.
 
+## Don't miss the new features!
+
+Since the recording of the A-Z Explainer, a lot of new features have been added:
+
+[![Link to the new features video](./addons/curved_lines_2d/video_thumbnails/splash-new-features.webp)](https://youtu.be/Pj-g_WFQvHA?si=NhE-vRIJ1LSxGaiF)
+
+## And all the other explainers
+
+You can find the rest of the explainer videos on this playlist:
+
+[![To the explainer playlist](./addons/curved_lines_2d/video_thumbnails/rigoberto.webp)](https://www.youtube.com/playlist?list=PL5lf_BvgORcg1YndZOi9wR_GaAbxqsujh)
 
 # Table of Contents
 
 - [Scalable Vector Shapes 2D plugin for Godot 4](#scalable-vector-shapes-2d-plugin-for-godot-4)
 	- [Watch the A-Z explainer on Youtube](#watch-the-a-z-explainer-on-youtube)
+	- [Don't miss the new features!](#dont-miss-the-new-features)
+	- [And all the other explainers](#and-all-the-other-explainers)
 - [Table of Contents](#table-of-contents)
 - [Drawing Shapes in the Godot 2D Viewport](#drawing-shapes-in-the-godot-2d-viewport)
 	- [Basic Drawing Explainer on youtube](#basic-drawing-explainer-on-youtube)
@@ -197,7 +210,7 @@ Read more about [manipulating shapes](#manipulating-shapes)
 
 ## Watch an explainer on Youtube
 
-[![watch explainer on youtube](./addons/curved_lines_2d/video_thumbnails/importing-svg-files-splash.png)](https://youtu.be/5PIVoQcm8QE)
+[![watch explainer on youtube](./addons/curved_lines_2d/video_thumbnails/importing-svg-files-splash.webp)](https://youtu.be/5PIVoQcm8QE)
 
 
 ## Using the Import SVG File Dock
