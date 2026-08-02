@@ -191,7 +191,7 @@ func _bake_outlines(dol : DynamicOutline2D) -> void:
 	var undo_redo := EditorInterface.get_editor_undo_redo()
 	undo_redo.create_action("Bake Static Outlines")
 	var rt := Node2D.new()
-	rt.name = "StaticOutlines"
+	rt.name = "BakedOutlines"
 	var idx := dol.get_index()
 	var p := dol.get_parent()
 	undo_redo.add_do_method(p, 'add_child', rt, true)
@@ -202,9 +202,14 @@ func _bake_outlines(dol : DynamicOutline2D) -> void:
 	undo_redo.add_undo_reference(rt)
 	undo_redo.add_do_method(dol, 'hide')
 	undo_redo.add_undo_method(dol, 'show')
+	var remotes : Array[RemoteTransform2D] = []
+	var outlines : Array[Line2D] = []
 	for svs in dol.shapes:
 		var stroke_line := Line2D.new()
 		var remote_tr := RemoteTransform2D.new()
+		stroke_line.begin_cap_mode = svs.begin_cap_mode
+		stroke_line.end_cap_mode = svs.end_cap_mode
+		stroke_line.joint_mode = svs.line_joint_mode
 		stroke_line.name = svs.name + "Outline"
 		undo_redo.add_do_method(rt, "add_child", stroke_line, true)
 		undo_redo.add_undo_method(rt, "remove_child", stroke_line)
@@ -221,7 +226,12 @@ func _bake_outlines(dol : DynamicOutline2D) -> void:
 		undo_redo.add_do_property(svs, 'stroke_width', dol.stroke_width)
 		undo_redo.add_undo_property(svs, 'stroke_color', svs.stroke_color)
 		undo_redo.add_undo_property(svs, 'stroke_width', svs.stroke_width)
+		remotes.append(remote_tr)
+		outlines.append(stroke_line)
 	undo_redo.commit_action()
+	for i in dol.shapes.size():
+		remotes[i].remote_path = remotes[i].get_path_to(outlines[i])
+
 
 func _on_convert_to_path_button_pressed(svs : ScalableVectorShape2D, button : Button):
 	var undo_redo := EditorInterface.get_editor_undo_redo()
