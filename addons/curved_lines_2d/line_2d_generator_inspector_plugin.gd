@@ -16,7 +16,8 @@ func _can_handle(obj) -> bool:
 		obj is AdaptableVectorShape3D or
 		obj is TextureRect or
 		obj is Button or
-		obj is TextureButton
+		obj is TextureButton or
+		obj is DynamicOutline2D
 	)
 
 
@@ -111,6 +112,17 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 			add_custom_control(button)
 			button.pressed.connect(func(): _add_guide_svs(object))
 			return true
+	elif name == "shapes" and (object is DynamicOutline2D):
+		var button := Button.new()
+		button.text = "Bake Static Outlines*"
+		button.tooltip_text = '''- Creates a child Line2D node per shape (ScalableVectorShape2D).
+			- Assigns the Line2D to that shape's line property to control its curve (replacing any original assignment)
+			- Gives that shape a RemoteTransform2D child to control its position/rotation/scale
+			- Changes this DynamicOutline2D node to a simple Node2D
+		'''
+		add_custom_control(button)
+		button.pressed.connect(func(): _bake_outlines(object))
+		return false
 	elif object is TextureRect or object is Button or object is TextureButton:
 		var svg_texture_helpers : Array[Node] = (
 				object.get_children().filter(func(ch): return ch is SVGTextureHelper)
@@ -171,6 +183,46 @@ func _on_convert_button_pressed(orig : DrawablePath2D):
 	EditorInterface.call_deferred('edit_node', replacement)
 
 
+func _bake_outlines(dol : DynamicOutline2D) -> void:
+	if dol == EditorInterface.get_edited_scene_root():
+		printerr("Cannot bake Static Outlines when Dynamic Outline is scene root")
+		return
+
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	undo_redo.create_action("Bake Static Outlines")
+	var rt := Node2D.new()
+	rt.name = "StaticOutlines"
+	var idx := dol.get_index()
+	var p := dol.get_parent()
+	undo_redo.add_do_method(p, 'add_child', rt, true)
+	undo_redo.add_do_method(p, 'move_child', rt, idx)
+	undo_redo.add_undo_reference(p)
+	undo_redo.add_undo_method(p, 'remove_child', rt)
+	undo_redo.add_do_property(rt, 'owner', EditorInterface.get_edited_scene_root())
+	undo_redo.add_undo_reference(rt)
+	undo_redo.add_do_method(dol, 'hide')
+	undo_redo.add_undo_method(dol, 'show')
+	for svs in dol.shapes:
+		var stroke_line := Line2D.new()
+		var remote_tr := RemoteTransform2D.new()
+		stroke_line.name = svs.name + "Outline"
+		undo_redo.add_do_method(rt, "add_child", stroke_line, true)
+		undo_redo.add_undo_method(rt, "remove_child", stroke_line)
+		remote_tr.name = "RemoteOutlineTransform2D"
+		undo_redo.add_do_method(svs, "add_child", remote_tr, true)
+		undo_redo.add_undo_method(svs, "remove_child", remote_tr)
+		undo_redo.add_do_property(remote_tr, "owner", EditorInterface.get_edited_scene_root())
+		undo_redo.add_do_property(stroke_line, "owner", EditorInterface.get_edited_scene_root())
+		undo_redo.add_undo_reference(remote_tr)
+		undo_redo.add_undo_reference(stroke_line)
+		undo_redo.add_do_property(svs, "line", stroke_line)
+		undo_redo.add_undo_property(svs, "line", null)
+		undo_redo.add_do_property(svs, 'stroke_color', dol.stroke_color)
+		undo_redo.add_do_property(svs, 'stroke_width', dol.stroke_width)
+		undo_redo.add_undo_property(svs, 'stroke_color', svs.stroke_color)
+		undo_redo.add_undo_property(svs, 'stroke_width', svs.stroke_width)
+	undo_redo.commit_action()
+
 func _on_convert_to_path_button_pressed(svs : ScalableVectorShape2D, button : Button):
 	var undo_redo := EditorInterface.get_editor_undo_redo()
 	undo_redo.create_action("Change shape type to path for %s" % str(svs))
@@ -195,7 +247,6 @@ func _on_change_svg_helper_pressed(parent_control : Control, helper : SVGTexture
 	)
 	EditorInterface.get_base_control().add_child(dialog)
 	dialog.popup_centered(Vector2i(800, 400))
-
 
 
 func _on_add_svg_helper_pressed(parent_control : Control, target_property : String, button : Button):
