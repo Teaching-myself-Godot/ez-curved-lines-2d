@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.28.0
+
+### Added
+
+- A new button `Bake Static Outlines` in the `DynamicOutline2D` inspector form, which generates `Line2D` nodes with a curve managed by your shape and their transforms via `RemoteTransform2D`
+
 ## 2.27.7
 
 ### Added
