@@ -128,6 +128,9 @@ You can find the rest of the explainer videos on this playlist:
   - [Don't duplicate `ScalableVectorShape2D`, use the `path_changed` signal in stead](#dont-duplicate-scalablevectorshape2d-use-the-path_changed-signal-in-stead)
   - [Performance impact](#performance-impact)
 - [Create one Outline for Multiple Shapes with `DynamicOutline2D`](#create-one-outline-for-multiple-shapes-with-dynamicoutline2d)
+  - [Optimize for performance with the Bake Static Outlines Button](#optimize-for-performance-with-the-bake-static-outlines-button)
+    - [The Scene Tree Before Baking Outlines](#the-scene-tree-before-baking-outlines)
+    - [The Scene Tree After Baking Outlines](#the-scene-tree-after-baking-outlines)
 - [Autoscaling SVG Textures for GUI Controls](#autoscaling-svg-textures-for-gui-controls)
   - [Adding Autoscaling SVG Textures via the Inspector](#adding-autoscaling-svg-textures-via-the-inspector)
     - [Example of Autoscaling GUI](#example-of-autoscaling-gui)
@@ -903,6 +906,24 @@ This node does not have all the `Line2D` options, but does have these 3 stroke p
 - `shapes : Array[ScalableVectorShape2D]` holds the shapes which are given an outline:
 
 ![`DynamicOutline2D` in the inspector](./screenshots/dynamic-outline-2d-inspector.png)
+
+## Optimize for performance with the Bake Static Outlines Button
+
+Release 28.0 introduces a new button to the `DynamicOutline2D` inspector. With this button you can generate a set of `Line2D` nodes assigned to the `ScalableVectorShape2D`'s in `DynamicOutline2D.shapes`.
+
+These new lines will all be grouped inside one parent `Node2D` that is a direct sibling of the `DynamicOutline2D`. Their curve is managed by their `ScalableVectorShape2D` and their transform (pos/rot/scale) is managed via a `RemoteTransform2D` direct child of that `ScalableVectorShape2D`.
+
+This effectively delegates all functionality for transforming the lines' global position back to native code (via `RemoteTransform2D`) making the outline scalable and fast again. 
+
+### The Scene Tree Before Baking Outlines
+
+![The Scene Tree Before Baking Outlines](./screenshots/scene-tree-before-baking-outlines.png)
+
+### The Scene Tree After Baking Outlines
+
+As you can see in this screenshot, the `DynamicOutline2D` node is not deleted, but it is hidden. Everything should still function the same when you do delete it. 
+
+![The Scene Tree After Baking Outlines](./screenshots/scene-tree-after-baking-outline.png)
 
 # Autoscaling SVG Textures for GUI Controls
 
