@@ -1,10 +1,14 @@
 # Changelog
 
-## 2.28.0
+## 2.28.1
 
 ### Added
 
 - A new button `Bake Static Outlines` in the `DynamicOutline2D` inspector form, which generates `Line2D` nodes with a curve managed by your shape and their transforms via `RemoteTransform2D`
+
+### Changed
+
+- Bugfix: setting `DynamicOutline2D.merge_shapes` now queues a redraw
 
 ## 2.27.7
 

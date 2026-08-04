@@ -26,7 +26,10 @@ class_name DynamicOutline2D
 ## else outlines are drawn over each other even if they intersect.
 ## ⚠️ WARNING: flagging this on is slow to use for animations at any significant scale because it calls
 ## [method Geometry2D.merge_polygons] multiple times per render.
-@export var merge_shapes := false
+@export var merge_shapes := false:
+	set(new_ms):
+		merge_shapes = new_ms
+		queue_redraw()
 
 ## List of [ScalableVectorShape2D]'s to draw outlines around
 @export var shapes : Array[ScalableVectorShape2D]: set = _on_shapes_assigned
