@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- A `collision_mode` property on `ScalableVectorShape2D`, which controls what the `CollisionPolygon2D` nodes of the assigned `collision_object` cover:
+  - `Fill And Stroke` (default): one collider for the fill and one for each piece of the stroke, as before
+  - `Merged`: the fill and the stroke as one single area, so a shape with a stroke no longer generates a collider for the fill _and_ an overlapping one for the stroke - cutouts made with clip paths are preserved
+  - `Fill Only` / `Stroke Only`: only one of both areas
+- `Geometry2DUtil.union_polygons`: merges a set of overlapping polygons into the smallest set of polygons covering the same area, slicing the result around any enclosed area, because a `CollisionPolygon2D` cannot represent a hole
+
 ## 2.28.1
 
 ### Added

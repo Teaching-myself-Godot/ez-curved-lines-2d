@@ -95,6 +95,111 @@ static func slice_polygons_with_holes(current_polygons : Array[PackedVector2Arra
 
 
 
+## Returns the smallest set of non-overlapping polygons covering exactly the same
+## area as the union of [param polygons], so a set of overlapping polygons can be
+## turned into a single shape (i.e. one [CollisionPolygon2D] in stead of one per
+## polygon).
+## Areas enclosed by the union - holes cut out by a boolean operation, or an area
+## trapped between two of the polygons - are preserved by slicing the result around
+## them, because [CollisionPolygon2D] and [Polygon2D] cannot represent a hole.
+static func union_polygons(polygons : Array[PackedVector2Array]) -> Array[PackedVector2Array]:
+	var sources : Array[PackedVector2Array] = []
+	for poly in polygons:
+		if poly.size() > 2:
+			sources.append(poly)
+	if sources.size() < 2:
+		return sources
+
+	var solids := sources.duplicate()
+	if not _merge_until_stable(solids):
+		# no merge ever enclosed an area, so the union cannot contain a hole
+		return solids
+
+	# a merge only reports the outline of the _pair_ it merged, so an area it enclosed
+	# may have been filled up by another polygon of the set: what is really left
+	# uncovered within the merged outlines are the holes
+	var holes : Array[PackedVector2Array] = []
+	for solid in solids:
+		holes.append_array(_subtract_polygons(solid, sources))
+	if not holes.is_empty():
+		slice_polygons_with_holes(solids, holes)
+	return solids
+
+
+# Merges every pair of overlapping polygons in [param solids] - in place - until no
+# pair can be merged anymore. Returns whether any merge enclosed an area, which is
+# the only way the resulting union can end up with a hole in it.
+static func _merge_until_stable(solids : Array[PackedVector2Array]) -> bool:
+	var enclosed_area := false
+	var merged := true
+	var guard := 0
+	while merged and solids.size() > 1 and guard < 1000:
+		merged = false
+		guard += 1
+		var merged_indices : Dictionary[int, bool] = {}
+		var merge_results : Array[PackedVector2Array] = []
+		for current_idx in solids.size():
+			if current_idx in merged_indices:
+				continue
+			for other_idx in range(current_idx + 1, solids.size()):
+				if other_idx in merged_indices:
+					continue
+				var result := Geometry2D.merge_polygons(solids[current_idx], solids[other_idx])
+				var outlines := result.filter(func(p): return not Geometry2D.is_polygon_clockwise(p))
+				if outlines.size() != 1:
+					# the two polygons are disjoint: merging them changed nothing
+					continue
+				merged = true
+				enclosed_area = enclosed_area or outlines.size() < result.size()
+				merged_indices[current_idx] = true
+				merged_indices[other_idx] = true
+				merge_results.append(outlines[0])
+				# solids[current_idx] is stale now, so continue with the next one
+				break
+		var sorted_indices := merged_indices.keys()
+		sorted_indices.sort()
+		sorted_indices.reverse()
+		for idx in sorted_indices:
+			solids.remove_at(idx)
+		solids.append_array(merge_results)
+	return enclosed_area
+
+
+# Subtracts every polygon in [param subtrahends] from [param minuend] and returns the
+# parts of it which none of them covers.
+# A subtrahend lying completely inside the remainder is postponed: subtracting it
+# would turn the remainder into a polygon _with_ a hole, which then has to be sliced
+# up into several polygons. Subtracting the overlapping ones first usually shrinks the
+# remainder far enough for the postponed ones to overlap it as well, so it can stay in
+# one piece. What is still enclosed once nothing else is left really is an island.
+static func _subtract_polygons(minuend : PackedVector2Array,
+			subtrahends : Array[PackedVector2Array]) -> Array[PackedVector2Array]:
+	var remainder : Array[PackedVector2Array] = [minuend]
+	var todo := subtrahends.duplicate()
+	while not todo.is_empty() and not remainder.is_empty():
+		var postponed : Array[PackedVector2Array] = []
+		for subtrahend in todo:
+			var difference : Array[PackedVector2Array] = []
+			var is_enclosed := false
+			for part in remainder:
+				for piece in Geometry2D.clip_polygons(part, subtrahend):
+					if Geometry2D.is_polygon_clockwise(piece):
+						is_enclosed = true
+					else:
+						difference.append(piece)
+			if is_enclosed:
+				postponed.append(subtrahend)
+			else:
+				remainder = difference
+		if postponed.size() == todo.size():
+			# only enclosed polygons are left: slice the remainder around them, in
+			# stead of leaving it with a hole it cannot represent
+			slice_polygons_with_holes(remainder, postponed)
+			return remainder
+		todo = postponed
+	return remainder
+
+
 static func calculate_outlines(result : Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 	if result.size() <= 1:
 		return result
