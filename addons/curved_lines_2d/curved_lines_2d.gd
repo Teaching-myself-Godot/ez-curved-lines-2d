@@ -2469,6 +2469,12 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		_locking_vp_horizontal_scrollbar = false
 		_locking_vp_vertical_scrollbar = false
 
+	if event is InputEventKey and event.keycode == KEY_ALT and event.is_pressed() and _is_svs_valid(current_selection):
+		_set_handle_hover(_svp_mouse_pos(
+				EditorInterface.get_editor_viewport_2d().get_mouse_position(),
+				current_selection), current_selection
+		)
+
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		var mouse_pos := _svp_mouse_pos(
 				EditorInterface.get_editor_viewport_2d().get_mouse_position(),
