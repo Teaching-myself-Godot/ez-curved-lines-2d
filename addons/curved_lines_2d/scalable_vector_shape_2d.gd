@@ -71,6 +71,21 @@ enum CollisionObjectType {
 	PHYSICAL_BONE_2D
 }
 
+## Determines which area the [CollisionPolygon2D] nodes generated for the
+## [member collision_object] cover, see [member collision_mode]
+enum CollisionMode {
+	## Generates the smallest possible set of [CollisionPolygon2D] nodes covering the
+	## fill and the stroke as one single area, in stead of one set per shape.
+	## Holes - cutouts made by [member clip_paths] - are preserved: the result is
+	## sliced around them, like the fill and the stroke are.
+	MERGED,
+	## Only generates [CollisionPolygon2D] nodes for the fill area, ignoring the stroke.
+	FILL_ONLY,
+	## Only generates [CollisionPolygon2D] nodes for the stroke area, ignoring the fill.
+	## Generates nothing when this shape has no stroke assigned.
+	STROKE_ONLY,
+}
+
 @export_group("Fill")
 ## The color of the fill, also sets the [member Polygon2D.color] of the [member polygon]
 @export var fill_color := Color.WHITE:
@@ -175,6 +190,15 @@ var stroke_width := 10.0:
 @export var collision_object: CollisionObject2D:
 	set(_coll):
 		collision_object = _coll
+		assigned_node_changed.emit()
+
+## Determines which area the [CollisionPolygon2D] nodes generated for the
+## [member collision_object] cover.
+## By default the fill and the stroke are covered by one single collider
+## ([constant CollisionMode.MERGED]), but either of them can be left out.
+@export var collision_mode := CollisionMode.MERGED:
+	set(_mode):
+		collision_mode = _mode
 		assigned_node_changed.emit()
 
 @export_subgroup("Collision Polygon2D*")
@@ -738,7 +762,6 @@ func _update_curve():
 
 
 func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
-	var collision_polygons : Array[PackedVector2Array] = []
 	var navigation_polygons : Array[PackedVector2Array] = []
 	# calculate stroke as polygon and cache it
 
@@ -747,16 +770,15 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 		var result := Geometry2DUtil.calculate_polystroke(cached_outline,
 				stroke_width * 0.5, cap_mode, JOINT_MODE_MAP[line_joint_mode])
 		cached_poly_strokes = result
-		# add to list of updated collision polygons
-		if is_instance_valid(collision_object):
-			collision_polygons.append_array(cached_poly_strokes)
 		if is_instance_valid(navigation_region):
 			navigation_polygons.append_array(cached_poly_strokes)
 
-	#  i. if there is a fill assigned, also generate collision polygon for the entire outline
-	# ii. if there is no fill assigned and no stroke assigned, we assume the user _does_ want nav and collision
-	if is_instance_valid(polygon) or (collision_polygons.is_empty() and not is_instance_valid(polygon)):
-		collision_polygons.append(polygon_points)
+	#  i. if there is a fill assigned, also generate a navigation polygon for the entire outline
+	# ii. if there is no fill assigned and no stroke assigned, we assume the user _does_ want nav
+	# the condition is keyed on the stroke ending up in the collision polygons, as it was
+	# when both lists were built together, to keep the navigation region unchanged
+	var has_collision_stroke := is_instance_valid(collision_object) and not cached_poly_strokes.is_empty()
+	if is_instance_valid(polygon) or (not has_collision_stroke and not is_instance_valid(polygon)):
 		navigation_polygons.append(polygon_points)
 
 	if is_instance_valid(line):
@@ -775,17 +797,8 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 	if is_instance_valid(collision_polygon):
 		collision_polygon.polygon = polygon_points
 	if is_instance_valid(collision_object):
-		var existing = collision_object.get_children().filter(func(ch): return ch is CollisionPolygon2D)
-		for idx in existing.size():
-			if idx >= collision_polygons.size():
-				existing[idx].hide()
-				existing[idx].disabled = true
-		for polygon_index in collision_polygons.size():
-			if polygon_index >= existing.size():
-				existing.append(_make_new_collision_polygon_2d())
-			existing[polygon_index].polygon = collision_polygons[polygon_index]
-			existing[polygon_index].show()
-			existing[polygon_index].disabled = false
+		var fill_polygons : Array[PackedVector2Array] = [polygon_points]
+		_update_collision_polygons(_get_collision_polygons(fill_polygons))
 
 	if is_instance_valid(navigation_region):
 		var navigation_poly = NavigationPolygon.new()
@@ -855,11 +868,6 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 	cached_poly_strokes = intersect_results_polystroke
 	cached_clipped_polygons = intersect_results_fill_polygon
 
-	var collision_polygons : Array[PackedVector2Array] = []
-	if is_instance_valid(collision_object):
-		collision_polygons.append_array(cached_poly_strokes)
-	if is_instance_valid(polygon) or (collision_polygons.is_empty() and not is_instance_valid(polygon)):
-		collision_polygons.append_array(cached_clipped_polygons)
 	var navigation_polygons : Array[PackedVector2Array] = []
 	if is_instance_valid(navigation_region):
 		navigation_polygons.append_array(cached_poly_strokes)
@@ -912,17 +920,7 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 	if is_instance_valid(collision_polygon):
 		collision_polygon.polygon = polygon_points
 	if is_instance_valid(collision_object):
-		var existing = collision_object.get_children().filter(func(ch): return ch is CollisionPolygon2D)
-		for idx in existing.size():
-			if idx >= collision_polygons.size():
-				existing[idx].hide()
-				existing[idx].disabled = true
-		for polygon_index in collision_polygons.size():
-			if polygon_index >= existing.size():
-				existing.append(_make_new_collision_polygon_2d())
-			existing[polygon_index].polygon = collision_polygons[polygon_index]
-			existing[polygon_index].show()
-			existing[polygon_index].disabled = false
+		_update_collision_polygons(_get_collision_polygons(cached_clipped_polygons))
 
 	if is_instance_valid(navigation_region):
 		var navigation_poly = NavigationPolygon.new()
@@ -930,6 +928,48 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 			navigation_poly.add_outline(outline)
 		NavigationServer2D.bake_from_source_geometry_data(navigation_poly, NavigationMeshSourceGeometryData2D.new())
 		navigation_region.navigation_polygon = navigation_poly
+
+
+# Determines which polygons the CollisionPolygon2D nodes of the collision_object
+# should cover, based on collision_mode.
+# The fill_polygons hold the (clipped) fill area of this shape, the stroke area is
+# read from cached_poly_strokes, which is empty when no stroke is assigned
+func _get_collision_polygons(fill_polygons : Array[PackedVector2Array]) -> Array[PackedVector2Array]:
+	match collision_mode:
+		CollisionMode.FILL_ONLY:
+			return fill_polygons.duplicate()
+		CollisionMode.STROKE_ONLY:
+			return cached_poly_strokes.duplicate()
+		CollisionMode.MERGED, _:
+			return Geometry2DUtil.union_polygons(_get_fill_and_stroke_polygons(fill_polygons))
+
+
+func _get_fill_and_stroke_polygons(fill_polygons : Array[PackedVector2Array]) -> Array[PackedVector2Array]:
+	var result : Array[PackedVector2Array] = []
+	result.append_array(cached_poly_strokes)
+	#  i. if there is a fill assigned, also generate collision polygons for the entire outline
+	# ii. if there is no fill assigned and no stroke assigned, we assume the user _does_ want collision
+	if is_instance_valid(polygon) or result.is_empty():
+		result.append_array(fill_polygons)
+	return result
+
+
+# Assigns the collision_polygons to the CollisionPolygon2D nodes of the
+# collision_object, reusing the existing ones and creating new ones when needed.
+# Any surplus node is kept, but hidden and disabled, so it can be reused when the
+# amount of polygons grows again
+func _update_collision_polygons(collision_polygons : Array[PackedVector2Array]) -> void:
+	var existing = collision_object.get_children().filter(func(ch): return ch is CollisionPolygon2D)
+	for idx in existing.size():
+		if idx >= collision_polygons.size():
+			existing[idx].hide()
+			existing[idx].disabled = true
+	for polygon_index in collision_polygons.size():
+		if polygon_index >= existing.size():
+			existing.append(_make_new_collision_polygon_2d())
+		existing[polygon_index].polygon = collision_polygons[polygon_index]
+		existing[polygon_index].show()
+		existing[polygon_index].disabled = false
 
 
 func _make_new_collision_polygon_2d() -> CollisionPolygon2D:
@@ -1517,4 +1557,3 @@ static func set_ellipse_points(curve : Curve2D, size: Vector2, offset := Vector2
 	)
 	curve.set_block_signals(false)
 	curve.changed.emit()
-
