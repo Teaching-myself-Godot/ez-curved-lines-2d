@@ -59,7 +59,7 @@ func ellipse_points(radius : float) -> PackedVector2Array:
 func test_ellipse_fill_and_closed_stroke() -> void:
 	print("\n[1] closed shape, fill + stroke")
 	var fill := ellipse_points(100.0)
-	var strokes := Geometry2DUtil.calculate_polystroke(fill, 10.0, Geometry2D.END_JOINED, Geometry2D.JOIN_ROUND)
+	var strokes := Geometry2DUtil.calculate_polystroke(fill, 10.0, Geometry2D.END_JOINED, Geometry2D.JOIN_ROUND, 0.0)
 	var unmerged : Array[PackedVector2Array] = []
 	unmerged.append_array(strokes)
 	unmerged.append(fill)
@@ -88,7 +88,7 @@ func test_donut_keeps_hole() -> void:
 	var strokes : Array[PackedVector2Array] = []
 	for polyline in Geometry2DUtil.calculate_outlines(clipped.duplicate()):
 		strokes.append_array(Geometry2DUtil.calculate_polystroke(polyline, 10.0,
-				Geometry2D.END_JOINED, Geometry2D.JOIN_ROUND))
+				Geometry2D.END_JOINED, Geometry2D.JOIN_ROUND, 0.0))
 
 	var unmerged : Array[PackedVector2Array] = []
 	unmerged.append_array(strokes)
@@ -126,7 +126,7 @@ func test_disjoint_shapes_stay_apart() -> void:
 func test_island_inside_hole_survives() -> void:
 	print("\n[4] island floating inside a hole")
 	var ring := Geometry2DUtil.calculate_polystroke(ellipse_points(100.0), 10.0,
-			Geometry2D.END_JOINED, Geometry2D.JOIN_ROUND)
+			Geometry2D.END_JOINED, Geometry2D.JOIN_ROUND, 0.0)
 	var island := ellipse_points(20.0)
 	var input : Array[PackedVector2Array] = []
 	input.append_array(ring)
@@ -147,7 +147,7 @@ func test_island_inside_hole_survives() -> void:
 func test_open_stroke_with_caps() -> void:
 	print("\n[5] open curve, fill + capped stroke")
 	var outline : PackedVector2Array = [Vector2(-100, 0), Vector2(0, -100), Vector2(100, 0)]
-	var strokes := Geometry2DUtil.calculate_polystroke(outline, 10.0, Geometry2D.END_BUTT, Geometry2D.JOIN_MITER)
+	var strokes := Geometry2DUtil.calculate_polystroke(outline, 10.0, Geometry2D.END_BUTT, Geometry2D.JOIN_MITER, 0.0)
 	var unmerged : Array[PackedVector2Array] = []
 	unmerged.append_array(strokes)
 	unmerged.append(outline)
@@ -171,7 +171,7 @@ func test_stroke_against_the_contour_of_the_fill() -> void:
 	var fill := ellipse_points(100.0)
 	var stroke_line := Geometry2D.offset_polygon(fill, 10.0, Geometry2D.JOIN_ROUND)[0]
 	var strokes := Geometry2DUtil.calculate_polystroke(stroke_line, 10.0,
-			Geometry2D.END_JOINED, Geometry2D.JOIN_ROUND)
+			Geometry2D.END_JOINED, Geometry2D.JOIN_ROUND, 0.0)
 	var unmerged : Array[PackedVector2Array] = []
 	unmerged.append_array(strokes)
 	unmerged.append(fill)
