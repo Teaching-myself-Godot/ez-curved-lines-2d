@@ -8,6 +8,7 @@ func _initialize() -> void:
 	test_disjoint_shapes_stay_apart()
 	test_island_inside_hole_survives()
 	test_open_stroke_with_caps()
+	test_stroke_against_the_contour_of_the_fill()
 	print("")
 	print("FAILURES: ", failures)
 	quit(1 if failures > 0 else 0)
@@ -159,3 +160,30 @@ func test_open_stroke_with_caps() -> void:
 	check("below the closing chord is outside", not covers(merged, Vector2(0, 20)))
 	check("area is at least the fill plus the outer half of the stroke",
 			total_area(merged) > area(outline), "%.0f vs %.0f" % [total_area(merged), area(outline)])
+
+
+# Two polygons can share an edge while describing it through a different chain of
+# floating point operations - a stroke lying against the contour of its fill, for
+# instance. Subtracting one from the other then leaves slivers behind, which are
+# rounding noise and not holes: slicing the result around them would fragment it.
+func test_stroke_against_the_contour_of_the_fill() -> void:
+	print("\n[6] stroke lying against the contour of the fill")
+	var fill := ellipse_points(100.0)
+	var stroke_line := Geometry2D.offset_polygon(fill, 10.0, Geometry2D.JOIN_ROUND)[0]
+	var strokes := Geometry2DUtil.calculate_polystroke(stroke_line, 10.0,
+			Geometry2D.END_JOINED, Geometry2D.JOIN_ROUND)
+	var unmerged : Array[PackedVector2Array] = []
+	unmerged.append_array(strokes)
+	unmerged.append(fill)
+
+	var merged := Geometry2DUtil.union_polygons(unmerged)
+	check("merged generates exactly one collider", merged.size() == 1, "%d polygons" % merged.size())
+	var expected := PI * 120.0 * 120.0
+	check("area equals the fill plus the stroke",
+			absf(total_area(merged) - expected) / expected < 0.01,
+			"%.0f vs %.0f" % [total_area(merged), expected])
+	check("centre is solid", covers(merged, Vector2.ZERO))
+	check("just inside the shared edge is solid", covers(merged, Vector2(99, 0)))
+	check("just outside the shared edge is solid", covers(merged, Vector2(101, 0)))
+	check("point at r=115 is solid", covers(merged, Vector2(115, 0)))
+	check("point at r=125 is outside", not covers(merged, Vector2(125, 0)))

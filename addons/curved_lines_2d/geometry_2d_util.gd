@@ -4,6 +4,15 @@ class_name Geometry2DUtil
 
 const THRESHOLD = 0.1
 
+## The surface below which an area enclosed by [method union_polygons] is discarded as
+## rounding noise in stead of treated as a hole. When two of the polygons describe the
+## same edge through a different chain of floating point operations - a stroke extruded
+## up against the contour of its fill, for instance - subtracting one from the other
+## leaves slivers behind, which are not holes: slicing the result around them would
+## only fragment it. Measured slivers stay below 0.00001, a cutout of 1 pixel across
+## still covers ~3.
+const MINIMUM_HOLE_AREA = 0.1
+
 static func get_polygon_bounding_rect(points : PackedVector2Array) -> Rect2:
 	var minx := INF
 	var miny := INF
@@ -19,6 +28,16 @@ static func get_polygon_bounding_rect(points : PackedVector2Array) -> Rect2:
 
 static func get_polygon_center(points : PackedVector2Array) -> Vector2:
 	return get_polygon_bounding_rect(points).get_center()
+
+
+## Returns the surface covered by [param points], regardless of its winding order
+static func get_polygon_area(points : PackedVector2Array) -> float:
+	var double_area := 0.0
+	for i in points.size():
+		var p := points[i]
+		var q := points[(i + 1) % points.size()]
+		double_area += p.x * q.y - q.x * p.y
+	return absf(double_area) * 0.5
 
 
 static func slice_polygon_vertical(polygon : PackedVector2Array, slice_target : Vector2) -> Array[PackedVector2Array]:
@@ -120,7 +139,9 @@ static func union_polygons(polygons : Array[PackedVector2Array]) -> Array[Packed
 	# uncovered within the merged outlines are the holes
 	var holes : Array[PackedVector2Array] = []
 	for solid in solids:
-		holes.append_array(_subtract_polygons(solid, sources))
+		for hole in _subtract_polygons(solid, sources):
+			if get_polygon_area(hole) > MINIMUM_HOLE_AREA:
+				holes.append(hole)
 	if not holes.is_empty():
 		slice_polygons_with_holes(solids, holes)
 	return solids
