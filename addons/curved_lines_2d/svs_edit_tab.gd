@@ -23,6 +23,7 @@ var warning_dialog : AcceptDialog = null
 var begin_cap_button_map = {}
 var end_cap_button_map = {}
 var joint_button_map = {}
+var extrude_button_map = {}
 
 func _enter_tree() -> void:
 	rect_width_input = _make_number_input("Width", 100, 2, 1000, "")
@@ -58,10 +59,13 @@ func _enter_tree() -> void:
 	joint_button_map[Line2D.LineJointMode.LINE_JOINT_SHARP] = %LineJointSharpToggleButton
 	joint_button_map[Line2D.LineJointMode.LINE_JOINT_BEVEL] = %LineJointBevelToggleButton
 	joint_button_map[Line2D.LineJointMode.LINE_JOINT_ROUND] = %LineJointRoundToggleButton
+	extrude_button_map[ScalableVectorShape2D.StrokeExtrusionDirection.MIDDLE] = %MiddleToggleButton
+	extrude_button_map[ScalableVectorShape2D.StrokeExtrusionDirection.OUTWARD] = %OutsideToggleButton
+	extrude_button_map[ScalableVectorShape2D.StrokeExtrusionDirection.INWARD] = %InsideToggleButton
 	begin_cap_button_map[CurvedLines2D._get_default_begin_cap()].button_pressed = true
 	end_cap_button_map[CurvedLines2D._get_default_end_cap()].button_pressed = true
 	joint_button_map[CurvedLines2D._get_default_joint_mode()].button_pressed = true
-
+	extrude_button_map[CurvedLines2D._get_default_stroke_extrusion_direction()].button_pressed = true
 
 	if not stroke_width_input.value_focus_exited.is_connected(ProjectSettings.save):
 		stroke_width_input.value_focus_exited.connect(ProjectSettings.save)
@@ -276,6 +280,24 @@ func _on_line_joint_round_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.save()
 
 
+func _on_middle_toggle_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_EXTRUSION,
+			ScalableVectorShape2D.StrokeExtrusionDirection.MIDDLE)
+	ProjectSettings.save()
+
+
+func _on_outside_toggle_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_EXTRUSION,
+			ScalableVectorShape2D.StrokeExtrusionDirection.OUTWARD)
+	ProjectSettings.save()
+
+
+func _on_inside_toggle_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_EXTRUSION,
+			ScalableVectorShape2D.StrokeExtrusionDirection.INWARD)
+	ProjectSettings.save()
+
+
 func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVectorShape2D.CollisionObjectType) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_COLLISION_TYPE, obj_type)
 
@@ -286,3 +308,4 @@ func _on_use_line_2d_check_button_toggled(toggled_on: bool) -> void:
 		%EndCapForm.show()
 	else:
 		%EndCapForm.hide()
+
