@@ -15,7 +15,7 @@
 
 - The fill and the stroke of a shape now share one single collider, in stead of generating one collider each which overlap where the stroke covers the fill. Cutouts made with clip paths are preserved.
 
-## 2.28.1
+## 2.28.2
 
 ### Added
 
@@ -24,6 +24,7 @@
 ### Changed
 
 - Bugfix: setting `DynamicOutline2D.merge_shapes` now queues a redraw
+- Bugfix: pressing alt after undo subdivision now places the crosshair on the correct line
 
 ## 2.27.7
 
