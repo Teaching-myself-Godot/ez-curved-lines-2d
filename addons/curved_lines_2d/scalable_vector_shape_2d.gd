@@ -851,17 +851,17 @@ func _update_polygon_texture(poly := polygon, grow := false):
 				poly.texture_scale = poly.texture.get_size() / box.size
 
 
-func _get_stroke_extrusion(points : PackedVector2Array) -> float:
+func _get_stroke_extrusion(points : PackedVector2Array, is_hole := false) -> float:
 	if extrusion_direction == StrokeExtrusionDirection.MIDDLE or not is_curve_closed():
 		return 0.0
 	var offs := -stroke_width * 0.5 if extrusion_direction == StrokeExtrusionDirection.INWARD else stroke_width * 0.5
-	if Geometry2D.is_polygon_clockwise(points):
+	if is_hole:
 		return -offs
 	return offs
 
 
-func _get_stroke_points_with_extrusion(pts : PackedVector2Array) -> PackedVector2Array:
-	var extrusion := _get_stroke_extrusion(pts)
+func _get_stroke_points_with_extrusion(pts : PackedVector2Array, is_hole := false) -> PackedVector2Array:
+	var extrusion := _get_stroke_extrusion(pts, is_hole)
 	if is_zero_approx(extrusion):
 		return pts
 	var extruded_result := Geometry2D.offset_polygon(pts, extrusion, JOINT_MODE_MAP[line_joint_mode])
@@ -892,10 +892,11 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 				[]
 		)
 		var polystroke_result : Array[PackedVector2Array] = []
-		for polyline in cutout_result_polylines:
+		for i in cutout_result_polylines.size():
+			var polyline := cutout_result_polylines[i]
 			polystroke_result.append_array(Geometry2DUtil.calculate_polystroke(polyline,
 					stroke_width * 0.5, Geometry2D.END_JOINED, JOINT_MODE_MAP[line_joint_mode],
-					_get_stroke_extrusion(polyline)
+					_get_stroke_extrusion(polyline, i > 0)
 			))
 		intersect_results_polystroke = Geometry2DUtil.apply_clips_to_polygon(
 			polystroke_result,
@@ -935,7 +936,7 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 			for polyline_index in polylines.size():
 				if polyline_index >= existing.size():
 					existing.append(_make_new_line_2d())
-				existing[polyline_index].points = _get_stroke_points_with_extrusion(polylines[polyline_index])
+				existing[polyline_index].points = _get_stroke_points_with_extrusion(polylines[polyline_index], true)
 				existing[polyline_index].width = line.width
 				existing[polyline_index].begin_cap_mode = line.begin_cap_mode
 				existing[polyline_index].end_cap_mode = line.end_cap_mode
