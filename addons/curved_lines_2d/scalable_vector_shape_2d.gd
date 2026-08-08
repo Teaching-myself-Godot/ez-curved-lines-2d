@@ -74,9 +74,6 @@ enum CollisionObjectType {
 ## Determines which area the [CollisionPolygon2D] nodes generated for the
 ## [member collision_object] cover, see [member collision_mode]
 enum CollisionMode {
-	## Generates [CollisionPolygon2D] nodes for the fill _and_ for the stroke, even
-	## where they overlap each other. This is the default for backward compatibility.
-	FILL_AND_STROKE,
 	## Generates the smallest possible set of [CollisionPolygon2D] nodes covering the
 	## fill and the stroke as one single area, in stead of one set per shape.
 	## Holes - cutouts made by [member clip_paths] - are preserved: the result is
@@ -197,10 +194,9 @@ var stroke_width := 10.0:
 
 ## Determines which area the [CollisionPolygon2D] nodes generated for the
 ## [member collision_object] cover.
-## Use [constant CollisionMode.MERGED] to get one collider for the fill and the
-## stroke together, in stead of one collider for each of them overlapping
-## each other.
-@export var collision_mode := CollisionMode.FILL_AND_STROKE:
+## By default the fill and the stroke are covered by one single collider
+## ([constant CollisionMode.MERGED]), but either of them can be left out.
+@export var collision_mode := CollisionMode.MERGED:
 	set(_mode):
 		collision_mode = _mode
 		assigned_node_changed.emit()
@@ -944,10 +940,8 @@ func _get_collision_polygons(fill_polygons : Array[PackedVector2Array]) -> Array
 			return fill_polygons.duplicate()
 		CollisionMode.STROKE_ONLY:
 			return cached_poly_strokes.duplicate()
-		CollisionMode.MERGED:
+		CollisionMode.MERGED, _:
 			return Geometry2DUtil.union_polygons(_get_fill_and_stroke_polygons(fill_polygons))
-		CollisionMode.FILL_AND_STROKE, _:
-			return _get_fill_and_stroke_polygons(fill_polygons)
 
 
 func _get_fill_and_stroke_polygons(fill_polygons : Array[PackedVector2Array]) -> Array[PackedVector2Array]:
@@ -1563,4 +1557,3 @@ static func set_ellipse_points(curve : Curve2D, size: Vector2, offset := Vector2
 	)
 	curve.set_block_signals(false)
 	curve.changed.emit()
-

@@ -59,12 +59,12 @@ func test_ellipse_fill_and_closed_stroke() -> void:
 	print("\n[1] closed shape, fill + stroke")
 	var fill := ellipse_points(100.0)
 	var strokes := Geometry2DUtil.calculate_polystroke(fill, 10.0, Geometry2D.END_JOINED, Geometry2D.JOIN_ROUND)
-	var legacy : Array[PackedVector2Array] = []
-	legacy.append_array(strokes)
-	legacy.append(fill)
+	var unmerged : Array[PackedVector2Array] = []
+	unmerged.append_array(strokes)
+	unmerged.append(fill)
 
-	var merged := Geometry2DUtil.union_polygons(legacy)
-	check("legacy generates more than one collider", legacy.size() > 1, "%d polygons" % legacy.size())
+	var merged := Geometry2DUtil.union_polygons(unmerged)
+	check("the unmerged set has more than one polygon", unmerged.size() > 1, "%d polygons" % unmerged.size())
 	check("merged generates exactly one collider", merged.size() == 1, "%d polygons" % merged.size())
 	var expected := PI * 110.0 * 110.0
 	check("area equals the outline grown by half the stroke width",
@@ -89,14 +89,14 @@ func test_donut_keeps_hole() -> void:
 		strokes.append_array(Geometry2DUtil.calculate_polystroke(polyline, 10.0,
 				Geometry2D.END_JOINED, Geometry2D.JOIN_ROUND))
 
-	var legacy : Array[PackedVector2Array] = []
-	legacy.append_array(strokes)
-	legacy.append_array(clipped)
+	var unmerged : Array[PackedVector2Array] = []
+	unmerged.append_array(strokes)
+	unmerged.append_array(clipped)
 
 	# the fill is a ring of [40, 100]; the stroke is drawn on both of its contours,
 	# so it covers [30, 50] and [90, 110]: the union is a ring of [30, 110]
-	var merged := Geometry2DUtil.union_polygons(legacy)
-	check("legacy generates 6 colliders", legacy.size() == 6, "%d polygons" % legacy.size())
+	var merged := Geometry2DUtil.union_polygons(unmerged)
+	check("the unmerged set has 6 polygons", unmerged.size() == 6, "%d polygons" % unmerged.size())
 	check("merged slices the hole out with 2 colliders", merged.size() == 2, "%d polygons" % merged.size())
 	var expected := PI * (110.0 * 110.0 - 30.0 * 30.0)
 	check("area equals the ring grown by half the stroke width on both sides",
@@ -147,11 +147,11 @@ func test_open_stroke_with_caps() -> void:
 	print("\n[5] open curve, fill + capped stroke")
 	var outline : PackedVector2Array = [Vector2(-100, 0), Vector2(0, -100), Vector2(100, 0)]
 	var strokes := Geometry2DUtil.calculate_polystroke(outline, 10.0, Geometry2D.END_BUTT, Geometry2D.JOIN_MITER)
-	var legacy : Array[PackedVector2Array] = []
-	legacy.append_array(strokes)
-	legacy.append(outline)
+	var unmerged : Array[PackedVector2Array] = []
+	unmerged.append_array(strokes)
+	unmerged.append(outline)
 
-	var merged := Geometry2DUtil.union_polygons(legacy)
+	var merged := Geometry2DUtil.union_polygons(unmerged)
 	check("merged generates exactly one collider", merged.size() == 1, "%d polygons" % merged.size())
 	check("inside of the fill is solid", covers(merged, Vector2(0, -20)))
 	check("outside of the stroke is solid", covers(merged, Vector2(-55, -50)))

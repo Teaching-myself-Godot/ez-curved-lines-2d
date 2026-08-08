@@ -3,7 +3,6 @@ extends SceneTree
 var failures := 0
 
 const MODE_NAMES := {
-	ScalableVectorShape2D.CollisionMode.FILL_AND_STROKE: "FILL_AND_STROKE",
 	ScalableVectorShape2D.CollisionMode.MERGED: "MERGED",
 	ScalableVectorShape2D.CollisionMode.FILL_ONLY: "FILL_ONLY",
 	ScalableVectorShape2D.CollisionMode.STROKE_ONLY: "STROKE_ONLY",
@@ -80,17 +79,18 @@ func run_modes(label : String, with_cutout : bool) -> void:
 			ScalableVectorShape2D.CollisionMode.STROKE_ONLY:
 				check("  stroke is solid", covers(polys, Vector2(105, 0)))
 				check("  centre is hollow", not covers(polys, Vector2.ZERO))
-			ScalableVectorShape2D.CollisionMode.FILL_AND_STROKE:
-				check("  keeps generating one collider per shape", polys.size() >= 3, "%d" % polys.size())
 		svs.free()
 
 
 func test_surplus_nodes_are_reused() -> void:
 	print("\n[surplus nodes]")
+	# the stroke of a closed shape is a ring, which is sliced into 2 polygons,
+	# where merging it with the fill needs only 1
 	var svs := make_shape(100.0, true, true, true)
-	svs.collision_mode = ScalableVectorShape2D.CollisionMode.FILL_AND_STROKE
+	svs.collision_mode = ScalableVectorShape2D.CollisionMode.STROKE_ONLY
 	svs._update_curve()
 	var created := child_count(svs)
+	check("the stroke needs more than one collider", created > 1, "%d nodes" % created)
 	svs.collision_mode = ScalableVectorShape2D.CollisionMode.MERGED
 	svs._update_curve()
 	check("surplus nodes are kept", child_count(svs) == created, "%d nodes" % child_count(svs))
@@ -100,7 +100,7 @@ func test_surplus_nodes_are_reused() -> void:
 		if ch is CollisionPolygon2D and ch.disabled:
 			check("  disabled node is hidden too", not ch.visible)
 			break
-	svs.collision_mode = ScalableVectorShape2D.CollisionMode.FILL_AND_STROKE
+	svs.collision_mode = ScalableVectorShape2D.CollisionMode.STROKE_ONLY
 	svs._update_curve()
 	check("nodes are reused when the count grows back", child_count(svs) == created
 			and active_polygons(svs).size() == created, "%d nodes" % child_count(svs))
@@ -123,12 +123,10 @@ func test_no_stroke_assigned() -> void:
 func test_no_fill_no_stroke() -> void:
 	print("\n[neither fill nor stroke assigned]")
 	var svs := make_shape(100.0, false, false, true)
-	for mode in [ScalableVectorShape2D.CollisionMode.FILL_AND_STROKE,
-			ScalableVectorShape2D.CollisionMode.MERGED]:
-		svs.collision_mode = mode
-		svs._update_curve()
-		check("%s still generates the outline" % MODE_NAMES[mode],
-				active_polygons(svs).size() == 1 and covers(active_polygons(svs), Vector2.ZERO))
+	svs.collision_mode = ScalableVectorShape2D.CollisionMode.MERGED
+	svs._update_curve()
+	check("MERGED still generates the outline",
+			active_polygons(svs).size() == 1 and covers(active_polygons(svs), Vector2.ZERO))
 	svs.free()
 
 
