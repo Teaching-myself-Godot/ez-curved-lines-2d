@@ -102,6 +102,7 @@ You can find the rest of the explainer videos on this playlist:
 	- [The Stroke inspector form](#the-stroke-inspector-form)
 		- [Creating new Strokes](#creating-new-strokes)
 	- [The Collision inspector form](#the-collision-inspector-form)
+		- [Choosing what the collision polygons cover](#choosing-what-the-collision-polygons-cover)
 	- [The Path inspector form](#the-path-inspector-form)
 	- [The Navigation inspector form](#the-navigation-inspector-form)
 	- [The Curve settings inspector form](#the-curve-settings-inspector-form)
@@ -701,6 +702,22 @@ Every time the shape is changed, one or more `Polygon2D` nodes will be added/upd
 - `RigidBody2D`
 - `CharacterBody2D`
 - `PhysicalBone2D`
+
+### Choosing what the collision polygons cover
+
+The `collision_mode` property controls which area(s) the generated `CollisionPolygon2D` nodes cover:
+
+- `Merged` (default): the fill and the stroke as one single area, so one shape usually needs one single collider
+- `Fill Only`: only the fill area, ignoring the stroke
+- `Stroke Only`: only the stroke area, ignoring the fill (nothing is generated when the shape has no stroke)
+
+![the three collision modes](./addons/curved_lines_2d/screenshots/collision_mode.gif)
+
+The colors are the convex shapes each `CollisionPolygon2D` is decomposed into.
+
+A stroke is drawn around the contour of the fill, so its inner half covers an area the fill already covers. `Merged` unites the two into one single area, which is why a shape with a fill and a stroke needs one collider in stead of one for the fill plus one for every piece of the ring the stroke draws around it. Because a `CollisionPolygon2D` cannot have a hole in it, cutouts made with [clip paths](#the-masking-inspector-form) are kept by slicing the merged result around them - exactly like the fill and the stroke themselves are sliced.
+
+Surplus `CollisionPolygon2D` nodes are never removed: they are hidden and disabled, so they can be reused when the amount of polygons grows again (when a cutout splits the shape in two, for instance).
 
 ## The Path inspector form
 
