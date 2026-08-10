@@ -15,9 +15,12 @@ const SETTING_NAME_ADD_FILL_ENABLED := "addons/curved_lines_2d/add_fill_enabled"
 const SETTING_NAME_ADD_COLLISION_TYPE = "addons/curved_lines_2d/add_collision_type"
 
 const SETTING_NAME_PAINT_ORDER := "addons/curved_lines_2d/paint_order"
+
 const SETTING_NAME_DEFAULT_LINE_BEGIN_CAP := "addons/curved_lines_2d/line_begin_cap"
 const SETTING_NAME_DEFAULT_LINE_END_CAP := "addons/curved_lines_2d/line_end_cap"
 const SETTING_NAME_DEFAULT_LINE_JOINT_MODE := "addons/curved_lines_2d/line_joint_mode"
+const SETTING_NAME_DEFAULT_EXTRUSION := "addons/curved_lines_2d/stroke_extrusion_direction"
+
 const SETTING_NAME_SNAP_TO_PIXEL := "addons/curved_lines_2d/snap_to_pixel"
 const SETTING_NAME_SNAP_RESOLUTION := "addons/curved_lines_2d/snap_resolution"
 
@@ -346,6 +349,7 @@ func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_na
 	new_shape.begin_cap_mode = _get_default_begin_cap()
 	new_shape.end_cap_mode = _get_default_end_cap()
 	new_shape.line_joint_mode = _get_default_joint_mode()
+	new_shape.extrusion_direction = _get_default_stroke_extrusion_direction()
 	if not force_no_realign and not is_instance_valid(is_cutout_for):
 		_set_viewport_pos_to_selection()
 
@@ -1398,17 +1402,27 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 			points = points.map(func(p): return current_selection.get_global_transform() * p)
 			stroke_width *= current_selection.get_global_transform().get_scale().x
 		points = points.map(func(p): return _vp_transform(p * mul))
+		var stroke_points := points
+		if _get_default_stroke_extrusion_direction() != ScalableVectorShape2D.StrokeExtrusionDirection.MIDDLE:
+			var offset = 0.5 * (
+					stroke_width
+						if _get_default_stroke_extrusion_direction() == ScalableVectorShape2D.StrokeExtrusionDirection.OUTWARD else
+					-stroke_width
+			)
+			var offset_result := Geometry2D.offset_polygon(points, offset, Geometry2D.PolyJoinType.JOIN_MITER)
+			stroke_points = points if offset_result.is_empty() else offset_result[0]
+			stroke_points.append(stroke_points[0])
 		match _get_default_paint_order():
 			PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
 				if _is_add_stroke_enabled():
-					viewport_control.draw_polyline(points, _get_default_stroke_color(), stroke_width)
+					viewport_control.draw_polyline(stroke_points, _get_default_stroke_color(), stroke_width)
 				if _is_add_fill_enabled():
 					viewport_control.draw_polygon(points, [_get_default_fill_color()])
 			PaintOrder.MARKERS_FILL_STROKE, PaintOrder.FILL_STROKE_MARKERS, PaintOrder.FILL_MARKERS_STROKE, _:
 				if _is_add_fill_enabled():
 					viewport_control.draw_polygon(points, [_get_default_fill_color()])
 				if _is_add_stroke_enabled():
-					viewport_control.draw_polyline(points, _get_default_stroke_color(), stroke_width)
+					viewport_control.draw_polyline(stroke_points, _get_default_stroke_color(), stroke_width)
 
 		if not _is_add_fill_enabled() and not _is_add_stroke_enabled():
 			viewport_control.draw_polyline(points, Color.LIME, 1)
@@ -2708,6 +2722,12 @@ static func _get_default_joint_mode() -> Line2D.LineJointMode:
 	if ProjectSettings.has_setting(SETTING_NAME_DEFAULT_LINE_JOINT_MODE):
 		return ProjectSettings.get_setting(SETTING_NAME_DEFAULT_LINE_JOINT_MODE)
 	return Line2D.LineJointMode.LINE_JOINT_SHARP
+
+
+static func _get_default_stroke_extrusion_direction() -> ScalableVectorShape2D.StrokeExtrusionDirection:
+	if ProjectSettings.has_setting(CurvedLines2D.SETTING_NAME_DEFAULT_EXTRUSION):
+		return ProjectSettings.get_setting(CurvedLines2D.SETTING_NAME_DEFAULT_EXTRUSION)
+	return ScalableVectorShape2D.StrokeExtrusionDirection.MIDDLE
 
 
 static func _get_default_fill_color() -> Color:

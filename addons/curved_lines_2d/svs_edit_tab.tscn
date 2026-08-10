@@ -76,6 +76,20 @@ region = Rect2(0, 32, 32, 32)
 atlas = ExtResource("4_xku8w")
 region = Rect2(32, 32, 32, 32)
 
+[sub_resource type="ButtonGroup" id="ButtonGroup_ogmdh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bo7e1"]
+atlas = ExtResource("4_xku8w")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qilx1"]
+atlas = ExtResource("4_xku8w")
+region = Rect2(32, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kp6fx"]
+atlas = ExtResource("4_xku8w")
+region = Rect2(64, 64, 32, 32)
+
 [node name="SVSEditTab" type="ScrollContainer" unique_id=640426920]
 anchors_preset = 15
 anchor_right = 1.0
@@ -97,11 +111,11 @@ metadata/_edit_vertical_guides_ = [170.0]
 layout_mode = 2
 
 [node name="Label2" type="Label" parent="VBoxContainer/DrawSettingsContainer" unique_id=410230614]
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(90, 0)
 layout_mode = 2
 tooltip_text = "These settings apply to all new shapes created via the buttons in this dock."
 mouse_filter = 0
-text = "Draw Settings*"
+text = "Draw *"
 
 [node name="FillCheckButton" type="CheckButton" parent="VBoxContainer/DrawSettingsContainer" unique_id=496946038]
 unique_name_in_owner = true
@@ -257,11 +271,11 @@ size_flags_horizontal = 3
 layout_mode = 2
 
 [node name="Label2" type="Label" parent="VBoxContainer/StrokeSettingsContainer" unique_id=1601670005]
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(90, 0)
 layout_mode = 2
 tooltip_text = "These settings apply to the Line2D assigned to a new node created via the buttons in this dock."
 mouse_filter = 0
-text = "Stroke Settings*"
+text = "Stroke *"
 
 [node name="StrokeWidthContainer" type="PanelContainer" parent="VBoxContainer/StrokeSettingsContainer" unique_id=390893354]
 unique_name_in_owner = true
@@ -297,7 +311,7 @@ tooltip_text = "This will set the begin_cap_mode of the assigned Line2D node to:
 
 "
 mouse_filter = 0
-text = "Begin Cap Mode*"
+text = "Begin*"
 horizontal_alignment = 2
 
 [node name="BeginNoCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer" unique_id=353030120]
@@ -376,7 +390,7 @@ tooltip_text = "This will set the end_cap_mode of the assigned Line2D node to:
 
 "
 mouse_filter = 0
-text = "End Cap Mode *"
+text = "End *"
 horizontal_alignment = 2
 
 [node name="EndNoCapToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/EndCapForm" unique_id=241614489]
@@ -452,7 +466,7 @@ tooltip_text = "This will set the joint_mode of the assigned Line2D node to:
 - Bevel
 - Round"
 mouse_filter = 0
-text = "Joint Mode*"
+text = "Join *"
 horizontal_alignment = 2
 
 [node name="LineJointSharpToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/HBoxContainer3" unique_id=1498596706]
@@ -510,6 +524,74 @@ keep_pressed_outside = true
 button_group = SubResource("ButtonGroup_xku8w")
 icon = SubResource("AtlasTexture_84wj1")
 
+[node name="StrokeExtrusionToggleButtons" type="HBoxContainer" parent="VBoxContainer/StrokeSettingsContainer" unique_id=1821588161]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/StrokeSettingsContainer/StrokeExtrusionToggleButtons" unique_id=1431883935]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "This will set the joint_mode of the assigned Line2D node to:
+- Sharp
+- Bevel
+- Round"
+mouse_filter = 0
+text = "Extrude *"
+horizontal_alignment = 2
+
+[node name="MiddleToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/StrokeExtrusionToggleButtons" unique_id=991756212]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "This will draw the Line2D or PolyStroke in over the middle of the outline."
+theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/pressed = ExtResource("2_3cgh6")
+toggle_mode = true
+button_pressed = true
+keep_pressed_outside = true
+button_group = SubResource("ButtonGroup_ogmdh")
+icon = SubResource("AtlasTexture_bo7e1")
+
+[node name="OutsideToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/StrokeExtrusionToggleButtons" unique_id=1938216648]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "This will draw the Line2D or PolyStroke on the outside of the outline."
+theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/pressed = ExtResource("2_3cgh6")
+toggle_mode = true
+keep_pressed_outside = true
+button_group = SubResource("ButtonGroup_ogmdh")
+icon = SubResource("AtlasTexture_qilx1")
+
+[node name="InsideToggleButton" type="Button" parent="VBoxContainer/StrokeSettingsContainer/StrokeExtrusionToggleButtons" unique_id=1357972501]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "This will draw the Line2D or PolyStroke on the inside of the outline."
+theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/pressed = ExtResource("2_3cgh6")
+toggle_mode = true
+keep_pressed_outside = true
+button_group = SubResource("ButtonGroup_ogmdh")
+icon = SubResource("AtlasTexture_kp6fx")
+
 [node name="HSeparator4" type="HSeparator" parent="VBoxContainer" unique_id=1889496376]
 layout_mode = 2
 
@@ -517,13 +599,13 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Label" type="Label" parent="VBoxContainer/RectBuilderContainer" unique_id=2098793824]
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(90, 0)
 layout_mode = 2
 tooltip_text = "Create a Rectangle as:
 - ScalableRect2D: a primitive rect, which extends from ScalableVectorShape2D (easier to edit)
  - ScalableVectorShape2D (editable as a path)"
 mouse_filter = 0
-text = "Create Rectangle*"
+text = "Rectangle*"
 
 [node name="WidthSliderContainer" type="PanelContainer" parent="VBoxContainer/RectBuilderContainer" unique_id=217195658]
 unique_name_in_owner = true
@@ -568,13 +650,13 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Label" type="Label" parent="VBoxContainer/EllipseBuilderContainer" unique_id=931032815]
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(90, 0)
 layout_mode = 2
 tooltip_text = "Create an Ellipse as:
 - ScalableEllipse2D: a primitive ellipse, which extends from ScalableVectorShape2D (easier to edit)
  - ScalableVectorShape2D (editable as a path)"
 mouse_filter = 0
-text = "Create Ellipse*"
+text = "Ellipse*"
 
 [node name="EllipseXRadiusSliderContainer" type="PanelContainer" parent="VBoxContainer/EllipseBuilderContainer" unique_id=1156878948]
 unique_name_in_owner = true
@@ -603,7 +685,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Label" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1913520253]
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(90, 0)
 layout_mode = 2
 text = "Links"
 
@@ -659,6 +741,9 @@ uri = "https://discord.com/invite/CDdkVvT2Ff"
 [connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/HBoxContainer3/LineJointSharpToggleButton" to="." method="_on_line_joint_sharp_toggle_button_toggled"]
 [connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/HBoxContainer3/LineJointBevelToggleButton" to="." method="_on_line_joint_bevel_toggle_button_toggled"]
 [connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/HBoxContainer3/LineJointRoundToggleButton" to="." method="_on_line_joint_round_toggle_button_toggled"]
+[connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/StrokeExtrusionToggleButtons/MiddleToggleButton" to="." method="_on_middle_toggle_button_toggled"]
+[connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/StrokeExtrusionToggleButtons/OutsideToggleButton" to="." method="_on_outside_toggle_button_toggled"]
+[connection signal="toggled" from="VBoxContainer/StrokeSettingsContainer/StrokeExtrusionToggleButtons/InsideToggleButton" to="." method="_on_inside_toggle_button_toggled"]
 [connection signal="mouse_entered" from="VBoxContainer/RectBuilderContainer/CreateRectButton" to="." method="_on_create_rect_button_mouse_entered"]
 [connection signal="mouse_exited" from="VBoxContainer/RectBuilderContainer/CreateRectButton" to="." method="_on_create_rect_button_mouse_exited"]
 [connection signal="pressed" from="VBoxContainer/RectBuilderContainer/CreateRectButton" to="." method="_on_create_rect_button_pressed"]
