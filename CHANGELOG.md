@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.29.1
+## 2.29.2
 
 ⚠️ Small notice: a shape with a stroke used to generate a `CollisionPolygon2D` for its fill _and_ one for each piece of its stroke, which overlapped each other. Those are now merged into one single collider covering the exact same area. Nothing has to be changed in your scenes, but the amount of `CollisionPolygon2D` nodes under your collision objects will go down.
 
@@ -15,6 +15,7 @@
 ### Changed
 
 - The fill and the stroke of a shape now share one single collider, in stead of generating one collider each which overlap where the stroke covers the fill. Cutouts made with clip paths are preserved.
+- Various bugfixes when using Ctrl+Z for undo and Ctrl+Shift+Z for redo
 
 ## 2.28.2
 
