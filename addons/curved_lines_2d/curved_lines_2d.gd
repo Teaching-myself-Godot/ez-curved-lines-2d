@@ -78,7 +78,7 @@ enum PaintOrder {
 	STROKE_MARKERS_FILL,
 	MARKERS_STROKE_FILL
 }
-enum UndoRedoEntry { UNDOS, DOS, NAME, DO_PROPS, UNDO_PROPS }
+enum UndoRedoEntry { UNDOS, DOS, NAME, DO_PROPS, UNDO_PROPS, ACTION_TYPE }
 
 const PAINT_ORDER_MAP := {
 	PaintOrder.FILL_STROKE_MARKERS: ['_add_fill_to_created_shape', '_add_stroke_to_created_shape', '_add_collision_to_created_shape'],
@@ -114,7 +114,11 @@ var selection_candidate : Node = null
 var current_cutout_shape := ScalableVectorShape2D.ShapeType.RECT
 var current_clip_operation := Geometry2D.OPERATION_DIFFERENCE
 
+enum UndoRedoActionType {
+	UNSPECIFIED, DRAGGING_POINT, DRAGGING_CP
+}
 var undo_redo_transaction : Dictionary = {
+	UndoRedoEntry.ACTION_TYPE: UndoRedoActionType.UNSPECIFIED,
 	UndoRedoEntry.NAME: "",
 	UndoRedoEntry.DOS: [],
 	UndoRedoEntry.UNDOS: [],
@@ -1447,9 +1451,10 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 			viewport_control.draw_polyline(points, Color.LIME, 1)
 
 
-func _start_undo_redo_transaction(name := "") -> void:
+func _start_undo_redo_transaction(name := "", undo_redo_action_type := UndoRedoActionType.UNSPECIFIED) -> void:
 	in_undo_redo_transaction = true
 	undo_redo_transaction = {
+		UndoRedoEntry.ACTION_TYPE: undo_redo_action_type,
 		UndoRedoEntry.NAME: name,
 		UndoRedoEntry.DOS: [],
 		UndoRedoEntry.UNDOS: [],
@@ -1481,6 +1486,10 @@ func _commit_undo_redo_transaction() -> void:
 	}
 
 
+func _in_other_undo_redo_transaction(other_type : UndoRedoActionType) -> bool:
+	return in_undo_redo_transaction and other_type != undo_redo_transaction[UndoRedoEntry.ACTION_TYPE]
+
+
 func _on_global_position_for_handle_changed(global_pos : Vector2, meta_name: String, idx : int) -> void:
 	var cur := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(cur):
@@ -1495,8 +1504,10 @@ func _on_global_position_for_handle_changed(global_pos : Vector2, meta_name: Str
 
 
 func _update_curve_point_position(current_selection : ScalableVectorShape2D, mouse_pos : Vector2, idx : int) -> void:
+	if _in_other_undo_redo_transaction(UndoRedoActionType.DRAGGING_POINT):
+		_commit_undo_redo_transaction()
 	if not in_undo_redo_transaction:
-		_start_undo_redo_transaction("Move point on " + str(current_selection))
+		_start_undo_redo_transaction("Move point on " + str(current_selection), UndoRedoActionType.DRAGGING_POINT)
 		if idx == 0 and current_selection.is_curve_closed():
 			var idx_1 = current_selection.curve.point_count - 1
 			undo_redo_transaction[UndoRedoEntry.UNDOS].append([
@@ -1566,8 +1577,10 @@ func _update_curve_cp_in_position(current_selection : ScalableVectorShape2D, mou
 			not(idx == current_selection.curve.point_count - 1
 					and not current_selection.is_curve_closed())
 	)
+	if _in_other_undo_redo_transaction(UndoRedoActionType.DRAGGING_CP):
+		_commit_undo_redo_transaction()
 	if not in_undo_redo_transaction:
-		_start_undo_redo_transaction("Move control point in %d on %s" % [idx, current_selection])
+		_start_undo_redo_transaction("Move control point in %d on %s" % [idx, current_selection], UndoRedoActionType.DRAGGING_CP)
 		undo_redo_transaction[UndoRedoEntry.UNDOS].append([current_selection.curve, 'set_point_in', idx, current_selection.curve.get_point_in(idx)])
 		if cp_in_is_cp_out_of_loop_start:
 			var idx_1 = 0 if idx == current_selection.curve.point_count - 1 else idx
@@ -1692,8 +1705,11 @@ func _update_curve_cp_out_position(current_selection : ScalableVectorShape2D, mo
 
 	var cp_out_is_cp_in_of_loop_end := (Input.is_key_pressed(KEY_SHIFT)
 			and not(idx == 0 and not current_selection.is_curve_closed()))
+
+	if _in_other_undo_redo_transaction(UndoRedoActionType.DRAGGING_CP):
+		_commit_undo_redo_transaction()
 	if not in_undo_redo_transaction:
-		_start_undo_redo_transaction("Move control point out %d on %s" % [idx, current_selection])
+		_start_undo_redo_transaction("Move control point out %d on %s" % [idx, current_selection], UndoRedoActionType.DRAGGING_CP)
 		undo_redo_transaction[UndoRedoEntry.UNDOS].append([current_selection.curve, 'set_point_out', idx, current_selection.curve.get_point_out(idx)])
 		if cp_out_is_cp_in_of_loop_end:
 			var idx_1 = current_selection.curve.point_count - 1 if idx == 0 else idx
