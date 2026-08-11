@@ -47,6 +47,16 @@ const META_NAME_HOVER_GRADIENT_FROM := "_hover_gradient_from_"
 const META_NAME_HOVER_GRADIENT_TO := "_hover_gradient_to_"
 const META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX := "_hover_gradient_color_stop_idx_"
 const META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE := "_hover_closest_point_on_gradient_"
+const HOVER_META_NAMES : Array[String] = [
+	META_NAME_HOVER_POINT_IDX,
+	META_NAME_HOVER_CP_IN_IDX,
+	META_NAME_HOVER_CP_OUT_IDX,
+	META_NAME_HOVER_CLOSEST_POINT,
+	META_NAME_HOVER_GRADIENT_FROM,
+	META_NAME_HOVER_GRADIENT_TO,
+	META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX,
+	META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE,
+]
 
 const META_NAME_SELECT_HINT := "_select_hint_"
 
@@ -178,7 +188,7 @@ func _enter_tree():
 	undo_redo = get_undo_redo()
 	add_control_to_bottom_panel(scalable_vector_shapes_2d_dock as Control, "Scalable Vector Shapes 2D")
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
-	undo_redo.version_changed.connect(update_overlays)
+	undo_redo.version_changed.connect(_on_undo_redo_version_changed)
 	make_bottom_panel_item_visible(scalable_vector_shapes_2d_dock)
 
 	set_global_position_popup_panel = load("res://addons/curved_lines_2d/set_global_position_popup_panel.tscn").instantiate()
@@ -218,6 +228,15 @@ func _enter_tree():
 func select_node_reversibly(target_node : Node) -> void:
 	if is_instance_valid(target_node):
 		EditorInterface.edit_node(target_node)
+
+
+func _on_undo_redo_version_changed() -> void:
+	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if _is_svs_valid(sel):
+		for meta_key in sel.get_meta_list():
+			if meta_key in HOVER_META_NAMES:
+				sel.remove_meta(meta_key)
+	update_overlays()
 
 
 func _select_scene_root_when_nothing_is_selected() -> void:
