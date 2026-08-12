@@ -227,6 +227,7 @@ func _enter_tree():
 	svs_edit_buttons.mode_changed.connect(_on_svs_edit_mode_changed)
 	svs_edit_buttons.flip_horizontal.connect(_flip_svs_horizontal)
 	svs_edit_buttons.flip_vertical.connect(_flip_svs_vertical)
+	svs_edit_buttons.convert_to_svs.connect(_extract_svs_from_selected_node)
 
 
 func select_node_reversibly(target_node : Node) -> void:
@@ -483,6 +484,10 @@ func _on_selection_changed():
 	if current_selection is AnimationPlayer and _scene_can_export_animations():
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(current_selection)
 	_on_select_mode_toggled(_get_select_mode_button().button_pressed)
+	if current_selection is Line2D or current_selection is Polygon2D or current_selection is CollisionPolygon2D:
+		svs_edit_buttons.show_convert_to_svs()
+	else:
+		svs_edit_buttons.hide_convert_to_svs()
 	update_overlays()
 
 
@@ -2287,6 +2292,25 @@ func _set_curve_from_polygon(svs : ScalableVectorShape2D, pts : PackedVector2Arr
 	var poly := PackedVector2Array(Array(pts).map(func(p): return svs.to_local(p)))
 	var fitness_prep := BasicFit.prepare_polyline_segments(poly, 0.5 * (_get_brush_size_x() + _get_brush_size_y()))
 	svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
+
+
+func _extract_svs_from_selected_node() -> void:
+	var node := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if not is_instance_valid(node):
+		return
+	if not node is Polygon2D and not node is CollisionPolygon2D and not node is Line2D:
+		return
+	var svs := ScalableVectorShape2D.new()
+	var poly := (
+		(node as Line2D).points
+			if node is Line2D else
+		(node as Polygon2D).polygon
+			if node is Polygon2D else
+		(node as CollisionPolygon2D).polygon
+	)
+	var fitness_prep := BasicFit.prepare_polyline_segments(poly, 0.5 * (_get_brush_size_x() + _get_brush_size_y()))
+	svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
+	_create_shape(svs, EditorInterface.get_edited_scene_root(), "Extracted" + node.name)
 
 
 func _handle_brush_draw_input(event : InputEvent) -> bool:

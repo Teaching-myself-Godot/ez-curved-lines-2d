@@ -4,6 +4,7 @@ extends HBoxContainer
 signal mode_changed(mode : CurvedLines2D.SVSEditMode)
 signal flip_horizontal()
 signal flip_vertical()
+signal convert_to_svs()
 
 func show_svs_editors() -> void:
 	%UniformRotate.show()
@@ -25,6 +26,14 @@ func hide_svs_editors() -> void:
 	%PaintBone.hide()
 	%VSeparator1.hide()
 	%VSeparator2.hide()
+
+
+func show_convert_to_svs() -> void:
+	%ConvertToSVS.show()
+
+
+func hide_convert_to_svs() -> void:
+	%ConvertToSVS.hide()
 
 
 func set_default_mode(svs_is_selected := false) -> void:
@@ -80,6 +89,10 @@ func _on_flip_vertical_pressed() -> void:
 	flip_vertical.emit()
 
 
+func _on_convert_to_svs_pressed() -> void:
+	convert_to_svs.emit()
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible:
 		return
@@ -98,3 +111,4 @@ func _unhandled_input(event: InputEvent) -> void:
 			%Pencil.button_pressed = true
 		if (event as InputEventKey).keycode == KEY_B and Input.is_key_pressed(KEY_SHIFT):
 			%Brush.button_pressed = true
+
