@@ -227,6 +227,7 @@ func _enter_tree():
 	svs_edit_buttons.mode_changed.connect(_on_svs_edit_mode_changed)
 	svs_edit_buttons.flip_horizontal.connect(_flip_svs_horizontal)
 	svs_edit_buttons.flip_vertical.connect(_flip_svs_vertical)
+	svs_edit_buttons.convert_to_svs.connect(_extract_svs_from_selected_node)
 
 
 func select_node_reversibly(target_node : Node) -> void:
@@ -332,9 +333,12 @@ func _on_shape_created(curve : Curve2D, scene_root : Node, node_name : String) -
 	_create_shape(new_shape, scene_root, node_name)
 
 
-func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_name : String, is_cutout_for : ScalableVectorShape2D = null, force_no_realign := false) -> void:
+func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_name : String,
+		is_cutout_for : ScalableVectorShape2D = null, force_no_realign := false,
+		parent : Node = null) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-	var parent = current_selection if current_selection is Node else scene_root
+	if parent == null:
+		parent = current_selection if current_selection is Node else scene_root
 	new_shape.update_curve_at_runtime = _is_setting_update_curve_at_runtime()
 	new_shape.curve.resource_local_to_scene = _is_making_curve_resources_local_to_scene()
 	new_shape.arc_list.resource_local_to_scene = _is_making_curve_resources_local_to_scene()
@@ -483,6 +487,10 @@ func _on_selection_changed():
 	if current_selection is AnimationPlayer and _scene_can_export_animations():
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(current_selection)
 	_on_select_mode_toggled(_get_select_mode_button().button_pressed)
+	if current_selection is Line2D or current_selection is Polygon2D or current_selection is CollisionPolygon2D:
+		svs_edit_buttons.show_convert_to_svs()
+	else:
+		svs_edit_buttons.hide_convert_to_svs()
 	update_overlays()
 
 
@@ -2259,8 +2267,9 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 				if is_instance_valid(current_selection):
 					var svs := _create_freehand_shape("PencilDrawing")
 					svs.global_position = _pencil_start_pos
-					for p in _pencil_stroke:
-						svs.curve.add_point(svs.to_local(p))
+					var poly := _pencil_stroke.map(svs.to_local)
+					var fitness_prep := BasicFit.prepare_polyline_segments(poly, _get_basic_fit_snap(poly))
+					svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
 					if _get_close_pencil_path() and _pencil_stroke.size() > 1:
 						svs.curve.add_point(svs.to_local(_pencil_stroke[0]))
 					_pencil_stroke.clear()
@@ -2289,9 +2298,53 @@ func _set_curve_from_polygon(svs : ScalableVectorShape2D, pts : PackedVector2Arr
 	svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
 
 
+func _get_points_from_node(node : Node) -> Array[PackedVector2Array]:
+	if not is_instance_valid(node):
+		return []
+	if not node is Polygon2D and not node is CollisionPolygon2D and not node is Line2D:
+		return []
+	if node is Polygon2D and (node as Polygon2D).polygons.size() > 1:
+		var polys : Array[PackedVector2Array] = []
+		for p_indices in (node as Polygon2D).polygons:
+			var pts := PackedVector2Array()
+			for p_idx in p_indices:
+				pts.append((node as Polygon2D).polygon[p_idx])
+			polys.append(pts)
+		return polys
+	return [(
+		(node as Line2D).points
+			if node is Line2D else
+		(node as Polygon2D).polygon
+			if node is Polygon2D else
+		(node as CollisionPolygon2D).polygon
+	)]
+
+
+func _get_basic_fit_snap(poly : PackedVector2Array) -> float:
+	var bounds := Geometry2DUtil.get_polygon_bounding_rect(poly)
+	return (bounds.size.x + bounds.size.y) / 2.0
+
+
+func _extract_svs_from_selected_node() -> void:
+	for node in EditorInterface.get_selection().get_selected_nodes():
+		var poly_list = _get_points_from_node(node)
+		if poly_list.is_empty():
+			continue
+		for poly in poly_list:
+			var svs = ScalableVectorShape2D.new()
+			if ((node is Line2D and (node as Line2D).closed) or (not node is Line2D) and
+					not (poly[0] as Vector2).is_equal_approx(poly[-1])
+			):
+				poly.append(poly[0])
+			var fitness_prep := BasicFit.prepare_polyline_segments(poly, _get_basic_fit_snap(poly))
+			svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
+			svs.position = node.position
+			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Extracted" + node.name,
+				null, true, node.get_parent())
+
+
 func _handle_brush_draw_input(event : InputEvent) -> bool:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-
 	var pos := _svp_mouse_pos(
 			EditorInterface.get_editor_viewport_2d().get_mouse_position(),
 			current_selection if current_selection else EditorInterface.get_edited_scene_root()

@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.30.0
+
+### Added
+
+- Button to extract ScalableVectorShape2D from `Line2D`, `Polygon2D` and `CollisionPolygon2D`
+
+### Changed
+
+- Pencil tool now also uses `BasicFit`'s curve fitting algorithm to reduce points and introduce control points (just like the polygon brush)
+
 ## 2.29.2
 
 ⚠️ Small notice: a shape with a stroke used to generate a `CollisionPolygon2D` for its fill _and_ one for each piece of its stroke, which overlapped each other. Those are now merged into one single collider covering the exact same area. Nothing has to be changed in your scenes, but the amount of `CollisionPolygon2D` nodes under your collision objects will go down.
