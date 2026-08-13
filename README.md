@@ -88,6 +88,7 @@ You can find the rest of the explainer videos on this playlist:
 - [Free-hand Drawing](#free-hand-drawing)
 	- [Drawing strokes and outlines with the Pencil Tool](#drawing-strokes-and-outlines-with-the-pencil-tool)
 	- [Drawing polygons using the Brush Tool](#drawing-polygons-using-the-brush-tool)
+- [Extracting a `ScalableVectorShape2D` from a `Polygon2D`, `Line2D`, or `CollisionPolygon2D`](#extracting-a-scalablevectorshape2d-from-a-polygon2d-line2d-or-collisionpolygon2d)
 - [Manipulating 2D Shapes in the 3D export](#manipulating-2d-shapes-in-the-3d-export)
 	- [Animating 3D curves](#animating-3d-curves)
 - [Manipulating gradients](#manipulating-gradients)
@@ -565,6 +566,14 @@ Configuration options for this tool are described under [The Draw Settings tab](
 Strokes, Fills and Collisions drawn by this tool are configured in the: [Create Shapes Tab](#the-create-shapes-dock)
 
 This pencil tool also respects the `Snap to Pixel` setting with the `Snap Resolution`, which are described under the [Project Settings Tab](#the-project-settings-dock).
+
+# Extracting a `ScalableVectorShape2D` from a `Polygon2D`, `Line2D`, or `CollisionPolygon2D`
+
+As of release 2.30 a new button is available that generates a `ScalableVectorShape2D` with a curve based on the selected `Polygon2D`, `Line2D` and `CollisionPolygon2D`. 
+
+This new button is presented when the actively selected node in the scene tree is of one of these types. It supports creating shapes from multiple selections.
+
+![Extracting a `ScalableVectorShape2D` from a `Polygon2D`](./addons/curved_lines_2d/screenshots/extract_svs.gif)
 
 # Manipulating 2D Shapes in the 3D export
 
