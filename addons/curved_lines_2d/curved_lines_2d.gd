@@ -2267,8 +2267,9 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 				if is_instance_valid(current_selection):
 					var svs := _create_freehand_shape("PencilDrawing")
 					svs.global_position = _pencil_start_pos
-					for p in _pencil_stroke:
-						svs.curve.add_point(svs.to_local(p))
+					var poly := _pencil_stroke.map(svs.to_local)
+					var fitness_prep := BasicFit.prepare_polyline_segments(poly, _get_basic_fit_snap(poly))
+					svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
 					if _get_close_pencil_path() and _pencil_stroke.size() > 1:
 						svs.curve.add_point(svs.to_local(_pencil_stroke[0]))
 					_pencil_stroke.clear()
@@ -2319,6 +2320,11 @@ func _get_points_from_node(node : Node) -> Array[PackedVector2Array]:
 	)]
 
 
+func _get_basic_fit_snap(poly : PackedVector2Array) -> float:
+	var bounds := Geometry2DUtil.get_polygon_bounding_rect(poly)
+	return (bounds.size.x + bounds.size.y) / 2.0
+
+
 func _extract_svs_from_selected_node() -> void:
 	for node in EditorInterface.get_selection().get_selected_nodes():
 		var poly_list = _get_points_from_node(node)
@@ -2326,14 +2332,11 @@ func _extract_svs_from_selected_node() -> void:
 			continue
 		for poly in poly_list:
 			var svs = ScalableVectorShape2D.new()
-			var bounds := Geometry2DUtil.get_polygon_bounding_rect(poly)
-			var snap := (bounds.size.x + bounds.size.y / 2.0)
-
 			if ((node is Line2D and (node as Line2D).closed) or (not node is Line2D) and
 					not (poly[0] as Vector2).is_equal_approx(poly[-1])
 			):
 				poly.append(poly[0])
-			var fitness_prep := BasicFit.prepare_polyline_segments(poly, snap)
+			var fitness_prep := BasicFit.prepare_polyline_segments(poly, _get_basic_fit_snap(poly))
 			svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
 			svs.position = node.position
 			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Extracted" + node.name,
