@@ -2326,7 +2326,14 @@ func _extract_svs_from_selected_node() -> void:
 			continue
 		for poly in poly_list:
 			var svs = ScalableVectorShape2D.new()
-			var fitness_prep := BasicFit.prepare_polyline_segments(poly, 0.5 * (_get_brush_size_x() + _get_brush_size_y()))
+			var bounds := Geometry2DUtil.get_polygon_bounding_rect(poly)
+			var snap := (bounds.size.x + bounds.size.y / 2.0)
+
+			if ((node is Line2D and (node as Line2D).closed) or (not node is Line2D) and
+					not (poly[0] as Vector2).is_equal_approx(poly[-1])
+			):
+				poly.append(poly[0])
+			var fitness_prep := BasicFit.prepare_polyline_segments(poly, snap)
 			svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
 			svs.position = node.position
 			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Extracted" + node.name,
