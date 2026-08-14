@@ -150,6 +150,7 @@ var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
 var _drawing_pencil_line := false
 var _pencil_start_pos := Vector2.ZERO
 var _pencil_stroke : Array[Vector2] = []
+var _knife_intersections : Array[Vector2] = []
 
 # Brush draw helper vars
 var _current_brush_shape := PackedVector2Array()
@@ -262,7 +263,8 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 		svs_edit_buttons.show()
 		svs_edit_buttons.show_svs_editors()
 		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
-				_svs_edit_mode == SVSEditMode.BRUSH or _svs_edit_mode == SVSEditMode.PENCIL) and
+				_svs_edit_mode == SVSEditMode.BRUSH or _svs_edit_mode == SVSEditMode.PENCIL or
+				_svs_edit_mode == SVSEditMode.KNIFE) and
 				not Input.is_key_pressed(KEY_Q)):
 					return
 		svs_edit_buttons.set_default_mode()
@@ -270,7 +272,8 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 		svs_edit_buttons.show()
 		svs_edit_buttons.hide_svs_editors()
 		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
-				_svs_edit_mode == SVSEditMode.BRUSH or _svs_edit_mode == SVSEditMode.PENCIL) and
+				_svs_edit_mode == SVSEditMode.BRUSH or _svs_edit_mode == SVSEditMode.PENCIL or
+				_svs_edit_mode == SVSEditMode.KNIFE) and
 				not Input.is_key_pressed(KEY_Q)):
 					return
 		svs_edit_buttons.set_default_mode()
@@ -493,6 +496,12 @@ func _on_selection_changed():
 		svs_edit_buttons.show_convert_to_svs()
 	else:
 		svs_edit_buttons.hide_convert_to_svs()
+	if current_selection is Polygon2D or current_selection is ScalableVectorShape2D or current_selection is CollisionPolygon2D:
+		svs_edit_buttons.show_knife()
+	else:
+		svs_edit_buttons.hide_knife()
+		if _svs_edit_mode == SVSEditMode.KNIFE:
+			svs_edit_buttons.set_default_mode()
 	update_overlays()
 
 
@@ -1219,6 +1228,17 @@ func _handle_knife_draw(viewport_control : Control) -> void:
 		var pts := Array(_pencil_stroke).map(func(p): return _vp_transform(p * mul))
 		viewport_control.draw_polyline(pts, Color.BLACK, 1.5, true)
 		viewport_control.draw_polyline(pts, Color.WHITE, 1.0, true)
+	for p in _knife_intersections:
+		_draw_crosshair(
+			viewport_control,
+			_vp_transform(p * mul),
+			1.0, 6.0, Color.WHITE, 3
+		)
+		_draw_crosshair(
+			viewport_control,
+			_vp_transform(p * mul),
+			1.0, 6.0, Color.RED, 1
+		)
 	if _is_svs_valid(current_selection):
 		_draw_curve(viewport_control, current_selection)
 	_show_draw_line_hints(viewport_control)
@@ -2292,11 +2312,28 @@ func _add_point_to_pencil_line() -> void:
 		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
 	if not _pencil_stroke.is_empty() and _pencil_stroke[-1].distance_to(pos) > _get_freehand_draw_granularity():
 		_pencil_stroke.append(pos)
+		if _svs_edit_mode == SVSEditMode.KNIFE:
+			var poly : PackedVector2Array = (
+				(current_selection as ScalableVectorShape2D).tessellate()
+					if current_selection is ScalableVectorShape2D else
+				current_selection.polygon
+			)
+			if not poly[0].is_equal_approx(poly[-1]):
+				poly.append(poly[0])
+			for i in range(0, poly.size() - 1):
+				var intersection = Geometry2D.segment_intersects_segment(
+						_pencil_stroke[-1], _pencil_stroke[-2],
+						current_selection.to_global(poly[i]),
+						current_selection.to_global(poly[i+1])
+				)
+				if intersection != null:
+					_knife_intersections.append(intersection)
 
 
 func _apply_knife_cut() -> bool:
 	print("TODO: apply knife cut of, ", _pencil_stroke.size(), " points")
 	_pencil_stroke.clear()
+	_knife_intersections.clear()
 	update_overlays()
 	_drawing_pencil_line = false
 	return true

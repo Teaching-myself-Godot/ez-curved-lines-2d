@@ -65,6 +65,7 @@ icon = ExtResource("7_i6df8")
 
 [node name="Knife" type="Button" parent="." unique_id=1946507872]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 tooltip_text = "Knife tool (K)"
 theme_override_styles/normal = SubResource("StyleBoxFlat_1j8wt")

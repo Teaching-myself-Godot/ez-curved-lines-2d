@@ -36,6 +36,14 @@ func hide_convert_to_svs() -> void:
 	%ConvertToSVS.hide()
 
 
+func show_knife() -> void:
+	%Knife.show()
+
+
+func hide_knife() -> void:
+	%Knife.hide()
+
+
 func set_default_mode(svs_is_selected := false) -> void:
 	%DefaultEdit.button_pressed = true
 
