@@ -71,6 +71,11 @@ func _on_pencil_toggled(toggled_on: bool) -> void:
 		mode_changed.emit(CurvedLines2D.SVSEditMode.PENCIL)
 
 
+func _on_knife_toggled(toggled_on: bool) -> void:
+	if toggled_on:
+		mode_changed.emit(CurvedLines2D.SVSEditMode.KNIFE)
+
+
 func _on_merge_toggled(toggled_on: bool) -> void:
 	if toggled_on:
 		mode_changed.emit(CurvedLines2D.SVSEditMode.MERGE)
@@ -111,4 +116,5 @@ func _unhandled_input(event: InputEvent) -> void:
 			%Pencil.button_pressed = true
 		if (event as InputEventKey).keycode == KEY_B and Input.is_key_pressed(KEY_SHIFT):
 			%Brush.button_pressed = true
-
+		if (event as InputEventKey).keycode == KEY_K:
+			%Knife.button_pressed = true

@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://chojkn0i6ngam" path="res://addons/curved_lines_2d/UniformTranslate.svg" id="3_ojxsm"]
 [ext_resource type="Texture2D" uid="uid://d1uok4qb3xets" path="res://addons/curved_lines_2d/UniformRotate.svg" id="4_sl6t4"]
 [ext_resource type="Texture2D" uid="uid://do5uut1a4xvqf" path="res://addons/curved_lines_2d/UniformScale.svg" id="5_1qgur"]
+[ext_resource type="Texture2D" uid="uid://d3bytoqdw2l73" path="res://addons/curved_lines_2d/Knife.svg" id="6_1j8wt"]
 [ext_resource type="Texture2D" uid="uid://dvrgy7r2fvcxk" path="res://addons/curved_lines_2d/FlipHorizontal.svg" id="6_ojxsm"]
 [ext_resource type="Texture2D" uid="uid://dgssn5fp75sqx" path="res://addons/curved_lines_2d/Brush.svg" id="6_rxvdi"]
 [ext_resource type="Texture2D" uid="uid://bxxtceujf66ws" path="res://addons/curved_lines_2d/Pencil.svg" id="7_i6df8"]
@@ -61,6 +62,15 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_1j8wt")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_rxvdi")
 icon = ExtResource("7_i6df8")
+
+[node name="Knife" type="Button" parent="." unique_id=1946507872]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Knife tool (K)"
+theme_override_styles/normal = SubResource("StyleBoxFlat_1j8wt")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_rxvdi")
+icon = ExtResource("6_1j8wt")
 
 [node name="VSeparator1" type="VSeparator" parent="." unique_id=1892531728]
 unique_name_in_owner = true
@@ -137,6 +147,7 @@ icon = ExtResource("8_fsls0")
 [connection signal="toggled" from="DefaultEdit" to="." method="_on_default_edit_toggled"]
 [connection signal="toggled" from="Brush" to="." method="_on_brush_toggled"]
 [connection signal="toggled" from="Pencil" to="." method="_on_pencil_toggled"]
+[connection signal="toggled" from="Knife" to="." method="_on_knife_toggled"]
 [connection signal="toggled" from="UniformTranslate" to="." method="_on_uniform_translate_toggled"]
 [connection signal="toggled" from="UniformRotate" to="." method="_on_uniform_rotate_toggled"]
 [connection signal="toggled" from="UniformScale" to="." method="_on_uniform_scale_toggled"]

@@ -101,7 +101,8 @@ const OPERATION_NAME_MAP := {
 
 enum SVSEditMode {
 	NONE, TRANSLATE, ROTATE, SCALE,
-	MERGE, BRUSH, PENCIL, PAINT_BONE
+	MERGE, BRUSH, PENCIL, PAINT_BONE,
+	KNIFE
 }
 
 var plugin : Line2DGeneratorInspectorPlugin
@@ -155,6 +156,7 @@ var _current_brush_shape := PackedVector2Array()
 var _current_brush_stroke := PackedVector2Array()
 var _brush_start_pos := Vector2.ZERO
 var _last_brush_pos := Vector2.ZERO
+
 
 # Bone Paint helper vars
 var _current_bone_idx := 0
@@ -1191,6 +1193,38 @@ func _handle_draw_vertex_merge_box(viewport_control: Control) -> void:
 		_draw_hint(viewport_control, "\nMerge points of:%s" % entries)
 
 
+func _handle_knife_draw(viewport_control : Control) -> void:
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if not _is_svs_valid(current_selection) and not current_selection is Polygon2D and not current_selection is CollisionPolygon2D:
+		return _draw_hint(viewport_control, "** Selected node cannot be cut by knife tool **")
+	var mul := _get_svp_transform(current_selection)
+	if is_instance_valid(current_selection) and Input.is_key_pressed(KEY_SHIFT) and _drawing_pencil_line:
+		var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+		if _is_snapped_to_pixel():
+			pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+
+		for p in _pencil_stroke:
+			_draw_crosshair(
+				viewport_control,
+				_vp_transform(p * mul),
+				2.0, 4.0, VIEWPORT_ORANGE, 1
+			)
+		if not _pencil_stroke.is_empty():
+			viewport_control.draw_line(
+				_vp_transform(_pencil_stroke[-1] * mul),
+				_vp_transform(pos),
+				Color.RED
+			)
+	if _pencil_stroke.size() > 1:
+		var pts := Array(_pencil_stroke).map(func(p): return _vp_transform(p * mul))
+		viewport_control.draw_polyline(pts, Color.BLACK, 1.5, true)
+		viewport_control.draw_polyline(pts, Color.WHITE, 1.0, true)
+	if _is_svs_valid(current_selection):
+		_draw_curve(viewport_control, current_selection)
+	_show_draw_line_hints(viewport_control)
+
+
+
 func _handle_pencil_draw(viewport_control : Control) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	var mul := _get_svp_transform(current_selection)
@@ -1230,28 +1264,41 @@ func _handle_pencil_draw(viewport_control : Control) -> void:
 					viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
 		if not _is_add_fill_enabled() and not _is_add_stroke_enabled():
 			viewport_control.draw_polyline(pts, Color.LIME, 1.0, true)
+	_show_draw_line_hints(viewport_control)
 
 
+func _show_draw_line_hints(viewport_control : Control) -> void:
 	if Input.is_key_pressed(KEY_SHIFT):
 		if _drawing_pencil_line:
 			_draw_hint(viewport_control, "- Left click to add a straight line segment (Shift Held)")
 		else:
-			_draw_hint(viewport_control, "- Left click to start drawing straight lines (Shift Held)")
+			_draw_hint(viewport_control, "- Left click to start %s straight lines (Shift Held)" %
+				("drawing" if _svs_edit_mode == SVSEditMode.PENCIL else "cutting")
+			)
 	elif Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		_draw_hint(viewport_control, "- Hold Shift to draw straight line segments
-			- Release left mouse button to finish outline / stroke
-		")
+		_draw_hint(viewport_control, "- Hold Shift to %s straight line segments
+			- Release left mouse button to finish %s
+		" % [
+				"draw" if _svs_edit_mode == SVSEditMode.PENCIL else "cut",
+				"outline / stroke" if _svs_edit_mode == SVSEditMode.PENCIL else "cut"
+			])
 	else:
 		if _drawing_pencil_line:
-			_draw_hint(viewport_control, "- Hold left again to continue drawing (Shift Released)
+			_draw_hint(viewport_control, "- Hold left again to continue %s (Shift Released)
 				- Left click to finish (Shift released)
-				- Hold Shift again to continue drawing straight line segments
-			")
+				- Hold Shift again to continue %s straight line segments
+			" % [
+				"drawing" if _svs_edit_mode == SVSEditMode.PENCIL else "cutting",
+				"drawing" if _svs_edit_mode == SVSEditMode.PENCIL else "cutting"
+			])
 		else:
 			_draw_hint(viewport_control, "
-				- Hold and drag left mouse button to draw outlines / strokes
-				- Hold Shift to draw straight line segments
-			")
+				- Hold and drag left mouse button to %s
+				- Hold Shift to %s straight line segments
+			" % [
+				"draw outlines / strokes" if _svs_edit_mode == SVSEditMode.PENCIL else "start cutting",
+				"draw" if _svs_edit_mode == SVSEditMode.PENCIL else "cut",
+			])
 
 
 func _handle_brush_draw(viewport_control : Control) -> void:
@@ -1380,6 +1427,8 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		return _handle_pencil_draw(viewport_control)
 	elif _svs_edit_mode == SVSEditMode.BRUSH:
 		return _handle_brush_draw(viewport_control)
+	elif _svs_edit_mode == SVSEditMode.KNIFE:
+		return _handle_knife_draw(viewport_control)
 	elif _svs_edit_mode == SVSEditMode.PAINT_BONE:
 		return _handle_paint_bone_draw(viewport_control)
 
@@ -2236,18 +2285,29 @@ func _start_pencil_draw():
 	_drawing_pencil_line = true
 
 
-
 func _add_point_to_pencil_line() -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	var pos := _svp_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), current_selection)
 	if _is_snapped_to_pixel():
 		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
-
 	if not _pencil_stroke.is_empty() and _pencil_stroke[-1].distance_to(pos) > _get_freehand_draw_granularity():
 		_pencil_stroke.append(pos)
 
 
+func _apply_knife_cut() -> bool:
+	print("TODO: apply knife cut of, ", _pencil_stroke.size(), " points")
+	_pencil_stroke.clear()
+	update_overlays()
+	_drawing_pencil_line = false
+	return true
+
+
 func _handle_pencil_draw_input(event : InputEvent) -> bool:
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if _svs_edit_mode == SVSEditMode.KNIFE:
+		if not _is_svs_valid(current_selection) and not current_selection is Polygon2D and not current_selection is CollisionPolygon2D:
+			update_overlays()
+			return true
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		if Input.is_key_pressed(KEY_SHIFT):
 			if event.is_pressed() and not _drawing_pencil_line:
@@ -2263,7 +2323,8 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 				_drawing_pencil_line = true
 				return true
 			if not event.is_pressed():
-				var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+				if _svs_edit_mode == SVSEditMode.KNIFE:
+					return _apply_knife_cut()
 				if is_instance_valid(current_selection):
 					var svs := _create_freehand_shape("PencilDrawing")
 					svs.global_position = _pencil_start_pos
@@ -2280,7 +2341,6 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 				update_overlays()
 				_drawing_pencil_line = false
 				return true
-
 
 	if event is InputEventMouseMotion:
 		update_overlays()
@@ -2530,12 +2590,13 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 
 	if _svs_edit_mode == SVSEditMode.MERGE:
 		return _handle_draw_merge_box_input(event)
-	elif _svs_edit_mode == SVSEditMode.PENCIL:
+	elif _svs_edit_mode == SVSEditMode.PENCIL or _svs_edit_mode == SVSEditMode.KNIFE:
 		return _handle_pencil_draw_input(event)
 	elif _svs_edit_mode == SVSEditMode.BRUSH:
 		return _handle_brush_draw_input(event)
 	elif _svs_edit_mode == SVSEditMode.PAINT_BONE:
 		return _handle_bone_paint_input(event)
+
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		_lmb_is_down_inside_viewport = (event as InputEventMouseButton).pressed
