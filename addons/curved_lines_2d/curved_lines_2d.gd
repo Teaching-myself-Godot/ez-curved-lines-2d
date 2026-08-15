@@ -496,7 +496,7 @@ func _on_selection_changed():
 		svs_edit_buttons.show_convert_to_svs()
 	else:
 		svs_edit_buttons.hide_convert_to_svs()
-	if current_selection is Polygon2D or current_selection is ScalableVectorShape2D or current_selection is CollisionPolygon2D:
+	if _is_svs_valid(current_selection):
 		svs_edit_buttons.show_knife()
 	else:
 		svs_edit_buttons.hide_knife()
@@ -1204,7 +1204,7 @@ func _handle_draw_vertex_merge_box(viewport_control: Control) -> void:
 
 func _handle_knife_draw(viewport_control : Control) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-	if not _is_svs_valid(current_selection) and not current_selection is Polygon2D and not current_selection is CollisionPolygon2D:
+	if not _is_svs_valid(current_selection):
 		return _draw_hint(viewport_control, "** Selected node cannot be cut by knife tool **")
 	var mul := _get_svp_transform(current_selection)
 	if is_instance_valid(current_selection) and Input.is_key_pressed(KEY_SHIFT) and _drawing_pencil_line:
@@ -1227,8 +1227,9 @@ func _handle_knife_draw(viewport_control : Control) -> void:
 	if _pencil_stroke.size() > 1:
 		var pts := Array(_pencil_stroke).map(func(p): return _vp_transform(p * mul))
 		viewport_control.draw_polyline(pts, Color.BLACK, 1.5, true)
-		viewport_control.draw_polyline(pts, Color.WHITE, 1.0, true)
+		viewport_control.draw_polyline(pts, Color.GRAY, 1.0, true)
 	for p in _knife_intersections:
+
 		_draw_crosshair(
 			viewport_control,
 			_vp_transform(p * mul),
@@ -2311,27 +2312,31 @@ func _add_point_to_pencil_line() -> void:
 	if _is_snapped_to_pixel():
 		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
 	if not _pencil_stroke.is_empty() and _pencil_stroke[-1].distance_to(pos) > _get_freehand_draw_granularity():
-		_pencil_stroke.append(pos)
-		if _svs_edit_mode == SVSEditMode.KNIFE:
-			var poly : PackedVector2Array = (
-				(current_selection as ScalableVectorShape2D).tessellate()
-					if current_selection is ScalableVectorShape2D else
-				current_selection.polygon
-			)
+		if _svs_edit_mode == SVSEditMode.KNIFE and _is_svs_valid(current_selection):
+			var svs := current_selection as ScalableVectorShape2D
+
+			var poly : PackedVector2Array = svs.tessellate()
 			if not poly[0].is_equal_approx(poly[-1]):
 				poly.append(poly[0])
+			var valid_intersections : Array[Vector2] = []
 			for i in range(0, poly.size() - 1):
 				var intersection = Geometry2D.segment_intersects_segment(
-						_pencil_stroke[-1], _pencil_stroke[-2],
-						current_selection.to_global(poly[i]),
-						current_selection.to_global(poly[i+1])
+						_pencil_stroke[-1], pos,
+						svs.to_global(poly[i]),
+						svs.to_global(poly[i+1])
 				)
 				if intersection != null:
 					_knife_intersections.append(intersection)
+					valid_intersections.append(intersection)
+			valid_intersections.sort_custom(func(a : Vector2, b : Vector2):
+					return a.distance_squared_to(_pencil_stroke[-1]) < b.distance_squared_to(_pencil_stroke[-1])
+			)
+			for p in valid_intersections:
+				_pencil_stroke.append(p)
+		_pencil_stroke.append(pos)
 
 
-func _apply_knife_cut() -> bool:
-	print("TODO: apply knife cut of, ", _pencil_stroke.size(), " points")
+func _finish_knife_cutting() -> bool:
 	_pencil_stroke.clear()
 	_knife_intersections.clear()
 	update_overlays()
@@ -2342,7 +2347,7 @@ func _apply_knife_cut() -> bool:
 func _handle_pencil_draw_input(event : InputEvent) -> bool:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _svs_edit_mode == SVSEditMode.KNIFE:
-		if not _is_svs_valid(current_selection) and not current_selection is Polygon2D and not current_selection is CollisionPolygon2D:
+		if not _is_svs_valid(current_selection):
 			update_overlays()
 			return true
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
@@ -2361,7 +2366,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 				return true
 			if not event.is_pressed():
 				if _svs_edit_mode == SVSEditMode.KNIFE:
-					return _apply_knife_cut()
+					return _finish_knife_cutting()
 				if is_instance_valid(current_selection):
 					var svs := _create_freehand_shape("PencilDrawing")
 					svs.global_position = _pencil_start_pos
