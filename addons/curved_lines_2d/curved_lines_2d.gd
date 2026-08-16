@@ -1207,6 +1207,7 @@ func _handle_knife_draw(viewport_control : Control) -> void:
 	if not _is_svs_valid(current_selection):
 		return _draw_hint(viewport_control, "** Selected node cannot be cut by knife tool **")
 	var mul := _get_svp_transform(current_selection)
+	var svs := current_selection as ScalableVectorShape2D
 	if is_instance_valid(current_selection) and Input.is_key_pressed(KEY_SHIFT) and _drawing_pencil_line:
 		var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_snapped_to_pixel():
@@ -1227,19 +1228,33 @@ func _handle_knife_draw(viewport_control : Control) -> void:
 	if _pencil_stroke.size() > 1:
 		var pts := Array(_pencil_stroke).map(func(p): return _vp_transform(p * mul))
 		viewport_control.draw_polyline(pts, Color.BLACK, 1.5, true)
-		viewport_control.draw_polyline(pts, Color.GRAY, 1.0, true)
-	for p in _knife_intersections:
+		viewport_control.draw_polyline(pts, Color.DARK_CYAN, 1.0, true)
+		var cuts := _knife_intersections.duplicate()
+		var next_cut := cuts.pop_front()
+		if svs.has_fine_point(_pencil_start_pos):
+			next_cut = cuts.pop_front()
+		var inside_valid_cut := false
+		for p_idx in range(0, _pencil_stroke.size() - 1):
+			var p = _pencil_stroke[p_idx]
+			var p1 = _pencil_stroke[p_idx + 1]
+			if next_cut != null and p.is_equal_approx(next_cut):
+				_draw_crosshair(
+					viewport_control,
+					_vp_transform(p * mul),
+					1.0, 4.0, Color.WHITE, 5
+				)
+				_draw_crosshair(
+					viewport_control,
+					_vp_transform(p * mul),
+					1.0, 4.0, Color.RED, 2
+				)
+				inside_valid_cut = not inside_valid_cut
+				next_cut = cuts.pop_front()
+			if inside_valid_cut:
+				viewport_control.draw_line(
+						_vp_transform(p * mul), _vp_transform(p1 * mul),
+						Color.WHITE, 1, true)
 
-		_draw_crosshair(
-			viewport_control,
-			_vp_transform(p * mul),
-			1.0, 6.0, Color.WHITE, 3
-		)
-		_draw_crosshair(
-			viewport_control,
-			_vp_transform(p * mul),
-			1.0, 6.0, Color.RED, 1
-		)
 	if _is_svs_valid(current_selection):
 		_draw_curve(viewport_control, current_selection)
 	_show_draw_line_hints(viewport_control)
@@ -2306,6 +2321,27 @@ func _start_pencil_draw():
 	_drawing_pencil_line = true
 
 
+func _detect_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) -> void:
+	var poly : PackedVector2Array = svs.tessellate()
+	if not poly[0].is_equal_approx(poly[-1]):
+		poly.append(poly[0])
+	var valid_intersections : Array[Vector2] = []
+	for i in range(0, poly.size() - 1):
+		var intersection = Geometry2D.segment_intersects_segment(
+				_pencil_stroke[-1], cursor_pos,
+				svs.to_global(poly[i]),
+				svs.to_global(poly[i+1])
+		)
+		if intersection != null:
+			valid_intersections.append(intersection)
+	valid_intersections.sort_custom(func(a : Vector2, b : Vector2):
+			return a.distance_squared_to(_pencil_stroke[-1]) < b.distance_squared_to(_pencil_stroke[-1])
+	)
+	for p in valid_intersections:
+		_pencil_stroke.append(p)
+		_knife_intersections.append(p)
+
+
 func _add_point_to_pencil_line() -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	var pos := _svp_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), current_selection)
@@ -2313,26 +2349,7 @@ func _add_point_to_pencil_line() -> void:
 		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
 	if not _pencil_stroke.is_empty() and _pencil_stroke[-1].distance_to(pos) > _get_freehand_draw_granularity():
 		if _svs_edit_mode == SVSEditMode.KNIFE and _is_svs_valid(current_selection):
-			var svs := current_selection as ScalableVectorShape2D
-
-			var poly : PackedVector2Array = svs.tessellate()
-			if not poly[0].is_equal_approx(poly[-1]):
-				poly.append(poly[0])
-			var valid_intersections : Array[Vector2] = []
-			for i in range(0, poly.size() - 1):
-				var intersection = Geometry2D.segment_intersects_segment(
-						_pencil_stroke[-1], pos,
-						svs.to_global(poly[i]),
-						svs.to_global(poly[i+1])
-				)
-				if intersection != null:
-					_knife_intersections.append(intersection)
-					valid_intersections.append(intersection)
-			valid_intersections.sort_custom(func(a : Vector2, b : Vector2):
-					return a.distance_squared_to(_pencil_stroke[-1]) < b.distance_squared_to(_pencil_stroke[-1])
-			)
-			for p in valid_intersections:
-				_pencil_stroke.append(p)
+			_detect_knife_cuts(current_selection, pos)
 		_pencil_stroke.append(pos)
 
 
