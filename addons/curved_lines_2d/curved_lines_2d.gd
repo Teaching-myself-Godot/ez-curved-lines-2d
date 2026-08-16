@@ -2354,10 +2354,10 @@ func _apply_valid_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) 
 			var p = _pencil_stroke[p_idx]
 			var p1 = _pencil_stroke[p_idx + 1]
 			if next_cut != null and p.is_equal_approx(next_cut):
-				cutting_line.append(next_cut)
 				next_cut = _knife_intersections.pop_front()
 				if not inside_valid_cut:
 					inside_valid_cut = true
+					cutting_line.append(p)
 				else:
 					break
 			if inside_valid_cut:
