@@ -2337,6 +2337,63 @@ func _detect_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) -> vo
 		_knife_intersections.append(p)
 
 
+func _apply_valid_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) -> void:
+	if _knife_intersections.size() < 2:
+		return
+	if _knife_intersections.size() < 3 and svs.has_fine_point(_pencil_start_pos):
+		return
+
+	var next_cut := _knife_intersections.pop_front()
+	if svs.has_fine_point(_pencil_start_pos):
+		next_cut = _knife_intersections.pop_front()
+
+	while not _knife_intersections.is_empty():
+		var inside_valid_cut := false
+		var cutting_line := PackedVector2Array()
+		for p_idx in range(0, _pencil_stroke.size() - 1):
+			var p = _pencil_stroke[p_idx]
+			var p1 = _pencil_stroke[p_idx + 1]
+			if next_cut != null and p.is_equal_approx(next_cut):
+				cutting_line.append(next_cut)
+				next_cut = _knife_intersections.pop_front()
+				if not inside_valid_cut:
+					inside_valid_cut = true
+				else:
+					break
+			if inside_valid_cut:
+				cutting_line.append(p1)
+		print(cutting_line)
+		var fitness_prep := BasicFit.prepare_polyline_segments(cutting_line, _get_basic_fit_snap(cutting_line))
+		var curve := BasicFit.fit_curve_to_polyline(cutting_line, fitness_prep)
+		print(fitness_prep)
+		print(curve.get_point_position(0))
+		print(curve.get_point_position(1))
+		var cut_svs := ScalableVectorShape2D.new()
+		var rt := EditorInterface.get_edited_scene_root()
+		var ln := Line2D.new()
+
+		cut_svs.curve = curve
+		cut_svs.line =ln
+		cut_svs.stroke_color = Color.WHITE
+		cut_svs.stroke_width = 2.0
+		cut_svs.name = "DebugCuttingLine"
+
+		undo_redo.create_action("add debug cut")
+		undo_redo.add_do_method(rt, "add_child", cut_svs, true)
+		undo_redo.add_undo_method(rt, "remove_child", cut_svs)
+		undo_redo.add_do_property(cut_svs, "owner", rt)
+		undo_redo.add_undo_reference(cut_svs)
+		undo_redo.add_do_method(cut_svs, "add_child", ln)
+		undo_redo.add_undo_method(cut_svs, "remove_child", ln)
+		undo_redo.add_do_property(ln, "owner", rt)
+		undo_redo.add_undo_reference(ln)
+		undo_redo.commit_action()
+
+	_pencil_start_pos = cursor_pos
+	_pencil_stroke.clear()
+	_pencil_stroke.append(cursor_pos)
+
+
 func _add_point_to_pencil_line() -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	var pos := _svp_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), current_selection)
@@ -2347,6 +2404,7 @@ func _add_point_to_pencil_line() -> void:
 			if Geometry2DUtil.will_self_intersect(_pencil_stroke, pos):
 				return
 			_detect_knife_cuts(current_selection, pos)
+			_apply_valid_knife_cuts(current_selection, pos)
 		_pencil_stroke.append(pos)
 
 
