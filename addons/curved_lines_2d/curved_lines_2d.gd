@@ -2362,16 +2362,15 @@ func _apply_valid_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) 
 					break
 			if inside_valid_cut:
 				cutting_line.append(p1)
-		print(cutting_line)
 		var fitness_prep := BasicFit.prepare_polyline_segments(cutting_line, _get_basic_fit_snap(cutting_line))
 		var curve := BasicFit.fit_curve_to_polyline(cutting_line, fitness_prep)
-		print(fitness_prep)
-		print(curve.get_point_position(0))
-		print(curve.get_point_position(1))
+		Geometry2DUtil.cut_bezier_with_bezier(svs.curve, curve, svs.to_local,
+				svs.max_stages, svs.tolerance_degrees)
 		var cut_svs := ScalableVectorShape2D.new()
 		var rt := EditorInterface.get_edited_scene_root()
 		var ln := Line2D.new()
-
+		cut_svs.max_stages = svs.max_stages
+		cut_svs.tolerance_degrees = svs.tolerance_degrees
 		cut_svs.curve = curve
 		cut_svs.line =ln
 		cut_svs.stroke_color = Color.WHITE

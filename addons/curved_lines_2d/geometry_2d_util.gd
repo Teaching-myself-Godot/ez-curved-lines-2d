@@ -376,6 +376,27 @@ static func get_point_on_bezier_at_ratio(c : Curve2D, ratio : float, max_stages 
 	return get_point_on_polyline_at_ratio(pts, ratio, tot_d)
 
 
+static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D, t : Callable = func(p): return p,
+		max_stages := 5, tolerance_degrees := 4.0) -> Array[Curve2D]:
+	var half_one := Curve2D.new()
+	var half_two := Curve2D.new()
+	var cut_start := t.call(cut.get_point_position(0))
+	var cut_end := t.call(cut.get_point_position(cut.point_count -1 ))
+	for i in curve.point_count:
+		# FIXME: assuming a loop
+		var p1_idx := i + 1 if i < curve.point_count - 1 else 0
+		var curve_segment := Curve2D.new()
+		curve_segment.add_point(curve.get_point_position(i), Vector2.ZERO, curve.get_point_out(i))
+		curve_segment.add_point(curve.get_point_position(p1_idx), curve.get_point_in(p1_idx))
+		var polyline := curve_segment.tessellate(max_stages, tolerance_degrees)
+		for j in range(polyline.size() - 1):
+			if is_point_on_segment(cut_start, polyline[j], polyline[j+1]):
+				print("yes 1", cut_start)
+			if is_point_on_segment(cut_end, polyline[j], polyline[j+1]):
+				print("yes 2", cut_end)
+	return [half_one, half_two]
+
+
 static func get_polyline_length(pts : PackedVector2Array) -> float:
 	var d := 0.0
 	for i in range(1, pts.size()):
