@@ -2364,7 +2364,7 @@ func _apply_valid_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) 
 				cutting_line.append(p1)
 		var fitness_prep := BasicFit.prepare_polyline_segments(cutting_line, _get_basic_fit_snap(cutting_line))
 		var curve := BasicFit.fit_curve_to_polyline(cutting_line, fitness_prep)
-		Geometry2DUtil.cut_bezier_with_bezier(svs.curve, curve, svs.to_local,
+		Geometry2DUtil.cut_bezier_with_bezier(svs.curve, svs.curve_to_local(curve),
 				svs.max_stages, svs.tolerance_degrees)
 		var cut_svs := ScalableVectorShape2D.new()
 		var rt := EditorInterface.get_edited_scene_root()
@@ -2372,7 +2372,7 @@ func _apply_valid_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) 
 		cut_svs.max_stages = svs.max_stages
 		cut_svs.tolerance_degrees = svs.tolerance_degrees
 		cut_svs.curve = curve
-		cut_svs.line =ln
+		cut_svs.line = ln
 		cut_svs.stroke_color = Color.WHITE
 		cut_svs.stroke_width = 2.0
 		cut_svs.name = "DebugCuttingLine"

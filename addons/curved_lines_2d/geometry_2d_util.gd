@@ -376,12 +376,8 @@ static func get_point_on_bezier_at_ratio(c : Curve2D, ratio : float, max_stages 
 	return get_point_on_polyline_at_ratio(pts, ratio, tot_d)
 
 
-static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D, t : Callable = func(p): return p,
-		max_stages := 5, tolerance_degrees := 4.0) -> Array[Curve2D]:
-	var half_one := Curve2D.new()
-	var half_two := Curve2D.new()
-	var cut_start := t.call(cut.get_point_position(0))
-	var cut_end := t.call(cut.get_point_position(cut.point_count -1 ))
+static func find_curve_segment_idx_for_point(curve : Curve2D, point : Vector2,
+		max_stages := 5, tolerance_degrees := 4.0) -> int:
 	for i in curve.point_count:
 		# FIXME: assuming a loop
 		var p1_idx := i + 1 if i < curve.point_count - 1 else 0
@@ -390,11 +386,27 @@ static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D, t : Callable 
 		curve_segment.add_point(curve.get_point_position(p1_idx), curve.get_point_in(p1_idx))
 		var polyline := curve_segment.tessellate(max_stages, tolerance_degrees)
 		for j in range(polyline.size() - 1):
-			if is_point_on_segment(cut_start, polyline[j], polyline[j+1]):
-				print("yes 1", cut_start)
-			if is_point_on_segment(cut_end, polyline[j], polyline[j+1]):
-				print("yes 2", cut_end)
-	return [half_one, half_two]
+			if is_point_on_segment(point, polyline[j], polyline[j+1]):
+				return i
+	return -1
+
+
+static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D,
+		max_stages := 5, tolerance_degrees := 4.0) -> Array[Curve2D]:
+	var halves : Array[Curve2D] = [
+		Curve2D.new(), Curve2D.new()
+	]
+	var cut_start := cut.get_point_position(0)
+	var cut_end := cut.get_point_position(cut.point_count -1)
+
+	var cut_start_segment_idx  := find_curve_segment_idx_for_point(curve, cut_start)
+	var cut_end_segment_idx := find_curve_segment_idx_for_point(curve, cut_end)
+	print("""TODO:
+		- add cutting points on original curve using slice_bezier
+		- walk through the new segments to create two slices
+	""")
+	return [
+	]
 
 
 static func get_polyline_length(pts : PackedVector2Array) -> float:
