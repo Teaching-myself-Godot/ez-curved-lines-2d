@@ -408,6 +408,23 @@ static func find_curve_segment_idx_for_point(curve : Curve2D, point : Vector2,
 	return -1
 
 
+static func get_sliced_curve_segment(curve : Curve2D, before_segment : int, point_position : Vector2, max_stages := 5, tolerance_degrees := 4.0) -> Curve2D:
+	var curve_segment := Curve2D.new()
+	curve_segment.add_point(curve.get_point_position(before_segment - 1))
+	curve_segment.set_point_out(0, curve.get_point_out(before_segment - 1))
+	curve_segment.add_point(curve.get_point_position(before_segment))
+	curve_segment.set_point_in(1, curve.get_point_in(before_segment))
+	var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
+			point_position, curve_segment, max_stages, tolerance_degrees)
+	return slice_bezier(
+		curve_segment.get_point_position(0),
+		curve_segment.get_point_out(0),
+		curve_segment.get_point_in(1),
+		curve_segment.get_point_position(1),
+		progress_ratio
+	)
+
+
 static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D,
 		max_stages := 5, tolerance_degrees := 4.0) -> Array[Curve2D]:
 	var halves : Array[Curve2D] = [

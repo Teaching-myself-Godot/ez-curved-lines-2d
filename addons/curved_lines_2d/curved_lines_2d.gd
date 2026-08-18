@@ -2019,7 +2019,8 @@ func _add_point_to_curve(svs : ScalableVectorShape2D, local_pos : Vector2,
 
 
 func _add_point_on_curved_segment(svs : ScalableVectorShape2D, placement_point : Vector2, before_segment : int) -> void:
-	var sliced_segment := svs.get_sliced_curve_segment(before_segment, placement_point)
+	var sliced_segment := Geometry2DUtil.get_sliced_curve_segment(svs.curve, before_segment, placement_point,
+			svs.max_stages, svs.tolerance_degrees)
 	_add_point_to_curve(svs, placement_point, Vector2.ZERO, Vector2.ZERO, before_segment, false)
 	undo_redo.add_do_method(svs.curve, "set_point_out", before_segment - 1, sliced_segment.get_point_out(0))
 	undo_redo.add_undo_method(svs.curve, "set_point_out", before_segment -1, svs.curve.get_point_out(before_segment - 1))
@@ -2356,9 +2357,11 @@ func _apply_valid_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) 
 		var cut_start_pos := _knife_intersections.pop_front()
 		var cut_end_pos := _knife_intersections.pop_front()
 		var cutting_line := Geometry2DUtil.get_polyline_segment(_pencil_stroke, cut_start_pos, cut_end_pos)
-
 		var fitness_prep := BasicFit.prepare_polyline_segments(cutting_line, _get_basic_fit_snap(cutting_line))
 		var curve := BasicFit.fit_curve_to_polyline(cutting_line, fitness_prep)
+		Geometry2DUtil.cut_bezier_with_bezier(svs.curve, svs.curve_to_local(curve),
+				svs.max_stages, svs.tolerance_degrees)
+
 		var cut_start_segment_idx := Geometry2DUtil.find_curve_segment_idx_for_point(
 			svs.curve, svs.to_local(cut_start_pos), svs.max_stages, svs.tolerance_degrees
 		)
@@ -2368,8 +2371,6 @@ func _apply_valid_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) 
 		)
 		_add_point_on_curved_segment(svs, svs.to_local(cut_end_pos), cut_end_segment_idx + 1)
 
-		#Geometry2DUtil.cut_bezier_with_bezier(svs.curve, svs.curve_to_local(curve),
-				#svs.max_stages, svs.tolerance_degrees)
 		var cut_svs := ScalableVectorShape2D.new()
 		var rt := EditorInterface.get_edited_scene_root()
 		var ln := Line2D.new()

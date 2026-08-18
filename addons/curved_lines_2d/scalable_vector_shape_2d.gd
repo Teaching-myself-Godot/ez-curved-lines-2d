@@ -1399,23 +1399,6 @@ func get_closest_point_on_curve(global_pos : Vector2) -> ClosestPointOnCurveMeta
 	)
 
 
-func get_sliced_curve_segment(before_segment : int, point_position : Vector2) -> Curve2D:
-	var curve_segment := Curve2D.new()
-	curve_segment.add_point(curve.get_point_position(before_segment - 1))
-	curve_segment.set_point_out(0, curve.get_point_out(before_segment - 1))
-	curve_segment.add_point(curve.get_point_position(before_segment))
-	curve_segment.set_point_in(1, curve.get_point_in(before_segment))
-	var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
-			point_position, curve_segment, max_stages, tolerance_degrees)
-	return Geometry2DUtil.slice_bezier(
-		curve_segment.get_point_position(0),
-		curve_segment.get_point_out(0),
-		curve_segment.get_point_in(1),
-		curve_segment.get_point_position(1),
-		progress_ratio
-	)
-
-
 func get_curve_segment_halfway_point(before_segment : int) -> Vector2:
 	var _curve := get_deformed_curve()
 	var p_idx_1 := before_segment if before_segment < _curve.point_count else 0
@@ -1433,7 +1416,8 @@ func get_subdivided_curve() -> Curve2D:
 	var new_curve := Curve2D.new()
 	new_curve.add_point(curve.get_point_position(0))
 	for i in range(1, curve.point_count):
-		var segment := get_sliced_curve_segment(i, get_curve_segment_halfway_point(i))
+		var segment := Geometry2DUtil.get_sliced_curve_segment(curve, i, get_curve_segment_halfway_point(i),
+				max_stages, tolerance_degrees)
 		new_curve.add_point(segment.get_point_position(1))
 		new_curve.add_point(segment.get_point_position(2))
 		if curve.get_point_out(i - 1).length() > 0.0 or curve.get_point_in(i).length() > 0.0:
