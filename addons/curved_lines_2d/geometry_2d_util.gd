@@ -340,6 +340,23 @@ static func get_segment_to_polyline_intersections(p0 : Vector2, p1 : Vector2,
 	return valid_intersections
 
 
+static func get_polyline_segment(poly : PackedVector2Array, from : Vector2, to : Vector2) -> PackedVector2Array:
+	var passed_from := false
+	var segment := PackedVector2Array()
+	for p_idx in range(0, poly.size() - 1):
+		var p = poly[p_idx]
+		var p1 = poly[p_idx + 1]
+		if p.is_equal_approx(from):
+			if not passed_from:
+				passed_from = true
+				segment.append(p)
+			else:
+				break
+		if passed_from:
+			segment.append(p1)
+	return segment
+
+
 # returns true if the next point causes a loop (self intersection)
 static func will_self_intersect(poly : Array[Vector2], next_point : Vector2) -> bool:
 	if poly.size() < 3:
