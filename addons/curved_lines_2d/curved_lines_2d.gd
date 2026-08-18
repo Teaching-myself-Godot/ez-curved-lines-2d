@@ -2359,24 +2359,24 @@ func _apply_valid_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) 
 		var cutting_line := Geometry2DUtil.get_polyline_segment(_pencil_stroke, cut_start_pos, cut_end_pos)
 		var fitness_prep := BasicFit.prepare_polyline_segments(cutting_line, _get_basic_fit_snap(cutting_line))
 		var curve := BasicFit.fit_curve_to_polyline(cutting_line, fitness_prep)
-		Geometry2DUtil.cut_bezier_with_bezier(svs.curve, svs.curve_to_local(curve),
+		var halves := Geometry2DUtil.cut_bezier_with_bezier(svs.curve, svs.curve_to_local(curve),
 				svs.max_stages, svs.tolerance_degrees)
-
-		var cut_start_segment_idx := Geometry2DUtil.find_curve_segment_idx_for_point(
-			svs.curve, svs.to_local(cut_start_pos), svs.max_stages, svs.tolerance_degrees
-		)
-		_add_point_on_curved_segment(svs, svs.to_local(cut_start_pos), cut_start_segment_idx + 1)
-		var cut_end_segment_idx := Geometry2DUtil.find_curve_segment_idx_for_point(
-			svs.curve, svs.to_local(cut_end_pos), svs.max_stages, svs.tolerance_degrees
-		)
-		_add_point_on_curved_segment(svs, svs.to_local(cut_end_pos), cut_end_segment_idx + 1)
+		print(halves[0].point_count)
+		#var cut_start_segment_idx := Geometry2DUtil.find_curve_segment_idx_for_point(
+			#svs.curve, svs.to_local(cut_start_pos), svs.max_stages, svs.tolerance_degrees
+		#)
+		#_add_point_on_curved_segment(svs, svs.to_local(cut_start_pos), cut_start_segment_idx + 1)
+		#var cut_end_segment_idx := Geometry2DUtil.find_curve_segment_idx_for_point(
+			#svs.curve, svs.to_local(cut_end_pos), svs.max_stages, svs.tolerance_degrees
+		#)
+		#_add_point_on_curved_segment(svs, svs.to_local(cut_end_pos), cut_end_segment_idx + 1)
 
 		var cut_svs := ScalableVectorShape2D.new()
 		var rt := EditorInterface.get_edited_scene_root()
 		var ln := Line2D.new()
 		cut_svs.max_stages = svs.max_stages
 		cut_svs.tolerance_degrees = svs.tolerance_degrees
-		cut_svs.curve = curve
+		cut_svs.curve = halves[0]
 		cut_svs.line = ln
 		cut_svs.stroke_color = Color.WHITE
 		cut_svs.stroke_width = 1.0
@@ -2396,6 +2396,7 @@ func _apply_valid_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) 
 	_pencil_start_pos = cursor_pos
 	_pencil_stroke.clear()
 	_pencil_stroke.append(cursor_pos)
+	_knife_intersections.clear()
 
 
 func _add_point_to_pencil_line() -> void:

@@ -285,8 +285,8 @@ static func get_polygon_indices(polygons : Array[PackedVector2Array], indices : 
 	return result
 
 
-static func is_point_on_segment(p : Vector2, s1 : Vector2, s2: Vector2) -> bool:
-	return Geometry2D.segment_intersects_circle(s1, s2, p, 0.01) > -1
+static func is_point_on_segment(p : Vector2, s1 : Vector2, s2: Vector2, r := 0.01) -> bool:
+	return Geometry2D.segment_intersects_circle(s1, s2, p, r) > -1
 
 
 static func get_rotation_of_polyline_segment_at_point(p : Vector2, poly_points : PackedVector2Array) -> float:
@@ -403,7 +403,7 @@ static func find_curve_segment_idx_for_point(curve : Curve2D, point : Vector2,
 		curve_segment.add_point(curve.get_point_position(p1_idx), curve.get_point_in(p1_idx))
 		var polyline := curve_segment.tessellate(max_stages, tolerance_degrees)
 		for j in range(polyline.size() - 1):
-			if is_point_on_segment(point, polyline[j], polyline[j+1]):
+			if is_point_on_segment(point, polyline[j], polyline[j+1], 0.1):
 				return i
 	return -1
 
@@ -424,23 +424,84 @@ static func get_sliced_curve_segment(curve : Curve2D, before_segment : int, poin
 		progress_ratio
 	)
 
+static func get_reversed_curve(curve : Curve2D) -> Curve2D:
+	var new_curve := Curve2D.new()
+	for i in range(curve.point_count - 1, -1, -1):
+		new_curve.add_point(curve.get_point_position(i), curve.get_point_out(i), curve.get_point_in(i))
+	return new_curve
+
 
 static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D,
 		max_stages := 5, tolerance_degrees := 4.0) -> Array[Curve2D]:
 	var halves : Array[Curve2D] = [
 		Curve2D.new(), Curve2D.new()
 	]
-	var cut_start := cut.get_point_position(0)
-	var cut_end := cut.get_point_position(cut.point_count -1)
 
-	var cut_start_segment_idx  := find_curve_segment_idx_for_point(curve, cut_start)
-	var cut_end_segment_idx := find_curve_segment_idx_for_point(curve, cut_end)
-	print("""TODO:
-		- add cutting points on original curve using slice_bezier
-		- walk through the new segments to create two slices
-	""")
-	return [
-	]
+	var cut_start := cut.get_point_position(0)
+	var cut_end := cut.get_point_position(cut.point_count - 1)
+	var cut_start_segment_idx  := find_curve_segment_idx_for_point(curve, cut_start, max_stages, tolerance_degrees)
+	var cut_end_segment_idx := find_curve_segment_idx_for_point(curve, cut_end, max_stages, tolerance_degrees)
+	print(cut_start_segment_idx, " / ", cut_end_segment_idx)
+	print(cut_start, " / ", cut_end)
+	if cut_start_segment_idx == cut_end_segment_idx:
+		print("TODO: handle start and end of cut in same segment", )
+		return halves
+	if cut_end_segment_idx < cut_start_segment_idx:
+		var swap_idx := cut_start_segment_idx
+		var swap := cut_start
+		cut_start_segment_idx = cut_end_segment_idx
+		cut_end_segment_idx = swap_idx
+		cut_start = cut_end
+		cut_end = swap
+		cut = get_reversed_curve(cut)
+
+	var cut_start_seg_slice := get_sliced_curve_segment(curve, cut_start_segment_idx + 1, cut_start, max_stages, tolerance_degrees)
+	var cut_end_seg_slice := get_sliced_curve_segment(curve, cut_end_segment_idx + 1, cut_end, max_stages, tolerance_degrees)
+
+	print(cut_start_segment_idx, " / ", cut_end_segment_idx)
+	var seg_p_idx := 0
+	for p_idx in range(0, cut_start_segment_idx + 1):
+		halves[0].add_point(curve.get_point_position(p_idx))
+		halves[0].set_point_out(seg_p_idx, curve.get_point_out(p_idx))
+		halves[0].set_point_in(seg_p_idx, curve.get_point_in(p_idx))
+		seg_p_idx += 1
+	halves[0].add_point(cut.get_point_position(0))
+	halves[0].set_point_out(seg_p_idx - 1, cut_start_seg_slice.get_point_out(0))
+	halves[0].set_point_in(seg_p_idx, cut_start_seg_slice.get_point_in(1))
+	halves[0].set_point_out(seg_p_idx, cut.get_point_out(0))
+	seg_p_idx += 1
+	for p_idx in range(1, cut.point_count):
+		halves[0].add_point(cut.get_point_position(p_idx))
+		halves[0].set_point_out(seg_p_idx, cut.get_point_out(p_idx))
+		halves[0].set_point_in(seg_p_idx, cut.get_point_in(p_idx))
+		seg_p_idx += 1
+	halves[0].set_point_out(seg_p_idx - 1, cut_end_seg_slice.get_point_out(1))
+	var memo_seg_p_idx = seg_p_idx
+	for p_idx in range(cut_end_segment_idx + 1, curve.point_count):
+		halves[0].add_point(curve.get_point_position(p_idx))
+		halves[0].set_point_out(seg_p_idx, curve.get_point_out(p_idx))
+		halves[0].set_point_in(seg_p_idx, curve.get_point_in(p_idx))
+		seg_p_idx += 1
+	halves[0].set_point_in(memo_seg_p_idx, cut_end_seg_slice.get_point_in(2))
+
+
+	return halves
+
+
+static func get_curve_segment(segment_p1_idx : int, curve : Curve2D) -> Curve2D:
+	var curve_segment := Curve2D.new()
+	curve_segment.add_point(
+		curve.get_point_position(segment_p1_idx),
+		Vector2.ZERO,
+		curve.get_point_out(segment_p1_idx)
+	)
+	var segment_p2_idx = (0 if segment_p1_idx == curve.point_count - 1
+			else segment_p1_idx + 1)
+	curve_segment.add_point(
+		curve.get_point_position(segment_p2_idx),
+		curve.get_point_in(segment_p2_idx)
+	)
+	return curve_segment
 
 
 static func get_polyline_length(pts : PackedVector2Array) -> float:

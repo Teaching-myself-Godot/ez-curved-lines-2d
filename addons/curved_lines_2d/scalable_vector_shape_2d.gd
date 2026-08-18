@@ -696,7 +696,7 @@ func tessellate() -> PackedVector2Array:
 	)
 	for p_idx in curve.point_count - 1:
 		if p_idx in arc_starts:
-			var seg := _get_curve_segment(p_idx, the_curve)
+			var seg := Geometry2DUtil.get_curve_segment(p_idx, the_curve)
 			var arc = arc_list.get_arc_for_point(p_idx)
 			if arc:
 				var seg_points := tessellate_arc_segment(seg.get_point_position(0), arc.radius,
@@ -711,7 +711,7 @@ func tessellate() -> PackedVector2Array:
 					poly_points.append(seg.get_point_position(0))
 				poly_points.append(seg.get_point_position(1))
 		else:
-			var seg_points := _get_curve_segment(p_idx, the_curve).tessellate(max_stages, tolerance_degrees)
+			var seg_points := Geometry2DUtil.get_curve_segment(p_idx, the_curve).tessellate(max_stages, tolerance_degrees)
 			for i in seg_points.size():
 				if i == 0 and not poly_points.is_empty():
 					continue
@@ -1332,25 +1332,9 @@ func replace_curve_points(curve_in : Curve2D) -> void:
 
 
 func add_arc(segment_p1_idx : int) -> void:
-	var seg := _get_curve_segment(segment_p1_idx, curve)
+	var seg := Geometry2DUtil.get_curve_segment(segment_p1_idx, curve)
 	var r := seg.get_point_position(0).distance_to(seg.get_point_position(1)) * 0.5
 	arc_list.add_arc(ScalableArc.new(segment_p1_idx, Vector2.ONE * r, 0.0))
-
-
-func _get_curve_segment(segment_p1_idx : int, _curve : Curve2D) -> Curve2D:
-	var curve_segment := Curve2D.new()
-	curve_segment.add_point(
-		_curve.get_point_position(segment_p1_idx),
-		Vector2.ZERO,
-		_curve.get_point_out(segment_p1_idx)
-	)
-	var segment_p2_idx = (0 if segment_p1_idx == _curve.point_count - 1
-			else segment_p1_idx + 1)
-	curve_segment.add_point(
-		_curve.get_point_position(segment_p2_idx),
-		_curve.get_point_in(segment_p2_idx)
-	)
-	return curve_segment
 
 
 func is_arc_start(p_idx) -> bool:
@@ -1359,7 +1343,7 @@ func is_arc_start(p_idx) -> bool:
 
 func _get_tessellated_curve_segment(segment_p1_idx : int) -> PackedVector2Array:
 	var arc := arc_list.get_arc_for_point(segment_p1_idx)
-	var seg := _get_curve_segment(segment_p1_idx, get_deformed_curve())
+	var seg := Geometry2DUtil.get_curve_segment(segment_p1_idx, get_deformed_curve())
 	return (
 			tessellate_arc_segment(seg.get_point_position(0), arc.radius, arc.rotation_deg,
 				arc.large_arc_flag, arc.sweep_flag, seg.get_point_position(1))
@@ -1431,9 +1415,12 @@ func get_subdivided_curve() -> Curve2D:
 func curve_to_local(curve : Curve2D) -> Curve2D:
 	var c1 := Curve2D.new()
 	for i in curve.point_count:
-		c1.add_point(to_local(curve.get_point_position(i)))
-		c1.set_point_in(i, to_local(curve.get_point_in(i)))
-		c1.set_point_out(i, to_local(curve.get_point_out(i)))
+		var pos := to_local(curve.get_point_position(i))
+		var abs_in := to_local(curve.get_point_position(i) + curve.get_point_in(i))
+		var abs_out := to_local(curve.get_point_position(i) + curve.get_point_out(i))
+		c1.add_point(pos)
+		c1.set_point_in(i, abs_in - pos)
+		c1.set_point_out(i, abs_out - pos)
 	return c1
 
 
