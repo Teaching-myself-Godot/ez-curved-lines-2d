@@ -346,7 +346,7 @@ static func get_polyline_segment(poly : PackedVector2Array, from : Vector2, to :
 	for p_idx in range(0, poly.size() - 1):
 		var p = poly[p_idx]
 		var p1 = poly[p_idx + 1]
-		if p.is_equal_approx(from):
+		if p.is_equal_approx(from) or p.is_equal_approx(to):
 			if not passed_from:
 				passed_from = true
 				segment.append(p)

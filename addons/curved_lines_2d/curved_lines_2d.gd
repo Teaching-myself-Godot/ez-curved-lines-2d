@@ -2356,32 +2356,33 @@ func _apply_valid_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) 
 	while _knife_intersections.size() > 1:
 		var cut_start_pos := _knife_intersections.pop_front()
 		var cut_end_pos := _knife_intersections.pop_front()
+		print(cut_start_pos, " ", cut_end_pos)
 		var cutting_line := Geometry2DUtil.get_polyline_segment(_pencil_stroke, cut_start_pos, cut_end_pos)
 		var fitness_prep := BasicFit.prepare_polyline_segments(cutting_line, _get_basic_fit_snap(cutting_line))
 		var curve := BasicFit.fit_curve_to_polyline(cutting_line, fitness_prep)
-		for half in Geometry2DUtil.cut_bezier_with_bezier(svs.curve, svs.curve_to_local(curve),
-				svs.max_stages, svs.tolerance_degrees):
-			var cut_svs := ScalableVectorShape2D.new()
-			var rt := EditorInterface.get_edited_scene_root()
-			var ln := Line2D.new()
-			cut_svs.max_stages = svs.max_stages
-			cut_svs.tolerance_degrees = svs.tolerance_degrees
-			cut_svs.curve = half
-			cut_svs.line = ln
-			cut_svs.stroke_color = Color.WHITE
-			cut_svs.stroke_width = 1.0
-			cut_svs.name = "DebugCuttingLine"
-
-			undo_redo.create_action("add debug cut")
-			undo_redo.add_do_method(rt, "add_child", cut_svs, true)
-			undo_redo.add_undo_method(rt, "remove_child", cut_svs)
-			undo_redo.add_do_property(cut_svs, "owner", rt)
-			undo_redo.add_undo_reference(cut_svs)
-			undo_redo.add_do_method(cut_svs, "add_child", ln)
-			undo_redo.add_undo_method(cut_svs, "remove_child", ln)
-			undo_redo.add_do_property(ln, "owner", rt)
-			undo_redo.add_undo_reference(ln)
-			undo_redo.commit_action()
+		var halves = Geometry2DUtil.cut_bezier_with_bezier(svs.curve, svs.curve_to_local(curve), svs.max_stages, svs.tolerance_degrees)
+		var cut_svs := ScalableVectorShape2D.new()
+		var rt := EditorInterface.get_edited_scene_root()
+		var ln := Line2D.new()
+		cut_svs.max_stages = svs.max_stages
+		cut_svs.tolerance_degrees = svs.tolerance_degrees
+		cut_svs.curve = halves[1]
+		cut_svs.line = ln
+		cut_svs.stroke_color = Color.WHITE
+		cut_svs.stroke_width = 1.0
+		cut_svs.name = "DebugCuttingLine"
+		undo_redo.create_action("add debug cut")
+		undo_redo.add_do_property(svs, "curve", halves[0])
+		undo_redo.add_undo_property(svs, "curve", svs.curve)
+		undo_redo.add_do_method(rt, "add_child", cut_svs, true)
+		undo_redo.add_undo_method(rt, "remove_child", cut_svs)
+		undo_redo.add_do_property(cut_svs, "owner", rt)
+		undo_redo.add_undo_reference(cut_svs)
+		undo_redo.add_do_method(cut_svs, "add_child", ln)
+		undo_redo.add_undo_method(cut_svs, "remove_child", ln)
+		undo_redo.add_do_property(ln, "owner", rt)
+		undo_redo.add_undo_reference(ln)
+		undo_redo.commit_action()
 
 	_pencil_start_pos = cursor_pos
 	_pencil_stroke.clear()
