@@ -369,13 +369,13 @@ static func will_self_intersect(poly : Array[Vector2], next_point : Vector2) -> 
 
 
 static func get_progress_ratio_for_point_on_curve(p : Vector2, c : Curve2D, max_stages := 5,
-		tolerance_degrees := 4.0) -> float:
+		tolerance_degrees := 4.0, r := 0.01) -> float:
 	# Heuristic to find progress_ratio of cpc
 	var d := 0.0
 	var pts := c.tessellate(max_stages, tolerance_degrees)
 	var p1 := pts[0]
 	for i in range(1, pts.size()):
-		if Geometry2DUtil.is_point_on_segment(p, p1, pts[i]):
+		if Geometry2DUtil.is_point_on_segment(p, p1, pts[i], r):
 			d += p1.distance_to(p)
 			break
 		d += p1.distance_to(pts[i])
@@ -408,14 +408,15 @@ static func find_curve_segment_idx_for_point(curve : Curve2D, point : Vector2,
 	return -1
 
 
-static func get_sliced_curve_segment(curve : Curve2D, before_segment : int, point_position : Vector2, max_stages := 5, tolerance_degrees := 4.0) -> Curve2D:
+static func get_sliced_curve_segment(curve : Curve2D, before_segment : int, point_position : Vector2,
+		max_stages := 5, tolerance_degrees := 4.0, r := 0.01) -> Curve2D:
 	var curve_segment := Curve2D.new()
 	curve_segment.add_point(curve.get_point_position(before_segment - 1))
 	curve_segment.set_point_out(0, curve.get_point_out(before_segment - 1))
 	curve_segment.add_point(curve.get_point_position(before_segment))
 	curve_segment.set_point_in(1, curve.get_point_in(before_segment))
 	var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
-			point_position, curve_segment, max_stages, tolerance_degrees)
+			point_position, curve_segment, max_stages, tolerance_degrees, r)
 	return slice_bezier(
 		curve_segment.get_point_position(0),
 		curve_segment.get_point_out(0),
@@ -424,11 +425,23 @@ static func get_sliced_curve_segment(curve : Curve2D, before_segment : int, poin
 		progress_ratio
 	)
 
+
 static func get_reversed_curve(curve : Curve2D) -> Curve2D:
 	var new_curve := Curve2D.new()
 	for i in range(curve.point_count - 1, -1, -1):
 		new_curve.add_point(curve.get_point_position(i), curve.get_point_out(i), curve.get_point_in(i))
 	return new_curve
+
+
+static func add_point_to_bezier(curve : Curve2D, placement_point : Vector2, before_segment : int,
+		max_stages := 5, tolerance_degrees := 4.0, r := 0.01) -> Curve2D:
+	var sliced_segment := get_sliced_curve_segment(curve, before_segment, placement_point,
+			max_stages, tolerance_degrees, r)
+	curve.add_point(placement_point, sliced_segment.get_point_in(1), sliced_segment.get_point_out(1), before_segment)
+	curve.set_point_out(before_segment - 1, sliced_segment.get_point_out(0))
+	curve.set_point_in(before_segment + 1, sliced_segment.get_point_in(2))
+
+	return curve
 
 
 static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D,
@@ -443,7 +456,46 @@ static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D,
 	var cut_end_segment_idx := find_curve_segment_idx_for_point(curve, cut_end, max_stages, tolerance_degrees)
 
 	if cut_start_segment_idx == cut_end_segment_idx:
-		print("TODO: handle start and end of cut in same segment", )
+		if cut_start.distance_squared_to(curve.get_point_position(cut_start_segment_idx)) > cut_end.distance_squared_to(curve.get_point_position(cut_start_segment_idx)):
+			var swap := cut_start
+			cut_start = cut_end
+			cut_end = swap
+			cut = get_reversed_curve(cut)
+			print("yes??")
+		curve = add_point_to_bezier(curve.duplicate(), cut_start, cut_start_segment_idx + 1, max_stages, tolerance_degrees)
+		curve = add_point_to_bezier(curve, cut_end, cut_start_segment_idx + 2, max_stages, tolerance_degrees, 1)
+
+		for p_idx in range(0, cut_start_segment_idx + 1):
+			halves[0].add_point(curve.get_point_position(p_idx))
+			halves[0].set_point_in(p_idx, curve.get_point_in(p_idx))
+			halves[0].set_point_out(p_idx, curve.get_point_out(p_idx))
+		halves[0].add_point(cut_start)
+		halves[0].set_point_in(cut_start_segment_idx + 1, curve.get_point_in(cut_start_segment_idx + 1))
+		halves[0].set_point_out(cut_start_segment_idx + 1, cut.get_point_out(0))
+		var seg_p_idx := halves[0].point_count
+		for p_idx in range(1, cut.point_count):
+			halves[0].add_point(cut.get_point_position(p_idx))
+			halves[0].set_point_in(seg_p_idx, cut.get_point_in(p_idx))
+			halves[0].set_point_out(seg_p_idx, cut.get_point_out(p_idx))
+			seg_p_idx += 1
+		for p_idx in range(cut_start_segment_idx + 2, curve.point_count):
+			halves[0].add_point(curve.get_point_position(p_idx))
+			if p_idx > cut_start_segment_idx + 2:
+				halves[0].set_point_in(seg_p_idx, curve.get_point_in(p_idx))
+			halves[0].set_point_out(seg_p_idx, curve.get_point_out(p_idx))
+			seg_p_idx += 1
+		halves[1].add_point(cut_start)
+		halves[1].set_point_out(0, curve.get_point_out(cut_start_segment_idx + 1))
+		halves[1].add_point(cut_end)
+		halves[1].set_point_in(1, curve.get_point_in(cut_start_segment_idx + 2))
+		cut = get_reversed_curve(cut)
+		halves[1].set_point_out(1, cut.get_point_out(0))
+		for p_idx in range(1, cut.point_count):
+			halves[1].add_point(cut.get_point_position(p_idx))
+			halves[1].set_point_in(p_idx + 1, cut.get_point_in(p_idx))
+			halves[1].set_point_out(p_idx + 1, cut.get_point_out(p_idx))
+
+
 		return halves
 
 	if cut_end_segment_idx < cut_start_segment_idx:
@@ -457,7 +509,6 @@ static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D,
 
 	var cut_start_seg_slice := get_sliced_curve_segment(curve, cut_start_segment_idx + 1, cut_start, max_stages, tolerance_degrees)
 	var cut_end_seg_slice := get_sliced_curve_segment(curve, cut_end_segment_idx + 1, cut_end, max_stages, tolerance_degrees)
-
 
 	var seg_p_idx := 0
 	for p_idx in range(0, cut_start_segment_idx + 1):
