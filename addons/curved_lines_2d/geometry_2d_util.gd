@@ -441,11 +441,11 @@ static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D,
 	var cut_end := cut.get_point_position(cut.point_count - 1)
 	var cut_start_segment_idx  := find_curve_segment_idx_for_point(curve, cut_start, max_stages, tolerance_degrees)
 	var cut_end_segment_idx := find_curve_segment_idx_for_point(curve, cut_end, max_stages, tolerance_degrees)
-	print(cut_start_segment_idx, " / ", cut_end_segment_idx)
-	print(cut_start, " / ", cut_end)
+
 	if cut_start_segment_idx == cut_end_segment_idx:
 		print("TODO: handle start and end of cut in same segment", )
 		return halves
+
 	if cut_end_segment_idx < cut_start_segment_idx:
 		var swap_idx := cut_start_segment_idx
 		var swap := cut_start
@@ -458,7 +458,7 @@ static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D,
 	var cut_start_seg_slice := get_sliced_curve_segment(curve, cut_start_segment_idx + 1, cut_start, max_stages, tolerance_degrees)
 	var cut_end_seg_slice := get_sliced_curve_segment(curve, cut_end_segment_idx + 1, cut_end, max_stages, tolerance_degrees)
 
-	print(cut_start_segment_idx, " / ", cut_end_segment_idx)
+
 	var seg_p_idx := 0
 	for p_idx in range(0, cut_start_segment_idx + 1):
 		halves[0].add_point(curve.get_point_position(p_idx))
@@ -484,6 +484,30 @@ static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D,
 		seg_p_idx += 1
 	halves[0].set_point_in(memo_seg_p_idx, cut_end_seg_slice.get_point_in(2))
 
+	seg_p_idx = 0
+	halves[1].add_point(cut_start)
+	halves[1].set_point_out(seg_p_idx, cut_start_seg_slice.get_point_out(1))
+	seg_p_idx += 1
+	halves[1].add_point(curve.get_point_position(cut_start_segment_idx + 1))
+	halves[1].set_point_in(seg_p_idx, cut_start_seg_slice.get_point_in(2))
+	halves[1].set_point_out(seg_p_idx, curve.get_point_out(cut_start_segment_idx + 1))
+	seg_p_idx += 1
+	for p_idx in range(cut_start_segment_idx + 2, cut_end_segment_idx + 1):
+		halves[1].add_point(curve.get_point_position(p_idx))
+		halves[1].set_point_out(seg_p_idx, curve.get_point_out(p_idx))
+		halves[1].set_point_in(seg_p_idx, curve.get_point_in(p_idx))
+		seg_p_idx += 1
+	cut = get_reversed_curve(cut)
+	halves[1].add_point(cut_end)
+	halves[1].set_point_out(seg_p_idx, cut.get_point_out(0))
+	memo_seg_p_idx = seg_p_idx
+	seg_p_idx += 1
+	for p_idx in range(1, cut.point_count):
+		halves[1].add_point(cut.get_point_position(p_idx))
+		halves[1].set_point_out(seg_p_idx, cut.get_point_out(p_idx))
+		halves[1].set_point_in(seg_p_idx, cut.get_point_in(p_idx))
+		seg_p_idx += 1
+	halves[1].set_point_in(memo_seg_p_idx, cut_end_seg_slice.get_point_in(1))
 
 	return halves
 
