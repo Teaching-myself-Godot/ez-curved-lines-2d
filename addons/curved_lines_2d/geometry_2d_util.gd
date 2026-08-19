@@ -494,8 +494,7 @@ static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D,
 			halves[1].add_point(cut.get_point_position(p_idx))
 			halves[1].set_point_in(p_idx + 1, cut.get_point_in(p_idx))
 			halves[1].set_point_out(p_idx + 1, cut.get_point_out(p_idx))
-
-
+		halves.sort_custom(func(a : Curve2D, b : Curve2D): return get_polygon_area(a.tessellate(max_stages, tolerance_degrees)) > get_polygon_area(b.tessellate(max_stages, tolerance_degrees)))
 		return halves
 
 	if cut_end_segment_idx < cut_start_segment_idx:
@@ -559,7 +558,7 @@ static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D,
 		halves[1].set_point_in(seg_p_idx, cut.get_point_in(p_idx))
 		seg_p_idx += 1
 	halves[1].set_point_in(memo_seg_p_idx, cut_end_seg_slice.get_point_in(1))
-
+	halves.sort_custom(func(a : Curve2D, b : Curve2D): return get_polygon_area(a.tessellate(max_stages, tolerance_degrees)) > get_polygon_area(b.tessellate(max_stages, tolerance_degrees)))
 	return halves
 
 
