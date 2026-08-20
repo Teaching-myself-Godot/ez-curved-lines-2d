@@ -2397,8 +2397,13 @@ func _add_point_to_pencil_line() -> void:
 		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
 	if not _pencil_stroke.is_empty() and _pencil_stroke[-1].distance_to(pos) > _get_freehand_draw_granularity():
 		if _svs_edit_mode == SVSEditMode.KNIFE and _is_svs_valid(current_selection):
-			if Geometry2DUtil.will_self_intersect(_pencil_stroke, pos):
-				return
+			var self_intersection = Geometry2DUtil.will_self_intersect_at(_pencil_stroke, pos)
+			if self_intersection != null:
+				var replacement : Array[Vector2] = []
+				for p_idx in self_intersection[0]:
+					replacement.append(_pencil_stroke[p_idx])
+				replacement.append(self_intersection[1])
+				_pencil_stroke = replacement
 			_detect_knife_cuts(current_selection, pos)
 			_apply_valid_knife_cuts(current_selection, pos)
 		_pencil_stroke.append(pos)

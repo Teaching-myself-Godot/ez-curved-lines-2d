@@ -358,14 +358,14 @@ static func get_polyline_segment(poly : PackedVector2Array, from : Vector2, to :
 
 
 # returns true if the next point causes a loop (self intersection)
-static func will_self_intersect(poly : Array[Vector2], next_point : Vector2) -> bool:
+static func will_self_intersect_at(poly : Array[Vector2], next_point : Vector2) -> Variant:
 	if poly.size() < 3:
-		return false
+		return null
 	for i in range(0, poly.size() - 2):
 		var intersection = Geometry2D.segment_intersects_segment(poly[-1], next_point, poly[i], poly[i+1])
 		if intersection != null:
-			return true
-	return false
+			return [i, intersection]
+	return null
 
 
 static func get_progress_ratio_for_point_on_curve(p : Vector2, c : Curve2D, max_stages := 5,
@@ -534,7 +534,6 @@ static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D,
 		halves[0].set_point_in(seg_p_idx, curve.get_point_in(p_idx))
 		seg_p_idx += 1
 	halves[0].set_point_in(memo_seg_p_idx, cut_end_seg_slice.get_point_in(2))
-
 	seg_p_idx = 0
 	halves[1].add_point(cut_start)
 	halves[1].set_point_out(seg_p_idx, cut_start_seg_slice.get_point_out(1))
@@ -548,6 +547,7 @@ static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D,
 		halves[1].set_point_out(seg_p_idx, curve.get_point_out(p_idx))
 		halves[1].set_point_in(seg_p_idx, curve.get_point_in(p_idx))
 		seg_p_idx += 1
+	halves[1].set_point_out(seg_p_idx - 1, cut_end_seg_slice.get_point_out(0))
 	cut = get_reversed_curve(cut)
 	halves[1].add_point(cut_end)
 	halves[1].set_point_out(seg_p_idx, cut.get_point_out(0))
