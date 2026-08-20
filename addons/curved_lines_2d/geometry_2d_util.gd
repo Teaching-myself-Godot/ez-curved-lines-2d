@@ -461,9 +461,10 @@ static func cut_bezier_with_bezier(curve : Curve2D, cut : Curve2D,
 			cut_start = cut_end
 			cut_end = swap
 			cut = get_reversed_curve(cut)
-			print("yes??")
 		curve = add_point_to_bezier(curve.duplicate(), cut_start, cut_start_segment_idx + 1, max_stages, tolerance_degrees)
-		curve = add_point_to_bezier(curve, cut_end, cut_start_segment_idx + 2, max_stages, tolerance_degrees, 1)
+		cut_end = get_closest_point_on_polyline(cut_end, curve.tessellate(max_stages, tolerance_degrees))
+		curve = add_point_to_bezier(curve, cut_end, cut_start_segment_idx + 2, max_stages, tolerance_degrees)
+		cut.set_point_position(cut.point_count - 1, cut_end)
 
 		for p_idx in range(0, cut_start_segment_idx + 1):
 			halves[0].add_point(curve.get_point_position(p_idx))
