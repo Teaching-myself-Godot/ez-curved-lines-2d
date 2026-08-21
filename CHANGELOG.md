@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.30.1
+## 2.30.2
 
 ### Added
 
@@ -8,6 +8,8 @@
 
 ### Changed
 
+- Bugfix: the stroke of a shape with a cutout no longer runs straight across its own fill. A cutout can pinch the fill into a peninsula, which `slice_polygon_vertical` then cuts loose through its neck; `Geometry2DUtil.calculate_outlines` read the hole off a merged _pair_ of those slices, which still counted the peninsula as part of the cutout
+- A cutout enclosing an island of fill now gets a stroke drawn around that island as well: `Geometry2DUtil.calculate_outlines` returns it as a contour in its own right in stead of swallowing it
 - Pencil tool now also uses `BasicFit`'s curve fitting algorithm to reduce points and introduce control points (just like the polygon brush)
 - Bugfix: pencil tool can now draw lines of 2 or less straight segments.
 
