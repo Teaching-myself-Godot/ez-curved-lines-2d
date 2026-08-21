@@ -563,12 +563,16 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_LOCAL_TRANSFORM_CHANGED or what == NOTIFICATION_TRANSFORM_CHANGED:
 		transform_changed.emit(self)
 	if what == NOTIFICATION_EDITOR_PRE_SAVE:
-		if is_instance_valid(skeleton):
-			for i in skeleton.get_bone_count():
-				skeleton.get_bone(i).apply_rest()
-			if is_instance_valid(bone):
-				global_position = bone.global_position
-				global_rotation = bone.global_rotation
+		reset_skeleton_to_rest_pose()
+
+
+func reset_skeleton_to_rest_pose():
+	if is_instance_valid(skeleton):
+		for i in skeleton.get_bone_count():
+			skeleton.get_bone(i).apply_rest()
+		if is_instance_valid(bone):
+			global_position = bone.global_position
+			global_rotation = bone.global_rotation
 
 func _on_dimensions_changed():
 	if shape_type == ShapeType.RECT:
