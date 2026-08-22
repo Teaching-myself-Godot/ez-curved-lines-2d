@@ -124,9 +124,11 @@ func parse_svg_xml_file(xml_parser : XMLParser) -> SVGXMLElement:
 				svg_xml_node = new_svg_xml_node
 	return svg_xml_node
 
-func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root :
-			Node2D, current_node : Node2D, svg_gradients : Array[Dictionary]) -> void:
-
+## Recursively turn an [SVGXMLElement] into [Polygon2D], [Line2D], and [ScaleableVectorShape2D]
+## children of [param current_node].
+##
+## Returns the extents of the created nodes.
+func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root : Node2D, current_node : Node2D, svg_gradients : Array[Dictionary]) -> Rect2:
 	if xml_data.name == "use":
 		var href = xml_data.get_named_attribute_value_safe("xlink:href")
 		if href.is_empty():
@@ -143,6 +145,7 @@ func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root 
 			xml_data.attributes.erase("id")
 		xml_data.name = reuse_xml_node.name
 
+	var objects : Array[ScalableVectorShape2D] = []
 	match xml_data.name:
 		"svg":
 			if xml_data.has_attribute("viewBox") and xml_data.has_attribute("width") and xml_data.has_attribute("height"):
@@ -165,31 +168,45 @@ func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root 
 			current_node = process_group(xml_data, current_node, scene_root, xml_data.name)
 			current_node.hide()
 		"rect":
-			process_svg_rectangle(xml_data, current_node, scene_root, svg_gradients)
+			objects.append(process_svg_rectangle(xml_data, current_node, scene_root, svg_gradients))
 		"image":
-			process_svg_image(xml_data, current_node, scene_root, svg_gradients)
+			objects.append(process_svg_image(xml_data, current_node, scene_root, svg_gradients))
 		"polygon":
-			process_svg_polygon(xml_data, current_node, scene_root, true, svg_gradients)
+			objects.append(process_svg_polygon(xml_data, current_node, scene_root, true, svg_gradients))
 		"polyline":
-			process_svg_polygon(xml_data, current_node, scene_root, false, svg_gradients)
+			objects.append(process_svg_polygon(xml_data, current_node, scene_root, false, svg_gradients))
 		"path":
-			process_svg_path(xml_data, current_node, scene_root, svg_gradients)
+			objects.append_array(process_svg_path(xml_data, current_node, scene_root, svg_gradients))
 		"circle":
-			process_svg_circle(xml_data, current_node, scene_root, svg_gradients)
+			objects.append(process_svg_circle(xml_data, current_node, scene_root, svg_gradients))
 		"ellipse":
-			process_svg_ellipse(xml_data, current_node, scene_root, svg_gradients)
+			objects.append(process_svg_ellipse(xml_data, current_node, scene_root, svg_gradients))
 		"linearGradient", "radialGradient":
 			svg_gradients.append(parse_gradient(xml_data))
 		"stop":
 			pass
 		_: log_message("⚠️ Skipping  unsupported node: <%s>" % xml_data.name, LogLevel.DEBUG)
 
+	var extents := Rect2()
+	for object_index in objects.size():
+		var bounding_box := objects[object_index].get_bounding_rect()
+		print(extents,bounding_box, objects[object_index].position)
+		bounding_box.position += objects[object_index].position
+		if object_index == 0:
+			extents = bounding_box
+		else:
+			extents = extents.merge(bounding_box)
+
 	var defs := xml_data.children.filter(func(ch): return ch.name == "defs")
 	var clip_paths := xml_data.children.filter(func(ch): return ch.name == "clipPath")
 	var remainder := xml_data.children.filter(func(ch): return ch.name != "defs" and ch.name != "clipPath")
 	for ch in defs + clip_paths + remainder:
-		process_svg_xml_tree(ch, scene_root, svg_root, current_node, svg_gradients)
+		var recursion = process_svg_xml_tree(ch, scene_root, svg_root, current_node, svg_gradients)
+		extents = extents.merge(recursion)
 
+	if ["g","clipPath","defs"].has(xml_data.name):
+		extents = process_group_pivot(xml_data,current_node, extents)
+	return extents
 
 func get_gradient_by_href(href : String, gradients : Array[Dictionary]) -> Dictionary:
 	var idx := gradients.find_custom(func(x): return "id" in x and "#" + x["id"] == href)
@@ -237,29 +254,36 @@ func process_group(element:SVGXMLElement, current_node : Node2D, scene_root : No
 	_managed_add_child_and_set_owner(current_node, new_group, scene_root)
 	return new_group
 
+func process_group_pivot(element:SVGXMLElement, current_node : Node2D, extents : Rect2) -> Rect2:
+	var pivot = Vector2(float(element.get_named_attribute_value_safe("inkscape:transform-center-x")),float(element.get_named_attribute_value_safe("inkscape:transform-center-y")))
+	current_node.translate(-extents.get_center() - pivot)
+	for child in current_node.get_children():
+		child.translate(extents.get_center() + pivot)
+	extents.position = extents.get_center()
+	return extents
 
 func process_svg_circle(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
-		gradients : Array[Dictionary]) -> void:
+		gradients : Array[Dictionary]) -> ScalableVectorShape2D:
 	var cx = float(element.get_named_attribute_value("cx"))
 	var cy = float(element.get_named_attribute_value("cy"))
 	var r = float(element.get_named_attribute_value("r"))
 	var path_name = get_element_label(element, "Circle")
-	create_path_from_ellipse(element, path_name, r, r, Vector2(cx, cy), current_node, scene_root, gradients)
+	return create_path_from_ellipse(element, path_name, r, r, Vector2(cx, cy), current_node, scene_root, gradients)
 
 
 func process_svg_ellipse(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
-		gradients : Array[Dictionary]) -> void:
+		gradients : Array[Dictionary]) -> ScalableVectorShape2D:
 	var cx = float(element.get_named_attribute_value("cx"))
 	var cy = float(element.get_named_attribute_value("cy"))
 	var rx = float(element.get_named_attribute_value("rx"))
 	var ry = float(element.get_named_attribute_value("ry"))
 	var path_name = get_element_label(element, "Ellipse")
-	create_path_from_ellipse(element, path_name, rx, ry, Vector2(cx, cy), current_node, scene_root, gradients)
+	return create_path_from_ellipse(element, path_name, rx, ry, Vector2(cx, cy), current_node, scene_root, gradients)
 
 
 func create_path_from_ellipse(element:SVGXMLElement, path_name : String, rx : float, ry: float,
 		pos : Vector2, current_node : Node2D, scene_root : Node,
-		gradients : Array[Dictionary]) -> void:
+		gradients : Array[Dictionary]) -> ScalableVectorShape2D:
 	var new_ellipse := ScalableVectorShape2D.new()
 	new_ellipse.shape_type = ScalableVectorShape2D.ShapeType.ELLIPSE
 	new_ellipse.size = Vector2(rx * 2, ry * 2)
@@ -267,9 +291,10 @@ func create_path_from_ellipse(element:SVGXMLElement, path_name : String, rx : fl
 	new_ellipse.name = path_name
 	_post_process_shape(new_ellipse, current_node, get_svg_transform(element),
 			element.get_merged_styles(log_message), scene_root, gradients)
+	return new_ellipse
 
 func process_svg_image(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
-		gradients : Array[Dictionary]) -> void:
+		gradients : Array[Dictionary]) -> ScalableVectorShape2D:
 	var x = float(element.get_named_attribute_value("x")) if element.has_attribute("x") else 0.0
 	var y = float(element.get_named_attribute_value("y")) if element.has_attribute("y") else 0.0
 	var width = float(element.get_named_attribute_value("width"))
@@ -301,9 +326,10 @@ func process_svg_image(element:SVGXMLElement, current_node : Node2D, scene_root 
 	_post_process_shape(new_image_rect, current_node, get_svg_transform(element),
 			element.get_merged_styles(log_message), scene_root, gradients, false, image_texture)
 
+	return new_image_rect
 
 func process_svg_rectangle(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
-		gradients : Array[Dictionary]) -> void:
+		gradients : Array[Dictionary]) -> ScalableVectorShape2D:
 	var x = float(element.get_named_attribute_value("x"))
 	var y = float(element.get_named_attribute_value("y"))
 	var rx = float(element.get_named_attribute_value("rx")) if element.has_attribute("rx") else 0
@@ -318,15 +344,18 @@ func process_svg_rectangle(element:SVGXMLElement, current_node : Node2D, scene_r
 	new_rect.shape_type = ScalableVectorShape2D.ShapeType.RECT
 	new_rect.size = Vector2(width, height)
 	new_rect.position = Vector2(x, y) + new_rect.size * 0.5
+
+
 	new_rect.rx = rx
 	new_rect.ry = ry
 	new_rect.name = get_element_label(element, "Rectangle")
 	_post_process_shape(new_rect, current_node, get_svg_transform(element),
 			element.get_merged_styles(log_message), scene_root, gradients)
+	return new_rect
 
 
 func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_root : Node, is_closed : bool,
-		gradients : Array[Dictionary]) -> void:
+		gradients : Array[Dictionary]) -> ScalableVectorShape2D:
 	var points_split = (element.get_named_attribute_value("points")
 			.replacen(",", " ")
 			.split(" ", false)
@@ -335,12 +364,14 @@ func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_roo
 	for p_idx in range(0, points_split.size(), 2):
 		curve.add_point(Vector2(float(points_split[p_idx]), float(points_split[p_idx + 1])))
 	var path_name = get_element_label(element, "Polygon" if is_closed else "Polyline")
-	create_path2d(path_name, current_node, curve, [], get_svg_transform(element),
+
+	return create_path2d(path_name, current_node, curve, [], get_svg_transform(element),
 			element.get_merged_styles(log_message), scene_root, gradients, is_closed)
 
 
+
 func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
-		gradients : Array[Dictionary]) -> void:
+		gradients : Array[Dictionary]) -> Array[ScalableVectorShape2D]:
 
 	# FIXME: implement better parsing here
 	var str_path = parse_attribute_string(
@@ -560,15 +591,18 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 						shape.clip_paths.append(shape1)
 					post_processed_shapes.erase(shape1)
 
+	var output : Array[ScalableVectorShape2D] = []
+
 	# Append actual new shapes to the scene by copying the `curve`, `arc_list` and
 	# `clip_paths`. Also, the shapes inside the `clip_paths` property are added as
 	# actual node in the resulting scene
 	for shape in post_processed_shapes:
 		var new_path := create_path2d(shape_name, current_node,  shape.curve.duplicate(true), shape.arc_list.arcs.duplicate(true), get_svg_transform(element),
 					element.get_merged_styles(log_message), scene_root, gradients, shape.get_meta("is_closed"))
+		output.append(new_path)
 		var clips : Array[ScalableVectorShape2D] = []
 		for cutout in shape.clip_paths:
-			clips.append(create_path2d("CutoutFor%s" % shape_name, current_node, cutout.curve.duplicate(true), cutout.arc_list.arcs.duplicate(true),
+			clips.append(create_path2d("CutoutFor%s" % shape_name, current_node, cutout.curve.duplicate(true), cutout.arc_list.arcs.duplicate(true), 
 							Transform2D.IDENTITY, {}, scene_root, gradients, cutout.get_meta("is_closed"), new_path))
 			cutout.free()
 		shape.free()
@@ -577,6 +611,8 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 		new_path.clip_paths.append_array(clips)
 		undo_redo.add_do_property(new_path, 'clip_paths', new_path.clip_paths)
 		undo_redo.add_undo_property(new_path, 'clip_paths', [])
+	
+	return output
 
 
 func create_path2d(path_name: String, parent: Node, curve: Curve2D, arcs: Array[ScalableArc],
