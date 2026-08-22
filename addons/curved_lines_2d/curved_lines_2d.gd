@@ -1411,10 +1411,10 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 				PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
 					if _is_add_stroke_enabled():
 						viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
-					if _is_add_fill_enabled():
+					if _is_add_fill_enabled() and _can_be_filled(pts):
 						viewport_control.draw_polygon(pts, [_get_default_fill_color()])
 				PaintOrder.MARKERS_FILL_STROKE, PaintOrder.FILL_STROKE_MARKERS, PaintOrder.FILL_MARKERS_STROKE, _:
-					if _is_add_fill_enabled():
+					if _is_add_fill_enabled() and _can_be_filled(pts):
 						viewport_control.draw_polygon(pts, [_get_default_fill_color()])
 					if _is_add_stroke_enabled():
 						viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
@@ -1429,7 +1429,7 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 		var pts := Array(Geometry2DUtil.get_polygon_at_granularity(_current_brush_shape,
 				_get_guarded_brush_granularity()
 		)).map(func(p): return _vp_transform(p * Transform2D(mul.get_rotation(), mul.get_scale(), 0.0, Vector2.ZERO) + mouse_pos))
-		if _is_add_fill_enabled():
+		if _is_add_fill_enabled() and _can_be_filled(pts):
 			viewport_control.draw_polygon(pts, [_get_default_fill_color()])
 		else:
 			viewport_control.draw_polyline(pts, Color.LIME)
@@ -1573,10 +1573,10 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 			PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
 				if _is_add_stroke_enabled():
 					viewport_control.draw_polyline(stroke_points, _get_default_stroke_color(), stroke_width)
-				if _is_add_fill_enabled():
+				if _is_add_fill_enabled() and _can_be_filled(points):
 					viewport_control.draw_polygon(points, [_get_default_fill_color()])
 			PaintOrder.MARKERS_FILL_STROKE, PaintOrder.FILL_STROKE_MARKERS, PaintOrder.FILL_MARKERS_STROKE, _:
-				if _is_add_fill_enabled():
+				if _is_add_fill_enabled() and _can_be_filled(points):
 					viewport_control.draw_polygon(points, [_get_default_fill_color()])
 				if _is_add_stroke_enabled():
 					viewport_control.draw_polyline(stroke_points, _get_default_stroke_color(), stroke_width)
@@ -3184,3 +3184,12 @@ func _exit_tree():
 	remove_control_from_bottom_panel(scalable_vector_shapes_2d_dock)
 	scalable_vector_shapes_2d_dock.free()
 	set_global_position_popup_panel.free()
+
+
+# draw_polygon() triangulates whatever it is handed and reports
+# "Invalid polygon data, triangulation failed." when it cannot. A shape dragged across
+# itself is self-intersecting for as long as the drag lasts, so the preview of its fill
+# cannot be drawn during those frames - skip it in stead of logging an error per frame.
+# The outline is drawn by draw_polyline() either way, which needs no triangulation.
+static func _can_be_filled(points) -> bool:
+	return Geometry2D.triangulate_polygon(PackedVector2Array(points)).size() > 0
