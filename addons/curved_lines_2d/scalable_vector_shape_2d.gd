@@ -579,10 +579,12 @@ func _prune_unused_colliders_and_lines():
 		for ch in line.get_children():
 			if ch is Line2D and not ch.visible:
 				line.remove_child(ch)
+				ch.free()
 	if is_instance_valid(collision_object):
 		for ch in collision_object.get_children():
 			if ch is CollisionPolygon2D and ch.disabled and not ch.visible:
 				collision_object.remove_child(ch)
+				ch.free()
 
 
 func reset_skeleton_to_rest_pose():
