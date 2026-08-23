@@ -72,6 +72,7 @@ func _load_svg(svg_file_path : String) -> void:
 		for child in %ImportLogContainer.get_children():
 			child.queue_free()
 		var svg_root := await svg_importer.load_svg(svg_file_path)
+
 		log_message("Import finished.\n\nThe SVG importer is still incrementally improving (slowly).")
 		var link_button = LinkButtonScene.instantiate()
 		link_button.text = "Click here to report issues or improvement requests on github"

@@ -57,13 +57,6 @@ func log_message(msg : String, log_level : LogLevel = LogLevel.INFO) -> void:
 	log_consumer.call(msg, log_level)
 
 
-func _get_viewport_center() -> Vector2:
-	var tr := EditorInterface.get_editor_viewport_2d().global_canvas_transform
-	var og := tr.get_origin()
-	var sz := Vector2(EditorInterface.get_editor_viewport_2d().size)
-	return (sz / 2) / tr.get_scale() - og / tr.get_scale()
-
-
 func load_svg(file_path : String) -> Node:
 	var xml_parser = XMLParser.new()
 	var scene_root := EditorInterface.get_edited_scene_root()
