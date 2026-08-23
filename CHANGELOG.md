@@ -1,5 +1,16 @@
 # Changelog
 
+
+## 2.31.0
+
+### Added
+
+- Knife tool
+
+### Changed
+
+- Multiple geometry related bug fixes
+
 ## 2.30.2
 
 ### Added
