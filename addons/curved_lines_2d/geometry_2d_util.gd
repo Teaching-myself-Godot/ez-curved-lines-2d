@@ -33,13 +33,7 @@ static func get_polygon_area(points : PackedVector2Array) -> float:
 	return absf(double_area) * 0.5
 
 
-## Removes every vertex coinciding with the one before it, the closing vertex included.
-## The boolean operations of [Geometry2D] hand back contours in which the same point
-## occurs twice in a row - a corner where two clipped edges meet, most often. That is
-## the same shape geometrically, but Godot cannot triangulate it: a [CollisionPolygon2D]
-## carrying such a contour makes `decompose_polygon_in_convex()` bail out with
-## `Convex decomposing failed!` every time the scene loads and every time the shape is
-## recomputed, even when the node is hidden and disabled.
+## Removes every vertex coinciding with the one before it
 static func remove_duplicate_points(points : PackedVector2Array) -> PackedVector2Array:
 	var result : PackedVector2Array = []
 	for p : Vector2 in points:
@@ -51,14 +45,6 @@ static func remove_duplicate_points(points : PackedVector2Array) -> PackedVector
 
 
 ## Returns the simple polygon(s) covering the surface enclosed by [param points].
-## A contour that crosses itself - a shape dragged through itself, a clip path folded
-## over its own outline - cannot be triangulated, so neither [Polygon2D] nor
-## [CollisionPolygon2D] can digest it: the editor logs
-## `Invalid polygon data, triangulation failed.` on every redraw and the collider
-## `Convex decomposing failed!` on every rebuild, for as long as the contour stays.
-## Merging such a contour with itself resolves the crossings into one simple outline
-## per enclosed lobe. A contour that is already simple comes back alone, deduplicated;
-## one enclosing no surface at all comes back as nothing.
 static func normalize_contour(points : PackedVector2Array) -> Array[PackedVector2Array]:
 	var cleaned := remove_duplicate_points(points)
 	if cleaned.size() < 3:
@@ -305,8 +291,6 @@ static func _merge_until_stable(solids : Array[PackedVector2Array]) -> bool:
 			solids.remove_at(idx)
 		solids.append_array(merge_results)
 	return enclosed_area
-
-
 
 
 # Not every contour is worth a CollisionPolygon2D as it arrives:
