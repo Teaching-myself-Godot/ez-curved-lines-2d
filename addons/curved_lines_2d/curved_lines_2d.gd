@@ -2416,24 +2416,6 @@ func _apply_valid_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) 
 		_create_shape(cut_svs, EditorInterface.get_edited_scene_root(), svs.name,
 				null, true, parent, svs)
 		select_node_reversibly(svs)
-		#var rt := EditorInterface.get_edited_scene_root()
-		#var ln := Line2D.new()
-		#cut_svs.max_stages = svs.max_stages
-		#cut_svs.tolerance_degrees = svs.tolerance_degrees
-		#cut_svs.curve = halves[1]
-		#cut_svs.line = ln
-		#cut_svs.stroke_color = Color.WHITE
-		#cut_svs.stroke_width = 1.0
-		#cut_svs.name = "DebugCuttingLine"
-		#undo_redo.add_do_method(rt, "add_child", cut_svs, true)
-		#undo_redo.add_undo_method(rt, "remove_child", cut_svs)
-		#undo_redo.add_do_property(cut_svs, "owner", rt)
-		#undo_redo.add_undo_reference(cut_svs)
-		#undo_redo.add_do_method(cut_svs, "add_child", ln)
-		#undo_redo.add_undo_method(cut_svs, "remove_child", ln)
-		#undo_redo.add_do_property(ln, "owner", rt)
-		#undo_redo.add_undo_reference(ln)
-		#undo_redo.commit_action()
 
 	_pencil_start_pos = cursor_pos
 	_pencil_stroke.clear()
