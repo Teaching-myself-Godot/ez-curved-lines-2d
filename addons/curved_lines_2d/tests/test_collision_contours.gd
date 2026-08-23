@@ -129,7 +129,6 @@ func test_the_closing_vertex_is_dropped() -> void:
 func test_contours_without_surface_get_no_collider() -> void:
 	print("
 [5] contours which do not deserve a collider")
-	var shape := ScalableVectorShape2D.new()
 	var square := PackedVector2Array([Vector2(0, 0), Vector2(100, 0), Vector2(100, 100),
 			Vector2(0, 100)])
 	var collinear := PackedVector2Array([Vector2(0, 0), Vector2(50, 0), Vector2(100, 0)])
@@ -137,7 +136,7 @@ func test_contours_without_surface_get_no_collider() -> void:
 			Vector2(100, 0), Vector2(0, 0)])
 	var contours : Array[PackedVector2Array] = [square, collinear, pinched,
 			from_a_saved_scene]
-	var usable := shape._collidable_contours(contours)
+	var usable := Geometry2DUtil.get_collidable_contours(contours)
 	check("the two contours with surface survive", usable.size() == 2,
 			"%d of %d kept" % [usable.size(), contours.size()])
 	check("the collinear triangle is dropped", not usable.has(collinear))
@@ -148,7 +147,6 @@ func test_contours_without_surface_get_no_collider() -> void:
 	check("the square keeps its surface",
 			is_equal_approx(Geometry2DUtil.get_polygon_area(usable[0]), 10000.0),
 			"%.1f" % Geometry2DUtil.get_polygon_area(usable[0]))
-	shape.free()
 
 
 # A shape dragged through itself encloses real surface but cannot be triangulated as it
@@ -175,11 +173,9 @@ func test_a_self_crossing_contour_is_resolved_into_lobes() -> void:
 			Vector2(0, 100)])
 	var untouched := Geometry2DUtil.normalize_contour(square)
 	check("a simple contour comes back alone", untouched.size() == 1 and untouched[0] == square)
-	var shape := ScalableVectorShape2D.new()
-	var colliders := shape._collidable_contours([figure_of_eight] as Array[PackedVector2Array])
+	var colliders := Geometry2DUtil.get_collidable_contours([figure_of_eight] as Array[PackedVector2Array])
 	check("the colliders get resolved geometry", not colliders.is_empty(),
 			"%d colliders" % colliders.size())
 	for collider in colliders:
 		check("collider of %d pts decomposes" % collider.size(),
 				not Geometry2D.decompose_polygon_in_convex(collider).is_empty())
-	shape.free()
