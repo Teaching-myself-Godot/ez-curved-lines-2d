@@ -861,7 +861,7 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 		_update_polygon_texture()
 	if is_instance_valid(collision_polygon):
 		collision_polygon.polygon = Geometry2DUtil.largest_contour(
-				_collidable_contours([polygon_points]))
+				Geometry2DUtil.get_collidable_contours([polygon_points]))
 	if is_instance_valid(collision_object):
 		var fill_polygons : Array[PackedVector2Array] = [polygon_points]
 		_update_collision_polygons(_get_collision_polygons(fill_polygons))
@@ -1013,7 +1013,7 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 			_update_polygon_texture()
 	if is_instance_valid(collision_polygon):
 		collision_polygon.polygon = Geometry2DUtil.largest_contour(
-				_collidable_contours([polygon_points]))
+				Geometry2DUtil.get_collidable_contours([polygon_points]))
 	if is_instance_valid(collision_object):
 		_update_collision_polygons(_get_collision_polygons(cached_clipped_polygons))
 
@@ -1054,7 +1054,7 @@ func _get_fill_and_stroke_polygons(fill_polygons : Array[PackedVector2Array]) ->
 # Any surplus node is kept, but hidden and disabled, so it can be reused when the
 # amount of polygons grows again
 func _update_collision_polygons(collision_polygons : Array[PackedVector2Array]) -> void:
-	var usable := _collidable_contours(collision_polygons)
+	var usable := Geometry2DUtil.get_collidable_contours(collision_polygons)
 	var existing = collision_object.get_children().filter(func(ch): return ch is CollisionPolygon2D)
 	for idx in existing.size():
 		if idx >= usable.size():
@@ -1070,85 +1070,6 @@ func _update_collision_polygons(collision_polygons : Array[PackedVector2Array]) 
 		existing[polygon_index].polygon = usable[polygon_index]
 		existing[polygon_index].show()
 		existing[polygon_index].disabled = false
-
-
-# Not every contour is worth a CollisionPolygon2D as it arrives:
-#  - one with a vertex repeating the one before it cannot be decomposed into convex
-#    shapes, which Godot reports as `Convex decomposing failed!` on load;
-#  - one that crosses itself cannot either, and the editor cannot triangulate it to
-#    draw it, adding `Invalid polygon data, triangulation failed.` on every redraw -
-#    it is resolved into its simple pieces in stead (see normalize_contour);
-#  - one that touches itself at a repeated vertex - a union pinching two lobes
-#    together - triangulates but does not decompose either, and is split into the
-#    separate loops meeting there (see split_at_pinch_points);
-#  - one enclosing next to no surface collides with nothing and is dropped.
-func _collidable_contours(contours : Array[PackedVector2Array]) -> Array[PackedVector2Array]:
-	var usable : Array[PackedVector2Array] = []
-	for contour in contours:
-		for piece in Geometry2DUtil.normalize_contour(contour):
-			for raw_loop in Geometry2DUtil.split_at_pinch_points(piece):
-				# the slice line leaves collinear vertices along the cut: the convex
-				# partition emits a zero-area piece at each, which the editor then
-				# fails to draw - see remove_collinear_points
-				var loop := Geometry2DUtil.remove_collinear_points(raw_loop)
-				if Geometry2DUtil.get_polygon_area(loop) <= MINIMUM_COLLISION_AREA:
-					continue
-				if Geometry2D.triangulate_polygon(loop).is_empty():
-					# still not drawable after normalization: a sub-pixel artefact
-					continue
-				if not Geometry2DUtil.is_strictly_simple(loop):
-					# ear clipping tolerated its crossings, the convex partitioner
-					# will not: resolve them silently in stead of letting the
-					# partitioner print - once more through Clipper, then give up
-					_append_resolved_collidable_loops(loop, usable)
-					continue
-				if not _decomposes_into_drawable_pieces(loop):
-					continue
-				usable.append(loop)
-	return usable
-
-
-# One silent resolution attempt for a loop that triangulates but is not strictly
-# simple: merging it with itself makes Clipper resolve the crossings. What comes
-# back is held to every gate again; what still fails is dropped without a node -
-# never handed to the partitioner, which would print `Convex decomposing failed!`.
-func _append_resolved_collidable_loops(loop : PackedVector2Array,
-			usable : Array[PackedVector2Array]) -> void:
-	for piece in Geometry2D.merge_polygons(loop, loop):
-		if Geometry2D.is_polygon_clockwise(piece):
-			continue
-		for sub in Geometry2DUtil.split_at_pinch_points(
-				Geometry2DUtil.remove_duplicate_points(piece)):
-			var cleaned := Geometry2DUtil.remove_collinear_points(sub)
-			if cleaned.size() < 3:
-				continue
-			if Geometry2DUtil.get_polygon_area(cleaned) <= MINIMUM_COLLISION_AREA:
-				continue
-			if Geometry2D.triangulate_polygon(cleaned).is_empty():
-				continue
-			if not Geometry2DUtil.is_strictly_simple(cleaned):
-				continue
-			if not _decomposes_into_drawable_pieces(cleaned):
-				continue
-			usable.append(cleaned)
-
-
-# The exact criterion the editor applies when it draws a CollisionPolygon2D: convex
-# decomposition, then a triangulated fill per piece. A sliver left over from booleans -
-# a band a fraction of a pixel wide between the stroke and the fill it hugs, as
-# described in #396 - can pass every contour-level check and still decompose into
-# near-zero pieces the fill rejects, logging `Invalid polygon data` on every redraw.
-# The decompose call is silent whenever it succeeds; the gates above make the failing
-# (printing) case all but impossible, and a contour that fails it here is dropped, so
-# it prints once per recompute at worst - never once per redraw.
-func _decomposes_into_drawable_pieces(loop : PackedVector2Array) -> bool:
-	var pieces := Geometry2D.decompose_polygon_in_convex(loop)
-	if pieces.is_empty():
-		return false
-	for piece in pieces:
-		if Geometry2D.triangulate_polygon(piece).is_empty():
-			return false
-	return true
 
 
 func _make_new_collision_polygon_2d() -> CollisionPolygon2D:
