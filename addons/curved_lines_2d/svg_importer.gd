@@ -38,17 +38,32 @@ var lock_shapes := true
 var antialiased_shapes := false
 var import_stroke_as_line_2d := true
 var collision_object_type := ScalableVectorShape2D.CollisionObjectType.NONE
+var update_curve_at_runtime := true
+var resource_local_to_scene := true
+var tolerance_degrees := 4.0
+var max_stages : int = 5
+var use_antialiased_line_2d = false
+
 var undo_redo : EditorUndoRedoManager = null
 var log_consumer : Callable = func(msg: String, log_level : LogLevel): pass
 
 func _init(is_svs := true, is_lock := true, is_aa := false, is_line_2d := true,
 		coll_type := ScalableVectorShape2D.CollisionObjectType.NONE,
+		is_update_curve_at_runtime := true,
+		is_resource_local_to_scene := true,
+		tol_deg := 4.0, max_stg := 5,
+		using_antialiased_line_2d := false,
 		on_log := func(msg: String, log_level : LogLevel): pass) -> void:
 	import_as_svs = is_svs
 	lock_shapes = is_lock
 	antialiased_shapes = is_aa
 	import_stroke_as_line_2d = is_line_2d
 	collision_object_type = coll_type
+	update_curve_at_runtime = is_update_curve_at_runtime
+	resource_local_to_scene = is_resource_local_to_scene
+	tolerance_degrees = tol_deg
+	max_stages = max_stg
+	use_antialiased_line_2d = using_antialiased_line_2d
 	undo_redo = EditorInterface.get_editor_undo_redo()
 	log_consumer = on_log
 
@@ -610,11 +625,11 @@ func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform :
 			style : Dictionary, scene_root : Node, gradients : Array[Dictionary],
 			is_cutout := false, image_texture : ImageTexture = null) -> void:
 	svs.lock_assigned_shapes = import_as_svs and lock_shapes
-	svs.update_curve_at_runtime = CurvedLines2D._is_setting_update_curve_at_runtime()
-	svs.arc_list.resource_local_to_scene = CurvedLines2D._is_making_curve_resources_local_to_scene()
-	svs.curve.resource_local_to_scene = CurvedLines2D._is_making_curve_resources_local_to_scene()
-	svs.tolerance_degrees = CurvedLines2D._get_default_tolerance_degrees()
-	svs.max_stages = CurvedLines2D._get_default_max_stages()
+	svs.update_curve_at_runtime = update_curve_at_runtime
+	svs.arc_list.resource_local_to_scene = resource_local_to_scene
+	svs.curve.resource_local_to_scene = resource_local_to_scene
+	svs.tolerance_degrees = tolerance_degrees
+	svs.max_stages = max_stages
 	var gradient_point_parent : Node2D = parent
 	if transform == Transform2D.IDENTITY:
 		_managed_add_child_and_set_owner(parent, svs, scene_root)
@@ -701,7 +716,7 @@ func add_stroke_to_path(new_path : ScalableVectorShape2D, style: Dictionary, sce
 				stroke.sharp_limit = float(style["stroke-miterlimit"])
 			else:
 				stroke.sharp_limit = 4.0 # svg default
-			if CurvedLines2D._use_antialiased_line_2d():
+			if use_antialiased_line_2d:
 				stroke.texture = load("res://addons/curved_lines_2d/LumAlpha8.tex")
 				stroke.texture_mode = Line2D.LINE_TEXTURE_TILE
 				stroke.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
