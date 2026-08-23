@@ -424,7 +424,7 @@ func _create_svs_vertex_merge_2d() -> void:
 func _add_fill_to_created_shape(new_shape : ScalableVectorShape2D, scene_root : Node, src : ScalableVectorShape2D) -> void:
 	if is_instance_valid(src) and not is_instance_valid(src.polygon):
 		return
-	if _is_add_fill_enabled():
+	if _is_add_fill_enabled() or (is_instance_valid(src) and is_instance_valid(src.polygon)):
 		var polygon := Polygon2D.new()
 		polygon.name = "Fill"
 		undo_redo.add_do_property(new_shape, 'polygon', polygon)
