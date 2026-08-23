@@ -1411,10 +1411,10 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 				PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
 					if _is_add_stroke_enabled():
 						viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
-					if _is_add_fill_enabled() and _can_be_filled(pts):
+					if _is_add_fill_enabled() and _polygon_can_be_drawn(pts):
 						viewport_control.draw_polygon(pts, [_get_default_fill_color()])
 				PaintOrder.MARKERS_FILL_STROKE, PaintOrder.FILL_STROKE_MARKERS, PaintOrder.FILL_MARKERS_STROKE, _:
-					if _is_add_fill_enabled() and _can_be_filled(pts):
+					if _is_add_fill_enabled() and _polygon_can_be_drawn(pts):
 						viewport_control.draw_polygon(pts, [_get_default_fill_color()])
 					if _is_add_stroke_enabled():
 						viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
@@ -1429,7 +1429,7 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 		var pts := Array(Geometry2DUtil.get_polygon_at_granularity(_current_brush_shape,
 				_get_guarded_brush_granularity()
 		)).map(func(p): return _vp_transform(p * Transform2D(mul.get_rotation(), mul.get_scale(), 0.0, Vector2.ZERO) + mouse_pos))
-		if _is_add_fill_enabled() and _can_be_filled(pts):
+		if _is_add_fill_enabled() and _polygon_can_be_drawn(pts):
 			viewport_control.draw_polygon(pts, [_get_default_fill_color()])
 		else:
 			viewport_control.draw_polyline(pts, Color.LIME)
@@ -1573,10 +1573,10 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 			PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
 				if _is_add_stroke_enabled():
 					viewport_control.draw_polyline(stroke_points, _get_default_stroke_color(), stroke_width)
-				if _is_add_fill_enabled() and _can_be_filled(points):
+				if _is_add_fill_enabled() and _polygon_can_be_drawn(points):
 					viewport_control.draw_polygon(points, [_get_default_fill_color()])
 			PaintOrder.MARKERS_FILL_STROKE, PaintOrder.FILL_STROKE_MARKERS, PaintOrder.FILL_MARKERS_STROKE, _:
-				if _is_add_fill_enabled() and _can_be_filled(points):
+				if _is_add_fill_enabled() and _polygon_can_be_drawn(points):
 					viewport_control.draw_polygon(points, [_get_default_fill_color()])
 				if _is_add_stroke_enabled():
 					viewport_control.draw_polyline(stroke_points, _get_default_stroke_color(), stroke_width)
@@ -2991,6 +2991,10 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	return false
 
 
+static func _polygon_can_be_drawn(points) -> bool:
+	return Geometry2D.triangulate_polygon(PackedVector2Array(points)).size() > 0
+
+
 static func _is_editing_enabled() -> bool:
 	if ProjectSettings.has_setting(SETTING_NAME_EDITING_ENABLED):
 		return ProjectSettings.get_setting(SETTING_NAME_EDITING_ENABLED)
@@ -3073,7 +3077,6 @@ static func _add_collision_object_type() -> ScalableVectorShape2D.CollisionObjec
 	if ProjectSettings.has_setting(SETTING_NAME_ADD_COLLISION_TYPE):
 		return ProjectSettings.get_setting(SETTING_NAME_ADD_COLLISION_TYPE)
 	return ScalableVectorShape2D.CollisionObjectType.NONE
-
 
 
 static func _get_default_paint_order() -> PaintOrder:
@@ -3184,7 +3187,3 @@ func _exit_tree():
 	remove_control_from_bottom_panel(scalable_vector_shapes_2d_dock)
 	scalable_vector_shapes_2d_dock.free()
 	set_global_position_popup_panel.free()
-
-
-static func _can_be_filled(points) -> bool:
-	return Geometry2D.triangulate_polygon(PackedVector2Array(points)).size() > 0
