@@ -1191,6 +1191,50 @@ func _handle_draw_vertex_merge_box(viewport_control: Control) -> void:
 		_draw_hint(viewport_control, "\nMerge points of:%s" % entries)
 
 
+func _handle_knife_draw(viewport_control : Control) -> void:
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if not _is_svs_valid(current_selection):
+		return _draw_hint(viewport_control, "** Selected node cannot be cut by knife tool **")
+	var mul := _get_svp_transform(current_selection)
+	if is_instance_valid(current_selection) and Input.is_key_pressed(KEY_SHIFT) and _drawing_pencil_line:
+		var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+		if _is_snapped_to_pixel():
+			pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+
+		for p in _pencil_stroke:
+			_draw_crosshair(
+				viewport_control,
+				_vp_transform(p * mul),
+				2.0, 4.0, VIEWPORT_ORANGE, 1
+			)
+		if not _pencil_stroke.is_empty():
+			viewport_control.draw_line(
+				_vp_transform(_pencil_stroke[-1] * mul),
+				_vp_transform(pos),
+				Color.RED
+			)
+	if _pencil_stroke.size() > 1:
+		var pts := Array(_pencil_stroke).map(func(p): return _vp_transform(p * mul))
+		viewport_control.draw_polyline(pts, Color.BLACK, 1.5, true)
+		viewport_control.draw_polyline(pts, Color.GRAY, 1.0, true)
+	for p in _knife_intersections:
+
+		_draw_crosshair(
+			viewport_control,
+			_vp_transform(p * mul),
+			1.0, 6.0, Color.WHITE, 3
+		)
+		_draw_crosshair(
+			viewport_control,
+			_vp_transform(p * mul),
+			1.0, 6.0, Color.RED, 1
+		)
+	if _is_svs_valid(current_selection):
+		_draw_curve(viewport_control, current_selection)
+	_show_draw_line_hints(viewport_control)
+
+
+
 func _handle_pencil_draw(viewport_control : Control) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	var mul := _get_svp_transform(current_selection)
@@ -2250,36 +2294,33 @@ func _start_pencil_draw():
 	_drawing_pencil_line = true
 
 
-func _detect_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) -> void:
-	var poly : PackedVector2Array = svs.tessellate()
-	if not poly[0].is_equal_approx(poly[-1]):
-		poly.append(poly[0])
-	var valid_intersections : Array[Vector2] = []
-	for i in range(0, poly.size() - 1):
-		var intersection = Geometry2D.segment_intersects_segment(
-				_pencil_stroke[-1], cursor_pos,
-				svs.to_global(poly[i]),
-				svs.to_global(poly[i+1])
-		)
-		if intersection != null:
-			valid_intersections.append(intersection)
-	valid_intersections.sort_custom(func(a : Vector2, b : Vector2):
-			return a.distance_squared_to(_pencil_stroke[-1]) < b.distance_squared_to(_pencil_stroke[-1])
-	)
-	for p in valid_intersections:
-		_pencil_stroke.append(p)
-		_knife_intersections.append(p)
-
-
 func _add_point_to_pencil_line() -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	var pos := _svp_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), current_selection)
 	if _is_snapped_to_pixel():
 		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
-
 	if not _pencil_stroke.is_empty() and _pencil_stroke[-1].distance_to(pos) > _get_freehand_draw_granularity():
 		if _svs_edit_mode == SVSEditMode.KNIFE and _is_svs_valid(current_selection):
-			_detect_knife_cuts(current_selection, pos)
+			var svs := current_selection as ScalableVectorShape2D
+
+			var poly : PackedVector2Array = svs.tessellate()
+			if not poly[0].is_equal_approx(poly[-1]):
+				poly.append(poly[0])
+			var valid_intersections : Array[Vector2] = []
+			for i in range(0, poly.size() - 1):
+				var intersection = Geometry2D.segment_intersects_segment(
+						_pencil_stroke[-1], pos,
+						svs.to_global(poly[i]),
+						svs.to_global(poly[i+1])
+				)
+				if intersection != null:
+					_knife_intersections.append(intersection)
+					valid_intersections.append(intersection)
+			valid_intersections.sort_custom(func(a : Vector2, b : Vector2):
+					return a.distance_squared_to(_pencil_stroke[-1]) < b.distance_squared_to(_pencil_stroke[-1])
+			)
+			for p in valid_intersections:
+				_pencil_stroke.append(p)
 		_pencil_stroke.append(pos)
 
 
