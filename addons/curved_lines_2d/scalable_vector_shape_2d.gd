@@ -85,6 +85,13 @@ enum StrokeExtrusionDirection {
 
 ## Determines which area the [CollisionPolygon2D] nodes generated for the
 ## [member collision_object] cover, see [member collision_mode]
+## The surface below which a contour is not worth a [CollisionPolygon2D]: at this scale
+## it is an artefact of a boolean operation rather than a piece of shape - a collider
+## 0.3 px across collides with nothing, and Godot cannot triangulate it to draw it in
+## the editor. Same order of magnitude as [constant Geometry2DUtil.MINIMUM_HOLE_AREA].
+const MINIMUM_COLLISION_AREA := 0.1
+
+
 enum CollisionMode {
 	## Generates the smallest possible set of [CollisionPolygon2D] nodes covering the
 	## fill and the stroke as one single area, in stead of one set per shape.
