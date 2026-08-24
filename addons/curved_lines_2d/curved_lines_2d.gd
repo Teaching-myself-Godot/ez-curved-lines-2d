@@ -15,12 +15,9 @@ const SETTING_NAME_ADD_FILL_ENABLED := "addons/curved_lines_2d/add_fill_enabled"
 const SETTING_NAME_ADD_COLLISION_TYPE = "addons/curved_lines_2d/add_collision_type"
 
 const SETTING_NAME_PAINT_ORDER := "addons/curved_lines_2d/paint_order"
-
 const SETTING_NAME_DEFAULT_LINE_BEGIN_CAP := "addons/curved_lines_2d/line_begin_cap"
 const SETTING_NAME_DEFAULT_LINE_END_CAP := "addons/curved_lines_2d/line_end_cap"
 const SETTING_NAME_DEFAULT_LINE_JOINT_MODE := "addons/curved_lines_2d/line_joint_mode"
-const SETTING_NAME_DEFAULT_EXTRUSION := "addons/curved_lines_2d/stroke_extrusion_direction"
-
 const SETTING_NAME_SNAP_TO_PIXEL := "addons/curved_lines_2d/snap_to_pixel"
 const SETTING_NAME_SNAP_RESOLUTION := "addons/curved_lines_2d/snap_resolution"
 
@@ -47,16 +44,6 @@ const META_NAME_HOVER_GRADIENT_FROM := "_hover_gradient_from_"
 const META_NAME_HOVER_GRADIENT_TO := "_hover_gradient_to_"
 const META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX := "_hover_gradient_color_stop_idx_"
 const META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE := "_hover_closest_point_on_gradient_"
-const HOVER_META_NAMES : Array[String] = [
-	META_NAME_HOVER_POINT_IDX,
-	META_NAME_HOVER_CP_IN_IDX,
-	META_NAME_HOVER_CP_OUT_IDX,
-	META_NAME_HOVER_CLOSEST_POINT,
-	META_NAME_HOVER_GRADIENT_FROM,
-	META_NAME_HOVER_GRADIENT_TO,
-	META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX,
-	META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE,
-]
 
 const META_NAME_SELECT_HINT := "_select_hint_"
 
@@ -78,7 +65,7 @@ enum PaintOrder {
 	STROKE_MARKERS_FILL,
 	MARKERS_STROKE_FILL
 }
-enum UndoRedoEntry { UNDOS, DOS, NAME, DO_PROPS, UNDO_PROPS, ACTION_TYPE }
+enum UndoRedoEntry { UNDOS, DOS, NAME, DO_PROPS, UNDO_PROPS }
 
 const PAINT_ORDER_MAP := {
 	PaintOrder.FILL_STROKE_MARKERS: ['_add_fill_to_created_shape', '_add_stroke_to_created_shape', '_add_collision_to_created_shape'],
@@ -114,11 +101,7 @@ var selection_candidate : Node = null
 var current_cutout_shape := ScalableVectorShape2D.ShapeType.RECT
 var current_clip_operation := Geometry2D.OPERATION_DIFFERENCE
 
-enum UndoRedoActionType {
-	UNSPECIFIED, DRAGGING_POINT, DRAGGING_CP
-}
 var undo_redo_transaction : Dictionary = {
-	UndoRedoEntry.ACTION_TYPE: UndoRedoActionType.UNSPECIFIED,
 	UndoRedoEntry.NAME: "",
 	UndoRedoEntry.DOS: [],
 	UndoRedoEntry.UNDOS: [],
@@ -192,7 +175,7 @@ func _enter_tree():
 	undo_redo = get_undo_redo()
 	add_control_to_bottom_panel(scalable_vector_shapes_2d_dock as Control, "Scalable Vector Shapes 2D")
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
-	undo_redo.version_changed.connect(_on_undo_redo_version_changed)
+	undo_redo.version_changed.connect(update_overlays)
 	make_bottom_panel_item_visible(scalable_vector_shapes_2d_dock)
 
 	set_global_position_popup_panel = load("res://addons/curved_lines_2d/set_global_position_popup_panel.tscn").instantiate()
@@ -232,15 +215,6 @@ func _enter_tree():
 func select_node_reversibly(target_node : Node) -> void:
 	if is_instance_valid(target_node):
 		EditorInterface.edit_node(target_node)
-
-
-func _on_undo_redo_version_changed() -> void:
-	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
-	if _is_svs_valid(sel):
-		for meta_key in sel.get_meta_list():
-			if meta_key in HOVER_META_NAMES:
-				sel.remove_meta(meta_key)
-	update_overlays()
 
 
 func _select_scene_root_when_nothing_is_selected() -> void:
@@ -372,7 +346,6 @@ func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_na
 	new_shape.begin_cap_mode = _get_default_begin_cap()
 	new_shape.end_cap_mode = _get_default_end_cap()
 	new_shape.line_joint_mode = _get_default_joint_mode()
-	new_shape.extrusion_direction = _get_default_stroke_extrusion_direction()
 	if not force_no_realign and not is_instance_valid(is_cutout_for):
 		_set_viewport_pos_to_selection()
 
@@ -1425,36 +1398,25 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 			points = points.map(func(p): return current_selection.get_global_transform() * p)
 			stroke_width *= current_selection.get_global_transform().get_scale().x
 		points = points.map(func(p): return _vp_transform(p * mul))
-		var stroke_points := points
-		if _get_default_stroke_extrusion_direction() != ScalableVectorShape2D.StrokeExtrusionDirection.MIDDLE:
-			var offset = 0.5 * (
-					stroke_width
-						if _get_default_stroke_extrusion_direction() == ScalableVectorShape2D.StrokeExtrusionDirection.OUTWARD else
-					-stroke_width
-			)
-			var offset_result := Geometry2D.offset_polygon(points, offset, Geometry2D.PolyJoinType.JOIN_MITER)
-			stroke_points = points if offset_result.is_empty() else offset_result[0]
-			stroke_points.append(stroke_points[0])
 		match _get_default_paint_order():
 			PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
 				if _is_add_stroke_enabled():
-					viewport_control.draw_polyline(stroke_points, _get_default_stroke_color(), stroke_width)
+					viewport_control.draw_polyline(points, _get_default_stroke_color(), stroke_width)
 				if _is_add_fill_enabled():
 					viewport_control.draw_polygon(points, [_get_default_fill_color()])
 			PaintOrder.MARKERS_FILL_STROKE, PaintOrder.FILL_STROKE_MARKERS, PaintOrder.FILL_MARKERS_STROKE, _:
 				if _is_add_fill_enabled():
 					viewport_control.draw_polygon(points, [_get_default_fill_color()])
 				if _is_add_stroke_enabled():
-					viewport_control.draw_polyline(stroke_points, _get_default_stroke_color(), stroke_width)
+					viewport_control.draw_polyline(points, _get_default_stroke_color(), stroke_width)
 
 		if not _is_add_fill_enabled() and not _is_add_stroke_enabled():
 			viewport_control.draw_polyline(points, Color.LIME, 1)
 
 
-func _start_undo_redo_transaction(name := "", undo_redo_action_type := UndoRedoActionType.UNSPECIFIED) -> void:
+func _start_undo_redo_transaction(name := "") -> void:
 	in_undo_redo_transaction = true
 	undo_redo_transaction = {
-		UndoRedoEntry.ACTION_TYPE: undo_redo_action_type,
 		UndoRedoEntry.NAME: name,
 		UndoRedoEntry.DOS: [],
 		UndoRedoEntry.UNDOS: [],
@@ -1486,10 +1448,6 @@ func _commit_undo_redo_transaction() -> void:
 	}
 
 
-func _in_other_undo_redo_transaction(other_type : UndoRedoActionType) -> bool:
-	return in_undo_redo_transaction and other_type != undo_redo_transaction[UndoRedoEntry.ACTION_TYPE]
-
-
 func _on_global_position_for_handle_changed(global_pos : Vector2, meta_name: String, idx : int) -> void:
 	var cur := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(cur):
@@ -1504,10 +1462,8 @@ func _on_global_position_for_handle_changed(global_pos : Vector2, meta_name: Str
 
 
 func _update_curve_point_position(current_selection : ScalableVectorShape2D, mouse_pos : Vector2, idx : int) -> void:
-	if _in_other_undo_redo_transaction(UndoRedoActionType.DRAGGING_POINT):
-		_commit_undo_redo_transaction()
 	if not in_undo_redo_transaction:
-		_start_undo_redo_transaction("Move point on " + str(current_selection), UndoRedoActionType.DRAGGING_POINT)
+		_start_undo_redo_transaction("Move point on " + str(current_selection))
 		if idx == 0 and current_selection.is_curve_closed():
 			var idx_1 = current_selection.curve.point_count - 1
 			undo_redo_transaction[UndoRedoEntry.UNDOS].append([
@@ -1577,10 +1533,8 @@ func _update_curve_cp_in_position(current_selection : ScalableVectorShape2D, mou
 			not(idx == current_selection.curve.point_count - 1
 					and not current_selection.is_curve_closed())
 	)
-	if _in_other_undo_redo_transaction(UndoRedoActionType.DRAGGING_CP):
-		_commit_undo_redo_transaction()
 	if not in_undo_redo_transaction:
-		_start_undo_redo_transaction("Move control point in %d on %s" % [idx, current_selection], UndoRedoActionType.DRAGGING_CP)
+		_start_undo_redo_transaction("Move control point in %d on %s" % [idx, current_selection])
 		undo_redo_transaction[UndoRedoEntry.UNDOS].append([current_selection.curve, 'set_point_in', idx, current_selection.curve.get_point_in(idx)])
 		if cp_in_is_cp_out_of_loop_start:
 			var idx_1 = 0 if idx == current_selection.curve.point_count - 1 else idx
@@ -1705,11 +1659,8 @@ func _update_curve_cp_out_position(current_selection : ScalableVectorShape2D, mo
 
 	var cp_out_is_cp_in_of_loop_end := (Input.is_key_pressed(KEY_SHIFT)
 			and not(idx == 0 and not current_selection.is_curve_closed()))
-
-	if _in_other_undo_redo_transaction(UndoRedoActionType.DRAGGING_CP):
-		_commit_undo_redo_transaction()
 	if not in_undo_redo_transaction:
-		_start_undo_redo_transaction("Move control point out %d on %s" % [idx, current_selection], UndoRedoActionType.DRAGGING_CP)
+		_start_undo_redo_transaction("Move control point out %d on %s" % [idx, current_selection])
 		undo_redo_transaction[UndoRedoEntry.UNDOS].append([current_selection.curve, 'set_point_out', idx, current_selection.curve.get_point_out(idx)])
 		if cp_out_is_cp_in_of_loop_end:
 			var idx_1 = current_selection.curve.point_count - 1 if idx == 0 else idx
@@ -2303,49 +2254,6 @@ func _set_curve_from_polygon(svs : ScalableVectorShape2D, pts : PackedVector2Arr
 	svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
 
 
-func _get_points_from_node(node : Node) -> Array[PackedVector2Array]:
-	if not is_instance_valid(node):
-		return []
-	if not node is Polygon2D and not node is CollisionPolygon2D and not node is Line2D:
-		return []
-	if node is Polygon2D and (node as Polygon2D).polygons.size() > 1:
-		var polys : Array[PackedVector2Array] = []
-		for p_indices in (node as Polygon2D).polygons:
-			var pts := PackedVector2Array()
-			for p_idx in p_indices:
-				pts.append((node as Polygon2D).polygon[p_idx])
-			polys.append(pts)
-		return polys
-	return [(
-		(node as Line2D).points
-			if node is Line2D else
-		(node as Polygon2D).polygon
-			if node is Polygon2D else
-		(node as CollisionPolygon2D).polygon
-	)]
-
-
-func _extract_svs_from_selected_node() -> void:
-	for node in EditorInterface.get_selection().get_selected_nodes():
-		var poly_list = _get_points_from_node(node)
-		if poly_list.is_empty():
-			continue
-		for poly in poly_list:
-			var svs = ScalableVectorShape2D.new()
-			var bounds := Geometry2DUtil.get_polygon_bounding_rect(poly)
-			var snap := (bounds.size.x + bounds.size.y / 2.0)
-
-			if ((node is Line2D and (node as Line2D).closed) or (not node is Line2D) and
-					not (poly[0] as Vector2).is_equal_approx(poly[-1])
-			):
-				poly.append(poly[0])
-			var fitness_prep := BasicFit.prepare_polyline_segments(poly, snap)
-			svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
-			svs.position = node.position
-			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Extracted" + node.name,
-				null, true, node.get_parent())
-
-
 func _handle_brush_draw_input(event : InputEvent) -> bool:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 
@@ -2661,7 +2569,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				current_clip_operation = 0 if current_clip_operation > 2 else current_clip_operation
 			return true
 		if _is_svs_valid(current_selection) and _handle_has_hover(current_selection) and not _is_editing_width_curve(current_selection):
-			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not _is_ctrl_or_cmd_pressed():
+			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) and not _is_ctrl_or_cmd_pressed():
 				if current_selection.has_meta(META_NAME_HOVER_POINT_IDX) and current_selection.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 					_remove_point_from_curve(current_selection, current_selection.get_meta(META_NAME_HOVER_POINT_IDX))
 				elif current_selection.has_meta(META_NAME_HOVER_CP_IN_IDX):
@@ -2814,12 +2722,6 @@ static func _get_default_joint_mode() -> Line2D.LineJointMode:
 	if ProjectSettings.has_setting(SETTING_NAME_DEFAULT_LINE_JOINT_MODE):
 		return ProjectSettings.get_setting(SETTING_NAME_DEFAULT_LINE_JOINT_MODE)
 	return Line2D.LineJointMode.LINE_JOINT_SHARP
-
-
-static func _get_default_stroke_extrusion_direction() -> ScalableVectorShape2D.StrokeExtrusionDirection:
-	if ProjectSettings.has_setting(CurvedLines2D.SETTING_NAME_DEFAULT_EXTRUSION):
-		return ProjectSettings.get_setting(CurvedLines2D.SETTING_NAME_DEFAULT_EXTRUSION)
-	return ScalableVectorShape2D.StrokeExtrusionDirection.MIDDLE
 
 
 static func _get_default_fill_color() -> Color:

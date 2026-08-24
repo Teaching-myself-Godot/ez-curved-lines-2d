@@ -8,7 +8,6 @@ const GROUP_NAME_EXPORT_OPTIONS := "Export Options"
 
 var LineCapEditor = preload("res://addons/curved_lines_2d/line_cap_editor_property.gd")
 var LineJointModeEditor = preload("res://addons/curved_lines_2d/line_joint_editor_property.gd")
-var StrokeExtrusionEditor = preload("res://addons/curved_lines_2d/stroke_extrusion_editor_property.gd")
 
 func _can_handle(obj) -> bool:
 	return (
@@ -105,9 +104,6 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 		return true
 	elif name == "line_joint_mode" and (object is ScalableVectorShape2D):
 		add_property_editor(name, LineJointModeEditor.new())
-		return true
-	elif name == "extrusion_direction" and (object is ScalableVectorShape2D):
-		add_property_editor(name, StrokeExtrusionEditor.new())
 		return true
 	elif name == "guide_svs" and object is AdaptableVectorShape3D:
 		if object.has_meta(AdaptableVectorShape3D.STORED_CURVE_META_NAME) and object.guide_svs == null:

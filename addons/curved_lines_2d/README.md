@@ -670,16 +670,10 @@ With this form the following `ScalableVectorShape2D` properties can be edited:
 - `begin_cap_mode` (in case of a `Polygon2D`-based stroke, this will also set the end cap)
 - `end_cap_mode`
 - `line_joint_mode`
-- `extrusion_direction` - This sets the way the stroke is drawn: 
-  - over the middle of the shape's outline
-  - entirely outside the shapes's outline
-  - entirely inside the shape's outline
 
 When a `Line2D` is assigned to draw the stroke with, these properties will be kept synchronized with the `ScalableVectorShape2D` properties.
 
 In case of a `Polygon2D` based stroke, the `stroke_color` will be kept synchronized with the `Polygon2D` color.
-
-The `extrusion_direction` property only works when the shape has a closed outline.
 
 ### Creating new Strokes
 When the selected shape has no stroke, an extra set of buttons is provided:
@@ -1097,7 +1091,6 @@ Make sure to try out ["Spring Ball" on Itch](https://permotion.itch.io/spring-ba
 - @hedberg-games
 - @thiagola92
 - @HannesParth
-- @Clauveira 
 
 
 # Reaching out / Contributing

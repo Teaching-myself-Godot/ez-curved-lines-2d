@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.29.2
+## 2.29.0
 
 ⚠️ Small notice: a shape with a stroke used to generate a `CollisionPolygon2D` for its fill _and_ one for each piece of its stroke, which overlapped each other. Those are now merged into one single collider covering the exact same area. Nothing has to be changed in your scenes, but the amount of `CollisionPolygon2D` nodes under your collision objects will go down.
 
@@ -10,12 +10,10 @@
   - `Merged` (default): the fill and the stroke as one single area
   - `Fill Only` / `Stroke Only`: only one of both areas
 - `Geometry2DUtil.union_polygons`: merges a set of overlapping polygons into the smallest set of polygons covering the same area, slicing the result around any enclosed area, because a `CollisionPolygon2D` cannot represent a hole
-- New property `extrusion_direction` for strokes. If the outline of a shape is closed, the stroke can now also be draw inside and outside of the shape's outline.
 
 ### Changed
 
 - The fill and the stroke of a shape now share one single collider, in stead of generating one collider each which overlap where the stroke covers the fill. Cutouts made with clip paths are preserved.
-- Various bugfixes when using Ctrl+Z for undo and Ctrl+Shift+Z for redo
 
 ## 2.28.2
 

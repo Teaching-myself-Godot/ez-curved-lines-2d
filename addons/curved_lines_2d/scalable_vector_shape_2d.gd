@@ -57,7 +57,7 @@ enum ShapeType {
 	## Provides one handle to change [member size]. The [member size] determines the radii of the
 	## ellipse on the y- and x- axis, so [member rx] and [member ry] are always sync'ed with
 	## [member size] (and vice-versa)
-	## The [member offset] can change by using the pivot-tool in the 2D Editor
+		## The [member offset] can change by using the pivot-tool in the 2D Editor
 	ELLIPSE
 }
 
@@ -69,18 +69,6 @@ enum CollisionObjectType {
 	RIGID_BODY_2D,
 	CHARACTER_BODY_2D,
 	PHYSICAL_BONE_2D
-}
-
-enum StrokeExtrusionDirection {
-	## The default for a stroke is to draw outward of its defined polyline in both directions
-	## So if the [member stroke_width] is 8px, it draws 4px inward and 4px outward
-	MIDDLE,
-	## If the stroke extrusion direction is set to outward, it will be drawn outside its polyline points
-	## So if the [member stroke_width] is 8px, it draws 0px inward and 8px outward
-	OUTWARD,
-	## If the stroke extrusion direction is set to inward, it will be drawn inside its polyline points
-	## So if the [member stroke_width] is 8px, it draws 8px inward and 0px outward
-	INWARD
 }
 
 ## Determines which area the [CollisionPolygon2D] nodes generated for the
@@ -172,14 +160,6 @@ var stroke_width := 10.0:
 		if is_instance_valid(line):
 			line.joint_mode = _ljm
 		assigned_node_changed.emit()
-
-
-## The extrusion direction of the stroke. Only applies for closed shapes.
-@export var extrusion_direction := StrokeExtrusionDirection.MIDDLE:
-	set(_ed):
-		extrusion_direction = _ed
-		assigned_node_changed.emit()
-
 
 ## The 'Stroke' of a [ScalableVectorShape2D] is simply an instance of a [Line2D] node
 ## assigned to the `line` property.
@@ -787,11 +767,8 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 
 	if (is_instance_valid(poly_stroke) or (is_instance_valid(line) and is_instance_valid(collision_object)) or (is_instance_valid(line) and is_instance_valid(navigation_region))) and not cached_outline.size() < 2:
 		var cap_mode := Geometry2D.END_JOINED if is_curve_closed() else CAP_MODE_MAP[begin_cap_mode]
-		var result := Geometry2DUtil.calculate_polystroke(
-				cached_outline, stroke_width * 0.5,
-				cap_mode, JOINT_MODE_MAP[line_joint_mode],
-				_get_stroke_extrusion(cached_outline)
-		)
+		var result := Geometry2DUtil.calculate_polystroke(cached_outline,
+				stroke_width * 0.5, cap_mode, JOINT_MODE_MAP[line_joint_mode])
 		cached_poly_strokes = result
 		if is_instance_valid(navigation_region):
 			navigation_polygons.append_array(cached_poly_strokes)
@@ -805,10 +782,7 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 		navigation_polygons.append(polygon_points)
 
 	if is_instance_valid(line):
-		if not extrusion_direction == StrokeExtrusionDirection.MIDDLE and is_curve_closed():
-			line.points = _get_stroke_points_with_extrusion(polygon_points)
-		else:
-			line.points = polygon_points
+		line.points = polygon_points
 		line.closed = is_curve_closed()
 	if is_instance_valid(poly_stroke):
 		var polygon_indices : Array = []
@@ -851,17 +825,17 @@ func _update_polygon_texture(poly := polygon, grow := false):
 				poly.texture_scale = poly.texture.get_size() / box.size
 
 
-func _get_stroke_extrusion(points : PackedVector2Array, is_hole := false) -> float:
+func _get_stroke_extrusion(points : PackedVector2Array) -> float:
 	if extrusion_direction == StrokeExtrusionDirection.MIDDLE or not is_curve_closed():
 		return 0.0
 	var offs := -stroke_width * 0.5 if extrusion_direction == StrokeExtrusionDirection.INWARD else stroke_width * 0.5
-	if is_hole:
+	if Geometry2D.is_polygon_clockwise(points):
 		return -offs
 	return offs
 
 
-func _get_stroke_points_with_extrusion(pts : PackedVector2Array, is_hole := false) -> PackedVector2Array:
-	var extrusion := _get_stroke_extrusion(pts, is_hole)
+func _get_stroke_points_with_extrusion(pts : PackedVector2Array) -> PackedVector2Array:
+	var extrusion := _get_stroke_extrusion(pts)
 	if is_zero_approx(extrusion):
 		return pts
 	var extruded_result := Geometry2D.offset_polygon(pts, extrusion, JOINT_MODE_MAP[line_joint_mode])
@@ -869,6 +843,7 @@ func _get_stroke_points_with_extrusion(pts : PackedVector2Array, is_hole := fals
 
 
 func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, valid_clip_paths : Array[ScalableVectorShape2D]) -> void:
+
 	var merges := valid_clip_paths.filter(func(cp : ScalableVectorShape2D): return cp.use_union_in_stead_of_clipping)
 	var clips := valid_clip_paths.filter(func(cp : ScalableVectorShape2D): return cp.use_interect_when_clipping)
 	var cutouts := valid_clip_paths.filter(func(cp : ScalableVectorShape2D): return not cp.use_interect_when_clipping and not cp.use_union_in_stead_of_clipping)
@@ -892,11 +867,10 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 				[]
 		)
 		var polystroke_result : Array[PackedVector2Array] = []
-		for i in cutout_result_polylines.size():
-			var polyline := cutout_result_polylines[i]
+		for polyline in cutout_result_polylines:
 			polystroke_result.append_array(Geometry2DUtil.calculate_polystroke(polyline,
 					stroke_width * 0.5, Geometry2D.END_JOINED, JOINT_MODE_MAP[line_joint_mode],
-					_get_stroke_extrusion(polyline, i > 0)
+					_get_stroke_extrusion(polyline)
 			))
 		intersect_results_polystroke = Geometry2DUtil.apply_clips_to_polygon(
 			polystroke_result,
@@ -925,8 +899,7 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 		else:
 			var polylines := Geometry2DUtil.calculate_outlines(cached_clipped_polygons.duplicate())
 			line.show()
-			line.points = _get_stroke_points_with_extrusion(polylines.pop_front())
-
+			line.points = polylines.pop_front()
 			# FIXME: closes the loop when original line is not closed
 			line.closed = true
 			var existing = line.get_children().filter(func(c): return c is Line2D)
@@ -936,14 +909,13 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 			for polyline_index in polylines.size():
 				if polyline_index >= existing.size():
 					existing.append(_make_new_line_2d())
-				existing[polyline_index].points = _get_stroke_points_with_extrusion(polylines[polyline_index], true)
+				existing[polyline_index].points = _get_stroke_points_with_extrusion(polylines[polyline_index])
 				existing[polyline_index].width = line.width
 				existing[polyline_index].begin_cap_mode = line.begin_cap_mode
 				existing[polyline_index].end_cap_mode = line.end_cap_mode
 				existing[polyline_index].joint_mode = line.joint_mode
 				existing[polyline_index].default_color = line.default_color
 				existing[polyline_index].show()
-
 	if is_instance_valid(poly_stroke):
 		if cached_poly_strokes.is_empty():
 			poly_stroke.hide()
