@@ -88,7 +88,6 @@ You can find the rest of the explainer videos on this playlist:
 - [Free-hand Drawing](#free-hand-drawing)
 	- [Drawing strokes and outlines with the Pencil Tool](#drawing-strokes-and-outlines-with-the-pencil-tool)
 	- [Drawing polygons using the Brush Tool](#drawing-polygons-using-the-brush-tool)
-	- [Cutting shapes in half with the knife tool](#cutting-shapes-in-half-with-the-knife-tool)
 - [Extracting a `ScalableVectorShape2D` from a `Polygon2D`, `Line2D`, or `CollisionPolygon2D`](#extracting-a-scalablevectorshape2d-from-a-polygon2d-line2d-or-collisionpolygon2d)
 - [Manipulating 2D Shapes in the 3D export](#manipulating-2d-shapes-in-the-3d-export)
 	- [Animating 3D curves](#animating-3d-curves)
@@ -154,7 +153,6 @@ You can find the rest of the explainer videos on this playlist:
 	- [Many thanks to @HannesParth/Permotion](#many-thanks-to-hannesparthpermotion)
 	- [And of course everyone who helped test and review the code thus far](#and-of-course-everyone-who-helped-test-and-review-the-code-thus-far)
 - [Reaching out / Contributing](#reaching-out--contributing)
-- [LLM Usage Disclosure](#llm-usage-disclosure)
 
 # Drawing Shapes in the Godot 2D Viewport
 
@@ -562,23 +560,12 @@ Using the mousewheel you can change the brush shape while holding command keys:
 - `Shift`: increase and decrease brush size
 - `Ctr+Shift`: rotate the brush
 
+
 Configuration options for this tool are described under [The Draw Settings tab](#the-draw-settings-tab)
 
 Strokes, Fills and Collisions drawn by this tool are configured in the: [Create Shapes Tab](#the-create-shapes-dock)
 
 This pencil tool also respects the `Snap to Pixel` setting with the `Snap Resolution`, which are described under the [Project Settings Tab](#the-project-settings-dock).
-
-## Cutting shapes in half with the knife tool
-
-As of release 2.31 a new knife tool (K) was added. 
-
-![knife tool](./addons/curved_lines_2d/screenshots/knife.gif)
-
-With this tool you can cut a shape in half. The curve biggest half of the shape will be assigned to the existing `ScalableVectorShape2D`. 
-
-A new `ScalableVectorShape2D` will be created as a sibling of the existing shape.
-
-The knife tool does not support clipping using the `clip_paths` property, so any assigned shapes for this should be (re)assigned manually.
 
 # Extracting a `ScalableVectorShape2D` from a `Polygon2D`, `Line2D`, or `CollisionPolygon2D`
 
@@ -1129,19 +1116,3 @@ If you have feedback on this project, feel free to post an [issue](https://githu
 If you'd like to improve on the code yourself, ideally use a fork and make a pull request.
 
 This stuff makes me zero money, so you can always branch off in your own direction if you're in a hurry.
-
-# LLM Usage Disclosure
-
-I have tried to keep this project free of LLM generated code entirely and was succesful in this endeavour up to version 2.29. 
-
-Beyond that I have merged some good quality fixes to geometry algorithms which where co-authored with Claude Opus 5, of which I became aware a little later. 
-
-After some serious deliberation I have decided to keep the code as it does not appear to infringe any form of tracable copyright (basic geometry is not patented as far as I can tell) and if I were to try and hand-craft the code myself now - after the fact - I would most probably need to refer to the fixes provided, effectively forcing me to be co-authored myself.
-
-I'm not prepared to throw away good quality code, especially as the harm has already been done (the lake will not de-evaporate itself), but I will be more pro-active in asking for a disclosure on any pull requests in the future. I will most likely not merge any more code that has been co-authored by an LLM, up until the time I am reassured enough that the impact on our planet's polycrises have sufficiently diminished.
-
-Any merged pull requests containing  co-authored code like this are labeled as 'Co-authored' and can be this traced using this link:
-
-[https://github.com/Teaching-myself-Godot/ez-curved-lines-2d/issues?q=label%3ACo-authored](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d/issues?q=label%3ACo-authored)
-
-This way you can decide for yourself whether the code is of sufficient quality.

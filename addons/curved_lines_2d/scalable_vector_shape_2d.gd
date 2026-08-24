@@ -83,6 +83,8 @@ enum StrokeExtrusionDirection {
 	INWARD
 }
 
+## Determines which area the [CollisionPolygon2D] nodes generated for the
+## [member collision_object] cover, see [member collision_mode]
 enum CollisionMode {
 	## Generates the smallest possible set of [CollisionPolygon2D] nodes covering the
 	## fill and the stroke as one single area, in stead of one set per shape.
@@ -561,31 +563,12 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_LOCAL_TRANSFORM_CHANGED or what == NOTIFICATION_TRANSFORM_CHANGED:
 		transform_changed.emit(self)
 	if what == NOTIFICATION_EDITOR_PRE_SAVE:
-		reset_skeleton_to_rest_pose()
-		_prune_unused_colliders_and_lines()
-
-
-func _prune_unused_colliders_and_lines():
-	if is_instance_valid(line):
-		for ch in line.get_children():
-			if ch is Line2D and not ch.visible:
-				line.remove_child(ch)
-				ch.free()
-	if is_instance_valid(collision_object):
-		for ch in collision_object.get_children():
-			if ch is CollisionPolygon2D and ch.disabled and not ch.visible:
-				collision_object.remove_child(ch)
-				ch.free()
-
-
-func reset_skeleton_to_rest_pose():
-	if is_instance_valid(skeleton):
-		for i in skeleton.get_bone_count():
-			skeleton.get_bone(i).apply_rest()
-		if is_instance_valid(bone):
-			global_position = bone.global_position
-			global_rotation = bone.global_rotation
-
+		if is_instance_valid(skeleton):
+			for i in skeleton.get_bone_count():
+				skeleton.get_bone(i).apply_rest()
+			if is_instance_valid(bone):
+				global_position = bone.global_position
+				global_rotation = bone.global_rotation
 
 func _on_dimensions_changed():
 	if shape_type == ShapeType.RECT:
@@ -713,7 +696,7 @@ func tessellate() -> PackedVector2Array:
 	)
 	for p_idx in curve.point_count - 1:
 		if p_idx in arc_starts:
-			var seg := Geometry2DUtil.get_curve_segment(p_idx, the_curve)
+			var seg := _get_curve_segment(p_idx, the_curve)
 			var arc = arc_list.get_arc_for_point(p_idx)
 			if arc:
 				var seg_points := tessellate_arc_segment(seg.get_point_position(0), arc.radius,
@@ -728,7 +711,7 @@ func tessellate() -> PackedVector2Array:
 					poly_points.append(seg.get_point_position(0))
 				poly_points.append(seg.get_point_position(1))
 		else:
-			var seg_points := Geometry2DUtil.get_curve_segment(p_idx, the_curve).tessellate(max_stages, tolerance_degrees)
+			var seg_points := _get_curve_segment(p_idx, the_curve).tessellate(max_stages, tolerance_degrees)
 			for i in seg_points.size():
 				if i == 0 and not poly_points.is_empty():
 					continue
@@ -829,30 +812,16 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 		line.closed = is_curve_closed()
 	if is_instance_valid(poly_stroke):
 		var polygon_indices : Array = []
-		var poly := Geometry2DUtil.get_polygon_indices(
-				Geometry2DUtil.normalize_contours(cached_poly_strokes), polygon_indices)
+		var poly := Geometry2DUtil.get_polygon_indices(cached_poly_strokes, polygon_indices)
 		poly_stroke.polygon = poly
 		poly_stroke.polygons = polygon_indices
 		_update_polygon_texture(poly_stroke, true)
 	if is_instance_valid(polygon):
-		var fill_contours := Geometry2DUtil.normalize_contour(polygon_points)
 		polygon.polygons.clear()
-		if fill_contours.size() > 1:
-			# the outline crosses itself: fill each lobe as a contour of its own,
-			# in stead of handing Polygon2D a shape it cannot triangulate
-			var fill_indices : Array = []
-			polygon.polygon = Geometry2DUtil.get_polygon_indices(fill_contours, fill_indices)
-			polygon.polygons = fill_indices
-		elif not fill_contours.is_empty():
-			polygon.polygon = fill_contours[0]
-		else:
-			# nothing drawable in this contour: park the node empty in stead of handing
-			# it a polygon it will fail to triangulate on every redraw
-			polygon.polygon = polygon_points if polygon_points.size() < 3 else PackedVector2Array()
+		polygon.polygon = polygon_points
 		_update_polygon_texture()
 	if is_instance_valid(collision_polygon):
-		collision_polygon.polygon = Geometry2DUtil.largest_contour(
-				Geometry2DUtil.get_collidable_contours([polygon_points]))
+		collision_polygon.polygon = polygon_points
 	if is_instance_valid(collision_object):
 		var fill_polygons : Array[PackedVector2Array] = [polygon_points]
 		_update_collision_polygons(_get_collision_polygons(fill_polygons))
@@ -904,17 +873,14 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 	var clips := valid_clip_paths.filter(func(cp : ScalableVectorShape2D): return cp.use_interect_when_clipping)
 	var cutouts := valid_clip_paths.filter(func(cp : ScalableVectorShape2D): return not cp.use_interect_when_clipping and not cp.use_union_in_stead_of_clipping)
 
-	# a self-crossing outline - the shape's own or a clip path's - would poison every
-	# boolean operation below and end up on nodes that cannot triangulate it, so each
-	# contour is resolved into simple pieces before it enters the pipeline
 	var merge_results := Geometry2DUtil.apply_clips_to_polygon(
-		Geometry2DUtil.normalize_contour(polygon_points),
-		Geometry2DUtil.normalize_contours(Array(merges.map(_clip_path_to_local), TYPE_PACKED_VECTOR2_ARRAY, "", null)),
+		[polygon_points],
+		Array(merges.map(_clip_path_to_local), TYPE_PACKED_VECTOR2_ARRAY, "", null),
 		Geometry2D.PolyBooleanOperation.OPERATION_UNION
 	)
 	var cutout_results := Geometry2DUtil.apply_clips_to_polygon(
 		merge_results,
-		Geometry2DUtil.normalize_contours(Array(cutouts.map(_clip_path_to_local), TYPE_PACKED_VECTOR2_ARRAY, "", null)),
+		Array(cutouts.map(_clip_path_to_local), TYPE_PACKED_VECTOR2_ARRAY, "", null),
 		Geometry2D.PolyBooleanOperation.OPERATION_DIFFERENCE
 	)
 
@@ -934,13 +900,13 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 			))
 		intersect_results_polystroke = Geometry2DUtil.apply_clips_to_polygon(
 			polystroke_result,
-			Geometry2DUtil.normalize_contours(Array(clips.map(_clip_path_to_local), TYPE_PACKED_VECTOR2_ARRAY, "", null)),
+			Array(clips.map(_clip_path_to_local), TYPE_PACKED_VECTOR2_ARRAY, "", null),
 			Geometry2D.PolyBooleanOperation.OPERATION_INTERSECTION
 		)
 
 	var intersect_results_fill_polygon := Geometry2DUtil.apply_clips_to_polygon(
 		cutout_results,
-		Geometry2DUtil.normalize_contours(Array(clips.map(_clip_path_to_local), TYPE_PACKED_VECTOR2_ARRAY, "", null)),
+		Array(clips.map(_clip_path_to_local), TYPE_PACKED_VECTOR2_ARRAY, "", null),
 		Geometry2D.PolyBooleanOperation.OPERATION_INTERSECTION
 	)
 
@@ -984,8 +950,7 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 		else:
 			poly_stroke.show()
 			var polygon_indices : Array = []
-			var poly := Geometry2DUtil.get_polygon_indices(
-					Geometry2DUtil.normalize_contours(cached_poly_strokes), polygon_indices)
+			var poly := Geometry2DUtil.get_polygon_indices(cached_poly_strokes, polygon_indices)
 			poly_stroke.polygon = poly
 			poly_stroke.polygons = polygon_indices
 			_update_polygon_texture(poly_stroke, true)
@@ -995,16 +960,12 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 		else:
 			polygon.show()
 			var polygon_indices : Array = []
-			# the boolean pipeline can still hand back a piece the triangulator
-			# rejects - resolve those before Polygon2D has to draw them
-			var poly := Geometry2DUtil.get_polygon_indices(
-					Geometry2DUtil.normalize_contours(cached_clipped_polygons), polygon_indices)
+			var poly := Geometry2DUtil.get_polygon_indices(cached_clipped_polygons, polygon_indices)
 			polygon.polygon = poly
 			polygon.polygons = polygon_indices
 			_update_polygon_texture()
 	if is_instance_valid(collision_polygon):
-		collision_polygon.polygon = Geometry2DUtil.largest_contour(
-				Geometry2DUtil.get_collidable_contours([polygon_points]))
+		collision_polygon.polygon = polygon_points
 	if is_instance_valid(collision_object):
 		_update_collision_polygons(_get_collision_polygons(cached_clipped_polygons))
 
@@ -1045,20 +1006,15 @@ func _get_fill_and_stroke_polygons(fill_polygons : Array[PackedVector2Array]) ->
 # Any surplus node is kept, but hidden and disabled, so it can be reused when the
 # amount of polygons grows again
 func _update_collision_polygons(collision_polygons : Array[PackedVector2Array]) -> void:
-	var usable := Geometry2DUtil.get_collidable_contours(collision_polygons)
 	var existing = collision_object.get_children().filter(func(ch): return ch is CollisionPolygon2D)
 	for idx in existing.size():
-		if idx >= usable.size():
+		if idx >= collision_polygons.size():
 			existing[idx].hide()
 			existing[idx].disabled = true
-			# a stale contour would keep failing convex decomposition on every physics
-			# rebuild - hidden and disabled or not - so the node is parked empty until
-			# it is reused (or pruned before save)
-			existing[idx].polygon = PackedVector2Array()
-	for polygon_index in usable.size():
+	for polygon_index in collision_polygons.size():
 		if polygon_index >= existing.size():
 			existing.append(_make_new_collision_polygon_2d())
-		existing[polygon_index].polygon = usable[polygon_index]
+		existing[polygon_index].polygon = collision_polygons[polygon_index]
 		existing[polygon_index].show()
 		existing[polygon_index].disabled = false
 
@@ -1376,9 +1332,25 @@ func replace_curve_points(curve_in : Curve2D) -> void:
 
 
 func add_arc(segment_p1_idx : int) -> void:
-	var seg := Geometry2DUtil.get_curve_segment(segment_p1_idx, curve)
+	var seg := _get_curve_segment(segment_p1_idx, curve)
 	var r := seg.get_point_position(0).distance_to(seg.get_point_position(1)) * 0.5
 	arc_list.add_arc(ScalableArc.new(segment_p1_idx, Vector2.ONE * r, 0.0))
+
+
+func _get_curve_segment(segment_p1_idx : int, _curve : Curve2D) -> Curve2D:
+	var curve_segment := Curve2D.new()
+	curve_segment.add_point(
+		_curve.get_point_position(segment_p1_idx),
+		Vector2.ZERO,
+		_curve.get_point_out(segment_p1_idx)
+	)
+	var segment_p2_idx = (0 if segment_p1_idx == _curve.point_count - 1
+			else segment_p1_idx + 1)
+	curve_segment.add_point(
+		_curve.get_point_position(segment_p2_idx),
+		_curve.get_point_in(segment_p2_idx)
+	)
+	return curve_segment
 
 
 func is_arc_start(p_idx) -> bool:
@@ -1387,7 +1359,7 @@ func is_arc_start(p_idx) -> bool:
 
 func _get_tessellated_curve_segment(segment_p1_idx : int) -> PackedVector2Array:
 	var arc := arc_list.get_arc_for_point(segment_p1_idx)
-	var seg := Geometry2DUtil.get_curve_segment(segment_p1_idx, get_deformed_curve())
+	var seg := _get_curve_segment(segment_p1_idx, get_deformed_curve())
 	return (
 			tessellate_arc_segment(seg.get_point_position(0), arc.radius, arc.rotation_deg,
 				arc.large_arc_flag, arc.sweep_flag, seg.get_point_position(1))
@@ -1427,6 +1399,23 @@ func get_closest_point_on_curve(global_pos : Vector2) -> ClosestPointOnCurveMeta
 	)
 
 
+func get_sliced_curve_segment(before_segment : int, point_position : Vector2) -> Curve2D:
+	var curve_segment := Curve2D.new()
+	curve_segment.add_point(curve.get_point_position(before_segment - 1))
+	curve_segment.set_point_out(0, curve.get_point_out(before_segment - 1))
+	curve_segment.add_point(curve.get_point_position(before_segment))
+	curve_segment.set_point_in(1, curve.get_point_in(before_segment))
+	var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
+			point_position, curve_segment, max_stages, tolerance_degrees)
+	return Geometry2DUtil.slice_bezier(
+		curve_segment.get_point_position(0),
+		curve_segment.get_point_out(0),
+		curve_segment.get_point_in(1),
+		curve_segment.get_point_position(1),
+		progress_ratio
+	)
+
+
 func get_curve_segment_halfway_point(before_segment : int) -> Vector2:
 	var _curve := get_deformed_curve()
 	var p_idx_1 := before_segment if before_segment < _curve.point_count else 0
@@ -1444,8 +1433,7 @@ func get_subdivided_curve() -> Curve2D:
 	var new_curve := Curve2D.new()
 	new_curve.add_point(curve.get_point_position(0))
 	for i in range(1, curve.point_count):
-		var segment := Geometry2DUtil.get_sliced_curve_segment(curve, i, get_curve_segment_halfway_point(i),
-				max_stages, tolerance_degrees)
+		var segment := get_sliced_curve_segment(i, get_curve_segment_halfway_point(i))
 		new_curve.add_point(segment.get_point_position(1))
 		new_curve.add_point(segment.get_point_position(2))
 		if curve.get_point_out(i - 1).length() > 0.0 or curve.get_point_in(i).length() > 0.0:
@@ -1454,18 +1442,6 @@ func get_subdivided_curve() -> Curve2D:
 			new_curve.set_point_out((i * 2) - 1, segment.get_point_out(1))
 			new_curve.set_point_in(i * 2, segment.get_point_in(2))
 	return new_curve
-
-
-func curve_to_local(curve : Curve2D) -> Curve2D:
-	var c1 := Curve2D.new()
-	for i in curve.point_count:
-		var pos := to_local(curve.get_point_position(i))
-		var abs_in := to_local(curve.get_point_position(i) + curve.get_point_in(i))
-		var abs_out := to_local(curve.get_point_position(i) + curve.get_point_out(i))
-		c1.add_point(pos)
-		c1.set_point_in(i, abs_in - pos)
-		c1.set_point_out(i, abs_out - pos)
-	return c1
 
 
 # Adapted from the GodSVG repository to draw arc in stead of determine bounding box.
