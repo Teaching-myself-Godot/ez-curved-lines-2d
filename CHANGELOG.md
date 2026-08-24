@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.28.1
+## 2.28.2
 
 ### Added
 
@@ -9,6 +9,8 @@
 ### Changed
 
 - Bugfix: setting `DynamicOutline2D.merge_shapes` now queues a redraw
+- Bugfix: pressing alt after undo subdivision now places the crosshair on the correct line
+
 
 ## 2.27.7
 
