@@ -328,45 +328,6 @@ static func get_intersection_point_on_polyline(p1 : Vector2, q1 : Vector2, poly_
 	return closest_result
 
 
-static func get_segment_to_polyline_intersections(p0 : Vector2, p1 : Vector2,
-		poly : PackedVector2Array) -> Array[Vector2]:
-	var valid_intersections : Array[Vector2] = []
-	if poly.size() < 2:
-		return []
-	for i in range(0, poly.size() - 1):
-		var intersection = Geometry2D.segment_intersects_segment(p0, p1, poly[i], poly[i+1])
-		if intersection != null:
-			valid_intersections.append(intersection)
-	return valid_intersections
-
-
-static func get_polyline_segment(poly : PackedVector2Array, from : Vector2, to : Vector2) -> PackedVector2Array:
-	var passed_from := false
-	var segment := PackedVector2Array()
-	for p_idx in range(0, poly.size() - 1):
-		var p = poly[p_idx]
-		var p1 = poly[p_idx + 1]
-		if p.is_equal_approx(from):
-			if not passed_from:
-				passed_from = true
-				segment.append(p)
-			else:
-				break
-		if passed_from:
-			segment.append(p1)
-	return segment
-
-
-# returns true if the next point causes a loop (self intersection)
-static func will_self_intersect(poly : Array[Vector2], next_point : Vector2) -> bool:
-	if poly.size() < 3:
-		return false
-	for i in range(0, poly.size() - 2):
-		var intersection = Geometry2D.segment_intersects_segment(poly[-1], next_point, poly[i], poly[i+1])
-		if intersection != null:
-			return true
-	return false
-
 
 static func get_progress_ratio_for_point_on_curve(p : Vector2, c : Curve2D, max_stages := 5,
 		tolerance_degrees := 4.0) -> float:

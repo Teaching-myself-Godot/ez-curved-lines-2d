@@ -2254,10 +2254,15 @@ func _detect_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) -> vo
 	var poly : PackedVector2Array = svs.tessellate()
 	if not poly[0].is_equal_approx(poly[-1]):
 		poly.append(poly[0])
-	var valid_intersections := Geometry2DUtil.get_segment_to_polyline_intersections(
-		_pencil_stroke[-1], cursor_pos,
-		PackedVector2Array(Array(poly).map(func(p): return svs.to_global(p)))
-	)
+	var valid_intersections : Array[Vector2] = []
+	for i in range(0, poly.size() - 1):
+		var intersection = Geometry2D.segment_intersects_segment(
+				_pencil_stroke[-1], cursor_pos,
+				svs.to_global(poly[i]),
+				svs.to_global(poly[i+1])
+		)
+		if intersection != null:
+			valid_intersections.append(intersection)
 	valid_intersections.sort_custom(func(a : Vector2, b : Vector2):
 			return a.distance_squared_to(_pencil_stroke[-1]) < b.distance_squared_to(_pencil_stroke[-1])
 	)
@@ -2274,8 +2279,6 @@ func _add_point_to_pencil_line() -> void:
 
 	if not _pencil_stroke.is_empty() and _pencil_stroke[-1].distance_to(pos) > _get_freehand_draw_granularity():
 		if _svs_edit_mode == SVSEditMode.KNIFE and _is_svs_valid(current_selection):
-			if Geometry2DUtil.will_self_intersect(_pencil_stroke, pos):
-				return
 			_detect_knife_cuts(current_selection, pos)
 		_pencil_stroke.append(pos)
 
