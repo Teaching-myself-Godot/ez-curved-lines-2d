@@ -71,18 +71,6 @@ enum CollisionObjectType {
 	PHYSICAL_BONE_2D
 }
 
-enum StrokeExtrusionDirection {
-	## The default for a stroke is to draw outward of its defined polyline in both directions
-	## So if the [member stroke_width] is 8px, it draws 4px inward and 4px outward
-	MIDDLE,
-	## If the stroke extrusion direction is set to outward, it will be drawn outside its polyline points
-	## So if the [member stroke_width] is 8px, it draws 0px inward and 8px outward
-	OUTWARD,
-	## If the stroke extrusion direction is set to inward, it will be drawn inside its polyline points
-	## So if the [member stroke_width] is 8px, it draws 8px inward and 0px outward
-	INWARD
-}
-
 @export_group("Fill")
 ## The color of the fill, also sets the [member Polygon2D.color] of the [member polygon]
 @export var fill_color := Color.WHITE:
@@ -765,7 +753,6 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 		if is_instance_valid(navigation_region):
 			navigation_polygons.append_array(cached_poly_strokes)
 
-
 	#  i. if there is a fill assigned, also generate collision polygon for the entire outline
 	# ii. if there is no fill assigned and no stroke assigned, we assume the user _does_ want nav and collision
 	if is_instance_valid(polygon) or (collision_polygons.is_empty() and not is_instance_valid(polygon)):
@@ -825,23 +812,6 @@ func _update_polygon_texture(poly := polygon, grow := false):
 				poly.texture_scale = poly.texture.get_size() / box.size
 
 
-func _get_stroke_extrusion(points : PackedVector2Array) -> float:
-	if extrusion_direction == StrokeExtrusionDirection.MIDDLE or not is_curve_closed():
-		return 0.0
-	var offs := -stroke_width * 0.5 if extrusion_direction == StrokeExtrusionDirection.INWARD else stroke_width * 0.5
-	if Geometry2D.is_polygon_clockwise(points):
-		return -offs
-	return offs
-
-
-func _get_stroke_points_with_extrusion(pts : PackedVector2Array) -> PackedVector2Array:
-	var extrusion := _get_stroke_extrusion(pts)
-	if is_zero_approx(extrusion):
-		return pts
-	var extruded_result := Geometry2D.offset_polygon(pts, extrusion, JOINT_MODE_MAP[line_joint_mode])
-	return pts if extruded_result.is_empty() else extruded_result[0]
-
-
 func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, valid_clip_paths : Array[ScalableVectorShape2D]) -> void:
 
 	var merges := valid_clip_paths.filter(func(cp : ScalableVectorShape2D): return cp.use_union_in_stead_of_clipping)
@@ -869,9 +839,7 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 		var polystroke_result : Array[PackedVector2Array] = []
 		for polyline in cutout_result_polylines:
 			polystroke_result.append_array(Geometry2DUtil.calculate_polystroke(polyline,
-					stroke_width * 0.5, Geometry2D.END_JOINED, JOINT_MODE_MAP[line_joint_mode],
-					_get_stroke_extrusion(polyline)
-			))
+					stroke_width * 0.5, Geometry2D.END_JOINED, JOINT_MODE_MAP[line_joint_mode]))
 		intersect_results_polystroke = Geometry2DUtil.apply_clips_to_polygon(
 			polystroke_result,
 			Array(clips.map(_clip_path_to_local), TYPE_PACKED_VECTOR2_ARRAY, "", null),
@@ -914,7 +882,7 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 			for polyline_index in polylines.size():
 				if polyline_index >= existing.size():
 					existing.append(_make_new_line_2d())
-				existing[polyline_index].points = _get_stroke_points_with_extrusion(polylines[polyline_index])
+				existing[polyline_index].points = polylines[polyline_index]
 				existing[polyline_index].width = line.width
 				existing[polyline_index].begin_cap_mode = line.begin_cap_mode
 				existing[polyline_index].end_cap_mode = line.end_cap_mode
