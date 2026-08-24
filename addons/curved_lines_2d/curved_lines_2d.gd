@@ -3036,5 +3036,10 @@ func _exit_tree():
 	set_global_position_popup_panel.free()
 
 
+# draw_polygon() triangulates whatever it is handed and reports
+# "Invalid polygon data, triangulation failed." when it cannot. A shape dragged across
+# itself is self-intersecting for as long as the drag lasts, so the preview of its fill
+# cannot be drawn during those frames - skip it in stead of logging an error per frame.
+# The outline is drawn by draw_polyline() either way, which needs no triangulation.
 static func _can_be_filled(points) -> bool:
 	return Geometry2D.triangulate_polygon(PackedVector2Array(points)).size() > 0
