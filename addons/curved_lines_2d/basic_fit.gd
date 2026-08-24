@@ -10,33 +10,19 @@ static func prepare_polyline_segments(pts : PackedVector2Array, snap := 10.0,
 	if pts.size() < 4:
 		return [0]
 	var splits : Array[int] = [0]
-
-	var d_tot := 0.0
-	var p_cnt := 0
 	## any point p of which the angle between the inbound and outbound line p_a exceeds 30.0° will
 	## become the start of a new segment
 	for i in range(1, pts.size()):
 		var prev_p := pts[i - 1]
 		var p := pts[i]
 		var next_p := pts[i + 1] if i < pts.size() - 1 else pts[0]
-		var cur_dst := prev_p.distance_to(p)
-		p_cnt += 1
-		var d_avg := d_tot / float(p_cnt)
-		d_tot += cur_dst
-
 		if absf(prev_p.direction_to(p).angle_to(p.direction_to(next_p))) > max_ang:
 			splits.append(i)
-			d_tot = 0.0
-			p_cnt = 0
-		if cur_dst >= snap or (d_avg > 0.0 and cur_dst / d_avg > 5.0):
+		if prev_p.distance_to(p) >= snap:
 			if i - 1 not in splits:
 				splits.append(i - 1)
-				d_tot = 0.0
-				p_cnt = 0
 			if i not in splits:
 				splits.append(i)
-				d_tot = 0.0
-				p_cnt = 0
 	if pts[pts.size()-1].distance_to(pts[0]) >= snap and pts.size()-1 not in splits:
 		splits.append(pts.size()-1)
 
@@ -153,8 +139,7 @@ static func fit_curve_segment_to_polyline_segment(segment : PackedVector2Array) 
 	return best_fit
 
 
-static func fit_curve_to_polyline(poly : PackedVector2Array, splits : Array[int],
-		minimum_points_per_segment_for_curve_fitting := 3) -> Curve2D:
+static func fit_curve_to_polyline(poly : PackedVector2Array, splits : Array[int]) -> Curve2D:
 	var c := Curve2D.new()
 	c.add_point(poly[0])
 	for i in splits.size():
@@ -162,11 +147,9 @@ static func fit_curve_to_polyline(poly : PackedVector2Array, splits : Array[int]
 		var next := splits[i + 1] if i + 1 < splits.size() else -2
 		var segment := poly.slice(s_idx, next + 1)
 		if next < 0:
-			segment = poly.slice(s_idx, poly.size())
-
-		if segment.size() <= minimum_points_per_segment_for_curve_fitting:
-			for j in range(1, segment.size()):
-				c.add_point(segment[j])
+			segment.append(poly[0])
+		if segment.size() == 2:
+			c.add_point(segment[1])
 		else:
 			var cs := fit_curve_segment_to_polyline_segment(segment)
 			c.set_point_out(c.point_count - 1, cs.get_point_out(0))
