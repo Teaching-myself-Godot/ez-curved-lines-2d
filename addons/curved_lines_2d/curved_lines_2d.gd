@@ -1876,20 +1876,6 @@ func _add_point_to_curve(svs : ScalableVectorShape2D, local_pos : Vector2,
 	undo_redo.commit_action()
 
 
-func _add_point_on_curved_segment(svs : ScalableVectorShape2D, placement_point : Vector2, before_segment : int) -> void:
-	var sliced_segment := svs.get_sliced_curve_segment(before_segment, placement_point)
-	_add_point_to_curve(svs, placement_point, Vector2.ZERO, Vector2.ZERO, before_segment, false)
-	undo_redo.add_do_method(svs.curve, "set_point_out", before_segment - 1, sliced_segment.get_point_out(0))
-	undo_redo.add_undo_method(svs.curve, "set_point_out", before_segment -1, svs.curve.get_point_out(before_segment - 1))
-	undo_redo.add_do_method(svs.curve, "set_point_in", before_segment, sliced_segment.get_point_in(1))
-	undo_redo.add_undo_method(svs.curve, "set_point_in", before_segment, svs.curve.get_point_in(before_segment))
-	undo_redo.add_do_method(svs.curve, "set_point_out", before_segment, sliced_segment.get_point_out(1))
-	undo_redo.add_undo_method(svs.curve, "set_point_out", before_segment, svs.curve.get_point_out(before_segment))
-	undo_redo.add_do_method(svs.curve, "set_point_in", before_segment + 1, sliced_segment.get_point_in(2))
-	undo_redo.add_undo_reference(svs.curve)
-	undo_redo.commit_action()
-
-
 func _create_arc(svs :  ScalableVectorShape2D, start_point_idx : int) -> void:
 	if svs.curve.point_count < 2:
 		return

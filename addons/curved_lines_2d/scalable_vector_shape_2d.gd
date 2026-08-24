@@ -1357,15 +1357,6 @@ func get_subdivided_curve() -> Curve2D:
 	return new_curve
 
 
-func curve_to_local(curve : Curve2D) -> Curve2D:
-	var c1 := Curve2D.new()
-	for i in curve.point_count:
-		c1.add_point(to_local(curve.get_point_position(i)))
-		c1.set_point_in(i, to_local(curve.get_point_in(i)))
-		c1.set_point_out(i, to_local(curve.get_point_out(i)))
-	return c1
-
-
 # Adapted from the GodSVG repository to draw arc in stead of determine bounding box.
 # https://github.com/MewPurPur/GodSVG/blob/53168a8cf74739fe828f488901eada02d5d97b69/src/data_classes/ElementPath.gd#L118
 func tessellate_arc_segment(start : Vector2, arc_radius : Vector2, arc_rotation_deg : float,
