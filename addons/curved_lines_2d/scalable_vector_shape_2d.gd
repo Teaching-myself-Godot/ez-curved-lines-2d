@@ -564,6 +564,18 @@ func _notification(what: int) -> void:
 		transform_changed.emit(self)
 	if what == NOTIFICATION_EDITOR_PRE_SAVE:
 		reset_skeleton_to_rest_pose()
+		_prune_unused_colliders_and_lines()
+
+
+func _prune_unused_colliders_and_lines():
+	if is_instance_valid(line):
+		for ch in line.get_children():
+			if ch is Line2D and not ch.visible:
+				line.remove_child(ch)
+	if is_instance_valid(collision_object):
+		for ch in collision_object.get_children():
+			if ch is CollisionPolygon2D and ch.disabled and not ch.visible:
+				collision_object.remove_child(ch)
 
 
 func reset_skeleton_to_rest_pose():
