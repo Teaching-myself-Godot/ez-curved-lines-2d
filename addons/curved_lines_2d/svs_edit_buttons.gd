@@ -111,4 +111,5 @@ func _unhandled_input(event: InputEvent) -> void:
 			%Pencil.button_pressed = true
 		if (event as InputEventKey).keycode == KEY_B and Input.is_key_pressed(KEY_SHIFT):
 			%Brush.button_pressed = true
-
+		if (event as InputEventKey).keycode == KEY_K:
+			%Knife.button_pressed = true
