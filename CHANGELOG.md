@@ -1,8 +1,6 @@
 # Changelog
 
-=======
->>>>>>> parent of ec912bf (Merge pull request #396 from Clauveira/dev-4.4)
-## 2.30.1
+## 2.30.0
 
 ### Added
 
@@ -11,7 +9,6 @@
 ### Changed
 
 - Pencil tool now also uses `BasicFit`'s curve fitting algorithm to reduce points and introduce control points (just like the polygon brush)
-- Bugfix: pencil tool can now draw lines of 2 or less straight segments.
 
 ## 2.29.2
 
