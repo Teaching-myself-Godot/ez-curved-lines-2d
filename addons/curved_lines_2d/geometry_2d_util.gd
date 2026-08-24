@@ -193,13 +193,8 @@ static func _merge_until_stable(solids : Array[PackedVector2Array]) -> bool:
 # up into several polygons. Subtracting the overlapping ones first usually shrinks the
 # remainder far enough for the postponed ones to overlap it as well, so it can stay in
 # one piece. What is still enclosed once nothing else is left really is an island.
-# With [param slice_around_islands] flagged off the remainder is left whole and the
-# islands are returned alongside it, so both stay closed loops: a caller after the
-# _contours_ of the remainder needs them intact, a caller after its _surface_ needs it
-# sliced, because a [CollisionPolygon2D] cannot represent a hole.
 static func _subtract_polygons(minuend : PackedVector2Array,
-			subtrahends : Array[PackedVector2Array],
-			slice_around_islands := true) -> Array[PackedVector2Array]:
+			subtrahends : Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 	var remainder : Array[PackedVector2Array] = [minuend]
 	var todo := subtrahends.duplicate()
 	while not todo.is_empty() and not remainder.is_empty():
@@ -218,10 +213,6 @@ static func _subtract_polygons(minuend : PackedVector2Array,
 			else:
 				remainder = difference
 		if postponed.size() == todo.size():
-			if not slice_around_islands:
-				# only islands are left: each of them bounds the remainder just like the
-				# remainder bounds them, so they are contours of it in their own right
-				return remainder + postponed
 			# only enclosed polygons are left: slice the remainder around them, in
 			# stead of leaving it with a hole it cannot represent
 			slice_polygons_with_holes(remainder, postponed)
@@ -230,32 +221,41 @@ static func _subtract_polygons(minuend : PackedVector2Array,
 	return remainder
 
 
-## Returns the contours enclosing the area covered by [param polygons]: the outline of
-## every solid they merge into first, followed by the holes those outlines enclose.
-## [ScalableVectorShape2D] draws one [Line2D] along each of them, so its stroke follows
-## the contour of a cutout just like it follows the contour of the shape itself.
-## The holes are derived from the merged outlines only once the whole set is joined,
-## because an area with a hole in it arrives here already sliced open around that hole -
-## see [method slice_polygons_with_holes]. Reading a hole off the merge of a _pair_ in
-## stead reports the hole of that pair: whatever the polygons merged after it fill up
-## of that hole is then still reported as a hole which is not there anymore.
-static func calculate_outlines(polygons : Array[PackedVector2Array]) -> Array[PackedVector2Array]:
-	if polygons.size() <= 1:
-		return polygons
-
-	var sources := polygons.duplicate()
-	_merge_until_stable(polygons)
-
+static func calculate_outlines(result : Array[PackedVector2Array]) -> Array[PackedVector2Array]:
+	if result.size() <= 1:
+		return result
+	var succesful_merges := true
+	var guard = 0
 	var holes : Array[PackedVector2Array] = []
-	for solid in polygons:
-		for hole in _subtract_polygons(solid, sources, false):
-			if get_polygon_area(hole) <= MINIMUM_HOLE_AREA:
+	while succesful_merges and result.size() > 1 and guard < 1000:
+		succesful_merges = false
+		guard += 1
+		var indices_to_be_removed : Dictionary[int, bool] = {}
+		var merged_to_be_appended : Array[PackedVector2Array] = []
+
+		for current_poly_idx in result.size():
+			if current_poly_idx in indices_to_be_removed:
 				continue
-			if not Geometry2D.is_polygon_clockwise(hole):
-				# a hole runs against the winding order of the outline enclosing it
-				hole.reverse()
-			holes.append(hole)
-	return polygons + holes
+			for other_poly_idx in result.size():
+				if current_poly_idx == other_poly_idx or other_poly_idx in indices_to_be_removed:
+					continue
+				var merge_result := Geometry2D.merge_polygons(
+						result[current_poly_idx], result[other_poly_idx])
+				var regular := merge_result.filter(func(x): return not Geometry2D.is_polygon_clockwise(x))
+				var clockwise := merge_result.filter(Geometry2D.is_polygon_clockwise)
+				if regular.size() == 1:
+					succesful_merges = true
+					indices_to_be_removed[current_poly_idx] = true
+					indices_to_be_removed[other_poly_idx] = true
+					merged_to_be_appended.append(regular[0])
+					holes.append_array(clockwise)
+		var sorted_indices = indices_to_be_removed.keys()
+		sorted_indices.sort()
+		sorted_indices.reverse()
+		for idx in sorted_indices:
+			result.remove_at(idx)
+		result.append_array(merged_to_be_appended)
+	return result + holes
 
 
 static func calculate_polystroke(outline : PackedVector2Array, stroke_width : float,
