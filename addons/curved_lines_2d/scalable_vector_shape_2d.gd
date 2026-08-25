@@ -537,12 +537,31 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_LOCAL_TRANSFORM_CHANGED or what == NOTIFICATION_TRANSFORM_CHANGED:
 		transform_changed.emit(self)
 	if what == NOTIFICATION_EDITOR_PRE_SAVE:
-		if is_instance_valid(skeleton):
-			for i in skeleton.get_bone_count():
-				skeleton.get_bone(i).apply_rest()
-			if is_instance_valid(bone):
-				global_position = bone.global_position
-				global_rotation = bone.global_rotation
+		reset_skeleton_to_rest_pose()
+		_prune_unused_colliders_and_lines()
+
+
+func _prune_unused_colliders_and_lines():
+	if is_instance_valid(line):
+		for ch in line.get_children():
+			if ch is Line2D and not ch.visible:
+				line.remove_child(ch)
+				ch.free()
+	if is_instance_valid(collision_object):
+		for ch in collision_object.get_children():
+			if ch is CollisionPolygon2D and ch.disabled and not ch.visible:
+				collision_object.remove_child(ch)
+				ch.free()
+
+
+func reset_skeleton_to_rest_pose():
+	if is_instance_valid(skeleton):
+		for i in skeleton.get_bone_count():
+			skeleton.get_bone(i).apply_rest()
+		if is_instance_valid(bone):
+			global_position = bone.global_position
+			global_rotation = bone.global_rotation
+
 
 func _on_dimensions_changed():
 	if shape_type == ShapeType.RECT:
@@ -1399,6 +1418,18 @@ func get_subdivided_curve() -> Curve2D:
 			new_curve.set_point_out((i * 2) - 1, segment.get_point_out(1))
 			new_curve.set_point_in(i * 2, segment.get_point_in(2))
 	return new_curve
+
+
+func curve_to_local(curve : Curve2D) -> Curve2D:
+	var c1 := Curve2D.new()
+	for i in curve.point_count:
+		var pos := to_local(curve.get_point_position(i))
+		var abs_in := to_local(curve.get_point_position(i) + curve.get_point_in(i))
+		var abs_out := to_local(curve.get_point_position(i) + curve.get_point_out(i))
+		c1.add_point(pos)
+		c1.set_point_in(i, abs_in - pos)
+		c1.set_point_out(i, abs_out - pos)
+	return c1
 
 
 # Adapted from the GodSVG repository to draw arc in stead of determine bounding box.
