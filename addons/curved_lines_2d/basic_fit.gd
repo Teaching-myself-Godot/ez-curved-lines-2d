@@ -162,7 +162,8 @@ static func fit_curve_to_polyline(poly : PackedVector2Array, splits : Array[int]
 		var next := splits[i + 1] if i + 1 < splits.size() else -2
 		var segment := poly.slice(s_idx, next + 1)
 		if next < 0:
-			segment.append(poly[0])
+			segment = poly.slice(s_idx, poly.size())
+
 		if segment.size() <= minimum_points_per_segment_for_curve_fitting:
 			for j in range(1, segment.size()):
 				c.add_point(segment[j])

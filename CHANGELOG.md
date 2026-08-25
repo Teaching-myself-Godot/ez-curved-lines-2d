@@ -11,7 +11,8 @@
 
 - Fixed multiple bugs with Undo/Redo by handling state of mouse hover while dragging better
 - Pencil tool now also uses `BasicFit`'s curve fitting algorithm to reduce points and introduce control points (just like the polygon brush)
-
+- Bugfix: pencil tool can now draw lines of 2 or less straight segments.
+- Bugfix: Basic fix correctly identifies looped and unlooped shapes
 
 ## 2.28.2
 
