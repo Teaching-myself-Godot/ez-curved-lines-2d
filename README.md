@@ -88,6 +88,8 @@ You can find the rest of the explainer videos on this playlist:
 - [Free-hand Drawing](#free-hand-drawing)
 	- [Drawing strokes and outlines with the Pencil Tool](#drawing-strokes-and-outlines-with-the-pencil-tool)
 	- [Drawing polygons using the Brush Tool](#drawing-polygons-using-the-brush-tool)
+	- [Cutting shapes in half with the knife tool](#cutting-shapes-in-half-with-the-knife-tool)
+- [Extracting a `ScalableVectorShape2D` from a `Polygon2D`, `Line2D`, or `CollisionPolygon2D`](#extracting-a-scalablevectorshape2d-from-a-polygon2d-line2d-or-collisionpolygon2d)
 - [Manipulating 2D Shapes in the 3D export](#manipulating-2d-shapes-in-the-3d-export)
 	- [Animating 3D curves](#animating-3d-curves)
 - [Manipulating gradients](#manipulating-gradients)
@@ -565,6 +567,27 @@ Strokes, Fills and Collisions drawn by this tool are configured in the: [Create 
 
 This pencil tool also respects the `Snap to Pixel` setting with the `Snap Resolution`, which are described under the [Project Settings Tab](#the-project-settings-dock).
 
+## Cutting shapes in half with the knife tool
+
+As of release 2.31 a new knife tool (K) was added. 
+
+![knife tool](./addons/curved_lines_2d/screenshots/knife.gif)
+
+With this tool you can cut a shape in half. The curve biggest half of the shape will be assigned to the existing `ScalableVectorShape2D`. 
+
+A new `ScalableVectorShape2D` will be created as a sibling of the existing shape.
+
+The knife tool does not support clipping using the `clip_paths` property, so any assigned shapes for this should be (re)assigned manually.
+
+
+# Extracting a `ScalableVectorShape2D` from a `Polygon2D`, `Line2D`, or `CollisionPolygon2D`
+
+As of release 2.30 a new button is available that generates a `ScalableVectorShape2D` with a curve based on the selected `Polygon2D`, `Line2D` and `CollisionPolygon2D`. 
+
+This new button is presented when the actively selected node in the scene tree is of one of these types. It supports creating shapes from multiple selections.
+
+![Extracting a `ScalableVectorShape2D` from a `Polygon2D`](./addons/curved_lines_2d/screenshots/extract_svs.gif)
+
 # Manipulating 2D Shapes in the 3D export
 
 Using the new `Export to 3D Scene` in the [Advanced Editing Tab](#the-advanced-tab) produces the new `AdaptableVectorShape3D` node, which holds instances of `CSGPolygon3D` with:
@@ -669,10 +692,16 @@ With this form the following `ScalableVectorShape2D` properties can be edited:
 - `begin_cap_mode` (in case of a `Polygon2D`-based stroke, this will also set the end cap)
 - `end_cap_mode`
 - `line_joint_mode`
+- `extrusion_direction` - This sets the way the stroke is drawn: 
+  - over the middle of the shape's outline
+  - entirely outside the shapes's outline
+  - entirely inside the shape's outline
 
 When a `Line2D` is assigned to draw the stroke with, these properties will be kept synchronized with the `ScalableVectorShape2D` properties.
 
 In case of a `Polygon2D` based stroke, the `stroke_color` will be kept synchronized with the `Polygon2D` color.
+
+The `extrusion_direction` property only works when the shape has a closed outline.
 
 ### Creating new Strokes
 When the selected shape has no stroke, an extra set of buttons is provided:

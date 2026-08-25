@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dgssn5fp75sqx"
-path="res://.godot/imported/Brush.svg-86d27f9ae1d09b8fc7e875027b468b5f.ctex"
+uid="uid://d3bytoqdw2l73"
+path="res://.godot/imported/Knife.svg-8bb119bdf0456324ca38380116a1dd91.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/curved_lines_2d/Brush.svg"
-dest_files=["res://.godot/imported/Brush.svg-86d27f9ae1d09b8fc7e875027b468b5f.ctex"]
+source_file="res://addons/curved_lines_2d/Knife.svg"
+dest_files=["res://.godot/imported/Knife.svg-8bb119bdf0456324ca38380116a1dd91.ctex"]
 
 [params]
 

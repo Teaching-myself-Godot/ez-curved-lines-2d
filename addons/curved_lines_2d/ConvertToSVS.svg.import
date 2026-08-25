@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dgssn5fp75sqx"
-path="res://.godot/imported/Brush.svg-86d27f9ae1d09b8fc7e875027b468b5f.ctex"
+uid="uid://dqkwd8qlbtqw8"
+path="res://.godot/imported/ConvertToSVS.svg-36f74b0dc69a8219206a67126a8ea20e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/curved_lines_2d/Brush.svg"
-dest_files=["res://.godot/imported/Brush.svg-86d27f9ae1d09b8fc7e875027b468b5f.ctex"]
+source_file="res://addons/curved_lines_2d/ConvertToSVS.svg"
+dest_files=["res://.godot/imported/ConvertToSVS.svg-36f74b0dc69a8219206a67126a8ea20e.ctex"]
 
 [params]
 

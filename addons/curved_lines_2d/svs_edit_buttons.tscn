@@ -1,10 +1,12 @@
-[gd_scene load_steps=13 format=3 uid="uid://jwgf6ni22kes"]
+[gd_scene format=3 uid="uid://jwgf6ni22kes"]
 
 [ext_resource type="Script" uid="uid://cligefu5bwmld" path="res://addons/curved_lines_2d/svs_edit_buttons.gd" id="1_ui2xk"]
 [ext_resource type="Texture2D" uid="uid://daemvs3ws7fpk" path="res://addons/curved_lines_2d/DefaultMode.svg" id="2_8dhsk"]
+[ext_resource type="Texture2D" uid="uid://dqkwd8qlbtqw8" path="res://addons/curved_lines_2d/ConvertToSVS.svg" id="2_fsls0"]
 [ext_resource type="Texture2D" uid="uid://chojkn0i6ngam" path="res://addons/curved_lines_2d/UniformTranslate.svg" id="3_ojxsm"]
 [ext_resource type="Texture2D" uid="uid://d1uok4qb3xets" path="res://addons/curved_lines_2d/UniformRotate.svg" id="4_sl6t4"]
 [ext_resource type="Texture2D" uid="uid://do5uut1a4xvqf" path="res://addons/curved_lines_2d/UniformScale.svg" id="5_1qgur"]
+[ext_resource type="Texture2D" uid="uid://d3bytoqdw2l73" path="res://addons/curved_lines_2d/Knife.svg" id="6_1j8wt"]
 [ext_resource type="Texture2D" uid="uid://dvrgy7r2fvcxk" path="res://addons/curved_lines_2d/FlipHorizontal.svg" id="6_ojxsm"]
 [ext_resource type="Texture2D" uid="uid://dgssn5fp75sqx" path="res://addons/curved_lines_2d/Brush.svg" id="6_rxvdi"]
 [ext_resource type="Texture2D" uid="uid://bxxtceujf66ws" path="res://addons/curved_lines_2d/Pencil.svg" id="7_i6df8"]
@@ -12,9 +14,12 @@
 [ext_resource type="Texture2D" uid="uid://6mmxldln6pdn" path="res://addons/curved_lines_2d/MergeChain.svg" id="8_fsls0"]
 [ext_resource type="Texture2D" uid="uid://cvplv4mak1uys" path="res://addons/curved_lines_2d/PaintBone.svg" id="11_i6df8"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1j8wt"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
 [sub_resource type="ButtonGroup" id="ButtonGroup_rxvdi"]
 
-[node name="svs_edit_buttons" type="HBoxContainer"]
+[node name="svs_edit_buttons" type="HBoxContainer" unique_id=1294486195]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -22,108 +27,128 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ui2xk")
 
-[node name="DefaultEdit" type="Button" parent="."]
+[node name="ConvertToSVS" type="Button" parent="." unique_id=475981746]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+tooltip_text = "Extract a  ScalableVectorShape2D  from the selected node"
+theme_override_styles/normal = SubResource("StyleBoxFlat_1j8wt")
+icon = ExtResource("2_fsls0")
+
+[node name="DefaultEdit" type="Button" parent="." unique_id=2067138896]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Edit the points normally (Q)"
+theme_override_styles/normal = SubResource("StyleBoxFlat_1j8wt")
 toggle_mode = true
 button_pressed = true
 button_group = SubResource("ButtonGroup_rxvdi")
 icon = ExtResource("2_8dhsk")
-flat = true
 
-[node name="Brush" type="Button" parent="."]
+[node name="Brush" type="Button" parent="." unique_id=904566050]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Polygon Brush (Shift+B)"
+theme_override_styles/normal = SubResource("StyleBoxFlat_1j8wt")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_rxvdi")
 icon = ExtResource("6_rxvdi")
-flat = true
 
-[node name="Pencil" type="Button" parent="."]
+[node name="Pencil" type="Button" parent="." unique_id=449354487]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Pencil tool (Shift+N)"
+theme_override_styles/normal = SubResource("StyleBoxFlat_1j8wt")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_rxvdi")
 icon = ExtResource("7_i6df8")
-flat = true
 
-[node name="VSeparator1" type="VSeparator" parent="."]
+[node name="Knife" type="Button" parent="." unique_id=1946507872]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+tooltip_text = "Knife tool (K)"
+theme_override_styles/normal = SubResource("StyleBoxFlat_1j8wt")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_rxvdi")
+icon = ExtResource("6_1j8wt")
+
+[node name="VSeparator1" type="VSeparator" parent="." unique_id=1892531728]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="UniformTranslate" type="Button" parent="."]
+[node name="UniformTranslate" type="Button" parent="." unique_id=1210676568]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Move all the points without moving the node (Z)"
+theme_override_styles/normal = SubResource("StyleBoxFlat_1j8wt")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_rxvdi")
 icon = ExtResource("3_ojxsm")
-flat = true
 
-[node name="UniformRotate" type="Button" parent="."]
+[node name="UniformRotate" type="Button" parent="." unique_id=1403660237]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Rotate all the points without rotating the node (X)"
+theme_override_styles/normal = SubResource("StyleBoxFlat_1j8wt")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_rxvdi")
 icon = ExtResource("4_sl6t4")
-flat = true
 
-[node name="UniformScale" type="Button" parent="."]
+[node name="UniformScale" type="Button" parent="." unique_id=1343286820]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Resize all the points without resizing the node (C)"
+theme_override_styles/normal = SubResource("StyleBoxFlat_1j8wt")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_rxvdi")
 icon = ExtResource("5_1qgur")
-flat = true
 
-[node name="PaintBone" type="Button" parent="."]
+[node name="PaintBone" type="Button" parent="." unique_id=791934690]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Assign Points to Bones"
+theme_override_styles/normal = SubResource("StyleBoxFlat_1j8wt")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_rxvdi")
 icon = ExtResource("11_i6df8")
-flat = true
 
-[node name="VSeparator2" type="VSeparator" parent="."]
+[node name="VSeparator2" type="VSeparator" parent="." unique_id=1094699543]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="FlipHorizontal" type="Button" parent="."]
+[node name="FlipHorizontal" type="Button" parent="." unique_id=1623628219]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Flip Shape Horizontally"
+theme_override_styles/normal = SubResource("StyleBoxFlat_1j8wt")
 icon = ExtResource("6_ojxsm")
-flat = true
 
-[node name="FlipVertical" type="Button" parent="."]
+[node name="FlipVertical" type="Button" parent="." unique_id=636009670]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Flip Shape Vertically"
+theme_override_styles/normal = SubResource("StyleBoxFlat_1j8wt")
 icon = ExtResource("7_sl6t4")
-flat = true
 
-[node name="VSeparator3" type="VSeparator" parent="."]
+[node name="VSeparator3" type="VSeparator" parent="." unique_id=244903633]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Merge" type="Button" parent="."]
+[node name="Merge" type="Button" parent="." unique_id=228096526]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Merge Points (M)"
+theme_override_styles/normal = SubResource("StyleBoxFlat_1j8wt")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_rxvdi")
 icon = ExtResource("8_fsls0")
-flat = true
 
+[connection signal="pressed" from="ConvertToSVS" to="." method="_on_convert_to_svs_pressed"]
 [connection signal="toggled" from="DefaultEdit" to="." method="_on_default_edit_toggled"]
 [connection signal="toggled" from="Brush" to="." method="_on_brush_toggled"]
 [connection signal="toggled" from="Pencil" to="." method="_on_pencil_toggled"]
+[connection signal="toggled" from="Knife" to="." method="_on_knife_toggled"]
 [connection signal="toggled" from="UniformTranslate" to="." method="_on_uniform_translate_toggled"]
 [connection signal="toggled" from="UniformRotate" to="." method="_on_uniform_rotate_toggled"]
 [connection signal="toggled" from="UniformScale" to="." method="_on_uniform_scale_toggled"]
