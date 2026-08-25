@@ -133,15 +133,19 @@ static func calculate_outlines(result : Array[PackedVector2Array]) -> Array[Pack
 
 
 static func calculate_polystroke(outline : PackedVector2Array, stroke_width : float,
-			end_mode : Geometry2D.PolyEndType, joint_mode : Geometry2D.PolyJoinType) -> Array[PackedVector2Array]:
+			end_mode : Geometry2D.PolyEndType, joint_mode : Geometry2D.PolyJoinType,
+			offset_poly : float) -> Array[PackedVector2Array]:
 	if outline.is_empty():
 		return []
-	var poly_strokes := Geometry2D.offset_polyline(outline, stroke_width, joint_mode, end_mode)
+	var offset_result := Geometry2D.offset_polygon(outline, offset_poly, joint_mode) if not is_zero_approx(offset_poly) else ([] as Array[PackedVector2Array])
+	var offsetted_outline := outline if offset_result.is_empty() else offset_result[0]
+	var poly_strokes := Geometry2D.offset_polyline(offsetted_outline, stroke_width, joint_mode, end_mode)
 	var result_poly_strokes := Array(poly_strokes.filter(func(ps): return not Geometry2D.is_polygon_clockwise(ps)), TYPE_PACKED_VECTOR2_ARRAY, "", null)
 	var result_poly_holes := Array(poly_strokes.filter(Geometry2D.is_polygon_clockwise), TYPE_PACKED_VECTOR2_ARRAY, "", null)
 	if not result_poly_holes.is_empty():
 		slice_polygons_with_holes(result_poly_strokes, result_poly_holes)
 	return result_poly_strokes
+
 
 
 static func get_polygon_indices(polygons : Array[PackedVector2Array], indices : Array) -> PackedVector2Array:
