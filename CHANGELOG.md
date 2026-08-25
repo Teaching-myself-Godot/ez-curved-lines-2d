@@ -1,9 +1,10 @@
 # Changelog
 
-## 2.32.0
+## 2.32.0 - Redemption
 
 ## Added
 
+- The Knife tool without "vibes"! <3
 - New property `extrusion_direction` for strokes. If the outline of a shape is closed, the stroke can now also be draw inside and outside of the shape's outline.
 - Button to extract ScalableVectorShape2D from `Line2D`, `Polygon2D` and `CollisionPolygon2D`
 

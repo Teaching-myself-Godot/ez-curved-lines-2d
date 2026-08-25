@@ -88,6 +88,7 @@ You can find the rest of the explainer videos on this playlist:
 - [Free-hand Drawing](#free-hand-drawing)
 	- [Drawing strokes and outlines with the Pencil Tool](#drawing-strokes-and-outlines-with-the-pencil-tool)
 	- [Drawing polygons using the Brush Tool](#drawing-polygons-using-the-brush-tool)
+	- [Cutting shapes in half with the knife tool](#cutting-shapes-in-half-with-the-knife-tool)
 - [Extracting a `ScalableVectorShape2D` from a `Polygon2D`, `Line2D`, or `CollisionPolygon2D`](#extracting-a-scalablevectorshape2d-from-a-polygon2d-line2d-or-collisionpolygon2d)
 - [Manipulating 2D Shapes in the 3D export](#manipulating-2d-shapes-in-the-3d-export)
 	- [Animating 3D curves](#animating-3d-curves)
@@ -565,6 +566,18 @@ Configuration options for this tool are described under [The Draw Settings tab](
 Strokes, Fills and Collisions drawn by this tool are configured in the: [Create Shapes Tab](#the-create-shapes-dock)
 
 This pencil tool also respects the `Snap to Pixel` setting with the `Snap Resolution`, which are described under the [Project Settings Tab](#the-project-settings-dock).
+
+## Cutting shapes in half with the knife tool
+
+As of release 2.31 a new knife tool (K) was added. 
+
+![knife tool](./addons/curved_lines_2d/screenshots/knife.gif)
+
+With this tool you can cut a shape in half. The curve biggest half of the shape will be assigned to the existing `ScalableVectorShape2D`. 
+
+A new `ScalableVectorShape2D` will be created as a sibling of the existing shape.
+
+The knife tool does not support clipping using the `clip_paths` property, so any assigned shapes for this should be (re)assigned manually.
 
 
 # Extracting a `ScalableVectorShape2D` from a `Polygon2D`, `Line2D`, or `CollisionPolygon2D`
