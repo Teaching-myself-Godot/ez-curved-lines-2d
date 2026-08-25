@@ -44,7 +44,7 @@ var tolerance_degrees := 4.0
 var max_stages : int = 5
 var use_antialiased_line_2d = false
 
-var undo_redo : EditorUndoRedoManager = null
+var undo_redo : Variant = null
 var log_consumer : Callable = func(msg: String, log_level : LogLevel): pass
 
 func _init(is_svs := true, is_lock := true, is_aa := false, is_line_2d := true,
@@ -53,6 +53,7 @@ func _init(is_svs := true, is_lock := true, is_aa := false, is_line_2d := true,
 		is_resource_local_to_scene := true,
 		tol_deg := 4.0, max_stg := 5,
 		using_antialiased_line_2d := false,
+		undo_redo_handler : Variant = null,
 		on_log := func(msg: String, log_level : LogLevel): pass) -> void:
 	import_as_svs = is_svs
 	lock_shapes = is_lock
@@ -64,7 +65,7 @@ func _init(is_svs := true, is_lock := true, is_aa := false, is_line_2d := true,
 	tolerance_degrees = tol_deg
 	max_stages = max_stg
 	use_antialiased_line_2d = using_antialiased_line_2d
-	undo_redo = EditorInterface.get_editor_undo_redo()
+	undo_redo = undo_redo_handler
 	log_consumer = on_log
 
 
@@ -72,10 +73,8 @@ func log_message(msg : String, log_level : LogLevel = LogLevel.INFO) -> void:
 	log_consumer.call(msg, log_level)
 
 
-func load_svg(file_path : String) -> Node:
+func load_svg(file_path : String, scene_root := Node2D.new(), selected_nodes : Array[Node] = []) -> Node:
 	var xml_parser = XMLParser.new()
-	var scene_root := EditorInterface.get_edited_scene_root()
-	var selected_nodes := EditorInterface.get_selection().get_selected_nodes()
 	var parent_node := scene_root if selected_nodes.is_empty() else selected_nodes[0]
 	if not scene_root is Node:
 		log_message("ERROR: Can only import into an opened scene", LogLevel.ERROR)

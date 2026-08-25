@@ -73,11 +73,15 @@ func _load_svg(svg_file_path : String) -> void:
 		CurvedLines2D._get_default_tolerance_degrees(),
 		CurvedLines2D._get_default_max_stages(),
 		CurvedLines2D._use_antialiased_line_2d(),
+		EditorInterface.get_editor_undo_redo(),
 	 	log_message
 	)
 	for child in %ImportLogContainer.get_children():
 		child.queue_free()
-	var svg_root := await svg_importer.load_svg(svg_file_path)
+	var svg_root := await svg_importer.load_svg(svg_file_path,
+		EditorInterface.get_edited_scene_root(),
+		EditorInterface.get_selection().get_selected_nodes()
+	)
 
 	log_message("Import finished.\n\nThe SVG importer is still incrementally improving (slowly).")
 	var link_button = LinkButtonScene.instantiate()
