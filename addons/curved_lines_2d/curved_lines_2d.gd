@@ -14,8 +14,8 @@ const SETTING_NAME_ADD_STROKE_ENABLED := "addons/curved_lines_2d/add_stroke_enab
 const SETTING_NAME_ADD_FILL_ENABLED := "addons/curved_lines_2d/add_fill_enabled"
 const SETTING_NAME_ADD_COLLISION_TYPE = "addons/curved_lines_2d/add_collision_type"
 
-
 const SETTING_NAME_PAINT_ORDER := "addons/curved_lines_2d/paint_order"
+
 const SETTING_NAME_DEFAULT_LINE_BEGIN_CAP := "addons/curved_lines_2d/line_begin_cap"
 const SETTING_NAME_DEFAULT_LINE_END_CAP := "addons/curved_lines_2d/line_end_cap"
 const SETTING_NAME_DEFAULT_LINE_JOINT_MODE := "addons/curved_lines_2d/line_joint_mode"
@@ -47,6 +47,16 @@ const META_NAME_HOVER_GRADIENT_FROM := "_hover_gradient_from_"
 const META_NAME_HOVER_GRADIENT_TO := "_hover_gradient_to_"
 const META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX := "_hover_gradient_color_stop_idx_"
 const META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE := "_hover_closest_point_on_gradient_"
+const HOVER_META_NAMES : Array[String] = [
+	META_NAME_HOVER_POINT_IDX,
+	META_NAME_HOVER_CP_IN_IDX,
+	META_NAME_HOVER_CP_OUT_IDX,
+	META_NAME_HOVER_CLOSEST_POINT,
+	META_NAME_HOVER_GRADIENT_FROM,
+	META_NAME_HOVER_GRADIENT_TO,
+	META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX,
+	META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE,
+]
 
 const META_NAME_SELECT_HINT := "_select_hint_"
 
@@ -68,7 +78,7 @@ enum PaintOrder {
 	STROKE_MARKERS_FILL,
 	MARKERS_STROKE_FILL
 }
-enum UndoRedoEntry { UNDOS, DOS, NAME, DO_PROPS, UNDO_PROPS }
+enum UndoRedoEntry { UNDOS, DOS, NAME, DO_PROPS, UNDO_PROPS, ACTION_TYPE }
 
 const PAINT_ORDER_MAP := {
 	PaintOrder.FILL_STROKE_MARKERS: ['_add_fill_to_created_shape', '_add_stroke_to_created_shape', '_add_collision_to_created_shape'],
@@ -104,7 +114,11 @@ var selection_candidate : Node = null
 var current_cutout_shape := ScalableVectorShape2D.ShapeType.RECT
 var current_clip_operation := Geometry2D.OPERATION_DIFFERENCE
 
+enum UndoRedoActionType {
+	UNSPECIFIED, DRAGGING_POINT, DRAGGING_CP
+}
 var undo_redo_transaction : Dictionary = {
+	UndoRedoEntry.ACTION_TYPE: UndoRedoActionType.UNSPECIFIED,
 	UndoRedoEntry.NAME: "",
 	UndoRedoEntry.DOS: [],
 	UndoRedoEntry.UNDOS: [],
@@ -178,7 +192,7 @@ func _enter_tree():
 	undo_redo = get_undo_redo()
 	add_control_to_bottom_panel(scalable_vector_shapes_2d_dock as Control, "Scalable Vector Shapes 2D")
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
-	undo_redo.version_changed.connect(update_overlays)
+	undo_redo.version_changed.connect(_on_undo_redo_version_changed)
 	make_bottom_panel_item_visible(scalable_vector_shapes_2d_dock)
 
 	set_global_position_popup_panel = load("res://addons/curved_lines_2d/set_global_position_popup_panel.tscn").instantiate()
@@ -218,6 +232,15 @@ func _enter_tree():
 func select_node_reversibly(target_node : Node) -> void:
 	if is_instance_valid(target_node):
 		EditorInterface.edit_node(target_node)
+
+
+func _on_undo_redo_version_changed() -> void:
+	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if _is_svs_valid(sel):
+		for meta_key in sel.get_meta_list():
+			if meta_key in HOVER_META_NAMES:
+				sel.remove_meta(meta_key)
+	update_overlays()
 
 
 func _select_scene_root_when_nothing_is_selected() -> void:
@@ -1428,9 +1451,10 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 			viewport_control.draw_polyline(points, Color.LIME, 1)
 
 
-func _start_undo_redo_transaction(name := "") -> void:
+func _start_undo_redo_transaction(name := "", undo_redo_action_type := UndoRedoActionType.UNSPECIFIED) -> void:
 	in_undo_redo_transaction = true
 	undo_redo_transaction = {
+		UndoRedoEntry.ACTION_TYPE: undo_redo_action_type,
 		UndoRedoEntry.NAME: name,
 		UndoRedoEntry.DOS: [],
 		UndoRedoEntry.UNDOS: [],
@@ -1462,6 +1486,10 @@ func _commit_undo_redo_transaction() -> void:
 	}
 
 
+func _in_other_undo_redo_transaction(other_type : UndoRedoActionType) -> bool:
+	return in_undo_redo_transaction and other_type != undo_redo_transaction[UndoRedoEntry.ACTION_TYPE]
+
+
 func _on_global_position_for_handle_changed(global_pos : Vector2, meta_name: String, idx : int) -> void:
 	var cur := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(cur):
@@ -1476,8 +1504,10 @@ func _on_global_position_for_handle_changed(global_pos : Vector2, meta_name: Str
 
 
 func _update_curve_point_position(current_selection : ScalableVectorShape2D, mouse_pos : Vector2, idx : int) -> void:
+	if _in_other_undo_redo_transaction(UndoRedoActionType.DRAGGING_POINT):
+		_commit_undo_redo_transaction()
 	if not in_undo_redo_transaction:
-		_start_undo_redo_transaction("Move point on " + str(current_selection))
+		_start_undo_redo_transaction("Move point on " + str(current_selection), UndoRedoActionType.DRAGGING_POINT)
 		if idx == 0 and current_selection.is_curve_closed():
 			var idx_1 = current_selection.curve.point_count - 1
 			undo_redo_transaction[UndoRedoEntry.UNDOS].append([
@@ -1547,8 +1577,10 @@ func _update_curve_cp_in_position(current_selection : ScalableVectorShape2D, mou
 			not(idx == current_selection.curve.point_count - 1
 					and not current_selection.is_curve_closed())
 	)
+	if _in_other_undo_redo_transaction(UndoRedoActionType.DRAGGING_CP):
+		_commit_undo_redo_transaction()
 	if not in_undo_redo_transaction:
-		_start_undo_redo_transaction("Move control point in %d on %s" % [idx, current_selection])
+		_start_undo_redo_transaction("Move control point in %d on %s" % [idx, current_selection], UndoRedoActionType.DRAGGING_CP)
 		undo_redo_transaction[UndoRedoEntry.UNDOS].append([current_selection.curve, 'set_point_in', idx, current_selection.curve.get_point_in(idx)])
 		if cp_in_is_cp_out_of_loop_start:
 			var idx_1 = 0 if idx == current_selection.curve.point_count - 1 else idx
@@ -1673,8 +1705,11 @@ func _update_curve_cp_out_position(current_selection : ScalableVectorShape2D, mo
 
 	var cp_out_is_cp_in_of_loop_end := (Input.is_key_pressed(KEY_SHIFT)
 			and not(idx == 0 and not current_selection.is_curve_closed()))
+
+	if _in_other_undo_redo_transaction(UndoRedoActionType.DRAGGING_CP):
+		_commit_undo_redo_transaction()
 	if not in_undo_redo_transaction:
-		_start_undo_redo_transaction("Move control point out %d on %s" % [idx, current_selection])
+		_start_undo_redo_transaction("Move control point out %d on %s" % [idx, current_selection], UndoRedoActionType.DRAGGING_CP)
 		undo_redo_transaction[UndoRedoEntry.UNDOS].append([current_selection.curve, 'set_point_out', idx, current_selection.curve.get_point_out(idx)])
 		if cp_out_is_cp_in_of_loop_end:
 			var idx_1 = current_selection.curve.point_count - 1 if idx == 0 else idx
@@ -2569,7 +2604,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				current_clip_operation = 0 if current_clip_operation > 2 else current_clip_operation
 			return true
 		if _is_svs_valid(current_selection) and _handle_has_hover(current_selection) and not _is_editing_width_curve(current_selection):
-			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) and not _is_ctrl_or_cmd_pressed():
+			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not _is_ctrl_or_cmd_pressed():
 				if current_selection.has_meta(META_NAME_HOVER_POINT_IDX) and current_selection.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 					_remove_point_from_curve(current_selection, current_selection.get_meta(META_NAME_HOVER_POINT_IDX))
 				elif current_selection.has_meta(META_NAME_HOVER_CP_IN_IDX):

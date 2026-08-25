@@ -6,6 +6,10 @@
 
 - New property `extrusion_direction` for strokes. If the outline of a shape is closed, the stroke can now also be draw inside and outside of the shape's outline.
 
+## Changed
+
+- Fixed multiple bugs with Undo/Redo by handling state of mouse hover while dragging better
+
 
 ## 2.28.2
 
