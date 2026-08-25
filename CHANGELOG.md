@@ -1,45 +1,19 @@
 # Changelog
 
+## 2.32.0 - Redemption
 
-## 2.31.0
+## Added
 
-### Added
-
-- Knife tool
-
-### Changed
-
-- Multiple geometry related bug fixes
-
-## 2.30.2
-
-### Added
-
+- The Knife tool without "vibes"! <3
+- New property `extrusion_direction` for strokes. If the outline of a shape is closed, the stroke can now also be draw inside and outside of the shape's outline.
 - Button to extract ScalableVectorShape2D from `Line2D`, `Polygon2D` and `CollisionPolygon2D`
 
-### Changed
+## Changed
 
-- Bugfix: the stroke of a shape with a cutout no longer runs straight across its own fill. A cutout can pinch the fill into a peninsula, which `slice_polygon_vertical` then cuts loose through its neck; `Geometry2DUtil.calculate_outlines` read the hole off a merged _pair_ of those slices, which still counted the peninsula as part of the cutout
-- A cutout enclosing an island of fill now gets a stroke drawn around that island as well: `Geometry2DUtil.calculate_outlines` returns it as a contour in its own right in stead of swallowing it
+- Fixed multiple bugs with Undo/Redo by handling state of mouse hover while dragging better
 - Pencil tool now also uses `BasicFit`'s curve fitting algorithm to reduce points and introduce control points (just like the polygon brush)
 - Bugfix: pencil tool can now draw lines of 2 or less straight segments.
-
-## 2.29.2
-
-⚠️ Small notice: a shape with a stroke used to generate a `CollisionPolygon2D` for its fill _and_ one for each piece of its stroke, which overlapped each other. Those are now merged into one single collider covering the exact same area. Nothing has to be changed in your scenes, but the amount of `CollisionPolygon2D` nodes under your collision objects will go down.
-
-### Added
-
-- A `collision_mode` property on `ScalableVectorShape2D`, which controls what the `CollisionPolygon2D` nodes of the assigned `collision_object` cover:
-  - `Merged` (default): the fill and the stroke as one single area
-  - `Fill Only` / `Stroke Only`: only one of both areas
-- `Geometry2DUtil.union_polygons`: merges a set of overlapping polygons into the smallest set of polygons covering the same area, slicing the result around any enclosed area, because a `CollisionPolygon2D` cannot represent a hole
-- New property `extrusion_direction` for strokes. If the outline of a shape is closed, the stroke can now also be draw inside and outside of the shape's outline.
-
-### Changed
-
-- The fill and the stroke of a shape now share one single collider, in stead of generating one collider each which overlap where the stroke covers the fill. Cutouts made with clip paths are preserved.
-- Various bugfixes when using Ctrl+Z for undo and Ctrl+Shift+Z for redo
+- Bugfix: BasicFit correctly identifies looped and unlooped shapes
 
 ## 2.28.2
 
@@ -51,6 +25,7 @@
 
 - Bugfix: setting `DynamicOutline2D.merge_shapes` now queues a redraw
 - Bugfix: pressing alt after undo subdivision now places the crosshair on the correct line
+
 
 ## 2.27.7
 

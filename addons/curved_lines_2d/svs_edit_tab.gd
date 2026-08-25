@@ -308,4 +308,3 @@ func _on_use_line_2d_check_button_toggled(toggled_on: bool) -> void:
 		%EndCapForm.show()
 	else:
 		%EndCapForm.hide()
-
