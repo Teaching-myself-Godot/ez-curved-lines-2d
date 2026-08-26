@@ -901,7 +901,8 @@ func process_svg_transform(svg_transform_attr : String) -> Transform2D:
 
 func _managed_add_child_and_set_owner(parent : Node, child : Node,
 		scene_root : Node, as_property := ""):
-	parent.add_child(child, true)
+	if not child.get_parent() == parent:
+		parent.add_child(child, true)
 	child.set_owner(scene_root)
 	undo_redo.add_do_method(parent, 'add_child', child, true)
 	undo_redo.add_do_method(child, 'set_owner', scene_root)
@@ -919,3 +920,48 @@ static func parse_attribute_string(raw_attribute_str : String) -> String:
 	for result  in regex.search_all(raw_attribute_str):
 		str_path += result.get_string() + " "
 	return str_path.strip_edges()
+
+
+class UndoRedoHandler:
+	func add_do_method(thing : Object, meth : String,
+				arg0 : Variant = null, arg1 : Variant = null, arg2 : Variant = null, arg3 : Variant = null) -> void:
+		if meth == "add_child" and thing == (arg0 as Node).get_parent():
+			return
+		if arg3 != null:
+			thing.callv(meth, [arg0, arg1, arg2, arg3])
+		elif arg2 != null:
+			thing.callv(meth, [arg0, arg1, arg2])
+		elif arg1 != null:
+			thing.callv(meth, [arg0, arg1])
+		elif arg0 != null:
+			thing.callv(meth, [arg0])
+		else:
+			thing.call(meth)
+
+
+	func add_undo_method(_thing : Object, _meth : String,
+				arg0 : Variant = null, arg1 : Variant = null, arg2 : Variant = null, arg3 : Variant = null) -> void:
+		pass
+
+
+	func add_do_property(thing : Object, prop_name : String, prop_value : Variant) -> void:
+		thing[prop_name] = prop_value
+
+
+	func add_undo_property(_thing : Object, _prop_name : String, _prop_value : Variant) -> void:
+		pass
+
+
+	func add_do_reference(_thing : Object) -> void:
+		pass
+
+
+	func create_action(action_name : String) -> void:
+		pass
+
+	func commit_action(_apply : bool) -> void:
+		pass
+
+
+static func get_runtime_handler() -> UndoRedoHandler:
+	return UndoRedoHandler.new()

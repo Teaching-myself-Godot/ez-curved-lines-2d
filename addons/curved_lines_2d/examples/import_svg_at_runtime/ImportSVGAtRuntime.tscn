@@ -1,3 +1,6 @@
 [gd_scene format=3 uid="uid://bohkt6co0fdt4"]
 
+[ext_resource type="Script" uid="uid://dbphcj3323xe4" path="res://addons/curved_lines_2d/examples/import_svg_at_runtime/import_svg_at_runtime.gd" id="1_lbjb3"]
+
 [node name="ImportSvgAtRuntime" type="Node2D" unique_id=1876251448]
+script = ExtResource("1_lbjb3")
