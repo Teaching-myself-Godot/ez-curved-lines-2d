@@ -5,6 +5,7 @@
 ### Added
 
 - Import SVG files as nodes at runtime
+- ScalableVectorShape2D now also handles `assigned_node_changed` signal at runtime
 
 ## 2.32.0 - Redemption
 
