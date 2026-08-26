@@ -482,6 +482,8 @@ func _enter_tree():
 			curve.changed.connect(curve_changed)
 		if not arc_list.changed.is_connected(curve_changed):
 			arc_list.changed.connect(curve_changed)
+		if not assigned_node_changed.is_connected(_on_assigned_node_changed):
+			assigned_node_changed.connect(_on_assigned_node_changed)
 		if not clip_paths_changed.is_connected(_on_clip_paths_changed):
 			clip_paths_changed.connect(_on_clip_paths_changed)
 			_on_clip_paths_changed()

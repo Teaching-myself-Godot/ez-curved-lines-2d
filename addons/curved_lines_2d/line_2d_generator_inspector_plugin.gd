@@ -423,7 +423,7 @@ static func _export_baked_scene(export_root_node : Node, filepath : String, dial
 	var new_node := Node2D.new()
 	EditorInterface.get_edited_scene_root().add_child(new_node)
 	new_node.owner = EditorInterface.get_edited_scene_root()
-	var result := _copy_baked_node(export_root_node, new_node, EditorInterface.get_edited_scene_root())
+	var result := SVSSceneExporter.copy_baked_node(export_root_node, new_node, EditorInterface.get_edited_scene_root())
 	result.transform = Transform2D.IDENTITY
 	for node in result.get_children():
 		_recursive_set_owner(node, result, EditorInterface.get_edited_scene_root())
@@ -432,29 +432,6 @@ static func _export_baked_scene(export_root_node : Node, filepath : String, dial
 	ResourceSaver.save(scene, filepath, ResourceSaver.FLAG_NONE)
 	new_node.queue_free()
 	EditorInterface.open_scene_from_path(filepath)
-
-
-static func _copy_baked_node(src_node : Node, dst_parent : Node, dst_owner : Node) -> Node:
-	if src_node is ScalableVectorShape2D and src_node.get_children().is_empty():
-		return null
-	var dst_node : Node = (
-		Node2D.new() if src_node is ScalableVectorShape2D else
-		ClassDB.instantiate(src_node.get_class())
-	)
-	dst_parent.add_child(dst_node)
-
-	for prop in src_node.get_property_list():
-		if prop.name == "owner":
-			continue
-		if src_node is ScalableVectorShape2D and prop.name == "script":
-			break
-		if prop.name in dst_node:
-			dst_node.set(prop.name, src_node.get(prop.name))
-
-	dst_node.owner = dst_owner
-	for ch in src_node.get_children().filter(func(ch): return ch != dst_parent):
-		_copy_baked_node(ch, dst_node, dst_owner)
-	return dst_node
 
 
 static func _recursive_set_owner(node : Node, new_owner : Node, root : Node):

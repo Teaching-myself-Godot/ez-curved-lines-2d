@@ -49,6 +49,7 @@ You can find the rest of the explainer videos on this playlist:
 	- [Using the Import SVG File Dock](#using-the-import-svg-file-dock)
 	- [`Line2D` Stroke versus `Polygon2D` Stroke](#line2d-stroke-versus-polygon2d-stroke)
 	- [The import log](#the-import-log)
+	- [Importing SVG as nodes at runtime via gdscript](#importing-svg-as-nodes-at-runtime-via-gdscript)
 - [The Project Settings Dock](#the-project-settings-dock)
 	- [Editor Settings (how the 2D Viewport should behave):](#editor-settings-how-the-2d-viewport-should-behave)
 	- [Curve Settings](#curve-settings)
@@ -147,6 +148,7 @@ You can find the rest of the explainer videos on this playlist:
 	- [Should I draw shapes programmatically?](#should-i-draw-shapes-programmatically)
 	- [When should I draw shapes programmatically?](#when-should-i-draw-shapes-programmatically)
 	- [Can I change shapes in the 2D editor while running the game?](#can-i-change-shapes-in-the-2d-editor-while-running-the-game)
+	- [Can I use the SVG Importer at runtime?](#can-i-use-the-svg-importer-at-runtime)
 - [Attributions](#attributions)
 	- [Lots of thanks go out to those who helped me out getting started:](#lots-of-thanks-go-out-to-those-who-helped-me-out-getting-started)
 	- [And a big thank you goes to to @MewPurPur](#and-a-big-thank-you-goes-to-to-mewpurpur)
@@ -243,6 +245,14 @@ A tooltip highlights the costs and benefits when picking either of these to draw
 On the right side is an import log, which will show warnings of known problems, usually unsupported stuff.
 
 The link it shows is to the issues list on the github repository hosting this plugin. Here you can report any encountered bugs while importing SVG files using this plugin.
+
+## Importing SVG as nodes at runtime via gdscript
+
+As of release 2.33 you can import SVG files as nodes in your gdscript runtime. 
+
+Please refer to the script in this example to accomplish that:
+
+[`res://addons/curved_lines_2d/examples/import_svg_at_runtime/`](./addons/curved_lines_2d/examples/import_svg_at_runtime/)
 
 # The Project Settings Dock
 
@@ -1068,6 +1078,12 @@ But I have not come around to documenting yet.
 When the `Update Curve At Runtime` checkbox is checked, the shape will also sync up with a scene running in debug mode.
 
 Once you're done drawing and do not need the shape to change anymore at runtime you can turn this checkbox off again.
+
+## Can I use the SVG Importer at runtime?
+
+As of release 2.33 you can. I created this example script to illustrate how. Please join the discord to spar / give feedback about it, because it's a little experimental as yet:
+
+[`res://addons/curved_lines_2d/examples/import_svg_at_runtime/`](./addons/curved_lines_2d/examples/import_svg_at_runtime/)
 
 # Attributions
 

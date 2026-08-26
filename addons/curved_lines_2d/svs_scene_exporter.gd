@@ -90,3 +90,26 @@ static func export_sprite_frames(root_node : Node,
 				im.set_pixel(floori(boxes[idx]["tl"].x) - min_x + x, floori(boxes[idx]["tl"].y) - min_y + y, images[idx].get_pixel(x, y))
 		return_list.append(im)
 	return return_list
+
+
+static func copy_baked_node(src_node : Node, dst_parent : Node, dst_owner : Node) -> Node:
+	if src_node is ScalableVectorShape2D and src_node.get_children().is_empty():
+		return null
+	var dst_node : Node = (
+		Node2D.new() if src_node is ScalableVectorShape2D else
+		ClassDB.instantiate(src_node.get_class())
+	)
+	dst_parent.add_child(dst_node)
+
+	for prop in src_node.get_property_list():
+		if prop.name == "owner":
+			continue
+		if src_node is ScalableVectorShape2D and prop.name == "script":
+			break
+		if prop.name in dst_node:
+			dst_node.set(prop.name, src_node.get(prop.name))
+
+	dst_node.owner = dst_owner
+	for ch in src_node.get_children().filter(func(ch): return ch != dst_parent):
+		copy_baked_node(ch, dst_node, dst_owner)
+	return dst_node
