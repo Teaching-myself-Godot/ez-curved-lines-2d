@@ -230,7 +230,6 @@ func _enter_tree():
 	svs_edit_buttons.flip_horizontal.connect(_flip_svs_horizontal)
 	svs_edit_buttons.flip_vertical.connect(_flip_svs_vertical)
 	svs_edit_buttons.convert_to_svs.connect(_extract_svs_from_selected_node)
-	_scan_synced_svg_nodes()
 
 
 func select_node_reversibly(target_node : Node) -> void:
@@ -554,7 +553,6 @@ func _on_scene_changed(scn : Node):
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(anim_pl)
 	else:
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(null)
-	_scan_synced_svg_nodes()
 
 
 func _handles(object: Object) -> bool:
@@ -2985,18 +2983,10 @@ func _on_resources_reloaded(resources : PackedStringArray) -> void:
 				_reimport_synchronized_svg_file(svg_root, checksum)
 
 
-func _scan_synced_svg_nodes() -> void:
-	var root := EditorInterface.get_edited_scene_root()
-	if not is_instance_valid(root):
-		return
-	print("scanning synced nodes")
-	for svg_root : SyncedSVGRoot in root.find_children("*", "SyncedSVGRoot"):
-		var checksum := FileAccess.get_md5(svg_root.svg_resource_path)
-		if checksum != svg_root.checksum:
-			_reimport_synchronized_svg_file(svg_root, checksum)
-
-
 func _reimport_synchronized_svg_file(svg_root : SyncedSVGRoot, new_checksum : String) -> void:
+	var scene_root := EditorInterface.get_edited_scene_root()
+	if not is_instance_valid(scene_root):
+		return
 	undo_redo.create_action("Resynchronize SVG")
 	undo_redo.add_do_property(svg_root, "checksum", new_checksum)
 	undo_redo.add_undo_property(svg_root, "checksum", svg_root.checksum)
@@ -3004,8 +2994,8 @@ func _reimport_synchronized_svg_file(svg_root : SyncedSVGRoot, new_checksum : St
 	undo_redo.add_undo_method(svg_root, "add_child", svg_root.get_child(0))
 	undo_redo.commit_action()
 	var svg_importer := SVGImporter.instantiate_from_synced_svg_root(svg_root, undo_redo, print)
-	svg_importer.load_svg(svg_root.svg_resource_path,
-			EditorInterface.get_edited_scene_root(), [svg_root])
+	await svg_importer.load_svg(svg_root.svg_resource_path,
+			scene_root, [svg_root])
 
 
 
