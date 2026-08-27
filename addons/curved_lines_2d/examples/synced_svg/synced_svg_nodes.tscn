@@ -5,12 +5,23 @@
 [ext_resource type="Script" uid="uid://dlbv4pit17dnu" path="res://addons/curved_lines_2d/scalable_arc.gd" id="3_mdivg"]
 [ext_resource type="Script" uid="uid://dl1t88tthmwts" path="res://addons/curved_lines_2d/scalable_arc_list.gd" id="4_ofnf7"]
 
-[sub_resource type="Curve2D" id="Curve2D_f6t0c"]
+[sub_resource type="Curve2D" id="Curve2D_mdivg"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector2Array(0, 0, 10.155894, -15.04, -16.698189, -9.942505, -14.603218, -30.76648, 0, 0, 18.150223, -9.942505, 0, 0, -15.94616, 17.4695, 20.570251, 16.662354, 12.006233, 15.074219, 0, 0, -20.570244, 13.745483, 0, 0, 0, 0, -16.698189, -9.942505)
 }
 point_count = 5
+
+[sub_resource type="Resource" id="Resource_ofnf7"]
+resource_local_to_scene = true
+script = ExtResource("4_ofnf7")
+
+[sub_resource type="Curve2D" id="Curve2D_f6t0c"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -17.711607, 28.02769, -49.17083, -270.75854, -5.981262, -38.29254, -7.9e-05, 0.008, -57.118088, -170.68628, 9.918213e-05, -0.011291504, 12.698622, 74.81011, -57.120087, -170.65607, -1.6683044, -71.41626, -18.439894, 44.0678, -47.450172, 45.027588, 0.7350006, -69.09387, 10.813589, 1.8267, -64.319305, 269.1272, -11.274628, 4.166748, 9.70075, -32.456, -28.782196, 268.8634, -4.5096436, 33.498657, 0.15194, -1.1879, 17.059586, 49.687622, -0.04347229, 1.116272, 5.40586, -38.90392, 17.350616, 46.23065, 1.6036072, 32.84027, -0.0227, -0.6805, 58.639694, -170.6366, 0.045333862, 0.7050171, 0.67771, -32.18079, 58.50476, -172.74988, 2.9322357, 32.498596, -3.96522, 0.18822, 63.817, -271.25964, 5.2273026, -0.32977295, 0, 0, -49.170868, -270.7583)
+}
+point_count = 12
 
 [sub_resource type="Resource" id="Resource_2bdvs"]
 resource_local_to_scene = true
@@ -19,9 +30,9 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_lm661"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, -17.711607, 28.02769, -49.17083, -270.75854, -5.981262, -38.29254, -7.9e-05, 0.008, -57.118088, -170.68628, 9.918213e-05, -0.011291504, 12.698622, 74.81011, -57.120087, -170.65607, -1.6683044, -71.41626, -18.439894, 44.0678, -47.450172, 45.027588, 0.7350006, -69.09387, 10.813589, 1.8267, -64.319305, 269.1272, -11.274628, 4.166748, 9.70075, -32.456, -28.782196, 268.8634, -4.5096436, 33.498657, 0.15194, -1.1879, 17.059586, 49.687622, -0.04347229, 1.116272, 5.40586, -38.90392, 17.350616, 46.23065, 1.6036072, 32.84027, -0.0227, -0.6805, 58.639694, -170.6366, 0.045333862, 0.7050171, 0.67771, -32.18079, 58.50476, -172.74988, 2.9322357, 32.498596, -3.96522, 0.18822, 63.817, -271.25964, 5.2273026, -0.32977295, 0, 0, -49.170868, -270.7583)
+"points": PackedVector2Array(0, 0, 9.32012, -2.90418, -19.13121, -189.88199, -10.259186, -11.117401, 46.85272, 70.92759, 47.321045, -167.52423, -1.4304047, -52.598022, 0, 0, 53.54071, 190.23163, 0, 0, 11.372108, -185.61081, -53.937973, 189.78589, -92.64226, 77.48721, 0, 0, -19.13121, -189.88046, 0, 0, 0, 0, -19.13121, -189.88199)
 }
-point_count = 12
+point_count = 6
 
 [sub_resource type="Resource" id="Resource_albfb"]
 resource_local_to_scene = true
@@ -30,9 +41,9 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_th8pr"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, 9.32012, -2.90418, -19.13121, -189.88199, -10.259186, -11.117401, 46.85272, 70.92759, 47.321045, -167.52423, -1.4304047, -52.598022, 0, 0, 53.54071, 190.23163, 0, 0, 11.372108, -185.61081, -53.937973, 189.78589, -92.64226, 77.48721, 0, 0, -19.13121, -189.88046, 0, 0, 0, 0, -19.13121, -189.88199)
+"points": PackedVector2Array(0, 0, 0, 0, -52.132286, -11.443176, 0, 0, 0, 0, 57.960068, -10.057434, 0, 0, 0, 0, 58.764008, 11.391296, 0, 0, 0, 0, -58.764015, 11.443115, 0, 0, 0, 0, -52.132286, -11.443176)
 }
-point_count = 6
+point_count = 5
 
 [sub_resource type="Resource" id="Resource_n3k0v"]
 resource_local_to_scene = true
@@ -41,9 +52,9 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_ky1ye"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, -52.132286, -11.443176, 0, 0, 0, 0, 57.960068, -10.057434, 0, 0, 0, 0, 58.764008, 11.391296, 0, 0, 0, 0, -58.764015, 11.443115, 0, 0, 0, 0, -52.132286, -11.443176)
+"points": PackedVector2Array(0, 0, 0.562239, 3.68563, -12.891205, -39.77452, -0.9672928, -4.490494, 0.05463, 0.36407, -9.981819, -23.670593, -0.088760376, -0.33572388, 1.65127, 10.65875, -9.764778, -22.62207, -1.4893875, -7.7048187, 0.07916, 0.697, -4.080887, 21.705978, -0.35581207, -1.8762817, 0.01177, 1.46812, -4.009575, 29.574738, -1.7700653, 0.005203247, 1.630285, -0.005, -0.69298553, 37.781998, -0.31311035, 1.3820953, 0.202399, 1.67342, -0.88752747, 29.377396, -1.70327, -0.011260986, 2.31177, -0.0792, 3.2349472, 39.329697, 0.2768097, 2.053238, 0.938883, 1.57814, 2.0581818, 29.328125, -2.2906723, 0.52423096, 3.009161, -0.68863, 8.112556, 39.75383, 1.2109833, 2.703415, 1.535386, 2.09591, 4.91658, 28.103912, -1.9641724, 0.83984375, 2.58433, -1.10501, 12.126427, 36.534164, 2.4921417, 2.537796, 1.650125, 0.40988, 6.6831207, 26.155563, -1.5840607, 2.2273712, -0.87028, -2.77974, 12.891205, 29.36589, 1.109108, 0.94148254, -1.131909, -0.96084, 9.072342, 22.277405, 1.6357498, 0.48597717, -0.482855, -4.76482, 5.0751495, 19.947342, 0.115852356, -0.4540863, 0.04628, -0.38678, 3.6987457, -23.253586, 0.00049591064, 0.012496948, 0.456494, -3.27097, 3.7424164, -24.132187, 0, 3.4394226, 0, 0, 6.5122757, -39.773575, 0, 0, 0, 0, -12.891205, -39.77452)
 }
-point_count = 5
+point_count = 20
 
 [sub_resource type="Resource" id="Resource_vcjgj"]
 resource_local_to_scene = true
@@ -52,9 +63,9 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_112r4"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, 0.562239, 3.68563, -12.891205, -39.77452, -0.9672928, -4.490494, 0.05463, 0.36407, -9.981819, -23.670593, -0.088760376, -0.33572388, 1.65127, 10.65875, -9.764778, -22.62207, -1.4893875, -7.7048187, 0.07916, 0.697, -4.080887, 21.705978, -0.35581207, -1.8762817, 0.01177, 1.46812, -4.009575, 29.574738, -1.7700653, 0.005203247, 1.630285, -0.005, -0.69298553, 37.781998, -0.31311035, 1.3820953, 0.202399, 1.67342, -0.88752747, 29.377396, -1.70327, -0.011260986, 2.31177, -0.0792, 3.2349472, 39.329697, 0.2768097, 2.053238, 0.938883, 1.57814, 2.0581818, 29.328125, -2.2906723, 0.52423096, 3.009161, -0.68863, 8.112556, 39.75383, 1.2109833, 2.703415, 1.535386, 2.09591, 4.91658, 28.103912, -1.9641724, 0.83984375, 2.58433, -1.10501, 12.126427, 36.534164, 2.4921417, 2.537796, 1.650125, 0.40988, 6.6831207, 26.155563, -1.5840607, 2.2273712, -0.87028, -2.77974, 12.891205, 29.36589, 1.109108, 0.94148254, -1.131909, -0.96084, 9.072342, 22.277405, 1.6357498, 0.48597717, -0.482855, -4.76482, 5.0751495, 19.947342, 0.115852356, -0.4540863, 0.04628, -0.38678, 3.6987457, -23.253586, 0.00049591064, 0.012496948, 0.456494, -3.27097, 3.7424164, -24.132187, 0, 3.4394226, 0, 0, 6.5122757, -39.773575, 0, 0, 0, 0, -12.891205, -39.77452)
+"points": PackedVector2Array(0, 0, 1.09097, 13.74626, 11.28289, -10.936844, 1.0711365, -10.706329, 0, 0, 10.181351, 21.977951, 0, 0, -0.86847, -7.19097, -9.216957, 21.980957, -1.5507736, 13.026047, 0.34494, -5.19969, -11.05352, -10.989075, -6.8803253, -0.07774353, 7.37761, 0.0834, 0.20828247, -21.980942, -0.4069214, -5.1271515, 0, 0, 11.28289, -10.936844)
 }
-point_count = 20
+point_count = 6
 
 [sub_resource type="Resource" id="Resource_sfnl8"]
 resource_local_to_scene = true
@@ -63,62 +74,62 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_8xfx2"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, 1.09097, 13.74626, 11.28289, -10.936844, 1.0711365, -10.706329, 0, 0, 10.181351, 21.977951, 0, 0, -0.86847, -7.19097, -9.216957, 21.980957, -1.5507736, 13.026047, 0.34494, -5.19969, -11.05352, -10.989075, -6.8803253, -0.07774353, 7.37761, 0.0834, 0.20828247, -21.980942, -0.4069214, -5.1271515, 0, 0, 11.28289, -10.936844)
+"points": PackedVector2Array(0, 0, -5.2624, -0.3095, 0.6260681, 5.2052, 6.57753, -0.21920776, -1.69519, -0.38649, -17.273605, 5.42041, -1.4334106, 1.3399658, 0.19352, 3.22903, -17.098541, -5.895935, -1.0698242, 3.1071167, 5.40838, 1.82263, -5.288681, -5.5295715, -4.118744, -2.1655579, 7.09424, 0.19529, 7.7266846, -0.7409973, -0.46471405, -5.308899, -0.42396, 4.1396, 18.359306, 3.481964, 0, 0, 0, 0, 0.62607574, 5.205261)
 }
-point_count = 6
+point_count = 7
 
 [sub_resource type="Resource" id="Resource_2c82c"]
 resource_local_to_scene = true
 script = ExtResource("4_ofnf7")
 
-[sub_resource type="Curve2D" id="Curve2D_1rdld"]
-resource_local_to_scene = true
-_data = {
-"points": PackedVector2Array(0, 0, -5.2624, -0.3095, 0.6260681, 5.2052, 6.57753, -0.21920776, -1.69519, -0.38649, -17.273605, 5.42041, -1.4334106, 1.3399658, 0.19352, 3.22903, -17.098541, -5.895935, -1.0698242, 3.1071167, 5.40838, 1.82263, -5.288681, -5.5295715, -4.118744, -2.1655579, 7.09424, 0.19529, 7.7266846, -0.7409973, -0.46471405, -5.308899, -0.42396, 4.1396, 18.359306, 3.481964, 0, 0, 0, 0, 0.62607574, 5.205261)
-}
-point_count = 7
-
-[sub_resource type="Resource" id="Resource_cqnfd"]
-resource_local_to_scene = true
-script = ExtResource("4_ofnf7")
-
-[sub_resource type="Gradient" id="Gradient_0f4lu"]
+[sub_resource type="Gradient" id="Gradient_1rdld"]
 colors = PackedColorArray(0.40784314, 0.17254902, 0, 1, 0.36862746, 0.16078432, 0, 1)
 
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_x1qkb"]
-gradient = SubResource("Gradient_0f4lu")
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_cqnfd"]
+gradient = SubResource("Gradient_1rdld")
 width = 36
 height = 11
 fill_from = Vector2(0.43634626, 0.5298384)
 fill_to = Vector2(0.55145586, 0.28582853)
 
-[sub_resource type="Curve2D" id="Curve2D_anf4w"]
+[sub_resource type="Curve2D" id="Curve2D_0f4lu"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector2Array(0, 0, -4.18288, 0.0467, 2.1504288, 1.7395935, 0.5365219, -1.2662964, 0.14303, -1.22471, -6.429817, 1.3938293, -0.44070435, 0.31262207, 0.32055, -0.28212, -5.6080246, -1.5314636, -0.11516571, -0.2194519, -0.021, 0.30178, -4.677147, -1.5715637, -0.26985168, -0.14425659, 1.27997, 0.22853, -3.6399155, -0.28430176, -1.9377594, 2.893341, 0, 0, 6.429825, -1.3760986, 3.78685, -0.1322937, 0, 0, 2.1504288, 1.7395935)
 }
 point_count = 7
 
-[sub_resource type="Resource" id="Resource_36y8b"]
+[sub_resource type="Resource" id="Resource_x1qkb"]
 resource_local_to_scene = true
 script = ExtResource("4_ofnf7")
 
-[sub_resource type="Gradient" id="Gradient_e4pgg"]
+[sub_resource type="Gradient" id="Gradient_anf4w"]
 colors = PackedColorArray(0.3372549, 0.14117648, 0, 1, 0.30588236, 0.12941177, 0, 1)
 
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_ylcqf"]
-gradient = SubResource("Gradient_e4pgg")
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_36y8b"]
+gradient = SubResource("Gradient_anf4w")
 width = 12
 height = 3
 fill_from = Vector2(-0.008678699, 0.47334805)
 fill_to = Vector2(0.025600342, 0.5741724)
 
-[sub_resource type="Curve2D" id="Curve2D_aa2cu"]
+[sub_resource type="Curve2D" id="Curve2D_e4pgg"]
 resource_local_to_scene = true
 _data = {
 "points": PackedVector2Array(0, 0, 12.53709, 0.0638, -18.042923, -0.81866455, -11.189423, 1.5578308, 0, 0, 18.681244, -2.175232, 0, 0, -6.01458, 1.52434, 18.320457, 0.5152283, 6.8361435, -0.17803955, 0, 0, -1.6279678, 1.9670105, 0, 0, 0, 0, -2.1320877, 1.2011719, 0, 0, 0, 0, -8.317101, 1.2335815, 0, 0, 0, 0, -8.3461, 2.1752014, 0, 0, 0.16602, -0.99495, -18.681252, 2.1661987, -0.45076752, 0.9949341, 0, 0, -18.042923, -0.81863403)
 }
 point_count = 9
+
+[sub_resource type="Resource" id="Resource_ylcqf"]
+resource_local_to_scene = true
+script = ExtResource("4_ofnf7")
+
+[sub_resource type="Curve2D" id="Curve2D_aa2cu"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0.694191, -1.9455261, 0, 0, 0, 0, 1.6536255, -1.2369995, 0, 0, -0.586974, 0.0359, -0.694191, 1.9423218, -0.0070724487, 0.5690918, 0, 0, -1.6536255, 1.2338257, 0, 0, 0, 0, 0.694191, -1.9455261)
+}
+point_count = 5
 
 [sub_resource type="Resource" id="Resource_3d1co"]
 resource_local_to_scene = true
@@ -127,7 +138,7 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_by1m0"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 0.694191, -1.9455261, 0, 0, 0, 0, 1.6536255, -1.2369995, 0, 0, -0.586974, 0.0359, -0.694191, 1.9423218, -0.0070724487, 0.5690918, 0, 0, -1.6536255, 1.2338257, 0, 0, 0, 0, 0.694191, -1.9455261)
+"points": PackedVector2Array(0, 0, 0, 0, 0.42546844, -1.7103271, 0, 0, 0, 0, 1.3849106, -1.001831, 0, 0, -0.48425, -0.0234, -0.42546844, 1.7103271, 0.110565186, 0.506958, 0, 0, -1.3849106, 1.001831, 0, 0, 0, 0, 0.42546844, -1.7103271)
 }
 point_count = 5
 
@@ -138,7 +149,7 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_ay8r1"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 0.42546844, -1.7103271, 0, 0, 0, 0, 1.3849106, -1.001831, 0, 0, -0.48425, -0.0234, -0.42546844, 1.7103271, 0.110565186, 0.506958, 0, 0, -1.3849106, 1.001831, 0, 0, 0, 0, 0.42546844, -1.7103271)
+"points": PackedVector2Array(0, 0, 0, 0, 0.5825577, -1.8426514, 0, 0, 0, 0, 1.5419846, -1.1341248, 0, 0, -0.44742, 0.0153, -0.5825424, 1.8426514, 0.0801239, 0.7084961, 0, 0, -1.5419846, 1.1341553, 0, 0, 0, 0, 0.5825577, -1.8426514)
 }
 point_count = 5
 
@@ -149,7 +160,7 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_asb0w"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 0.5825577, -1.8426514, 0, 0, 0, 0, 1.5419846, -1.1341248, 0, 0, -0.44742, 0.0153, -0.5825424, 1.8426514, 0.0801239, 0.7084961, 0, 0, -1.5419846, 1.1341553, 0, 0, 0, 0, 0.5825577, -1.8426514)
+"points": PackedVector2Array(0, 0, 0, 0, -11.866699, -67.268875, 0, 0, 2.40763, 23.48233, 31.171005, -16.718628, 3.457016, -20.131042, -23.7995, 6.69993, 32.914124, 66.469086, 21.574608, 13.567963, 4.9502, -45.01029, -34.43876, 23.099884, -3.1169586, 19.26056, 0, 0, -11.8667145, -67.268875)
 }
 point_count = 5
 
@@ -160,41 +171,41 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_x2pvf"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, -11.866699, -67.268875, 0, 0, 2.40763, 23.48233, 31.171005, -16.718628, 3.457016, -20.131042, -23.7995, 6.69993, 32.914124, 66.469086, 21.574608, 13.567963, 4.9502, -45.01029, -34.43876, 23.099884, -3.1169586, 19.26056, 0, 0, -11.8667145, -67.268875)
+"points": PackedVector2Array(0, 0, -3.34013, 5.5334, 73.76068, 52.68483, 8.748993, -0.058502197, -10.81625, 19.93927, 48.02426, 57.419357, 14.78241, -10.4410095, -16.92993, 0.83937, 30.376892, 117.76341, 20.993423, 38.63141, -16.04666, -29.52855, -67.15857, 64.89336, -19.400879, 18.876541, 25.22542, -24.543646, -55.162155, -92.34108, -25.960663, -5.7424774, 79.70948, 17.63165, 22.692627, -115.50941, -5.8187866, -8.847565, 10.45142, 15.8915, 63.838776, 3.3750763, 4.3851013, -7.264572, 0, 0, 73.76065, 52.6848)
 }
-point_count = 5
+point_count = 8
 
 [sub_resource type="Resource" id="Resource_iwf54"]
 resource_local_to_scene = true
 script = ExtResource("4_ofnf7")
 
-[sub_resource type="Curve2D" id="Curve2D_gtnpw"]
-resource_local_to_scene = true
-_data = {
-"points": PackedVector2Array(0, 0, -2.01657, 6.14072, 81.66696, 38.70735, 8.513855, -2.0157013, -6.07783, 21.85465, 57.643707, 49.083435, 12.069717, -13.485382, -16.3123, 4.60823, 53.95372, 111.84662, 29.10913, 32.95096, -22.25004, -25.18663, -52.94232, 82.154175, -14.68248, 22.740784, 19.09047, -29.568003, -76.4511, -73.77504, -26.587357, 0.21520996, 81.63357, -0.660756, -5.759186, -113.78499, -7.6518555, -7.3203125, 13.74384, 13.14835, 60.957764, -7.1295776, 2.647461, -8.061905, 0, 0, 81.66696, 38.707336)
-}
-point_count = 8
-
-[sub_resource type="Resource" id="Resource_ai2k3"]
-resource_local_to_scene = true
-script = ExtResource("4_ofnf7")
-
-[sub_resource type="Gradient" id="Gradient_bjlab"]
+[sub_resource type="Gradient" id="Gradient_gtnpw"]
 colors = PackedColorArray(0.9607843, 0.61960787, 0.64705884, 1, 0.81960785, 0.48235294, 0.49411765, 1)
 
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_nkax8"]
-gradient = SubResource("Gradient_bjlab")
-width = 164
-height = 227
-fill_from = Vector2(0.6514882, 0.5263585)
-fill_to = Vector2(0.98809844, 0.98775494)
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ai2k3"]
+gradient = SubResource("Gradient_gtnpw")
+width = 151
+height = 235
+fill_from = Vector2(0.67034715, 0.5343561)
+fill_to = Vector2(0.871342, 1.0213871)
+
+[sub_resource type="Curve2D" id="Curve2D_bjlab"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -0.0665, -2.41535, 22.059448, -0.25701904, 7.1469116, -0.19714355, -7.1469, 0.19712, 8.998108, -4.2734222, -0.06661987, -2.415329, 5.21506, -0.83289, -22.059448, 4.2734222, -1.5227661, 4.01326, 0, 0, 22.059448, -0.25700378)
+}
+point_count = 4
+
+[sub_resource type="Resource" id="Resource_nkax8"]
+resource_local_to_scene = true
+script = ExtResource("4_ofnf7")
 
 [sub_resource type="Curve2D" id="Curve2D_7eaox"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, -0.60552, -2.33916, 20.998383, -6.1055756, 6.9213867, -1.7921295, -6.92137, 1.79213, 7.3694, -7.095955, -0.6056671, -2.339096, 4.89623, -1.97927, -20.986435, 8.186935, -0.5856476, 4.252304, 0, 0, 20.998383, -6.1055756)
+"points": PackedVector2Array(0, 0, -1.73074, 7.53467, 12.325897, 0.9107666, 2.3735352, 0.7160492, -4.23234, -1.27679, 4.2877502, 13.619354, -1.1908875, 3.5665894, 2.097, -6.28041, -13.183289, -5.9411926, -2.3620605, -1.8045502, 1.97007, 1.50508, 11.202362, -13.132767, 1.7307739, -7.534668, 0, 0, 12.325897, 0.9107666)
 }
-point_count = 4
+point_count = 5
 
 [sub_resource type="Resource" id="Resource_shs1u"]
 resource_local_to_scene = true
@@ -203,7 +214,7 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_rtcp5"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, 0, 7.73089, 13.199921, -0.30889893, 2.4736176, 0.1665039, -4.41075, -0.29688, 8.210907, 13.876648, -0.36218262, 3.7426605, 0.63776, -6.59046, -13.1957855, -1.2761078, -2.7061005, -1.22995, 2.25702, 1.02583, 8.960907, -13.744446, 0, -7.730896, 0, 0, 13.199921, -0.30889893)
+"points": PackedVector2Array(0, 0, 0, 7.509004, 4.360059, 0, 2.4080606, 0, -2.4080606, 0, 0, 13.59588, 0, 7.509004, 0, -7.509004, -4.360059, 0, -2.4080606, 0, 2.4080606, 0, 0, -13.59588, 0, -7.509004, 0, 0, 4.360059, 0)
 }
 point_count = 5
 
@@ -214,7 +225,7 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_psswf"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, 0, 7.509004, 4.360059, 0, 2.4080606, 0, -2.4080606, 0, 0, 13.59588, 0, 7.509004, 0, -7.509004, -4.360059, 0, -2.4080606, 0, 2.4080606, 0, 0, -13.59588, 0, -7.509004, 0, 0, 4.360059, 0)
+"points": PackedVector2Array(0, 0, 0, 7.078448, 4.1100583, 0, 2.2699852, 0, -2.2699852, 0, 0, 12.81631, 0, 7.078448, 0, -7.078448, -4.1100583, 0, -2.2699852, 0, 2.2699852, 0, 0, -12.81631, 0, -7.078448, 0, 0, 4.1100583, 0)
 }
 point_count = 5
 
@@ -225,7 +236,7 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_or4b0"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, 0, 7.078448, 4.1100583, 0, 2.2699852, 0, -2.2699852, 0, 0, 12.81631, 0, 7.078448, 0, -7.078448, -4.1100583, 0, -2.2699852, 0, 2.2699852, 0, 0, -12.81631, 0, -7.078448, 0, 0, 4.1100583, 0)
+"points": PackedVector2Array(0, 0, -0.75179, 3.92624, 1.9822693, -0.044418335, 0.64801025, -1.4381866, -1.24939, -0.28702, -0.3859558, 7.2010345, -0.8949585, 3.8960571, 0.89494, -3.89605, -2.5422974, -1.0837402, -1.2494507, -0.2869873, -0.0594, 1.64141, 2.7586365, -7.179413, 0.6816406, -3.5596619, 0, 0, 1.9822998, -0.044418335)
 }
 point_count = 5
 
@@ -236,7 +247,7 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_q208p"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, 0.14627, 3.99489, 2.3212128, -0.23200989, 0.30963135, -1.5467529, -1.28194, -3e-05, 1.6351471, 7.359726, 0, 3.9975128, 0, -3.99752, -2.321228, -0.23200989, -1.2819672, 1.5258789e-05, 0.30955, 1.61305, 1.480484, -7.3597107, -0.13256836, -3.6219177, 0, 0, 2.3211975, -0.23200989)
+"points": PackedVector2Array(0, 0, 0, 1.220081, 2.8110614, 0, 1.5525492, 0, -1.5525492, 0, 0, 2.209091, 0, 1.220081, 0, -1.220081, -2.8110614, 0, -1.5525492, 0, 1.5525492, 0, 0, -2.209091, 0, -1.220081, 0, 0, 2.8110614, 0)
 }
 point_count = 5
 
@@ -247,9 +258,9 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_ioorw"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, 0, 1.220081, 2.8110614, 0, 1.5525492, 0, -1.5525492, 0, 0, 2.209091, 0, 1.220081, 0, -1.220081, -2.8110614, 0, -1.5525492, 0, 1.5525492, 0, 0, -2.209091, 0, -1.220081, 0, 0, 2.8110614, 0)
+"points": PackedVector2Array(0, 0, 3.35042, 12.11338, 70.32428, -13.174149, 2.2832642, -4.4658813, -11.42177, -6.71589, 71.05701, 6.7513275, 33.54294, 7.704956, -26.85807, 25.82141, -4.277954, -16.514091, 48.756058, 45.197296, -4.02107, 1.30694, -74.97421, 59.34375, 4.5747375, 9.225586, -10.06855, -20.30471, -90.09317, 14.463287, -70.221466, -23.503326, 130.3837, 15.26483, 0.968277, -67.270546, 18.502167, -17.992554, 0, 0, 70.32425, -13.174149)
 }
-point_count = 5
+point_count = 7
 
 [sub_resource type="Resource" id="Resource_2b32l"]
 resource_local_to_scene = true
@@ -258,9 +269,9 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_ofssh"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, 5.97725, 11.055843, 69.97815, -34.852165, 1.2255096, -4.863693, -12.63538, -3.98839, 75.153076, -15.596474, 34.41649, 1.5258789e-05, -20.39562, 31.17884, -3.4782562, -21.405846, 57.637024, 33.134888, -3.62642, 2.17398, -55.397507, 68.353645, 6.5239944, 7.9672546, -14.358688, -17.535263, -80.18029, 27.997078, -73.70089, -7.1860085, 130.4917, -14.312141, -9.728241, -72.04849, 14.004471, -21.678032, 0, 0, 69.97815, -34.852165)
+"points": PackedVector2Array(0, 0, 0.21821, 10.69267, 20.416443, 8.162811, 15.651382, 1.1353455, -15.65135, -1.13534, 9.059647, 29.904495, 3.1454315, 12.950073, -8.38857, -34.53675, -18.69069, 4.2017975, -24.244614, -25.28218, 8.63776, 9.00745, 12.055832, -16.205048, -0.26719666, -13.092407, 0, 0, 20.416443, 8.162796)
 }
-point_count = 7
+point_count = 5
 
 [sub_resource type="Resource" id="Resource_njdgp"]
 resource_local_to_scene = true
@@ -269,9 +280,9 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_330fq"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, 2.60648, 10.37242, 21.183228, 3.241562, 15.508301, -2.3974304, -15.50827, 2.3974, 14.982086, 26.973907, 5.9647675, 11.917191, -15.907541, -31.78216, -17.818054, 8.136169, -29.28926, -19.212753, 10.43505, 6.84505, 7.5794983, -18.636047, -3.1914673, -12.700287, 0, 0, 21.183228, 3.2415771)
+"points": PackedVector2Array(0, 0, -3.12682, -4.39065, -11.9077, 12.830582, -12.291885, -0.25073242, 12.47457, 0.25442, -5.835205, -12.830612, 1.2568207, -2.8062592, -8.65824, -16.30183, 14.591782, 4.090927, -5.342407, -28.691544, 0, 0, -11.907593, 12.830612)
 }
-point_count = 5
+point_count = 4
 
 [sub_resource type="Resource" id="Resource_75rtt"]
 resource_local_to_scene = true
@@ -280,7 +291,7 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_gfri3"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, -4.03041, -3.57919, -8.828041, 13.355759, -12.036018, 2.5074768, 12.2149, -2.54477, -8.654564, -13.01358, 0.5966644, -3.0164032, -12.08803, -13.94971, 15.042252, -1.0946045, -11.630096, -26.767258, 0, 0, -8.827927, 13.355759)
+"points": PackedVector2Array(0, 0, -17.6594, -4.7459, 13.783539, 10.554871, -0.54022217, 2.4053955, 6.93702, 1.64815, -15.519241, -10.554871, -6.9354553, -0.10821533, 0, 0, 15.535278, -2.6723022, 0, 0, 0, 0, 13.783539, 10.554871)
 }
 point_count = 4
 
@@ -291,22 +302,11 @@ script = ExtResource("4_ofnf7")
 [sub_resource type="Curve2D" id="Curve2D_28fcn"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, -18.27366, -0.67196, 16.642471, 7.006897, 0.011993408, 2.4653015, 7.12992, 0.0533, -16.642471, -7.006897, -6.783661, 1.4471893, 0, 0, 15.388535, -6.276703, 0, 0, 0, 0, 16.642471, 7.006897)
+"points": PackedVector2Array(0, 0, -7.1481, -0.15057, 12.079163, 6.4296265, -0.050872803, 2.4157104, 5.56893, 2.10919, -13.274857, -6.4296875, -9.213745, -0.78530884, -0.0748, 2.11403, 13.274841, 0.11911011, 0.63082886, -1.497467, 0, 0, 12.079285, 6.429657)
 }
 point_count = 4
 
 [sub_resource type="Resource" id="Resource_h3ipv"]
-resource_local_to_scene = true
-script = ExtResource("4_ofnf7")
-
-[sub_resource type="Curve2D" id="Curve2D_oyu8b"]
-resource_local_to_scene = true
-_data = {
-"points": PackedVector2Array(0, 0, -7.00037, 1.45353, 13.726822, 3.3185425, 0.49124146, 2.365799, 5.89977, 0.80892, -13.862534, -3.5382843, -9.155701, 1.2973328, 0.40041, 2.07711, 13.479401, -3.0994873, 0.27957153, -1.6006775, 0, 0, 13.726959, 3.3185425)
-}
-point_count = 4
-
-[sub_resource type="Resource" id="Resource_ds4wg"]
 resource_local_to_scene = true
 script = ExtResource("4_ofnf7")
 
@@ -800,21 +800,21 @@ script = ExtResource("4_ofnf7")
 [node name="SyncedSVGRoot" type="Node2D" parent="." unique_id=1700015384]
 script = ExtResource("1_4d5vq")
 svg_resource_path = "res://addons/curved_lines_2d/examples/synced_svg/jaques.svg"
-checksum = "fb8766f75ef92ae929494dd7f372fc69"
+checksum = "8e6a13bee4c6504bc0d06a22b527c995"
 metadata/_custom_type_script = "uid://c3p3fhbo34ahd"
 
-[node name="Jaques" type="Node2D" parent="SyncedSVGRoot" unique_id=79947895]
+[node name="Jaques" type="Node2D" parent="SyncedSVGRoot" unique_id=1032456433]
 metadata/svg_root = true
 
-[node name="defs1" type="Node2D" parent="SyncedSVGRoot/Jaques" unique_id=1889428720]
+[node name="defs1" type="Node2D" parent="SyncedSVGRoot/Jaques" unique_id=1302318040]
 visible = false
 metadata/svg_style = {}
 
-[node name="Jacques" type="Node2D" parent="SyncedSVGRoot/Jaques" unique_id=1501429207]
+[node name="Jacques" type="Node2D" parent="SyncedSVGRoot/Jaques" unique_id=1976848679]
 position = Vector2(-78.064674, -52.81407)
 metadata/svg_style = {}
 
-[node name="Sock" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1184636733 node_paths=PackedStringArray("polygon", "line")]
+[node name="Sock" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=927395887 node_paths=PackedStringArray("polygon", "line")]
 position = Vector2(107.740845, 1235.8997)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.7921569, 0.7372549, 0.5372549, 1)
@@ -822,16 +822,16 @@ polygon = NodePath("Fill")
 stroke_color = Color(0.5137255, 0.47843137, 0.34117648, 1)
 stroke_width = 3.99999
 line = NodePath("Stroke")
-curve = SubResource("Curve2D_f6t0c")
+curve = SubResource("Curve2D_mdivg")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_2bdvs")
+arc_list = SubResource("Resource_ofnf7")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/Sock" unique_id=933313553]
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/Sock" unique_id=111692459]
 color = Color(0.7921569, 0.7372549, 0.5372549, 1)
 polygon = PackedVector2Array(-16.698189, -9.942505, -9.022184, -20.614042, -7.056762, -22.803822, -5.059352, -24.664135, -4.0465546, -25.449146, -3.0232441, -26.125877, -1.9885826, -26.685686, -0.94172955, -27.119934, 0.11815262, -27.419985, 1.1919029, -27.577198, 1.7342405, -27.599543, 2.2803593, -27.582935, 2.8303652, -27.5263, 3.3843613, -27.428556, 4.504748, -27.105425, 5.642357, -26.604898, 6.7980275, -25.918339, 7.9725986, -25.037113, 9.166908, -23.952578, 10.381796, -22.656094, 12.876659, -19.392725, 15.463898, -15.177898, 18.150223, -9.942505, 20.570251, 16.662354, 17.612282, 19.674088, 14.716646, 22.170954, 11.881035, 24.172016, 9.103139, 25.696348, 6.3806496, 26.763023, 5.0394607, 27.130697, 3.7112577, 27.391108, 2.395752, 27.546644, 1.0926545, 27.599686, -0.19832253, 27.55261, -1.477469, 27.407812, -2.745072, 27.16767, -4.001421, 26.834568, -6.481511, 25.899027, -8.920048, 24.620255, -11.319341, 23.017328, -13.681698, 21.109316, -16.009428, 18.915289, -20.570244, 13.745483)
 metadata/_edit_lock_ = true
 
-[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/Sock" unique_id=570874435]
+[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/Sock" unique_id=754317126]
 points = PackedVector2Array(-16.698189, -9.942505, -9.022184, -20.614042, -7.056762, -22.803822, -5.059352, -24.664135, -4.0465546, -25.449146, -3.0232441, -26.125877, -1.9885826, -26.685686, -0.94172955, -27.119934, 0.11815262, -27.419985, 1.1919029, -27.577198, 1.7342405, -27.599543, 2.2803593, -27.582935, 2.8303652, -27.5263, 3.3843613, -27.428556, 4.504748, -27.105425, 5.642357, -26.604898, 6.7980275, -25.918339, 7.9725986, -25.037113, 9.166908, -23.952578, 10.381796, -22.656094, 12.876659, -19.392725, 15.463898, -15.177898, 18.150223, -9.942505, 20.570251, 16.662354, 17.612282, 19.674088, 14.716646, 22.170954, 11.881035, 24.172016, 9.103139, 25.696348, 6.3806496, 26.763023, 5.0394607, 27.130697, 3.7112577, 27.391108, 2.395752, 27.546644, 1.0926545, 27.599686, -0.19832253, 27.55261, -1.477469, 27.407812, -2.745072, 27.16767, -4.001421, 26.834568, -6.481511, 25.899027, -8.920048, 24.620255, -11.319341, 23.017328, -13.681698, 21.109316, -16.009428, 18.915289, -20.570244, 13.745483)
 closed = true
 width = 3.99999
@@ -839,7 +839,7 @@ default_color = Color(0.5137255, 0.47843137, 0.34117648, 1)
 sharp_limit = 80.0
 metadata/_edit_lock_ = true
 
-[node name="Pants" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=222753705 node_paths=PackedStringArray("polygon", "line")]
+[node name="Pants" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=2097869770 node_paths=PackedStringArray("polygon", "line")]
 position = Vector2(154.33461, 957.1417)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.6745098, 0.42745098, 0.08627451, 1)
@@ -847,16 +847,16 @@ polygon = NodePath("Fill")
 stroke_color = Color(0.3529412, 0.22745098, 0.050980393, 1)
 stroke_width = 6.0
 line = NodePath("Stroke")
-curve = SubResource("Curve2D_lm661")
+curve = SubResource("Curve2D_f6t0c")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_albfb")
+arc_list = SubResource("Resource_2bdvs")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/Pants" unique_id=652992592]
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/Pants" unique_id=1372039195]
 color = Color(0.6745098, 0.42745098, 0.08627451, 1)
 polygon = PackedVector2Array(-49.17083, -270.75854, -52.244576, -265.43652, -54.842804, -259.98215, -56.99379, -254.39702, -58.725792, -248.68295, -61.045906, -236.87488, -62.02929, -224.57173, -60.890366, -198.53583, -57.118088, -170.68628, -57.120087, -170.65607, -50.486534, -115.4379, -48.14876, -61.54155, -47.450172, 45.027588, -50.670345, 54.047394, -53.439137, 64.47522, -57.761948, 88.91792, -62.524075, 147.69261, -64.319305, 269.1272, -46.72364, 271.24286, -42.12979, 271.2596, -37.57069, 270.91934, -33.102707, 270.146, -28.782196, 268.8634, 17.059586, 49.687622, 17.350616, 46.23065, 53.624996, -128.36746, 57.54769, -153.485, 58.499657, -163.21658, 58.639694, -170.6366, 58.50476, -172.74988, 64.319305, -246.68256, 63.817, -271.25964)
 metadata/_edit_lock_ = true
 
-[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/Pants" unique_id=557517464]
+[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/Pants" unique_id=275176861]
 points = PackedVector2Array(-49.17083, -270.75854, -52.244576, -265.43652, -54.842804, -259.98215, -56.99379, -254.39702, -58.725792, -248.68295, -61.045906, -236.87488, -62.02929, -224.57173, -60.890366, -198.53583, -57.118088, -170.68628, -57.120087, -170.65607, -50.486534, -115.4379, -48.14876, -61.54155, -47.450172, 45.027588, -50.670345, 54.047394, -53.439137, 64.47522, -57.761948, 88.91792, -62.524075, 147.69261, -64.319305, 269.1272, -46.72364, 271.24286, -42.12979, 271.2596, -37.57069, 270.91934, -33.102707, 270.146, -28.782196, 268.8634, 17.059586, 49.687622, 17.350616, 46.23065, 53.624996, -128.36746, 57.54769, -153.485, 58.499657, -163.21658, 58.639694, -170.6366, 58.50476, -172.74988, 64.319305, -246.68256, 63.817, -271.25964)
 closed = true
 width = 6.0
@@ -864,7 +864,7 @@ default_color = Color(0.3529412, 0.22745098, 0.050980393, 1)
 sharp_limit = 80.0
 metadata/_edit_lock_ = true
 
-[node name="Torso" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=115677461 node_paths=PackedStringArray("polygon", "line")]
+[node name="Torso" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=240524703 node_paths=PackedStringArray("polygon", "line")]
 position = Vector2(163.8706, 480.1623)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.63529414, 0.2509804, 0.28627452, 1)
@@ -872,16 +872,16 @@ polygon = NodePath("Fill")
 stroke_color = Color(0.41568628, 0.16078432, 0.18039216, 1)
 stroke_width = 6.0
 line = NodePath("Stroke")
-curve = SubResource("Curve2D_th8pr")
+curve = SubResource("Curve2D_lm661")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_n3k0v")
+arc_list = SubResource("Resource_albfb")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/Torso" unique_id=1701376610]
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/Torso" unique_id=215131696]
 color = Color(0.63529414, 0.2509804, 0.28627452, 1)
 polygon = PackedVector2Array(-19.13121, -189.88199, -18.667107, -190.0057, -18.149694, -190.10492, -16.961723, -190.23163, -14.020733, -190.21112, -6.258818, -189.17717, 13.742767, -183.96121, 33.920425, -176.11618, 41.902435, -171.79594, 44.98649, -169.63931, 46.254242, -168.57475, 47.321045, -167.52423, 51.45703, -160.40688, 55.096275, -152.39581, 60.981483, -133.94527, 65.17064, -112.67789, 67.857704, -89.09891, 67.46425, 18.227287, 53.54071, 190.23163, -53.937973, 189.78589, -52.977108, 123.35969, -56.72962, 63.0551, -67.010895, -40.593636, -67.85771, -84.640015, -65.96474, -104.87231, -62.054016, -123.96919, -59.23102, -133.10558, -55.77042, -141.97458, -51.627827, -150.58167, -46.75884, -158.93231, -41.119076, -167.03203, -34.664143, -174.8863, -27.349651, -182.50063, -19.13121, -189.88046, -19.13121, -189.88046, -19.131208, -189.88048, -19.131212, -189.88048, -19.13121, -189.8805, -19.13121, -189.88051, -19.131208, -189.88054, -19.13121, -189.88065, -19.131208, -189.88075, -19.131212, -189.88124, -19.131208, -189.88133, -19.13121, -189.88153, -19.13121, -189.8819, -19.13121, -189.88196, -19.13121, -189.88196, -19.13121, -189.88199, -19.13121, -189.88199, -19.13121, -189.88199)
 metadata/_edit_lock_ = true
 
-[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/Torso" unique_id=865028408]
+[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/Torso" unique_id=76521855]
 points = PackedVector2Array(-19.13121, -189.88199, -18.667107, -190.0057, -18.149694, -190.10492, -16.961723, -190.23163, -14.020733, -190.21112, -6.258818, -189.17717, 13.742767, -183.96121, 33.920425, -176.11618, 41.902435, -171.79594, 44.98649, -169.63931, 46.254242, -168.57475, 47.321045, -167.52423, 51.45703, -160.40688, 55.096275, -152.39581, 60.981483, -133.94527, 65.17064, -112.67789, 67.857704, -89.09891, 67.46425, 18.227287, 53.54071, 190.23163, -53.937973, 189.78589, -52.977108, 123.35969, -56.72962, 63.0551, -67.010895, -40.593636, -67.85771, -84.640015, -65.96474, -104.87231, -62.054016, -123.96919, -59.23102, -133.10558, -55.77042, -141.97458, -51.627827, -150.58167, -46.75884, -158.93231, -41.119076, -167.03203, -34.664143, -174.8863, -27.349651, -182.50063, -19.13121, -189.88046, -19.13121, -189.88046, -19.131208, -189.88048, -19.131212, -189.88048, -19.13121, -189.8805, -19.13121, -189.88051, -19.131208, -189.88054, -19.13121, -189.88065, -19.131208, -189.88075, -19.131212, -189.88124, -19.131208, -189.88133, -19.13121, -189.88153, -19.13121, -189.8819, -19.13121, -189.88196, -19.13121, -189.88196, -19.13121, -189.88199, -19.13121, -189.88199, -19.13121, -189.88199)
 closed = true
 width = 6.0
@@ -889,7 +889,7 @@ default_color = Color(0.41568628, 0.16078432, 0.18039216, 1)
 sharp_limit = 80.0
 metadata/_edit_lock_ = true
 
-[node name="Belt" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=810727557 node_paths=PackedStringArray("polygon", "line")]
+[node name="Belt" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1218062620 node_paths=PackedStringArray("polygon", "line")]
 position = Vector2(160.73946, 678.098)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.40784314, 0.17254902, 0, 1)
@@ -897,16 +897,16 @@ polygon = NodePath("Fill")
 stroke_color = Color(0.28627452, 0.11764706, 0, 1)
 stroke_width = 3.99999
 line = NodePath("Stroke")
-curve = SubResource("Curve2D_ky1ye")
+curve = SubResource("Curve2D_th8pr")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_vcjgj")
+arc_list = SubResource("Resource_n3k0v")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/Belt" unique_id=963182918]
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/Belt" unique_id=1047497068]
 color = Color(0.40784314, 0.17254902, 0, 1)
 polygon = PackedVector2Array(-52.132286, -11.443176, 57.960068, -10.057434, 58.764008, 11.391296, -58.764015, 11.443115)
 metadata/_edit_lock_ = true
 
-[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/Belt" unique_id=1810645650]
+[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/Belt" unique_id=1424356563]
 points = PackedVector2Array(-52.132286, -11.443176, 57.960068, -10.057434, 58.764008, 11.391296, -58.764015, 11.443115)
 closed = true
 width = 3.99999
@@ -914,11 +914,11 @@ default_color = Color(0.28627452, 0.11764706, 0, 1)
 sharp_limit = 80.0
 metadata/_edit_lock_ = true
 
-[node name="ArmTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=373586264]
+[node name="ArmTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=340022994]
 position = Vector2(-168.45094, -155.66821)
 scale = Vector2(3.7795274, 3.7795274)
 
-[node name="Arm" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/ArmTransform" unique_id=477648482 node_paths=PackedStringArray("polygon", "line")]
+[node name="Arm" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/ArmTransform" unique_id=733725917 node_paths=PackedStringArray("polygon", "line")]
 position = Vector2(89.34537, 216.72847)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.9607843, 0.61960787, 0.64705884, 1)
@@ -927,16 +927,16 @@ stroke_color = Color(0.4745098, 0.25490198, 0.27058825, 1)
 stroke_width = 1.05833
 line_joint_mode = 2
 line = NodePath("Stroke")
-curve = SubResource("Curve2D_112r4")
+curve = SubResource("Curve2D_ky1ye")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_sfnl8")
+arc_list = SubResource("Resource_vcjgj")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/ArmTransform/Arm" unique_id=359835234]
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/ArmTransform/Arm" unique_id=1704183298]
 color = Color(0.9607843, 0.61960787, 0.64705884, 1)
 polygon = PackedVector2Array(-12.891205, -39.77452, -9.981819, -23.670593, -9.764778, -22.62207, -4.080887, 21.705978, -4.1596937, 27.651703, -4.1115494, 28.726517, -4.009575, 29.574738, -3.9362862, 30.34912, -3.7353077, 31.477217, -3.010641, 34.230865, -2.5171325, 35.57456, -2.2441864, 36.176468, -1.9562937, 36.708263, -1.6553411, 37.15233, -1.5005568, 37.33596, -1.3432148, 37.49105, -1.1835508, 37.615402, -1.102922, 37.665363, -1.0218009, 37.706814, -0.9402172, 37.73948, -0.8582005, 37.763077, -0.7757801, 37.777344, -0.69298553, 37.781998, -0.61930215, 37.776676, -0.55099624, 37.76137, -0.4879255, 37.736374, -0.42994758, 37.70197, -0.37692007, 37.658455, -0.32870078, 37.606113, -0.2851472, 37.545235, -0.24611706, 37.476116, -0.21146798, 37.399036, -0.18105766, 37.31429, -0.13238378, 37.122955, -0.09895657, 36.90443, -0.07963735, 36.661026, -0.12066434, 35.48495, -0.296316, 34.096107, -0.7599649, 31.272984, -0.902198, 30.135138, -0.91903085, 29.69949, -0.90989053, 29.52309, -0.88752747, 29.377396, -0.39752603, 31.636835, 0.61088324, 34.976856, 1.2354301, 36.617012, 1.9007058, 38.005222, 2.2393596, 38.55047, 2.4085703, 38.776356, 2.5770864, 38.96746, 2.7444448, 39.12107, 2.8275456, 39.18296, 2.9101834, 39.234455, 2.9923, 39.27522, 3.0738382, 39.304905, 3.1547399, 39.32318, 3.2349472, 39.329697, 3.339298, 39.32033, 3.4357517, 39.299866, 3.5245013, 39.268612, 3.6057408, 39.226875, 3.6796634, 39.174988, 3.7464628, 39.113235, 3.8063328, 39.04194, 3.8594675, 38.961414, 3.9060595, 38.871975, 3.946303, 38.773922, 4.0085177, 38.553238, 4.047661, 38.301857, 4.065282, 38.022278, 4.0421505, 37.38846, 3.9515128, 36.671715, 3.617282, 35.069176, 2.0581818, 29.328125, 4.5784483, 35.32937, 5.437828, 37.101555, 6.3322134, 38.5679, 6.7836704, 39.121597, 7.008914, 39.34224, 7.233243, 39.52109, 7.344926, 39.593834, 7.456215, 39.654915, 7.567054, 39.70393, 7.6773868, 39.74047, 7.787159, 39.764137, 7.896315, 39.774525, 8.004799, 39.771225, 8.112556, 39.75383, 8.247794, 39.716057, 8.371578, 39.6675, 8.484177, 39.608448, 8.585864, 39.539215, 8.676904, 39.460094, 8.75757, 39.371387, 8.828131, 39.273396, 8.888857, 39.166416, 8.940019, 39.05076, 8.981882, 38.926712, 9.014722, 38.79458, 9.038803, 38.65467, 9.061779, 38.352684, 9.05297, 38.023182, 8.948619, 37.29119, 8.743016, 36.477913, 8.097122, 34.684418, 4.91658, 28.103912, 8.360708, 33.419945, 9.386863, 34.788483, 9.893118, 35.373203, 10.387167, 35.865986, 10.863266, 36.24765, 11.092789, 36.39082, 11.315671, 36.49902, 11.424397, 36.539253, 11.531194, 36.56985, 11.635971, 36.590504, 11.73864, 36.600918, 11.839108, 36.60079, 11.937289, 36.58982, 12.033092, 36.56771, 12.126427, 36.534164, 12.241662, 36.47828, 12.345261, 36.41437, 12.437474, 36.342667, 12.51856, 36.26339, 12.588774, 36.176758, 12.64837, 36.08301, 12.697606, 35.98236, 12.736737, 35.875042, 12.766016, 35.76127, 12.785701, 35.641273, 12.796048, 35.51528, 12.79731, 35.38352, 12.773605, 35.103558, 12.716631, 34.803207, 12.511055, 34.14852, 12.19693, 33.433853, 11.308451, 31.882158, 8.948431, 28.69246, 6.6831207, 26.155563, 6.841615, 26.207157, 7.00737, 26.283632, 7.358669, 26.502546, 8.126522, 27.143318, 9.811937, 28.749697, 10.665899, 29.437023, 11.081781, 29.690847, 11.28521, 29.78769, 11.484965, 29.86159, 11.680552, 29.91037, 11.776628, 29.92466, 11.871473, 29.931858, 11.96503, 29.931684, 12.057233, 29.923878, 12.148022, 29.908157, 12.237333, 29.884256, 12.325107, 29.851904, 12.411278, 29.810822, 12.495786, 29.760746, 12.578568, 29.7014, 12.659564, 29.632511, 12.73871, 29.553814, 12.891205, 29.36589, 12.083326, 27.218006, 11.071334, 25.132301, 10.014561, 23.391268, 9.519174, 22.738283, 9.288444, 22.481625, 9.072342, 22.277405, 8.200283, 21.576319, 7.262686, 20.9343, 6.2306185, 20.381317, 5.670117, 20.147581, 5.0751495, 19.947342, 3.7115169, -23.183132, 3.7046573, -23.246336, 3.6987457, -23.253586, 3.7424164, -24.132187, 6.1436796, -36.33858, 6.4119816, -38.248154, 6.5122757, -39.773575)
 metadata/_edit_lock_ = true
 
-[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/ArmTransform/Arm" unique_id=510042017]
+[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/ArmTransform/Arm" unique_id=702046556]
 points = PackedVector2Array(-12.891205, -39.77452, -9.981819, -23.670593, -9.764778, -22.62207, -4.080887, 21.705978, -4.1596937, 27.651703, -4.1115494, 28.726517, -4.009575, 29.574738, -3.9362862, 30.34912, -3.7353077, 31.477217, -3.010641, 34.230865, -2.5171325, 35.57456, -2.2441864, 36.176468, -1.9562937, 36.708263, -1.6553411, 37.15233, -1.5005568, 37.33596, -1.3432148, 37.49105, -1.1835508, 37.615402, -1.102922, 37.665363, -1.0218009, 37.706814, -0.9402172, 37.73948, -0.8582005, 37.763077, -0.7757801, 37.777344, -0.69298553, 37.781998, -0.61930215, 37.776676, -0.55099624, 37.76137, -0.4879255, 37.736374, -0.42994758, 37.70197, -0.37692007, 37.658455, -0.32870078, 37.606113, -0.2851472, 37.545235, -0.24611706, 37.476116, -0.21146798, 37.399036, -0.18105766, 37.31429, -0.13238378, 37.122955, -0.09895657, 36.90443, -0.07963735, 36.661026, -0.12066434, 35.48495, -0.296316, 34.096107, -0.7599649, 31.272984, -0.902198, 30.135138, -0.91903085, 29.69949, -0.90989053, 29.52309, -0.88752747, 29.377396, -0.39752603, 31.636835, 0.61088324, 34.976856, 1.2354301, 36.617012, 1.9007058, 38.005222, 2.2393596, 38.55047, 2.4085703, 38.776356, 2.5770864, 38.96746, 2.7444448, 39.12107, 2.8275456, 39.18296, 2.9101834, 39.234455, 2.9923, 39.27522, 3.0738382, 39.304905, 3.1547399, 39.32318, 3.2349472, 39.329697, 3.339298, 39.32033, 3.4357517, 39.299866, 3.5245013, 39.268612, 3.6057408, 39.226875, 3.6796634, 39.174988, 3.7464628, 39.113235, 3.8063328, 39.04194, 3.8594675, 38.961414, 3.9060595, 38.871975, 3.946303, 38.773922, 4.0085177, 38.553238, 4.047661, 38.301857, 4.065282, 38.022278, 4.0421505, 37.38846, 3.9515128, 36.671715, 3.617282, 35.069176, 2.0581818, 29.328125, 4.5784483, 35.32937, 5.437828, 37.101555, 6.3322134, 38.5679, 6.7836704, 39.121597, 7.008914, 39.34224, 7.233243, 39.52109, 7.344926, 39.593834, 7.456215, 39.654915, 7.567054, 39.70393, 7.6773868, 39.74047, 7.787159, 39.764137, 7.896315, 39.774525, 8.004799, 39.771225, 8.112556, 39.75383, 8.247794, 39.716057, 8.371578, 39.6675, 8.484177, 39.608448, 8.585864, 39.539215, 8.676904, 39.460094, 8.75757, 39.371387, 8.828131, 39.273396, 8.888857, 39.166416, 8.940019, 39.05076, 8.981882, 38.926712, 9.014722, 38.79458, 9.038803, 38.65467, 9.061779, 38.352684, 9.05297, 38.023182, 8.948619, 37.29119, 8.743016, 36.477913, 8.097122, 34.684418, 4.91658, 28.103912, 8.360708, 33.419945, 9.386863, 34.788483, 9.893118, 35.373203, 10.387167, 35.865986, 10.863266, 36.24765, 11.092789, 36.39082, 11.315671, 36.49902, 11.424397, 36.539253, 11.531194, 36.56985, 11.635971, 36.590504, 11.73864, 36.600918, 11.839108, 36.60079, 11.937289, 36.58982, 12.033092, 36.56771, 12.126427, 36.534164, 12.241662, 36.47828, 12.345261, 36.41437, 12.437474, 36.342667, 12.51856, 36.26339, 12.588774, 36.176758, 12.64837, 36.08301, 12.697606, 35.98236, 12.736737, 35.875042, 12.766016, 35.76127, 12.785701, 35.641273, 12.796048, 35.51528, 12.79731, 35.38352, 12.773605, 35.103558, 12.716631, 34.803207, 12.511055, 34.14852, 12.19693, 33.433853, 11.308451, 31.882158, 8.948431, 28.69246, 6.6831207, 26.155563, 6.841615, 26.207157, 7.00737, 26.283632, 7.358669, 26.502546, 8.126522, 27.143318, 9.811937, 28.749697, 10.665899, 29.437023, 11.081781, 29.690847, 11.28521, 29.78769, 11.484965, 29.86159, 11.680552, 29.91037, 11.776628, 29.92466, 11.871473, 29.931858, 11.96503, 29.931684, 12.057233, 29.923878, 12.148022, 29.908157, 12.237333, 29.884256, 12.325107, 29.851904, 12.411278, 29.810822, 12.495786, 29.760746, 12.578568, 29.7014, 12.659564, 29.632511, 12.73871, 29.553814, 12.891205, 29.36589, 12.083326, 27.218006, 11.071334, 25.132301, 10.014561, 23.391268, 9.519174, 22.738283, 9.288444, 22.481625, 9.072342, 22.277405, 8.200283, 21.576319, 7.262686, 20.9343, 6.2306185, 20.381317, 5.670117, 20.147581, 5.0751495, 19.947342, 3.7115169, -23.183132, 3.7046573, -23.246336, 3.6987457, -23.253586, 3.7424164, -24.132187, 6.1436796, -36.33858, 6.4119816, -38.248154, 6.5122757, -39.773575)
 closed = true
 width = 1.05833
@@ -945,11 +945,11 @@ joint_mode = 2
 sharp_limit = 80.0
 metadata/_edit_lock_ = true
 
-[node name="SleeveTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=967340400]
+[node name="SleeveTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=712304034]
 position = Vector2(-168.45094, -155.66821)
 scale = Vector2(3.7795274, 3.7795274)
 
-[node name="Sleeve" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/SleeveTransform" unique_id=2128309187 node_paths=PackedStringArray("polygon", "line")]
+[node name="Sleeve" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/SleeveTransform" unique_id=426695667 node_paths=PackedStringArray("polygon", "line")]
 position = Vector2(85.74442, 155.11185)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.63529414, 0.2509804, 0.28627452, 1)
@@ -957,16 +957,16 @@ polygon = NodePath("Fill")
 stroke_color = Color(0.41568628, 0.16078432, 0.18039216, 1)
 stroke_width = 1.05833
 line = NodePath("Stroke")
-curve = SubResource("Curve2D_8xfx2")
+curve = SubResource("Curve2D_112r4")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_2c82c")
+arc_list = SubResource("Resource_sfnl8")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/SleeveTransform/Sleeve" unique_id=483171875]
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/SleeveTransform/Sleeve" unique_id=1219987488]
 color = Color(0.63529414, 0.2509804, 0.28627452, 1)
 polygon = PackedVector2Array(11.28289, -10.936844, 11.542911, 6.660527, 10.181351, 21.977951, -9.216957, 21.980957, -11.042455, 7.6840954, -11.542918, -1.3533738, -11.05352, -10.989075, -10.94579, -11.970256, -10.752779, -12.95745, -10.475732, -13.940965, -10.115887, -14.911106, -9.674489, -15.858177, -9.15278, -16.77249, -8.551997, -17.644342, -7.8733883, -18.464046, -7.118192, -19.221905, -6.2876515, -19.908222, -5.3830085, -20.51331, -4.405504, -21.027466, -3.3563812, -21.441004, -2.2368813, -21.744225, -1.0482459, -21.927435, 0.20828247, -21.980942, 1.5439775, -21.899496, 2.7856355, -21.692738, 3.9350202, -21.370127, 4.993896, -20.941122, 5.964027, -20.41518, 6.847178, -19.801756, 7.645112, -19.110308, 8.359594, -18.3503, 8.99239, -17.531181, 9.54526, -16.662418, 10.019973, -15.753462, 10.418289, -14.813773, 10.741975, -13.852809, 10.992795, -12.880028)
 metadata/_edit_lock_ = true
 
-[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/SleeveTransform/Sleeve" unique_id=344350794]
+[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/SleeveTransform/Sleeve" unique_id=1101554819]
 points = PackedVector2Array(11.28289, -10.936844, 11.542911, 6.660527, 10.181351, 21.977951, -9.216957, 21.980957, -11.042455, 7.6840954, -11.542918, -1.3533738, -11.05352, -10.989075, -10.94579, -11.970256, -10.752779, -12.95745, -10.475732, -13.940965, -10.115887, -14.911106, -9.674489, -15.858177, -9.15278, -16.77249, -8.551997, -17.644342, -7.8733883, -18.464046, -7.118192, -19.221905, -6.2876515, -19.908222, -5.3830085, -20.51331, -4.405504, -21.027466, -3.3563812, -21.441004, -2.2368813, -21.744225, -1.0482459, -21.927435, 0.20828247, -21.980942, 1.5439775, -21.899496, 2.7856355, -21.692738, 3.9350202, -21.370127, 4.993896, -20.941122, 5.964027, -20.41518, 6.847178, -19.801756, 7.645112, -19.110308, 8.359594, -18.3503, 8.99239, -17.531181, 9.54526, -16.662418, 10.019973, -15.753462, 10.418289, -14.813773, 10.741975, -13.852809, 10.992795, -12.880028)
 closed = true
 width = 1.05833
@@ -974,11 +974,11 @@ default_color = Color(0.41568628, 0.16078432, 0.18039216, 1)
 sharp_limit = 80.0
 metadata/_edit_lock_ = true
 
-[node name="ShoeTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1462300006]
+[node name="ShoeTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=265027621]
 position = Vector2(-209.48288, -145.29816)
 scale = Vector2(3.7795274, 3.7795274)
 
-[node name="Shoe" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/ShoeTransform" unique_id=1130937368 node_paths=PackedStringArray("polygon", "line")]
+[node name="Shoe" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/ShoeTransform" unique_id=604525990 node_paths=PackedStringArray("polygon", "line")]
 position = Vector2(94.98007, 371.10522)
 script = ExtResource("2_xtu0p")
 polygon = NodePath("Fill")
@@ -986,17 +986,17 @@ stroke_color = Color(0.25490198, 0.10980392, 0, 1)
 stroke_width = 1.05833
 line_joint_mode = 2
 line = NodePath("Stroke")
-curve = SubResource("Curve2D_1rdld")
+curve = SubResource("Curve2D_8xfx2")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_cqnfd")
+arc_list = SubResource("Resource_2c82c")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/ShoeTransform/Shoe" unique_id=1329710444]
-texture = SubResource("GradientTexture2D_x1qkb")
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/ShoeTransform/Shoe" unique_id=370128019]
+texture = SubResource("GradientTexture2D_cqnfd")
 texture_offset = Vector2(18.359299, 5.895935)
 polygon = PackedVector2Array(0.6260681, 5.2052, -17.273605, 5.42041, -17.35151, 5.395619, -17.42632, 5.3577466, -17.498053, 5.3071904, -17.566748, 5.244352, -17.63242, 5.1696296, -17.695097, 5.083423, -17.81158, 4.8781557, -17.9164, 4.631745, -18.009771, 4.347388, -18.162983, 3.6776133, -18.34112, 2.023315, -18.359299, 0.11979103, -18.230824, -1.828427, -17.969002, -3.6168082, -17.792244, -4.387144, -17.58714, -5.040821, -17.474476, -5.315923, -17.35535, -5.5522738, -17.229969, -5.746676, -17.164999, -5.8271484, -17.098541, -5.895935, -17.081964, -5.746762, -17.050673, -5.6019683, -17.005125, -5.461564, -16.945774, -5.3255568, -16.873072, -5.193956, -16.787474, -5.066767, -16.689434, -4.944002, -16.579405, -4.825668, -16.325197, -4.6023245, -16.028482, -4.396805, -15.692891, -4.2091756, -15.322054, -4.0395055, -14.489166, -3.7543077, -13.558868, -3.5417488, -12.560204, -3.4023666, -11.522225, -3.3366983, -10.473977, -3.3452818, -9.444506, -3.4286547, -8.462862, -3.5873547, -7.55809, -3.8219185, -6.759239, -4.132885, -6.4086103, -4.317187, -6.095355, -4.5207906, -5.823104, -4.743764, -5.703489, -4.862535, -5.5954866, -4.986174, -5.4995513, -5.114688, -5.416136, -5.2480874, -5.3456945, -5.386379, -5.288681, -5.5295715, 1.7026153, -3.2638824, 4.715992, -2.1464994, 7.7266846, -0.7409973, 14.085966, -0.71881247, 14.847395, -0.6570205, 15.529068, -0.54712, 16.13305, -0.37729424, 16.406553, -0.2662168, 16.66141, -0.13572699, 16.897877, 0.01565218, 17.116217, 0.18939799, 17.316683, 0.3869874, 17.499537, 0.6098973, 17.665035, 0.85960484, 17.813437, 1.1375871, 17.945002, 1.4453213, 18.059986, 1.7842841, 18.241255, 2.5618043, 18.359306, 3.481964, 18.327196, 3.6712403, 18.271137, 3.8511186, 18.191904, 4.0218043, 18.090286, 4.183502, 17.967068, 4.3364186, 17.823023, 4.480759, 17.658945, 4.616727, 17.475609, 4.74453, 17.0543, 4.9764595, 16.56536, 5.1781893, 15.409632, 5.497623, 14.058511, 5.7159743, 12.56209, 5.846386, 9.333706, 5.8959627)
 metadata/_edit_lock_ = true
 
-[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/ShoeTransform/Shoe" unique_id=1876640317]
+[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/ShoeTransform/Shoe" unique_id=2064309677]
 points = PackedVector2Array(0.6260681, 5.2052, -17.273605, 5.42041, -17.35151, 5.395619, -17.42632, 5.3577466, -17.498053, 5.3071904, -17.566748, 5.244352, -17.63242, 5.1696296, -17.695097, 5.083423, -17.81158, 4.8781557, -17.9164, 4.631745, -18.009771, 4.347388, -18.162983, 3.6776133, -18.34112, 2.023315, -18.359299, 0.11979103, -18.230824, -1.828427, -17.969002, -3.6168082, -17.792244, -4.387144, -17.58714, -5.040821, -17.474476, -5.315923, -17.35535, -5.5522738, -17.229969, -5.746676, -17.164999, -5.8271484, -17.098541, -5.895935, -17.081964, -5.746762, -17.050673, -5.6019683, -17.005125, -5.461564, -16.945774, -5.3255568, -16.873072, -5.193956, -16.787474, -5.066767, -16.689434, -4.944002, -16.579405, -4.825668, -16.325197, -4.6023245, -16.028482, -4.396805, -15.692891, -4.2091756, -15.322054, -4.0395055, -14.489166, -3.7543077, -13.558868, -3.5417488, -12.560204, -3.4023666, -11.522225, -3.3366983, -10.473977, -3.3452818, -9.444506, -3.4286547, -8.462862, -3.5873547, -7.55809, -3.8219185, -6.759239, -4.132885, -6.4086103, -4.317187, -6.095355, -4.5207906, -5.823104, -4.743764, -5.703489, -4.862535, -5.5954866, -4.986174, -5.4995513, -5.114688, -5.416136, -5.2480874, -5.3456945, -5.386379, -5.288681, -5.5295715, 1.7026153, -3.2638824, 4.715992, -2.1464994, 7.7266846, -0.7409973, 14.085966, -0.71881247, 14.847395, -0.6570205, 15.529068, -0.54712, 16.13305, -0.37729424, 16.406553, -0.2662168, 16.66141, -0.13572699, 16.897877, 0.01565218, 17.116217, 0.18939799, 17.316683, 0.3869874, 17.499537, 0.6098973, 17.665035, 0.85960484, 17.813437, 1.1375871, 17.945002, 1.4453213, 18.059986, 1.7842841, 18.241255, 2.5618043, 18.359306, 3.481964, 18.327196, 3.6712403, 18.271137, 3.8511186, 18.191904, 4.0218043, 18.090286, 4.183502, 17.967068, 4.3364186, 17.823023, 4.480759, 17.658945, 4.616727, 17.475609, 4.74453, 17.0543, 4.9764595, 16.56536, 5.1781893, 15.409632, 5.497623, 14.058511, 5.7159743, 12.56209, 5.846386, 9.333706, 5.8959627)
 closed = true
 width = 1.05833
@@ -1005,11 +1005,11 @@ joint_mode = 2
 sharp_limit = 80.0
 metadata/_edit_lock_ = true
 
-[node name="ShoeDecorationTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1464335652]
+[node name="ShoeDecorationTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=653873732]
 position = Vector2(-209.48288, -145.29816)
 scale = Vector2(3.7795274, 3.7795274)
 
-[node name="ShoeDecoration" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/ShoeDecorationTransform" unique_id=1252941060 node_paths=PackedStringArray("polygon", "line")]
+[node name="ShoeDecoration" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/ShoeDecorationTransform" unique_id=1813385253 node_paths=PackedStringArray("polygon", "line")]
 position = Vector2(83.138794, 366.90445)
 script = ExtResource("2_xtu0p")
 polygon = NodePath("Fill")
@@ -1017,17 +1017,17 @@ stroke_color = Color(0.25490198, 0.10980392, 0, 1)
 stroke_width = 0.264583
 line_joint_mode = 2
 line = NodePath("Stroke")
-curve = SubResource("Curve2D_anf4w")
+curve = SubResource("Curve2D_0f4lu")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_36y8b")
+arc_list = SubResource("Resource_x1qkb")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/ShoeDecorationTransform/ShoeDecoration" unique_id=1531443482]
-texture = SubResource("GradientTexture2D_ylcqf")
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/ShoeDecorationTransform/ShoeDecoration" unique_id=1336047880]
+texture = SubResource("GradientTexture2D_36y8b")
 texture_offset = Vector2(6.429817, 1.7396032)
 polygon = PackedVector2Array(2.1504288, 1.7395935, 0.602808, 1.6862063, -0.87943876, 1.5271964, -3.5070784, 1.1093628, -4.5821056, 0.95906687, -5.044528, 0.9223146, -5.451026, 0.9202034, -5.6319294, 0.93425786, -5.797202, 0.9595163, -5.946295, 0.9968264, -6.0786576, 1.0470363, -6.138394, 1.0772434, -6.1937413, 1.1109936, -6.244631, 1.1483926, -6.2909956, 1.1895462, -6.332765, 1.2345608, -6.3698707, 1.2835423, -6.4022446, 1.3365964, -6.429817, 1.3938293, -6.1305485, -0.4108501, -6.024001, -0.7914215, -5.902238, -1.114724, -5.8352575, -1.2503636, -5.764, -1.3662429, -5.726718, -1.4162056, -5.6883087, -1.4605478, -5.6487503, -1.4990426, -5.6080246, -1.5314636, -5.546011, -1.580817, -5.480717, -1.6231868, -5.412955, -1.6587317, -5.343538, -1.6876091, -5.273278, -1.7099769, -5.202988, -1.7259934, -5.13348, -1.7358161, -5.0655665, -1.7396032, -5.00006, -1.7375124, -4.9377723, -1.7297018, -4.879516, -1.7163291, -4.8261046, -1.6975524, -4.7783494, -1.6735297, -4.756847, -1.6596003, -4.7370634, -1.6444187, -4.7191, -1.6280044, -4.7030582, -1.6103773, -4.68904, -1.5915571, -4.677147, -1.5715637, -4.6775436, -1.5570273, -4.676785, -1.5417291, -4.671924, -1.5089601, -4.6628065, -1.4734832, -4.649676, -1.4355247, -4.612348, -1.353068, -4.561887, -1.2634017, -4.4293413, -1.0696843, -4.2676005, -0.86886144, -3.9187799, -0.5038569, -3.7628222, -0.36865354, -3.696265, -0.3192156, -3.6399155, -0.28430176, -1.7990286, 0.04839216, 1.1482837, 0.34050143, 2.7296338, 0.30109745, 3.4934697, 0.20523885, 4.218931, 0.047259927, 4.8906584, -0.18135124, 5.2015715, -0.324804, 5.4932904, -0.48910683, 5.7638955, -0.67532367, 6.011466, -0.8845186, 6.2340827, -1.1177557, 6.429825, -1.3760986, 6.4012647, -1.2476473, 6.293695, -0.90787554, 6.074283, -0.4251563, 5.9123755, -0.15155795, 5.7101955, 0.1321373, 5.463638, 0.41738293, 5.168599, 0.69563216, 4.8209753, 0.95833844, 4.4166617, 1.1969552, 3.9515545, 1.4029357, 3.4215493, 1.5677333, 2.8225422, 1.6828015)
 metadata/_edit_lock_ = true
 
-[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/ShoeDecorationTransform/ShoeDecoration" unique_id=103527970]
+[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/ShoeDecorationTransform/ShoeDecoration" unique_id=862449284]
 points = PackedVector2Array(2.1504288, 1.7395935, 0.602808, 1.6862063, -0.87943876, 1.5271964, -3.5070784, 1.1093628, -4.5821056, 0.95906687, -5.044528, 0.9223146, -5.451026, 0.9202034, -5.6319294, 0.93425786, -5.797202, 0.9595163, -5.946295, 0.9968264, -6.0786576, 1.0470363, -6.138394, 1.0772434, -6.1937413, 1.1109936, -6.244631, 1.1483926, -6.2909956, 1.1895462, -6.332765, 1.2345608, -6.3698707, 1.2835423, -6.4022446, 1.3365964, -6.429817, 1.3938293, -6.1305485, -0.4108501, -6.024001, -0.7914215, -5.902238, -1.114724, -5.8352575, -1.2503636, -5.764, -1.3662429, -5.726718, -1.4162056, -5.6883087, -1.4605478, -5.6487503, -1.4990426, -5.6080246, -1.5314636, -5.546011, -1.580817, -5.480717, -1.6231868, -5.412955, -1.6587317, -5.343538, -1.6876091, -5.273278, -1.7099769, -5.202988, -1.7259934, -5.13348, -1.7358161, -5.0655665, -1.7396032, -5.00006, -1.7375124, -4.9377723, -1.7297018, -4.879516, -1.7163291, -4.8261046, -1.6975524, -4.7783494, -1.6735297, -4.756847, -1.6596003, -4.7370634, -1.6444187, -4.7191, -1.6280044, -4.7030582, -1.6103773, -4.68904, -1.5915571, -4.677147, -1.5715637, -4.6775436, -1.5570273, -4.676785, -1.5417291, -4.671924, -1.5089601, -4.6628065, -1.4734832, -4.649676, -1.4355247, -4.612348, -1.353068, -4.561887, -1.2634017, -4.4293413, -1.0696843, -4.2676005, -0.86886144, -3.9187799, -0.5038569, -3.7628222, -0.36865354, -3.696265, -0.3192156, -3.6399155, -0.28430176, -1.7990286, 0.04839216, 1.1482837, 0.34050143, 2.7296338, 0.30109745, 3.4934697, 0.20523885, 4.218931, 0.047259927, 4.8906584, -0.18135124, 5.2015715, -0.324804, 5.4932904, -0.48910683, 5.7638955, -0.67532367, 6.011466, -0.8845186, 6.2340827, -1.1177557, 6.429825, -1.3760986, 6.4012647, -1.2476473, 6.293695, -0.90787554, 6.074283, -0.4251563, 5.9123755, -0.15155795, 5.7101955, 0.1321373, 5.463638, 0.41738293, 5.168599, 0.69563216, 4.8209753, 0.95833844, 4.4166617, 1.1969552, 3.9515545, 1.4029357, 3.4215493, 1.5677333, 2.8225422, 1.6828015)
 closed = true
 width = 0.264583
@@ -1036,30 +1036,59 @@ joint_mode = 2
 sharp_limit = 80.0
 metadata/_edit_lock_ = true
 
-[node name="SoleTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1801545394]
+[node name="SoleTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1185797934]
 position = Vector2(-209.48288, -145.29816)
 scale = Vector2(3.7795274, 3.7795274)
 
-[node name="Sole" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/SoleTransform" unique_id=988649645 node_paths=PackedStringArray("polygon")]
+[node name="Sole" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/SoleTransform" unique_id=727179917 node_paths=PackedStringArray("polygon")]
 position = Vector2(95.14618, 376.83307)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.25490198, 0.10980392, 0, 1)
 polygon = NodePath("Fill")
-curve = SubResource("Curve2D_aa2cu")
+curve = SubResource("Curve2D_e4pgg")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_3d1co")
+arc_list = SubResource("Resource_ylcqf")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/SoleTransform/Sole" unique_id=477412176]
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/SoleTransform/Sole" unique_id=726312764]
 color = Color(0.25490198, 0.10980392, 0, 1)
 polygon = PackedVector2Array(-18.042923, -0.81866455, 18.681244, -2.175232, 18.320457, 0.5152283, 13.627447, 1.3601134, 8.654331, 1.7459822, -1.6279678, 1.9670105, -2.1320877, 1.2011719, -8.317101, 1.2335815, -8.3461, 2.1752014, -18.681252, 2.1661987, -18.468866, 0.6737764, -18.309483, -0.07243097, -18.192963, -0.4455331)
 metadata/_edit_lock_ = true
 
-[node name="LaceTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=429647365]
+[node name="LaceTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=2093595336]
 position = Vector2(-209.48288, -145.29816)
 scale = Vector2(3.7795274, 3.7795274)
 
-[node name="Lace" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform" unique_id=607086175 node_paths=PackedStringArray("polygon", "line")]
+[node name="Lace" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform" unique_id=70411726 node_paths=PackedStringArray("polygon", "line")]
 position = Vector2(91.20864, 367.8232)
+script = ExtResource("2_xtu0p")
+fill_color = Color(0.25490198, 0.10980392, 0, 1)
+polygon = NodePath("Fill")
+stroke_color = Color(0.25490198, 0.10980392, 0, 1)
+stroke_width = 0.0
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_aa2cu")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_3d1co")
+
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform/Lace" unique_id=1297763012]
+color = Color(0.25490198, 0.10980392, 0, 1)
+polygon = PackedVector2Array(0.694191, -1.9455261, 1.6536255, -1.2369995, -0.694191, 1.9423218, -0.90423256, 1.9455276, -1.0927268, 1.9267931, -1.1782377, 1.9085299, -1.2575744, 1.8839791, -1.3304746, 1.8528734, -1.3966756, 1.8149457, -1.4559152, 1.7699281, -1.4828424, 1.7446771, -1.507931, 1.7175533, -1.5311478, 1.6885234, -1.5524603, 1.6575539, -1.5892408, 1.5896622, -1.61801, 1.5136111, -1.6385055, 1.4291329, -1.6504648, 1.3359603, -1.6536255, 1.2338257)
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform/Lace" unique_id=686445665]
+points = PackedVector2Array(0.694191, -1.9455261, 1.6536255, -1.2369995, -0.694191, 1.9423218, -0.90423256, 1.9455276, -1.0927268, 1.9267931, -1.1782377, 1.9085299, -1.2575744, 1.8839791, -1.3304746, 1.8528734, -1.3966756, 1.8149457, -1.4559152, 1.7699281, -1.4828424, 1.7446771, -1.507931, 1.7175533, -1.5311478, 1.6885234, -1.5524603, 1.6575539, -1.5892408, 1.5896622, -1.61801, 1.5136111, -1.6385055, 1.4291329, -1.6504648, 1.3359603, -1.6536255, 1.2338257)
+closed = true
+width = 0.0
+default_color = Color(0.25490198, 0.10980392, 0, 1)
+sharp_limit = 80.0
+metadata/_edit_lock_ = true
+
+[node name="LaceTransform2" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1036924489]
+position = Vector2(-209.48288, -145.29816)
+scale = Vector2(3.7795274, 3.7795274)
+
+[node name="Lace" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform2" unique_id=1004672980 node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(98.586716, 369.9968)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.25490198, 0.10980392, 0, 1)
 polygon = NodePath("Fill")
@@ -1070,25 +1099,25 @@ curve = SubResource("Curve2D_by1m0")
 update_curve_at_runtime = true
 arc_list = SubResource("Resource_qydo6")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform/Lace" unique_id=751649818]
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform2/Lace" unique_id=2011852247]
 color = Color(0.25490198, 0.10980392, 0, 1)
-polygon = PackedVector2Array(0.694191, -1.9455261, 1.6536255, -1.2369995, -0.694191, 1.9423218, -0.90423256, 1.9455276, -1.0927268, 1.9267931, -1.1782377, 1.9085299, -1.2575744, 1.8839791, -1.3304746, 1.8528734, -1.3966756, 1.8149457, -1.4559152, 1.7699281, -1.4828424, 1.7446771, -1.507931, 1.7175533, -1.5311478, 1.6885234, -1.5524603, 1.6575539, -1.5892408, 1.5896622, -1.61801, 1.5136111, -1.6385055, 1.4291329, -1.6504648, 1.3359603, -1.6536255, 1.2338257)
+polygon = PackedVector2Array(0.42546844, -1.7103271, 1.3849106, -1.001831, -0.42546844, 1.7103271, -0.6011923, 1.6939588, -0.764126, 1.6610438, -0.8403043, 1.6377437, -0.91269416, 1.6095419, -0.9810989, 1.5761834, -1.0453213, 1.5374134, -1.1051646, 1.4929765, -1.160432, 1.442618, -1.2109263, 1.3860828, -1.2564507, 1.3231158, -1.2968082, 1.2534623, -1.331802, 1.1768669, -1.3612351, 1.0930748, -1.3849106, 1.001831)
 metadata/_edit_lock_ = true
 
-[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform/Lace" unique_id=1792694087]
-points = PackedVector2Array(0.694191, -1.9455261, 1.6536255, -1.2369995, -0.694191, 1.9423218, -0.90423256, 1.9455276, -1.0927268, 1.9267931, -1.1782377, 1.9085299, -1.2575744, 1.8839791, -1.3304746, 1.8528734, -1.3966756, 1.8149457, -1.4559152, 1.7699281, -1.4828424, 1.7446771, -1.507931, 1.7175533, -1.5311478, 1.6885234, -1.5524603, 1.6575539, -1.5892408, 1.5896622, -1.61801, 1.5136111, -1.6385055, 1.4291329, -1.6504648, 1.3359603, -1.6536255, 1.2338257)
+[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform2/Lace" unique_id=480021153]
+points = PackedVector2Array(0.42546844, -1.7103271, 1.3849106, -1.001831, -0.42546844, 1.7103271, -0.6011923, 1.6939588, -0.764126, 1.6610438, -0.8403043, 1.6377437, -0.91269416, 1.6095419, -0.9810989, 1.5761834, -1.0453213, 1.5374134, -1.1051646, 1.4929765, -1.160432, 1.442618, -1.2109263, 1.3860828, -1.2564507, 1.3231158, -1.2968082, 1.2534623, -1.331802, 1.1768669, -1.3612351, 1.0930748, -1.3849106, 1.001831)
 closed = true
 width = 0.0
 default_color = Color(0.25490198, 0.10980392, 0, 1)
 sharp_limit = 80.0
 metadata/_edit_lock_ = true
 
-[node name="LaceTransform2" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=2026770676]
+[node name="LaceTransform3" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=547178220]
 position = Vector2(-209.48288, -145.29816)
 scale = Vector2(3.7795274, 3.7795274)
 
-[node name="Lace" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform2" unique_id=1557488262 node_paths=PackedStringArray("polygon", "line")]
-position = Vector2(98.586716, 369.9968)
+[node name="Lace" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform3" unique_id=1845179229 node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(95.03866, 368.95978)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.25490198, 0.10980392, 0, 1)
 polygon = NodePath("Fill")
@@ -1099,41 +1128,12 @@ curve = SubResource("Curve2D_ay8r1")
 update_curve_at_runtime = true
 arc_list = SubResource("Resource_cm2im")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform2/Lace" unique_id=1810487121]
-color = Color(0.25490198, 0.10980392, 0, 1)
-polygon = PackedVector2Array(0.42546844, -1.7103271, 1.3849106, -1.001831, -0.42546844, 1.7103271, -0.6011923, 1.6939588, -0.764126, 1.6610438, -0.8403043, 1.6377437, -0.91269416, 1.6095419, -0.9810989, 1.5761834, -1.0453213, 1.5374134, -1.1051646, 1.4929765, -1.160432, 1.442618, -1.2109263, 1.3860828, -1.2564507, 1.3231158, -1.2968082, 1.2534623, -1.331802, 1.1768669, -1.3612351, 1.0930748, -1.3849106, 1.001831)
-metadata/_edit_lock_ = true
-
-[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform2/Lace" unique_id=83431556]
-points = PackedVector2Array(0.42546844, -1.7103271, 1.3849106, -1.001831, -0.42546844, 1.7103271, -0.6011923, 1.6939588, -0.764126, 1.6610438, -0.8403043, 1.6377437, -0.91269416, 1.6095419, -0.9810989, 1.5761834, -1.0453213, 1.5374134, -1.1051646, 1.4929765, -1.160432, 1.442618, -1.2109263, 1.3860828, -1.2564507, 1.3231158, -1.2968082, 1.2534623, -1.331802, 1.1768669, -1.3612351, 1.0930748, -1.3849106, 1.001831)
-closed = true
-width = 0.0
-default_color = Color(0.25490198, 0.10980392, 0, 1)
-sharp_limit = 80.0
-metadata/_edit_lock_ = true
-
-[node name="LaceTransform3" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=821664818]
-position = Vector2(-209.48288, -145.29816)
-scale = Vector2(3.7795274, 3.7795274)
-
-[node name="Lace" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform3" unique_id=740541235 node_paths=PackedStringArray("polygon", "line")]
-position = Vector2(95.03866, 368.95978)
-script = ExtResource("2_xtu0p")
-fill_color = Color(0.25490198, 0.10980392, 0, 1)
-polygon = NodePath("Fill")
-stroke_color = Color(0.25490198, 0.10980392, 0, 1)
-stroke_width = 0.0
-line = NodePath("Stroke")
-curve = SubResource("Curve2D_asb0w")
-update_curve_at_runtime = true
-arc_list = SubResource("Resource_iv3fp")
-
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform3/Lace" unique_id=1797821357]
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform3/Lace" unique_id=1180170247]
 color = Color(0.25490198, 0.10980392, 0, 1)
 polygon = PackedVector2Array(0.5825577, -1.8426514, 1.5419846, -1.1341248, -0.5825424, 1.8426514, -0.90994316, 1.8380358, -0.98718965, 1.8278095, -1.0616096, 1.8120129, -1.1327105, 1.7896756, -1.1999996, 1.7598269, -1.2629844, 1.7214962, -1.2927089, 1.6988467, -1.3211725, 1.673713, -1.3483137, 1.6459732, -1.3740711, 1.6155063, -1.4211879, 1.5459062, -1.4620302, 1.4639416, -1.4961054, 1.3686419, -1.5229211, 1.2590367, -1.5419846, 1.1341553)
 metadata/_edit_lock_ = true
 
-[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform3/Lace" unique_id=546162007]
+[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/LaceTransform3/Lace" unique_id=837890154]
 points = PackedVector2Array(0.5825577, -1.8426514, 1.5419846, -1.1341248, -0.5825424, 1.8426514, -0.90994316, 1.8380358, -0.98718965, 1.8278095, -1.0616096, 1.8120129, -1.1327105, 1.7896756, -1.1999996, 1.7598269, -1.2629844, 1.7214962, -1.2927089, 1.6988467, -1.3211725, 1.673713, -1.3483137, 1.6459732, -1.3740711, 1.6155063, -1.4211879, 1.5459062, -1.4620302, 1.4639416, -1.4961054, 1.3686419, -1.5229211, 1.2590367, -1.5419846, 1.1341553)
 closed = true
 width = 0.0
@@ -1141,10 +1141,10 @@ default_color = Color(0.25490198, 0.10980392, 0, 1)
 sharp_limit = 80.0
 metadata/_edit_lock_ = true
 
-[node name="NeckTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=2041068319]
+[node name="NeckTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=179556752]
 position = Vector2(31.75, 8.202083)
 
-[node name="Neck" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/NeckTransform" unique_id=2031091147 node_paths=PackedStringArray("polygon", "line")]
+[node name="Neck" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/NeckTransform" unique_id=146316745 node_paths=PackedStringArray("polygon", "line")]
 position = Vector2(149.08038, 266.179)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.9607843, 0.61960787, 0.64705884, 1)
@@ -1152,16 +1152,16 @@ polygon = NodePath("Fill")
 stroke_color = Color(0.4745098, 0.25490198, 0.27058825, 1)
 stroke_width = 3.99999
 line = NodePath("Stroke")
-curve = SubResource("Curve2D_x2pvf")
+curve = SubResource("Curve2D_asb0w")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_iwf54")
+arc_list = SubResource("Resource_iv3fp")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/NeckTransform/Neck" unique_id=1619369959]
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/NeckTransform/Neck" unique_id=2016052834]
 color = Color(0.9607843, 0.61960787, 0.64705884, 1)
 polygon = PackedVector2Array(-11.866699, -67.268875, 31.171005, -16.718628, 34.241806, 26.131962, 34.438763, 48.280426, 32.914124, 66.469086, 30.68821, 66.97265, 28.472708, 67.23521, 26.267353, 67.268845, 24.07189, 67.08568, 21.886057, 66.69782, 19.709597, 66.11737, 15.38375, 64.42718, 11.0922785, 62.111958, 6.8331037, 59.268597, -1.596652, 52.384945, -18.15989, 36.542484, -26.326569, 29.133696, -34.43876, 23.099884, -29.261833, -7.300433, -22.465273, -31.740644, -13.528479, -59.70208)
 metadata/_edit_lock_ = true
 
-[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/NeckTransform/Neck" unique_id=1953106097]
+[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/NeckTransform/Neck" unique_id=890441625]
 points = PackedVector2Array(-11.866699, -67.268875, 31.171005, -16.718628, 34.241806, 26.131962, 34.438763, 48.280426, 32.914124, 66.469086, 30.68821, 66.97265, 28.472708, 67.23521, 26.267353, 67.268845, 24.07189, 67.08568, 21.886057, 66.69782, 19.709597, 66.11737, 15.38375, 64.42718, 11.0922785, 62.111958, 6.8331037, 59.268597, -1.596652, 52.384945, -18.15989, 36.542484, -26.326569, 29.133696, -34.43876, 23.099884, -29.261833, -7.300433, -22.465273, -31.740644, -13.528479, -59.70208)
 closed = true
 width = 3.99999
@@ -1169,258 +1169,231 @@ default_color = Color(0.4745098, 0.25490198, 0.27058825, 1)
 sharp_limit = 80.0
 metadata/_edit_lock_ = true
 
-[node name="HeadTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1227568672]
-position = Vector2(31.75, 8.202083)
-
-[node name="Head" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/HeadTransform" unique_id=1733042179 node_paths=PackedStringArray("polygon", "line")]
-position = Vector2(195.39328, 184.53558)
+[node name="Head" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=2097760403 node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(240.44373, 206.83815)
 script = ExtResource("2_xtu0p")
 polygon = NodePath("Fill")
 stroke_color = Color(0.4745098, 0.25490198, 0.27058825, 1)
 stroke_width = 2.0
 line = NodePath("Stroke")
-curve = SubResource("Curve2D_gtnpw")
+curve = SubResource("Curve2D_x2pvf")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_ai2k3")
+arc_list = SubResource("Resource_iwf54")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/HeadTransform/Head" unique_id=1728812899]
-texture = SubResource("GradientTexture2D_nkax8")
-texture_offset = Vector2(82.10094, 113.78499)
-polygon = PackedVector2Array(81.66696, 38.70735, 81.44479, 39.27167, 81.15839, 39.813694, 80.81076, 40.334106, 80.40494, 40.833584, 79.94392, 41.312805, 79.430725, 41.77246, 78.25984, 42.635777, 76.91642, 43.428963, 75.42452, 44.157482, 72.09181, 45.442276, 57.643707, 49.083435, 56.733273, 53.241673, 56.235195, 57.501854, 56.200363, 66.21373, 58.04567, 83.60351, 58.822777, 91.82422, 58.933655, 95.71602, 58.767498, 99.42404, 58.255363, 102.91967, 57.848015, 104.57892, 57.32832, 106.17436, 56.687653, 107.70243, 55.91742, 109.15954, 55.008976, 110.54212, 53.95372, 111.84662, 50.384846, 112.63458, 45.871048, 113.24534, 34.462933, 113.785, 20.63791, 113.16509, 5.30451, 111.0851, -10.628742, 107.24451, -18.536398, 104.57008, -26.253317, 101.342834, -33.665936, 97.52518, -40.66069, 93.07956, -47.12401, 87.968414, -52.94232, 82.154175, -55.00904, 79.555435, -57.03434, 76.50223, -60.942867, 69.1555, -68.06703, 50.36254, -74.02985, 27.744957, -78.54641, 3.272375, -81.33175, -21.085558, -82.10094, -43.3592, -81.64044, -53.0989, -80.56904, -61.578907, -79.79313, -65.26959, -78.851135, -68.553024, -77.73861, -71.39844, -77.11701, -72.64726, -76.4511, -73.77504, -69.023, -83.97464, -61.09055, -92.47033, -52.704712, -99.37144, -43.916477, -104.78731, -34.77683, -108.82726, -25.336742, -111.60064, -15.647202, -113.21677, -5.759186, -113.78499, 1.5927839, -113.55794, 8.358809, -112.77651, 14.563501, -111.4761, 20.231476, -109.69209, 25.387344, -107.459915, 30.055723, -104.81495, 34.261223, -101.792595, 38.028458, -98.428246, 41.382042, -94.75734, 44.34659, -90.81523, 46.94671, -86.63735, 49.207024, -82.25909, 52.806667, -73.043, 55.34243, -63.450188, 58.009945, -44.267174, 59.242355, -13.841259, 59.491745, -11.472708, 59.844368, -9.5409775, 60.06708, -8.749982, 60.324837, -8.081468, 60.620705, -7.5398574, 60.957764, -7.1295776, 65.90218, -1.7156721, 70.36406, 4.445695, 74.24812, 11.025894, 77.45911, 17.696297, 79.90174, 24.128273, 81.480774, 29.99319, 81.91667, 32.610306, 82.10094, 34.96242, 82.02167, 37.008457, 81.87949, 37.90386)
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/Head" unique_id=96483023]
+texture = SubResource("GradientTexture2D_ai2k3")
+texture_offset = Vector2(75.53005, 117.76341)
+polygon = PackedVector2Array(73.76068, 52.68483, 73.417816, 53.18508, 73.01733, 53.64923, 72.562035, 54.07861, 72.05468, 54.47456, 71.49808, 54.83841, 70.895004, 55.171505, 69.56058, 55.75078, 68.07366, 56.223076, 66.45654, 56.599106, 62.920795, 57.10518, 48.02426, 57.419357, 46.206013, 61.268234, 44.76684, 65.30877, 42.78253, 73.79173, 40.68789, 91.15324, 39.604866, 99.33927, 38.841656, 103.15712, 37.849586, 106.73381, 36.56787, 110.02608, 35.799397, 111.55202, 34.93571, 112.990616, 33.969215, 114.336464, 32.892315, 115.58416, 31.697407, 116.72827, 30.376892, 117.76341, 26.722198, 117.73241, 22.186235, 117.31714, 10.946863, 115.289116, -2.3884728, 111.58988, -16.867027, 106.12993, -31.536062, 98.81977, -38.64427, 94.44293, -45.442825, 89.56996, -51.812622, 84.18971, -57.634575, 78.290985, -62.78959, 71.862595, -67.15857, 64.89336, -68.59104, 61.897892, -69.88139, 58.46877, -72.04599, 50.4335, -74.78206, 30.522633, -75.53005, 7.144199, -74.45319, -17.718365, -71.71473, -42.081615, -67.477905, -63.962112, -64.84862, -73.3515, -61.905964, -81.37641, -60.323498, -84.79971, -58.67034, -87.78892, -56.949043, -90.313034, -56.063637, -91.39101, -55.162155, -92.34108, -45.63917, -100.618835, -36.00609, -107.12302, -26.288122, -111.97159, -16.510479, -115.28253, -6.6983733, -117.17382, 3.1229873, -117.76341, 12.928391, -117.16928, 22.692627, -115.50941, 29.80716, -113.642204, 36.22651, -111.365875, 41.982582, -108.7094, 47.1073, -105.70177, 51.63258, -102.37197, 55.590324, -98.749016, 59.012455, -94.86187, 61.930885, -90.73954, 64.377525, -86.41102, 66.38429, -81.90529, 67.98309, -77.25134, 69.20586, -72.47818, 70.65089, -62.690155, 70.97472, -52.773132, 69.27994, -33.479836, 63.66948, -3.5502872, 63.382286, -1.1860218, 63.293495, 0.7756214, 63.33347, 1.5963998, 63.43502, 2.3056512, 63.602123, 2.8997512, 63.838776, 3.3750763, 67.44567, 9.758491, 70.41492, 16.762367, 72.72726, 24.045086, 74.3634, 31.265036, 75.3041, 38.080597, 75.53005, 44.150158, 75.36898, 46.798428, 75.021996, 49.132095, 74.486694, 51.10845, 74.14766, 51.949295)
 metadata/_edit_lock_ = true
 
-[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/HeadTransform/Head" unique_id=614977716]
-points = PackedVector2Array(81.66696, 38.70735, 81.44479, 39.27167, 81.15839, 39.813694, 80.81076, 40.334106, 80.40494, 40.833584, 79.94392, 41.312805, 79.430725, 41.77246, 78.25984, 42.635777, 76.91642, 43.428963, 75.42452, 44.157482, 72.09181, 45.442276, 57.643707, 49.083435, 56.733273, 53.241673, 56.235195, 57.501854, 56.200363, 66.21373, 58.04567, 83.60351, 58.822777, 91.82422, 58.933655, 95.71602, 58.767498, 99.42404, 58.255363, 102.91967, 57.848015, 104.57892, 57.32832, 106.17436, 56.687653, 107.70243, 55.91742, 109.15954, 55.008976, 110.54212, 53.95372, 111.84662, 50.384846, 112.63458, 45.871048, 113.24534, 34.462933, 113.785, 20.63791, 113.16509, 5.30451, 111.0851, -10.628742, 107.24451, -18.536398, 104.57008, -26.253317, 101.342834, -33.665936, 97.52518, -40.66069, 93.07956, -47.12401, 87.968414, -52.94232, 82.154175, -55.00904, 79.555435, -57.03434, 76.50223, -60.942867, 69.1555, -68.06703, 50.36254, -74.02985, 27.744957, -78.54641, 3.272375, -81.33175, -21.085558, -82.10094, -43.3592, -81.64044, -53.0989, -80.56904, -61.578907, -79.79313, -65.26959, -78.851135, -68.553024, -77.73861, -71.39844, -77.11701, -72.64726, -76.4511, -73.77504, -69.023, -83.97464, -61.09055, -92.47033, -52.704712, -99.37144, -43.916477, -104.78731, -34.77683, -108.82726, -25.336742, -111.60064, -15.647202, -113.21677, -5.759186, -113.78499, 1.5927839, -113.55794, 8.358809, -112.77651, 14.563501, -111.4761, 20.231476, -109.69209, 25.387344, -107.459915, 30.055723, -104.81495, 34.261223, -101.792595, 38.028458, -98.428246, 41.382042, -94.75734, 44.34659, -90.81523, 46.94671, -86.63735, 49.207024, -82.25909, 52.806667, -73.043, 55.34243, -63.450188, 58.009945, -44.267174, 59.242355, -13.841259, 59.491745, -11.472708, 59.844368, -9.5409775, 60.06708, -8.749982, 60.324837, -8.081468, 60.620705, -7.5398574, 60.957764, -7.1295776, 65.90218, -1.7156721, 70.36406, 4.445695, 74.24812, 11.025894, 77.45911, 17.696297, 79.90174, 24.128273, 81.480774, 29.99319, 81.91667, 32.610306, 82.10094, 34.96242, 82.02167, 37.008457, 81.87949, 37.90386)
+[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/Head" unique_id=1930450673]
+points = PackedVector2Array(73.76068, 52.68483, 73.417816, 53.18508, 73.01733, 53.64923, 72.562035, 54.07861, 72.05468, 54.47456, 71.49808, 54.83841, 70.895004, 55.171505, 69.56058, 55.75078, 68.07366, 56.223076, 66.45654, 56.599106, 62.920795, 57.10518, 48.02426, 57.419357, 46.206013, 61.268234, 44.76684, 65.30877, 42.78253, 73.79173, 40.68789, 91.15324, 39.604866, 99.33927, 38.841656, 103.15712, 37.849586, 106.73381, 36.56787, 110.02608, 35.799397, 111.55202, 34.93571, 112.990616, 33.969215, 114.336464, 32.892315, 115.58416, 31.697407, 116.72827, 30.376892, 117.76341, 26.722198, 117.73241, 22.186235, 117.31714, 10.946863, 115.289116, -2.3884728, 111.58988, -16.867027, 106.12993, -31.536062, 98.81977, -38.64427, 94.44293, -45.442825, 89.56996, -51.812622, 84.18971, -57.634575, 78.290985, -62.78959, 71.862595, -67.15857, 64.89336, -68.59104, 61.897892, -69.88139, 58.46877, -72.04599, 50.4335, -74.78206, 30.522633, -75.53005, 7.144199, -74.45319, -17.718365, -71.71473, -42.081615, -67.477905, -63.962112, -64.84862, -73.3515, -61.905964, -81.37641, -60.323498, -84.79971, -58.67034, -87.78892, -56.949043, -90.313034, -56.063637, -91.39101, -55.162155, -92.34108, -45.63917, -100.618835, -36.00609, -107.12302, -26.288122, -111.97159, -16.510479, -115.28253, -6.6983733, -117.17382, 3.1229873, -117.76341, 12.928391, -117.16928, 22.692627, -115.50941, 29.80716, -113.642204, 36.22651, -111.365875, 41.982582, -108.7094, 47.1073, -105.70177, 51.63258, -102.37197, 55.590324, -98.749016, 59.012455, -94.86187, 61.930885, -90.73954, 64.377525, -86.41102, 66.38429, -81.90529, 67.98309, -77.25134, 69.20586, -72.47818, 70.65089, -62.690155, 70.97472, -52.773132, 69.27994, -33.479836, 63.66948, -3.5502872, 63.382286, -1.1860218, 63.293495, 0.7756214, 63.33347, 1.5963998, 63.43502, 2.3056512, 63.602123, 2.8997512, 63.838776, 3.3750763, 67.44567, 9.758491, 70.41492, 16.762367, 72.72726, 24.045086, 74.3634, 31.265036, 75.3041, 38.080597, 75.53005, 44.150158, 75.36898, 46.798428, 75.021996, 49.132095, 74.486694, 51.10845, 74.14766, 51.949295)
 closed = true
 width = 2.0
 default_color = Color(0.4745098, 0.25490198, 0.27058825, 1)
 sharp_limit = 80.0
 metadata/_edit_lock_ = true
 
-[node name="EyeBrowTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=333182172]
-position = Vector2(31.75, 8.202083)
-
-[node name="EyeBrow" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/EyeBrowTransform" unique_id=1704274616 node_paths=PackedStringArray("polygon")]
-position = Vector2(222.28784, 134.01978)
+[node name="EyeBrow" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=689820461 node_paths=PackedStringArray("polygon")]
+position = Vector2(280.56982, 159.30977)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.45490196, 0.24313726, 0.25490198, 1)
 polygon = NodePath("Fill")
-curve = SubResource("Curve2D_7eaox")
+curve = SubResource("Curve2D_bjlab")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_shs1u")
+arc_list = SubResource("Resource_nkax8")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/EyeBrowTransform/EyeBrow" unique_id=1029352759]
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/EyeBrow" unique_id=1700381107]
 color = Color(0.45490196, 0.24313726, 0.25490198, 1)
-polygon = PackedVector2Array(20.998383, -6.1055756, 20.965992, -6.2138343, 20.925655, -6.3193073, 20.877481, -6.421988, 20.821575, -6.5218687, 20.687006, -6.713197, 20.522797, -6.893231, 20.32981, -7.0619082, 20.108896, -7.219165, 19.86091, -7.3649406, 19.58672, -7.4991736, 18.963127, -7.732759, 18.244965, -7.919423, 16.552341, -8.149999, 14.563662, -8.18692, 12.333737, -8.026207, 9.917379, -7.6638794, 7.3694, -7.095955, 4.138953, -6.02067, -0.066323996, -4.280884, -9.631157, 0.34037805, -17.784668, 5.064196, -19.187635, 6.06153, -20.225796, 6.9321775, -20.59079, 7.3116755, -20.731739, 7.486012, -20.843838, 7.649519, -20.92622, 7.8017807, -20.978024, 7.942382, -20.998383, 8.070905, -20.986435, 8.186935, 1.6224422, 1.8930678, 14.879717, -2.3567648, 17.325909, -3.3771574, 19.227024, -4.351749, 19.94227, -4.8173413, 20.235655, -5.0439196, 20.484152, -5.266051, 20.686222, -5.483508, 20.840313, -5.696066, 20.944881, -5.903497)
+polygon = PackedVector2Array(22.059448, -0.25701904, 22.052114, -0.3697813, 22.036413, -0.481608, 22.01245, -0.5924675, 21.980324, -0.70232844, 21.891998, -0.9189281, 21.772259, -1.1311544, 21.621931, -1.3387554, 21.441828, -1.5414783, 21.232777, -1.739071, 20.995594, -1.9312811, 20.44012, -2.2985442, 19.781975, -2.6412485, 18.183933, -3.2449057, 16.253996, -3.7261024, 14.044694, -4.0686874, 11.608555, -4.256511, 8.998108, -4.2734222, 5.6089287, -3.948646, 1.1208978, -3.1944733, -9.235741, -0.83182836, -18.239841, 1.9467309, -19.830479, 2.604664, -21.037205, 3.2207963, -21.477894, 3.50895, -21.654297, 3.6473074, -21.800156, 3.7815688, -21.914534, 3.9115229, -21.9965, 4.0369577, -22.045116, 4.1576614, -22.059448, 4.2734222, 1.3846111, 3.2008479, 15.256822, 2.0268443, 17.869366, 1.5799897, 19.940413, 1.0557461, 20.741737, 0.7620958, 21.078402, 0.6069498, 21.370323, 0.44608945, 21.615944, 0.2793893, 21.813711, 0.10672395, 21.962065, -0.07203196)
 metadata/_edit_lock_ = true
 
-[node name="EyeTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1403902395]
-position = Vector2(31.75, 8.202083)
-
-[node name="Eye" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/EyeTransform" unique_id=1664196632 node_paths=PackedStringArray("polygon", "line")]
-position = Vector2(230.31131, 157.2377)
+[node name="Eye" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1957520438 node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(284.02704, 186.47052)
 script = ExtResource("2_xtu0p")
 polygon = NodePath("Fill")
 stroke_color = Color(0.4745098, 0.25490198, 0.27058825, 1)
 stroke_width = 0.999999
 line = NodePath("Stroke")
-curve = SubResource("Curve2D_rtcp5")
+curve = SubResource("Curve2D_7eaox")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_5h36n")
+arc_list = SubResource("Resource_shs1u")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/EyeTransform/Eye" unique_id=81239029]
-polygon = PackedVector2Array(13.199921, -0.30889893, 13.087006, 2.5270767, 12.76824, 5.1924767, 12.273588, 7.6207623, 11.63302, 9.745398, 10.876501, 11.499841, 10.464125, 12.217449, 10.0339985, 12.817556, 9.813448, 13.07095, 9.589867, 13.291847, 9.36372, 13.479214, 9.135477, 13.632006, 8.905606, 13.749184, 8.790207, 13.794094, 8.674576, 13.829711, 8.558771, 13.855905, 8.442853, 13.872545, 8.326879, 13.879503, 8.210907, 13.876648, 7.760403, 13.817681, 7.239651, 13.698669, 6.0098653, 13.293824, 2.9543939, 11.910095, -4.282289, 7.5924377, -7.744727, 5.0847635, -10.624046, 2.6286964, -11.732729, 1.4866177, -12.560863, 0.4373634, -12.855684, -0.044129252, -13.063522, -0.49242544, -13.133067, -0.7030841, -13.1787615, -0.90419495, -13.199901, -1.0953417, -13.1957855, -1.2761078, -13.152709, -1.5853808, -13.083795, -1.895209, -12.989824, -2.2053895, -12.871587, -2.51572, -12.565437, -3.1360197, -12.171625, -3.7544866, -11.696428, -4.3694997, -11.146122, -4.9794364, -9.845293, -6.177598, -8.319355, -7.3359995, -6.618526, -8.4416685, -2.893067, -10.44293, 0.9293461, -12.07761, 4.446973, -13.241937, 5.965947, -13.615289, 7.258073, -13.832138, 7.8033743, -13.877822, 8.273131, -13.879515, 8.47772, -13.8633585, 8.661068, -13.835597, 8.822392, -13.796027, 8.960907, -13.744446, 9.171644, -13.63759, 9.380458, -13.50944, 9.587036, -13.360107, 9.791062, -13.1897, 10.190223, -12.786101, 10.575434, -12.299527, 10.944196, -11.730858, 11.294012, -11.08097, 11.926796, -9.541072, 12.453783, -7.686874, 12.854969, -5.5254173, 13.110349, -3.0637455)
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/Eye" unique_id=596502673]
+polygon = PackedVector2Array(12.325897, 0.9107666, 11.580949, 3.6494823, 10.673559, 6.1758666, 9.647833, 8.431779, 8.547873, 10.35908, 7.41778, 11.899629, 6.8552175, 12.506702, 6.3016605, 12.995283, 6.0299816, 13.192869, 5.762623, 13.358108, 5.500271, 13.490089, 5.243616, 13.587906, 4.9933476, 13.650649, 4.870824, 13.668584, 4.7501545, 13.67741, 4.6314263, 13.677014, 4.5147257, 13.667282, 4.4001384, 13.6481, 4.2877502, 13.619354, 3.8618817, 13.46103, 3.3809907, 13.228456, 2.2730522, 12.558569, -0.39508653, 10.525925, -6.4814796, 4.697756, -9.294631, 1.4785819, -11.551018, -1.5597508, -12.375875, -2.921047, -12.948088, -4.1290674, -13.12763, -4.6643424, -13.229831, -5.14779, -13.250449, -5.3686714, -13.249959, -5.5749073, -13.227769, -5.7659354, -13.183289, -5.9411926, -13.072068, -6.232972, -12.93554, -6.519508, -12.774514, -6.8007793, -12.589802, -7.0767627, -12.1525545, -7.6127796, -11.630281, -8.127385, -11.02946, -8.620403, -10.356572, -9.091661, -8.820522, -9.968188, -7.073981, -10.75557, -5.1687922, -11.452408, -1.0898609, -12.56884, 3.001495, -13.306291, 6.6905003, -13.653561, 8.254505, -13.67738, 9.562381, -13.599452, 10.104069, -13.521898, 10.562283, -13.418381, 10.75806, -13.356833, 10.93054, -13.28873, 11.078911, -13.214048, 11.202362, -13.132767, 11.383828, -12.981445, 11.558652, -12.809799, 11.726555, -12.61801, 11.887253, -12.406251, 12.1859255, -11.923534, 12.452429, -11.363071, 12.684522, -10.726278, 12.879965, -10.014572, 13.151946, -8.372095, 13.25045, -6.4469814, 13.157557, -4.2505717, 12.855345, -1.7942085)
 metadata/_edit_lock_ = true
 
-[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/EyeTransform/Eye" unique_id=550798456]
-points = PackedVector2Array(13.199921, -0.30889893, 13.087006, 2.5270767, 12.76824, 5.1924767, 12.273588, 7.6207623, 11.63302, 9.745398, 10.876501, 11.499841, 10.464125, 12.217449, 10.0339985, 12.817556, 9.813448, 13.07095, 9.589867, 13.291847, 9.36372, 13.479214, 9.135477, 13.632006, 8.905606, 13.749184, 8.790207, 13.794094, 8.674576, 13.829711, 8.558771, 13.855905, 8.442853, 13.872545, 8.326879, 13.879503, 8.210907, 13.876648, 7.760403, 13.817681, 7.239651, 13.698669, 6.0098653, 13.293824, 2.9543939, 11.910095, -4.282289, 7.5924377, -7.744727, 5.0847635, -10.624046, 2.6286964, -11.732729, 1.4866177, -12.560863, 0.4373634, -12.855684, -0.044129252, -13.063522, -0.49242544, -13.133067, -0.7030841, -13.1787615, -0.90419495, -13.199901, -1.0953417, -13.1957855, -1.2761078, -13.152709, -1.5853808, -13.083795, -1.895209, -12.989824, -2.2053895, -12.871587, -2.51572, -12.565437, -3.1360197, -12.171625, -3.7544866, -11.696428, -4.3694997, -11.146122, -4.9794364, -9.845293, -6.177598, -8.319355, -7.3359995, -6.618526, -8.4416685, -2.893067, -10.44293, 0.9293461, -12.07761, 4.446973, -13.241937, 5.965947, -13.615289, 7.258073, -13.832138, 7.8033743, -13.877822, 8.273131, -13.879515, 8.47772, -13.8633585, 8.661068, -13.835597, 8.822392, -13.796027, 8.960907, -13.744446, 9.171644, -13.63759, 9.380458, -13.50944, 9.587036, -13.360107, 9.791062, -13.1897, 10.190223, -12.786101, 10.575434, -12.299527, 10.944196, -11.730858, 11.294012, -11.08097, 11.926796, -9.541072, 12.453783, -7.686874, 12.854969, -5.5254173, 13.110349, -3.0637455)
+[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/Eye" unique_id=1776422719]
+points = PackedVector2Array(12.325897, 0.9107666, 11.580949, 3.6494823, 10.673559, 6.1758666, 9.647833, 8.431779, 8.547873, 10.35908, 7.41778, 11.899629, 6.8552175, 12.506702, 6.3016605, 12.995283, 6.0299816, 13.192869, 5.762623, 13.358108, 5.500271, 13.490089, 5.243616, 13.587906, 4.9933476, 13.650649, 4.870824, 13.668584, 4.7501545, 13.67741, 4.6314263, 13.677014, 4.5147257, 13.667282, 4.4001384, 13.6481, 4.2877502, 13.619354, 3.8618817, 13.46103, 3.3809907, 13.228456, 2.2730522, 12.558569, -0.39508653, 10.525925, -6.4814796, 4.697756, -9.294631, 1.4785819, -11.551018, -1.5597508, -12.375875, -2.921047, -12.948088, -4.1290674, -13.12763, -4.6643424, -13.229831, -5.14779, -13.250449, -5.3686714, -13.249959, -5.5749073, -13.227769, -5.7659354, -13.183289, -5.9411926, -13.072068, -6.232972, -12.93554, -6.519508, -12.774514, -6.8007793, -12.589802, -7.0767627, -12.1525545, -7.6127796, -11.630281, -8.127385, -11.02946, -8.620403, -10.356572, -9.091661, -8.820522, -9.968188, -7.073981, -10.75557, -5.1687922, -11.452408, -1.0898609, -12.56884, 3.001495, -13.306291, 6.6905003, -13.653561, 8.254505, -13.67738, 9.562381, -13.599452, 10.104069, -13.521898, 10.562283, -13.418381, 10.75806, -13.356833, 10.93054, -13.28873, 11.078911, -13.214048, 11.202362, -13.132767, 11.383828, -12.981445, 11.558652, -12.809799, 11.726555, -12.61801, 11.887253, -12.406251, 12.1859255, -11.923534, 12.452429, -11.363071, 12.684522, -10.726278, 12.879965, -10.014572, 13.151946, -8.372095, 13.25045, -6.4469814, 13.157557, -4.2505717, 12.855345, -1.7942085)
 closed = true
 width = 0.999999
 default_color = Color(0.4745098, 0.25490198, 0.27058825, 1)
 sharp_limit = 80.0
 metadata/_edit_lock_ = true
 
-[node name="IrisRimTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1034914302]
-position = Vector2(31.75, 8.202083)
+[node name="IrisRimTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=741639845]
+rotation = 0.22578755
 
-[node name="IrisRim" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/IrisRimTransform" unique_id=1744880841 node_paths=PackedStringArray("polygon")]
-position = Vector2(238.81058, 157.17332)
+[node name="IrisRim" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/IrisRimTransform" unique_id=1980824934 node_paths=PackedStringArray("polygon")]
+position = Vector2(326.0801, 116.52399)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.22745098, 0.1764706, 0.35686275, 1)
 polygon = NodePath("Fill")
-curve = SubResource("Curve2D_psswf")
+curve = SubResource("Curve2D_rtcp5")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_rc3dq")
+arc_list = SubResource("Resource_5h36n")
 shape_type = 2
 size = Vector2(8.720118, 27.19176)
 rx = 4.360059
 ry = 13.59588
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/IrisRimTransform/IrisRim" unique_id=1328833099]
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/IrisRimTransform/IrisRim" unique_id=1449807575]
 color = Color(0.22745098, 0.1764706, 0.35686275, 1)
 polygon = PackedVector2Array(4.360059, 0, 4.017433, 5.2922173, 3.6154468, 7.601677, 3.0830522, 9.613816, 2.4377794, 11.273972, 2.0782924, 11.954972, 1.6971596, 12.527477, 1.4991612, 12.770908, 1.2965728, 12.984653, 1.0896688, 13.167858, 0.878723, 13.319668, 0.66400933, 13.43923, 0.44580165, 13.525688, 0.33547318, 13.556236, 0.2243739, 13.578189, 0.11253811, 13.591439, 0, 13.59588, -0.1125381, 13.59144, -0.22437389, 13.578189, -0.33547315, 13.556236, -0.44580165, 13.525688, -0.66400933, 13.43923, -0.878723, 13.319668, -1.0896689, 13.167858, -1.2965729, 12.9846525, -1.499161, 12.770909, -1.6971598, 12.527477, -2.0782924, 11.954971, -2.4377797, 11.273972, -3.0830522, 9.613816, -3.6154466, 7.6016765, -4.017433, 5.2922173, -4.360059, 0, -4.017433, -5.2922173, -3.6154468, -7.601677, -3.0830522, -9.613816, -2.4377794, -11.273972, -2.0782924, -11.954972, -1.6971596, -12.527477, -1.4991612, -12.770908, -1.2965728, -12.984653, -1.0896688, -13.167858, -0.878723, -13.319668, -0.66400933, -13.43923, -0.44580165, -13.525688, -0.33547318, -13.556236, -0.2243739, -13.578189, -0.11253811, -13.591439, 0, -13.59588, 0.1125381, -13.59144, 0.22437389, -13.578189, 0.33547315, -13.556236, 0.44580165, -13.525688, 0.66400933, -13.43923, 0.878723, -13.319668, 1.0896689, -13.167858, 1.2965729, -12.9846525, 1.499161, -12.770909, 1.6971598, -12.527477, 2.0782924, -11.954971, 2.4377797, -11.273972, 3.0830522, -9.613816, 3.6154466, -7.6016765, 4.017433, -5.2922173)
 metadata/_edit_lock_ = true
 
-[node name="IrisTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=969184274]
-position = Vector2(31.75, 8.202083)
+[node name="IrisTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=153900387]
+rotation = 0.22578755
 
-[node name="Iris" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/IrisTransform" unique_id=1930088540 node_paths=PackedStringArray("polygon")]
-position = Vector2(239.06058, 157.17332)
+[node name="Iris" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/IrisTransform" unique_id=184650235 node_paths=PackedStringArray("polygon")]
+position = Vector2(326.3301, 116.52399)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.49411765, 0.38431373, 0.7764706, 1)
 polygon = NodePath("Fill")
-curve = SubResource("Curve2D_or4b0")
+curve = SubResource("Curve2D_psswf")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_0hd4h")
+arc_list = SubResource("Resource_rc3dq")
 shape_type = 2
 size = Vector2(8.220117, 25.63262)
 rx = 4.1100583
 ry = 12.81631
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/IrisTransform/Iris" unique_id=954582487]
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/IrisTransform/Iris" unique_id=1884137573]
 color = Color(0.49411765, 0.38431373, 0.7764706, 1)
 polygon = PackedVector2Array(4.1100583, 0, 3.7870784, 4.988769, 3.4081411, 7.165807, 2.9062736, 9.0625725, 2.298, 10.627537, 1.9591256, 11.269489, 1.5998466, 11.809168, 1.4132011, 12.038642, 1.2222289, 12.240131, 1.0271885, 12.41283, 0.82833815, 12.555936, 0.6259359, 12.668641, 0.42023993, 12.750143, 0.31623754, 12.77894, 0.21150857, 12.799634, 0.1060853, 12.812124, 0, 12.81631, -0.1060853, 12.812123, -0.21150856, 12.799634, -0.31623754, 12.77894, -0.42023993, 12.750143, -0.6259358, 12.668642, -0.8283381, 12.555936, -1.0271885, 12.412829, -1.222229, 12.24013, -1.413201, 12.038641, -1.5998466, 11.809168, -1.9591256, 11.269489, -2.298, 10.627537, -2.9062736, 9.0625725, -3.4081416, 7.165807, -3.7870784, 4.9887686, -4.1100583, 0, -3.7870784, -4.988769, -3.4081411, -7.165807, -2.9062736, -9.0625725, -2.298, -10.627537, -1.9591256, -11.269489, -1.5998466, -11.809168, -1.4132011, -12.038642, -1.2222289, -12.240131, -1.0271885, -12.41283, -0.82833815, -12.555936, -0.6259359, -12.668641, -0.42023993, -12.750143, -0.31623754, -12.77894, -0.21150857, -12.799634, -0.1060853, -12.812124, 0, -12.81631, 0.1060853, -12.812123, 0.21150856, -12.799634, 0.31623754, -12.77894, 0.42023993, -12.750143, 0.6259358, -12.668642, 0.8283381, -12.555936, 1.0271885, -12.412829, 1.222229, -12.24013, 1.413201, -12.038641, 1.5998466, -11.809168, 1.9591256, -11.269489, 2.298, -10.627537, 2.9062736, -9.0625725, 3.4081416, -7.165807, 3.7870784, -4.9887686)
 metadata/_edit_lock_ = true
 
-[node name="PupilTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=850963404]
-position = Vector2(31.75, 8.202083)
-
-[node name="Pupil" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/PupilTransform" unique_id=12143686 node_paths=PackedStringArray("polygon")]
-position = Vector2(240.93564, 156.88971)
+[node name="Pupil" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1695839817 node_paths=PackedStringArray("polygon")]
+position = Vector2(294.18344, 187.10452)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.12941177, 0.101960786, 0.20392157, 1)
+polygon = NodePath("Fill")
+curve = SubResource("Curve2D_or4b0")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_0hd4h")
+
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/Pupil" unique_id=1074100319]
+color = Color(0.12941177, 0.101960786, 0.20392157, 1)
+polygon = PackedVector2Array(1.9822693, -0.044418335, 1.3861991, 2.5418212, 0.7592393, 4.511328, -0.3859558, 7.2010345, -0.44491324, 7.1848016, -0.5046057, 7.1630735, -0.62589794, 7.1034966, -0.7492377, 7.0230403, -0.87403, 6.922441, -0.9996797, 6.802435, -1.1255921, 6.6637573, -1.3758241, 6.333335, -1.6199665, 5.937063, -1.8532594, 5.4808292, -2.2682571, 4.412036, -2.5827389, 3.17407, -2.758625, 1.8140426, -2.7578375, 0.37906837, -2.6792915, -0.35180122, -2.5422974, -1.0837402, -2.3490107, -1.7973995, -2.1088243, -2.4760273, -1.5121776, -3.7201927, -0.80120957, -4.800251, -0.024771929, -5.7002153, 0.76828337, -6.4041004, 1.1557765, -6.677517, 1.5291045, -6.895919, 1.8821609, -7.0573072, 2.049179, -7.115998, 2.2088394, -7.159685, 2.3603787, -7.1881204, 2.5030336, -7.2010527, 2.6360404, -7.1982336, 2.6986876, -7.1908393, 2.7586365, -7.179413, 2.6038084, -4.33126)
+metadata/_edit_lock_ = true
+
+[node name="PupilShineTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=331098872]
+rotation = 0.22578755
+
+[node name="PupilShine" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/PupilShineTransform" unique_id=139660484 node_paths=PackedStringArray("polygon")]
+position = Vector2(324.195, 113.28963)
+script = ExtResource("2_xtu0p")
 polygon = NodePath("Fill")
 curve = SubResource("Curve2D_q208p")
 update_curve_at_runtime = true
 arc_list = SubResource("Resource_mtq1x")
-
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/PupilTransform/Pupil" unique_id=1580652907]
-color = Color(0.12941177, 0.101960786, 0.20392157, 1)
-polygon = PackedVector2Array(2.3212128, -0.23200989, 2.3192647, 2.422031, 2.149143, 4.4819093, 1.6351471, 7.359726, 1.5740517, 7.357104, 1.5110098, 7.3492904, 1.3794581, 7.31838, 1.2412364, 7.267579, 1.0970896, 7.1974707, 0.94776237, 7.1086392, 0.7939996, 7.001671, 0.47614503, 6.735655, 0.14948364, 6.404097, -0.18002725, 6.011672, -0.82376796, 5.062914, -1.4074178, 3.9267745, -1.8833172, 2.6406453, -2.203807, 1.2419196, -2.29088, 0.51201826, -2.321228, -0.23200989, -2.292617, -0.9708281, -2.210454, -1.6860032, -1.9074872, -3.0321648, -1.4563612, -4.2439775, -0.9011097, -5.2949247, -0.28576592, -6.1584888, 0.03068006, -6.5117154, 0.3456366, -6.808152, 0.6535994, -7.044485, 0.8032382, -7.139076, 0.94906443, -7.2173986, 1.0903901, -7.2790375, 1.2265272, -7.323579, 1.3567879, -7.350608, 1.4194996, -7.357426, 1.480484, -7.3597107, 1.9672089, -4.5491858)
-metadata/_edit_lock_ = true
-
-[node name="PupilShineTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1669708131]
-position = Vector2(31.75, 8.202083)
-
-[node name="PupilShine" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/PupilShineTransform" unique_id=812011367 node_paths=PackedStringArray("polygon")]
-position = Vector2(236.92549, 153.93896)
-script = ExtResource("2_xtu0p")
-polygon = NodePath("Fill")
-curve = SubResource("Curve2D_ioorw")
-update_curve_at_runtime = true
-arc_list = SubResource("Resource_2b32l")
 shape_type = 2
 size = Vector2(5.622123, 4.418182)
 rx = 2.8110614
 ry = 2.209091
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/PupilShineTransform/PupilShine" unique_id=1923725957]
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/PupilShineTransform/PupilShine" unique_id=1015170698]
 polygon = PackedVector2Array(2.8110614, 0, 2.7965486, 0.22587228, 2.7539523, 0.44521853, 2.6846852, 0.6569286, 2.5901604, 0.85989213, 2.4717898, 1.0529988, 2.3309875, 1.2351385, 2.1691654, 1.4052011, 1.9877367, 1.5620759, 1.7881138, 1.7046528, 1.57171, 1.8318217, 1.3399377, 1.9424725, 1.09421, 2.0354943, 0.8359396, 2.1097775, 0.5665392, 2.1642115, 0.28742176, 2.1976862, 0, 2.209091, -0.28742176, 2.197686, -0.5665392, 2.1642115, -0.8359396, 2.1097775, -1.09421, 2.0354943, -1.3399378, 1.9424726, -1.5717101, 1.8318219, -1.7881138, 1.7046528, -1.9877367, 1.5620759, -2.1691654, 1.405201, -2.3309875, 1.2351387, -2.47179, 1.0529989, -2.5901604, 0.85989213, -2.6846852, 0.6569286, -2.7539523, 0.44521856, -2.7965486, 0.22587228, -2.8110614, 0, -2.7965486, -0.22587228, -2.7539523, -0.44521853, -2.6846852, -0.6569286, -2.5901604, -0.85989213, -2.4717898, -1.0529988, -2.3309875, -1.2351385, -2.1691654, -1.4052011, -1.9877367, -1.5620759, -1.7881138, -1.7046528, -1.57171, -1.8318217, -1.3399377, -1.9424725, -1.09421, -2.0354943, -0.8359396, -2.1097775, -0.5665392, -2.1642115, -0.28742176, -2.1976862, 0, -2.209091, 0.28742176, -2.197686, 0.5665392, -2.1642115, 0.8359396, -2.1097775, 1.09421, -2.0354943, 1.3399378, -1.9424726, 1.5717101, -1.8318219, 1.7881138, -1.7046528, 1.9877367, -1.5620759, 2.1691654, -1.405201, 2.3309875, -1.2351387, 2.47179, -1.0529989, 2.5901604, -0.85989213, 2.6846852, -0.6569286, 2.7539523, -0.44521856, 2.7965486, -0.22587228)
 metadata/_edit_lock_ = true
 
-[node name="HairTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=987171782]
-position = Vector2(31.75, 8.202083)
-
-[node name="Hair" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/HairTransform" unique_id=1300011017 node_paths=PackedStringArray("polygon", "line")]
-position = Vector2(171.86716, 122.40536)
+[node name="Hair" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1488731528 node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(239.93643, 132.56775)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.34117648, 0.25490198, 0.27058825, 1)
 polygon = NodePath("Fill")
 stroke_color = Color(0.34117648, 0.18039216, 0.19215687, 1)
 stroke_width = 3.99999
 line = NodePath("Stroke")
-curve = SubResource("Curve2D_ofssh")
+curve = SubResource("Curve2D_ioorw")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_njdgp")
+arc_list = SubResource("Resource_2b32l")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/HairTransform/Hair" unique_id=802757205]
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/Hair" unique_id=444686241]
 color = Color(0.34117648, 0.25490198, 0.27058825, 1)
-polygon = PackedVector2Array(69.97815, -34.852165, 73.48071, -27.863237, 74.565384, -25.18344, 75.26665, -22.902264, 75.63028, -20.911345, 75.69979, -19.990868, 75.70206, -19.102318, 75.52773, -17.366816, 75.153076, -15.596474, 69.55827, -16.9912, 62.376198, -18.186789, 44.005325, -19.9968, -3.4782562, -21.405846, -5.258064, -18.311132, -6.7892094, -14.895658, -9.200917, -7.2382064, -12.089835, 10.432242, -15.472355, 47.59155, -16.932018, 55.676094, -19.018913, 62.735397, -20.3572, 65.795715, -21.92385, 68.497894, -22.800264, 69.70407, -23.742712, 70.80798, -24.754177, 71.80538, -25.837639, 72.69203, -26.99608, 73.463684, -28.232481, 74.1161, -29.549822, 74.64503, -30.951088, 75.046234, -32.43926, 75.315475, -34.017315, 75.4485, -35.688236, 75.44107, -37.455013, 75.28895, -41.288025, 74.53363, -45.54021, 73.148605, -50.235424, 71.09993, -55.397507, 68.353645, -55.57548, 68.42889, -55.769142, 68.45177, -55.97805, 68.42372, -56.201767, 68.346214, -56.43986, 68.220695, -56.69188, 68.0486, -57.235985, 67.570526, -57.830574, 66.923584, -58.472157, 66.11935, -59.882275, 64.08548, -66.70231, 51.978325, -77.391045, 32.107788, -80.18029, 27.997078, -80.834564, 27.122906, -81.450676, 26.146896, -82.56502, 23.90485, -83.51655, 21.30189, -84.298454, 18.368967, -85.32621, 11.637056, -85.59392, 3.956737, -85.04719, -4.42437, -83.631645, -13.258638, -81.292915, -22.298452, -77.97661, -31.296183, -73.62836, -40.00421, -68.19378, -48.17492, -65.052124, -51.98139, -61.618492, -55.560673, -57.886093, -58.881813, -53.84813, -61.913864, -49.49779, -64.62587, -44.828293, -66.98686, -39.83284, -68.96591, -34.504623, -70.53204, -28.836853, -71.65433, -22.822731, -72.301796, -16.45546, -72.443504, -9.728241, -72.04849, 31.736435, -75.448494, 59.746445, -75.32298, 69.40193, -74.12965, 73.26409, -73.28385, 76.52893, -72.28475, 79.23124, -71.1419, 80.382324, -70.51956, 81.40582, -69.864876, 82.3061, -69.17905, 83.08749, -68.463264, 83.75435, -67.718735, 84.31102, -66.94665, 84.761856, -66.14819, 85.11122, -65.324585, 85.36346, -64.477005, 85.522896, -63.60665, 85.5939, -62.714733, 85.580826, -61.802433, 85.48803, -60.87096, 85.31985, -59.9215, 84.77472, -57.97343, 83.98027, -55.967808, 81.782555, -51.82216)
+polygon = PackedVector2Array(70.32428, -13.174149, 72.17331, -5.578475, 72.63051, -2.723868, 72.803276, -0.34359837, 72.71197, 1.6781945, 72.57364, 2.590869, 72.37692, 3.4573722, 71.81849, 5.109796, 71.05701, 6.7513275, 65.91645, 4.1394696, 59.184334, 1.3663492, 41.684967, -4.5104823, -4.277954, -16.514091, -6.705412, -13.896382, -8.962329, -10.910382, -13.027127, -3.9872108, -19.798672, 12.587973, -31.414337, 48.046844, -34.64687, 55.599407, -38.261192, 62.01233, -40.250637, 64.695366, -42.38247, 66.978226, -43.506668, 67.95758, -44.672333, 68.82248, -45.881416, 69.568115, -47.135876, 70.189705, -48.437668, 70.68243, -49.788746, 71.04149, -51.191063, 71.26207, -52.646584, 71.339386, -54.157257, 71.26863, -55.725037, 71.04499, -57.35189, 70.66368, -59.03976, 70.11988, -62.606396, 68.52563, -66.44058, 66.2238, -70.55797, 63.17598, -74.97421, 59.34375, -75.164505, 59.377235, -75.35838, 59.356174, -75.55571, 59.28208, -75.7564, 59.156456, -75.96035, 58.980816, -76.16745, 58.75667, -76.590706, 58.168922, -77.02537, 57.405277, -77.47063, 56.477837, -78.389626, 54.179893, -82.326065, 40.853214, -88.295006, 19.0941, -90.09317, 14.463287, -90.535126, 13.464829, -90.9171, 12.375663, -91.50123, 9.94105, -91.84587, 7.1911364, -91.951324, 4.157611, -91.44589, -2.6335196, -89.98738, -10.178829, -87.57822, -18.224808, -84.22083, -26.517942, -79.917694, -34.804726, -74.6712, -42.831642, -68.48382, -50.345184, -61.35797, -57.091843, -57.443886, -60.098362, -53.296097, -62.8181, -48.91492, -65.21936, -44.300644, -67.27045, -39.453583, -68.93968, -34.374043, -70.19538, -29.062319, -71.005844, -23.518728, -71.339386, -17.743567, -71.16431, -11.7371435, -70.448944, -5.4997597, -69.16158, 0.968277, -67.270546, 42.141678, -61.301388, 69.412636, -54.908333, 78.55589, -51.583683, 82.13067, -49.89472, 85.08897, -48.19006, 87.46683, -46.47124, 88.44937, -45.607, 89.30033, -44.7398, 90.02421, -43.869835, 90.62551, -42.997288, 91.10877, -42.12236, 91.478455, -41.24524, 91.73911, -40.366127, 91.89521, -39.485207, 91.951294, -38.602676, 91.911835, -37.71872, 91.781364, -36.833538, 91.56439, -35.947327, 91.26541, -35.06027, 90.88893, -34.17256, 89.921524, -32.395977, 88.69823, -30.619112, 85.62819, -27.070704)
 metadata/_edit_lock_ = true
 
-[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/HairTransform/Hair" unique_id=1833741868]
-points = PackedVector2Array(69.97815, -34.852165, 73.48071, -27.863237, 74.565384, -25.18344, 75.26665, -22.902264, 75.63028, -20.911345, 75.69979, -19.990868, 75.70206, -19.102318, 75.52773, -17.366816, 75.153076, -15.596474, 69.55827, -16.9912, 62.376198, -18.186789, 44.005325, -19.9968, -3.4782562, -21.405846, -5.258064, -18.311132, -6.7892094, -14.895658, -9.200917, -7.2382064, -12.089835, 10.432242, -15.472355, 47.59155, -16.932018, 55.676094, -19.018913, 62.735397, -20.3572, 65.795715, -21.92385, 68.497894, -22.800264, 69.70407, -23.742712, 70.80798, -24.754177, 71.80538, -25.837639, 72.69203, -26.99608, 73.463684, -28.232481, 74.1161, -29.549822, 74.64503, -30.951088, 75.046234, -32.43926, 75.315475, -34.017315, 75.4485, -35.688236, 75.44107, -37.455013, 75.28895, -41.288025, 74.53363, -45.54021, 73.148605, -50.235424, 71.09993, -55.397507, 68.353645, -55.57548, 68.42889, -55.769142, 68.45177, -55.97805, 68.42372, -56.201767, 68.346214, -56.43986, 68.220695, -56.69188, 68.0486, -57.235985, 67.570526, -57.830574, 66.923584, -58.472157, 66.11935, -59.882275, 64.08548, -66.70231, 51.978325, -77.391045, 32.107788, -80.18029, 27.997078, -80.834564, 27.122906, -81.450676, 26.146896, -82.56502, 23.90485, -83.51655, 21.30189, -84.298454, 18.368967, -85.32621, 11.637056, -85.59392, 3.956737, -85.04719, -4.42437, -83.631645, -13.258638, -81.292915, -22.298452, -77.97661, -31.296183, -73.62836, -40.00421, -68.19378, -48.17492, -65.052124, -51.98139, -61.618492, -55.560673, -57.886093, -58.881813, -53.84813, -61.913864, -49.49779, -64.62587, -44.828293, -66.98686, -39.83284, -68.96591, -34.504623, -70.53204, -28.836853, -71.65433, -22.822731, -72.301796, -16.45546, -72.443504, -9.728241, -72.04849, 31.736435, -75.448494, 59.746445, -75.32298, 69.40193, -74.12965, 73.26409, -73.28385, 76.52893, -72.28475, 79.23124, -71.1419, 80.382324, -70.51956, 81.40582, -69.864876, 82.3061, -69.17905, 83.08749, -68.463264, 83.75435, -67.718735, 84.31102, -66.94665, 84.761856, -66.14819, 85.11122, -65.324585, 85.36346, -64.477005, 85.522896, -63.60665, 85.5939, -62.714733, 85.580826, -61.802433, 85.48803, -60.87096, 85.31985, -59.9215, 84.77472, -57.97343, 83.98027, -55.967808, 81.782555, -51.82216)
+[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/Hair" unique_id=401142792]
+points = PackedVector2Array(70.32428, -13.174149, 72.17331, -5.578475, 72.63051, -2.723868, 72.803276, -0.34359837, 72.71197, 1.6781945, 72.57364, 2.590869, 72.37692, 3.4573722, 71.81849, 5.109796, 71.05701, 6.7513275, 65.91645, 4.1394696, 59.184334, 1.3663492, 41.684967, -4.5104823, -4.277954, -16.514091, -6.705412, -13.896382, -8.962329, -10.910382, -13.027127, -3.9872108, -19.798672, 12.587973, -31.414337, 48.046844, -34.64687, 55.599407, -38.261192, 62.01233, -40.250637, 64.695366, -42.38247, 66.978226, -43.506668, 67.95758, -44.672333, 68.82248, -45.881416, 69.568115, -47.135876, 70.189705, -48.437668, 70.68243, -49.788746, 71.04149, -51.191063, 71.26207, -52.646584, 71.339386, -54.157257, 71.26863, -55.725037, 71.04499, -57.35189, 70.66368, -59.03976, 70.11988, -62.606396, 68.52563, -66.44058, 66.2238, -70.55797, 63.17598, -74.97421, 59.34375, -75.164505, 59.377235, -75.35838, 59.356174, -75.55571, 59.28208, -75.7564, 59.156456, -75.96035, 58.980816, -76.16745, 58.75667, -76.590706, 58.168922, -77.02537, 57.405277, -77.47063, 56.477837, -78.389626, 54.179893, -82.326065, 40.853214, -88.295006, 19.0941, -90.09317, 14.463287, -90.535126, 13.464829, -90.9171, 12.375663, -91.50123, 9.94105, -91.84587, 7.1911364, -91.951324, 4.157611, -91.44589, -2.6335196, -89.98738, -10.178829, -87.57822, -18.224808, -84.22083, -26.517942, -79.917694, -34.804726, -74.6712, -42.831642, -68.48382, -50.345184, -61.35797, -57.091843, -57.443886, -60.098362, -53.296097, -62.8181, -48.91492, -65.21936, -44.300644, -67.27045, -39.453583, -68.93968, -34.374043, -70.19538, -29.062319, -71.005844, -23.518728, -71.339386, -17.743567, -71.16431, -11.7371435, -70.448944, -5.4997597, -69.16158, 0.968277, -67.270546, 42.141678, -61.301388, 69.412636, -54.908333, 78.55589, -51.583683, 82.13067, -49.89472, 85.08897, -48.19006, 87.46683, -46.47124, 88.44937, -45.607, 89.30033, -44.7398, 90.02421, -43.869835, 90.62551, -42.997288, 91.10877, -42.12236, 91.478455, -41.24524, 91.73911, -40.366127, 91.89521, -39.485207, 91.951294, -38.602676, 91.911835, -37.71872, 91.781364, -36.833538, 91.56439, -35.947327, 91.26541, -35.06027, 90.88893, -34.17256, 89.921524, -32.395977, 88.69823, -30.619112, 85.62819, -27.070704)
 closed = true
 width = 3.99999
 default_color = Color(0.34117648, 0.18039216, 0.19215687, 1)
 sharp_limit = 80.0
 metadata/_edit_lock_ = true
 
-[node name="EarTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=245845301]
-position = Vector2(31.75, 8.202083)
-
-[node name="Ear" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/EarTransform" unique_id=1720939334 node_paths=PackedStringArray("polygon", "line")]
-position = Vector2(122.25508, 187.95082)
+[node name="Ear" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=539533782 node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(170.73291, 190.20865)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.9607843, 0.61960787, 0.64705884, 1)
 polygon = NodePath("Fill")
 stroke_color = Color(0.34117648, 0.18039216, 0.19215687, 1)
 stroke_width = 2.0
 line = NodePath("Stroke")
-curve = SubResource("Curve2D_330fq")
+curve = SubResource("Curve2D_ofssh")
 update_curve_at_runtime = true
-arc_list = SubResource("Resource_75rtt")
+arc_list = SubResource("Resource_njdgp")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/EarTransform/Ear" unique_id=771961560]
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/Ear" unique_id=1694879276]
 color = Color(0.9607843, 0.61960787, 0.64705884, 1)
-polygon = PackedVector2Array(21.183228, 3.241562, 23.494762, 10.988466, 24.455675, 14.6766815, 24.752563, 16.427542, 24.8757, 18.098356, 24.860071, 18.899555, 24.786552, 19.675713, 24.650333, 20.425156, 24.446592, 21.146202, 24.170517, 21.837181, 23.81729, 22.496412, 23.382095, 23.122223, 22.860117, 23.712934, 22.246534, 24.26687, 21.536537, 24.782356, 20.725307, 25.257713, 19.808025, 25.691263, 17.636053, 26.426252, 14.982086, 26.973907, 12.123571, 27.288355, 9.364784, 27.341578, 6.707453, 27.146935, 4.153308, 26.71777, 1.7040808, 26.06744, -0.6384994, 25.209303, -2.8727026, 24.156708, -4.9967976, 22.92301, -7.009055, 21.521564, -8.907743, 19.965721, -10.691134, 18.268839, -12.357496, 16.444265, -15.332214, 12.465471, -17.818054, 8.136169, -20.476091, 2.386889, -22.495275, -2.9271784, -23.891205, -7.7828355, -24.679482, -12.156882, -24.850628, -14.156052, -24.875708, -16.026123, -24.756674, -17.764193, -24.495483, -19.36736, -24.094074, -20.832726, -23.554405, -22.157396, -22.878424, -23.338465, -22.489923, -23.87424, -22.068077, -24.373032, -21.613129, -24.834473, -21.12532, -25.258198, -20.604897, -25.643854, -20.052101, -25.991072, -19.467176, -26.29949, -18.85037, -26.56874, -17.522072, -26.988317, -16.069166, -27.246893, -14.493599, -27.34157, -12.7973175, -27.269451, -10.982273, -27.027637, -7.0037007, -26.023312, -2.573482, -24.305405, 2.292785, -21.850716, 7.5794983, -18.636047, 11.029134, -16.251625, 13.658568, -14.1158905, 14.715777, -13.086786, 15.628019, -12.054461, 16.415318, -10.997114, 17.097706, -9.892949, 17.695208, -8.720168, 18.227852, -7.456973, 19.178673, -4.57215)
+polygon = PackedVector2Array(20.416443, 8.162811, 20.934978, 16.230577, 21.045805, 20.040302, 20.943184, 21.813187, 20.689142, 23.469158, 20.494541, 24.246521, 20.249128, 24.98652, 19.948584, 25.686445, 19.588593, 26.343578, 19.164833, 26.955212, 18.672987, 27.518633, 18.108734, 28.031128, 17.467758, 28.489988, 16.74574, 28.892498, 15.938361, 29.235949, 15.041302, 29.517624, 14.050243, 29.734818, 11.768854, 29.9649, 9.059647, 29.904495, 6.2032905, 29.571018, 3.5026116, 29.005274, 0.9563057, 28.220657, -1.4369304, 27.230581, -3.6784, 26.048445, -5.7694063, 24.68764, -7.7112513, 23.161587, -9.50524, 21.483671, -11.152676, 19.667305, -12.65486, 17.725883, -14.013098, 15.672815, -15.228691, 13.5215, -17.23716, 8.977732, -18.69069, 4.2017975, -19.994144, -1.9966205, -20.772394, -7.6278486, -21.04584, -12.6727705, -20.834871, -17.11227, -20.554111, -19.099014, -20.159893, -20.92723, -19.654774, -22.594538, -19.041302, -24.09854, -18.322027, -25.436848, -17.499498, -26.607075, -16.576262, -27.606833, -16.077677, -28.042032, -15.5548725, -28.433723, -15.008165, -28.7816, -14.437876, -29.085365, -13.844325, -29.34472, -13.227827, -29.55937, -12.588703, -29.729008, -11.927273, -29.853344, -10.53876, -29.9649, -9.064843, -29.891642, -7.508068, -29.631187, -5.870989, -29.181149, -4.156151, -28.53913, -0.50340414, -26.669601, 3.4297743, -24.003489, 7.6229854, -20.521675, 12.055832, -16.205048, 14.8841, -13.108863, 16.968658, -10.438675, 17.768642, -9.199008, 18.426619, -7.988657, 18.957226, -6.781892, 19.3751, -5.5529847, 19.69488, -4.2762074, 19.931208, -2.9258301, 20.212059, 0.098633766)
 metadata/_edit_lock_ = true
 
-[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/EarTransform/Ear" unique_id=989165897]
-points = PackedVector2Array(21.183228, 3.241562, 23.494762, 10.988466, 24.455675, 14.6766815, 24.752563, 16.427542, 24.8757, 18.098356, 24.860071, 18.899555, 24.786552, 19.675713, 24.650333, 20.425156, 24.446592, 21.146202, 24.170517, 21.837181, 23.81729, 22.496412, 23.382095, 23.122223, 22.860117, 23.712934, 22.246534, 24.26687, 21.536537, 24.782356, 20.725307, 25.257713, 19.808025, 25.691263, 17.636053, 26.426252, 14.982086, 26.973907, 12.123571, 27.288355, 9.364784, 27.341578, 6.707453, 27.146935, 4.153308, 26.71777, 1.7040808, 26.06744, -0.6384994, 25.209303, -2.8727026, 24.156708, -4.9967976, 22.92301, -7.009055, 21.521564, -8.907743, 19.965721, -10.691134, 18.268839, -12.357496, 16.444265, -15.332214, 12.465471, -17.818054, 8.136169, -20.476091, 2.386889, -22.495275, -2.9271784, -23.891205, -7.7828355, -24.679482, -12.156882, -24.850628, -14.156052, -24.875708, -16.026123, -24.756674, -17.764193, -24.495483, -19.36736, -24.094074, -20.832726, -23.554405, -22.157396, -22.878424, -23.338465, -22.489923, -23.87424, -22.068077, -24.373032, -21.613129, -24.834473, -21.12532, -25.258198, -20.604897, -25.643854, -20.052101, -25.991072, -19.467176, -26.29949, -18.85037, -26.56874, -17.522072, -26.988317, -16.069166, -27.246893, -14.493599, -27.34157, -12.7973175, -27.269451, -10.982273, -27.027637, -7.0037007, -26.023312, -2.573482, -24.305405, 2.292785, -21.850716, 7.5794983, -18.636047, 11.029134, -16.251625, 13.658568, -14.1158905, 14.715777, -13.086786, 15.628019, -12.054461, 16.415318, -10.997114, 17.097706, -9.892949, 17.695208, -8.720168, 18.227852, -7.456973, 19.178673, -4.57215)
+[node name="Stroke" type="Line2D" parent="SyncedSVGRoot/Jaques/Jacques/Ear" unique_id=1352338457]
+points = PackedVector2Array(20.416443, 8.162811, 20.934978, 16.230577, 21.045805, 20.040302, 20.943184, 21.813187, 20.689142, 23.469158, 20.494541, 24.246521, 20.249128, 24.98652, 19.948584, 25.686445, 19.588593, 26.343578, 19.164833, 26.955212, 18.672987, 27.518633, 18.108734, 28.031128, 17.467758, 28.489988, 16.74574, 28.892498, 15.938361, 29.235949, 15.041302, 29.517624, 14.050243, 29.734818, 11.768854, 29.9649, 9.059647, 29.904495, 6.2032905, 29.571018, 3.5026116, 29.005274, 0.9563057, 28.220657, -1.4369304, 27.230581, -3.6784, 26.048445, -5.7694063, 24.68764, -7.7112513, 23.161587, -9.50524, 21.483671, -11.152676, 19.667305, -12.65486, 17.725883, -14.013098, 15.672815, -15.228691, 13.5215, -17.23716, 8.977732, -18.69069, 4.2017975, -19.994144, -1.9966205, -20.772394, -7.6278486, -21.04584, -12.6727705, -20.834871, -17.11227, -20.554111, -19.099014, -20.159893, -20.92723, -19.654774, -22.594538, -19.041302, -24.09854, -18.322027, -25.436848, -17.499498, -26.607075, -16.576262, -27.606833, -16.077677, -28.042032, -15.5548725, -28.433723, -15.008165, -28.7816, -14.437876, -29.085365, -13.844325, -29.34472, -13.227827, -29.55937, -12.588703, -29.729008, -11.927273, -29.853344, -10.53876, -29.9649, -9.064843, -29.891642, -7.508068, -29.631187, -5.870989, -29.181149, -4.156151, -28.53913, -0.50340414, -26.669601, 3.4297743, -24.003489, 7.6229854, -20.521675, 12.055832, -16.205048, 14.8841, -13.108863, 16.968658, -10.438675, 17.768642, -9.199008, 18.426619, -7.988657, 18.957226, -6.781892, 19.3751, -5.5529847, 19.69488, -4.2762074, 19.931208, -2.9258301, 20.212059, 0.098633766)
 closed = true
 width = 2.0
 default_color = Color(0.34117648, 0.18039216, 0.19215687, 1)
 sharp_limit = 80.0
 metadata/_edit_lock_ = true
 
-[node name="EarShadeTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1833784535]
-position = Vector2(31.75, 8.202083)
-
-[node name="EarShade" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/EarShadeTransform" unique_id=5420455 node_paths=PackedStringArray("polygon")]
-position = Vector2(118.51538, 182.21844)
+[node name="EarShade" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=869708456 node_paths=PackedStringArray("polygon")]
+position = Vector2(169.18176, 182.25552)
 script = ExtResource("2_xtu0p")
 fill_color = Color(0.5254902, 0.2784314, 0.29411766, 1)
+polygon = NodePath("Fill")
+curve = SubResource("Curve2D_330fq")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_75rtt")
+
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/EarShade" unique_id=1741354294]
+color = Color(0.5254902, 0.2784314, 0.29411766, 1)
+polygon = PackedVector2Array(-11.9077, 12.830582, -12.200271, 12.369957, -12.489829, 11.816083, -13.048672, 10.457072, -14.006545, 6.9334555, -14.6014385, 2.7156236, -14.706554, 0.4888426, -14.653467, -1.7405338, -14.419692, -3.9155185, -13.982742, -5.979126, -13.681051, -6.951355, -13.320133, -7.87437, -12.897181, -8.741047, -12.409381, -9.544263, -11.853922, -10.2768955, -11.227997, -10.931821, -10.528791, -11.501915, -9.753496, -11.980056, -8.899301, -12.359119, -7.963394, -12.631981, -6.9429665, -12.791521, -5.835205, -12.830612, -3.5362465, -12.629479, -1.3243675, -12.145569, 0.78988445, -11.415008, 2.7959614, -10.473918, 4.6833153, -9.358427, 6.4413986, -8.104657, 8.059662, -6.748735, 9.527559, -5.326782, 11.970062, -2.4292893, 12.923573, -1.025998, 13.684523, 0.29882383, 14.242367, 1.5090519, 14.441828, 2.0599043, 14.586557, 2.5685616, 14.675236, 3.0305083, 14.706544, 3.4412282, 14.7002735, 3.6259673, 14.679167, 3.7962065, 14.643057, 3.9513812, 14.591782, 4.090927, 12.808654, 1.1874043, 10.748152, -1.3907493, 8.473342, -3.6146915, 6.047283, -5.4555798, 3.533042, -6.8845725, 2.2625597, -7.435593, 0.9936807, -7.872825, -0.2657131, -8.192662, -1.507737, -8.391498, -2.7245102, -8.465727, -3.9081483, -8.411745, -5.0507693, -8.225948, -6.1444893, -7.904728, -7.181426, -7.4444814, -8.153697, -6.8416014, -9.053419, -6.092484, -9.872707, -5.193524, -10.6036825, -4.141115, -11.238459, -2.931654, -11.769154, -1.5615325, -12.187885, -0.027146816, -12.486771, 1.675108, -12.657927, 3.5488372, -12.585516, 7.825144)
+metadata/_edit_lock_ = true
+
+[node name="Mouth" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1056457588 node_paths=PackedStringArray("polygon")]
+position = Vector2(267.03854, 282.0055)
+script = ExtResource("2_xtu0p")
+fill_color = Color(0.45490196, 0.24313726, 0.25490198, 1)
 polygon = NodePath("Fill")
 curve = SubResource("Curve2D_gfri3")
 update_curve_at_runtime = true
 arc_list = SubResource("Resource_en5i4")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/EarShadeTransform/EarShade" unique_id=307340668]
-color = Color(0.5254902, 0.2784314, 0.29411766, 1)
-polygon = PackedVector2Array(-8.828041, 13.355759, -9.216307, 12.972326, -9.622517, 12.4973345, -10.471421, 11.297928, -12.193829, 8.078192, -13.717887, 4.1006, -14.318853, 1.9538717, -14.766213, -0.23080349, -15.025294, -2.4029193, -15.061424, -4.51197, -14.985048, -5.527063, -14.8399315, -6.50745, -14.62174, -7.4468174, -14.326141, -8.338853, -13.948799, -9.177242, -13.485382, -9.955673, -12.931555, -10.667831, -12.282982, -11.307405, -11.53533, -11.86808, -10.684266, -12.343543, -9.725455, -12.727481, -8.654564, -13.01358, -6.3689284, -13.332229, -4.1048565, -13.355784, -1.8807139, -13.117091, 0.2851305, -12.648997, 2.37431, -11.984348, 4.3684564, -11.155989, 6.2492023, -10.19677, 7.9981804, -9.139532, 11.027363, -6.8623953, 12.270832, -5.7081866, 13.309063, -4.587348, 14.123688, -3.532724, 14.441407, -3.0405068, 14.696339, -2.5771608, 14.886185, -2.146792, 15.008649, -1.7535057, 15.043896, -1.5720518, 15.061437, -1.4014081, 15.060985, -1.2420878, 15.042252, -1.0946045, 12.65436, -3.5252354, 10.068976, -5.5766587, 7.3540235, -7.234882, 4.5774164, -8.485915, 1.8070773, -9.315763, 0.4454841, -9.568371, -0.8890734, -9.710435, -2.1881042, -9.740209, -3.4431179, -9.655941, -4.6456246, -9.455883, -5.787135, -9.138286, -6.8591585, -8.701401, -7.853205, -8.143478, -8.760785, -7.4627705, -9.573409, -6.657528, -10.282585, -5.726001, -10.879826, -4.666441, -11.35664, -3.477098, -11.704537, -2.1562257, -11.91503, -0.70207167, -11.979623, 0.88710976, -11.889831, 2.6130705, -11.637163, 4.477558, -10.609238, 8.629109)
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/Mouth" unique_id=755255923]
+color = Color(0.45490196, 0.24313726, 0.25490198, 1)
+polygon = PackedVector2Array(13.783539, 10.554871, 7.4320974, 8.383878, 1.6789508, 5.592556, -3.3909643, 2.424251, -7.69271, -0.87768936, -11.141348, -4.069918, -13.651941, -6.9090896, -14.528928, -8.120233, -15.139551, -9.151855, -15.34166, -9.590841, -15.473196, -9.973541, -15.512084, -10.142595, -15.532831, -10.296152, -15.535273, -10.433735, -15.519241, -10.554871, 0.008605003, -6.036111, 8.732633, -3.717836, 12.494197, -2.974476, 15.535278, -2.6723022)
 metadata/_edit_lock_ = true
 
-[node name="MouthTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1973600294]
-position = Vector2(31.75, 8.202083)
-
-[node name="Mouth" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/MouthTransform" unique_id=1633774541 node_paths=PackedStringArray("polygon")]
-position = Vector2(235.27895, 255.9083)
+[node name="Teeth" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1470875497 node_paths=PackedStringArray("polygon")]
+position = Vector2(268.9647, 279.93195)
 script = ExtResource("2_xtu0p")
-fill_color = Color(0.45490196, 0.24313726, 0.25490198, 1)
 polygon = NodePath("Fill")
 curve = SubResource("Curve2D_28fcn")
 update_curve_at_runtime = true
 arc_list = SubResource("Resource_h3ipv")
 
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/MouthTransform/Mouth" unique_id=678363490]
-color = Color(0.45490196, 0.24313726, 0.25490198, 1)
-polygon = PackedVector2Array(16.642471, 7.006897, 9.966211, 6.312932, 3.7341852, 4.8804417, -1.9163476, 2.9275808, -6.8481255, 0.672503, -10.923887, -1.6666373, -14.006372, -3.871687, -15.132242, -4.8557544, -15.958321, -5.7244916, -16.253576, -6.107089, -16.46745, -6.4506288, -16.543198, -6.606686, -16.597797, -6.751701, -16.630978, -6.8852468, -16.642471, -7.006897, -0.49712133, -6.0791163, 8.524478, -5.772767, 12.356988, -5.890391, 15.388535, -6.276703)
-metadata/_edit_lock_ = true
-
-[node name="TeethTransform" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques" unique_id=1774251389]
-position = Vector2(31.75, 8.202083)
-
-[node name="Teeth" type="Node2D" parent="SyncedSVGRoot/Jaques/Jacques/TeethTransform" unique_id=234035540 node_paths=PackedStringArray("polygon")]
-position = Vector2(237.02298, 253.50555)
-script = ExtResource("2_xtu0p")
-polygon = NodePath("Fill")
-curve = SubResource("Curve2D_oyu8b")
-update_curve_at_runtime = true
-arc_list = SubResource("Resource_ds4wg")
-
-[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/TeethTransform/Teeth" unique_id=603302232]
-polygon = PackedVector2Array(13.726822, 3.3185425, 12.268752, 3.5070632, 10.551619, 3.5382698, 6.531785, 3.1930616, -2.508779, 1.3223774, -10.328881, -1.264431, -11.733913, -1.9024324, -12.823138, -2.5047944, -13.234351, -2.7875862, -13.548647, -3.0554385, -13.667579, -3.183134, -13.760037, -3.3063412, -13.825272, -3.4248083, -13.862534, -3.5382843, -1.4125404, -2.529041, 6.1743174, -2.5069828, 13.479401, -3.0994873, 13.72632, -1.4454846, 13.858173, 0.28818977, 13.86253, 1.9325331)
+[node name="Fill" type="Polygon2D" parent="SyncedSVGRoot/Jaques/Jacques/Teeth" unique_id=488327219]
+polygon = PackedVector2Array(12.079163, 6.4296265, 10.615896, 6.286937, 8.935359, 5.9329295, 5.094838, 4.6965466, -3.2974617, 0.8493972, -10.339954, -3.4224658, -11.566493, -4.358822, -12.4932165, -5.1897416, -12.830681, -5.557414, -13.077034, -5.8888288, -13.16436, -6.0399084, -13.226888, -6.180686, -13.263945, -6.3107505, -13.274857, -6.4296875, -1.3668132, -2.6588333, 6.0225334, -0.9388368, 13.274841, 0.11911011, 13.14519, 1.7864081, 12.885574, 3.5055947, 12.521703, 5.1091757)
 metadata/_edit_lock_ = true
 
 [node name="SyncedSVGRoot2" type="Node2D" parent="." unique_id=433765849]

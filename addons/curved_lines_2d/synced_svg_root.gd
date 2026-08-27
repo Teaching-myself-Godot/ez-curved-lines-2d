@@ -9,7 +9,7 @@ extends Node2D
 ## created manually, by saving and reopening your scene
 class_name SyncedSVGRoot
 
-@export_file_path("*.svg") var svg_resource_path : String
+@export var svg_resource_path : String
 @export var checksum : String
 
 @export var is_svs := true
