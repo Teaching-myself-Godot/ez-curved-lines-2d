@@ -124,6 +124,7 @@ func parse_svg_xml_file(xml_parser : XMLParser) -> SVGXMLElement:
 				svg_xml_node = new_svg_xml_node
 	return svg_xml_node
 
+
 func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root :
 			Node2D, current_node : Node2D, svg_gradients : Array[Dictionary]) -> void:
 
@@ -965,3 +966,12 @@ class UndoRedoHandler:
 
 static func get_runtime_handler() -> UndoRedoHandler:
 	return UndoRedoHandler.new()
+
+
+static func instantiate_from_synced_svg_root(svg_root : SyncedSVGRoot, undo_redo : Variant, on_log : Callable) -> SVGImporter:
+	return SVGImporter.new(
+		svg_root.is_svs, svg_root.is_lock, svg_root.is_aa, svg_root.is_line_2d,
+		svg_root.coll_type, svg_root.is_update_curve_at_runtime, svg_root.is_resource_local_to_scene,
+		svg_root.tol_deg, svg_root.max_stg, svg_root.using_antialiased_line_2d,
+		undo_redo, on_log
+	)

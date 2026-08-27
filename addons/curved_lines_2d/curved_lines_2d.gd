@@ -196,8 +196,8 @@ func _enter_tree():
 	add_control_to_bottom_panel(scalable_vector_shapes_2d_dock as Control, "Scalable Vector Shapes 2D")
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
 	undo_redo.version_changed.connect(_on_undo_redo_version_changed)
+	EditorInterface.get_resource_filesystem().resources_reimported.connect(_on_resources_reloaded)
 	make_bottom_panel_item_visible(scalable_vector_shapes_2d_dock)
-
 	set_global_position_popup_panel = load("res://addons/curved_lines_2d/set_global_position_popup_panel.tscn").instantiate()
 	arc_settings_popup_panel = load("res://addons/curved_lines_2d/arc_settings_popup_panel.tscn").instantiate()
 	EditorInterface.get_base_control().add_child(set_global_position_popup_panel)
@@ -218,7 +218,6 @@ func _enter_tree():
 	if not scalable_vector_shapes_2d_dock.brush_changed.is_connected(_update_brush):
 		scalable_vector_shapes_2d_dock.brush_changed.connect(_update_brush)
 	scene_changed.connect(_on_scene_changed)
-
 	svs_edit_buttons = load("res://addons/curved_lines_2d/svs_edit_buttons.tscn").instantiate()
 	var canvas_editor_buttons_container = EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*").find_child("*HFlowContainer*", true, false)
 	canvas_editor_buttons_container.add_child(svs_edit_buttons)
@@ -231,6 +230,7 @@ func _enter_tree():
 	svs_edit_buttons.flip_horizontal.connect(_flip_svs_horizontal)
 	svs_edit_buttons.flip_vertical.connect(_flip_svs_vertical)
 	svs_edit_buttons.convert_to_svs.connect(_extract_svs_from_selected_node)
+	_scan_synced_svg_nodes()
 
 
 func select_node_reversibly(target_node : Node) -> void:
@@ -554,6 +554,7 @@ func _on_scene_changed(scn : Node):
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(anim_pl)
 	else:
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(null)
+	_scan_synced_svg_nodes()
 
 
 func _handles(object: Object) -> bool:
@@ -2971,6 +2972,41 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				_set_handle_hover(mouse_pos, current_selection)
 		update_overlays()
 	return false
+
+
+func _on_resources_reloaded(resources : PackedStringArray) -> void:
+	var root := EditorInterface.get_edited_scene_root()
+	if not is_instance_valid(root):
+		return
+	for path in resources:
+		for svg_root : SyncedSVGRoot in root.find_children("*", "SyncedSVGRoot"):
+			var checksum := FileAccess.get_md5(path)
+			if path == svg_root.svg_resource_path and checksum != svg_root.checksum:
+				_reimport_synchronized_svg_file(svg_root, checksum)
+
+
+func _scan_synced_svg_nodes() -> void:
+	var root := EditorInterface.get_edited_scene_root()
+	if not is_instance_valid(root):
+		return
+	print("scanning synced nodes")
+	for svg_root : SyncedSVGRoot in root.find_children("*", "SyncedSVGRoot"):
+		var checksum := FileAccess.get_md5(svg_root.svg_resource_path)
+		if checksum != svg_root.checksum:
+			_reimport_synchronized_svg_file(svg_root, checksum)
+
+
+func _reimport_synchronized_svg_file(svg_root : SyncedSVGRoot, new_checksum : String) -> void:
+	undo_redo.create_action("Resynchronize SVG")
+	undo_redo.add_do_property(svg_root, "checksum", new_checksum)
+	undo_redo.add_undo_property(svg_root, "checksum", svg_root.checksum)
+	undo_redo.add_do_method(svg_root, "remove_child", svg_root.get_child(0))
+	undo_redo.add_undo_method(svg_root, "add_child", svg_root.get_child(0))
+	undo_redo.commit_action()
+	var svg_importer := SVGImporter.instantiate_from_synced_svg_root(svg_root, undo_redo, print)
+	svg_importer.load_svg(svg_root.svg_resource_path,
+			EditorInterface.get_edited_scene_root(), [svg_root])
+
 
 
 static func _polygon_can_be_drawn(points) -> bool:

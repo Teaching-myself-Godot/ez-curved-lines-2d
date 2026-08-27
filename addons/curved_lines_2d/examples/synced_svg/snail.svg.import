@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b30xa0q3e1cwc"
-path="res://.godot/imported/snail_concept.svg-4fd47850492ffa5b1cd35bdf73a0aa52.ctex"
+uid="uid://cws62y2kk5bau"
+path="res://.godot/imported/snail.svg-54a25bf88937ec41164536680f7641bf.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/curved_lines_2d/tests/snail_concept.svg"
-dest_files=["res://.godot/imported/snail_concept.svg-4fd47850492ffa5b1cd35bdf73a0aa52.ctex"]
+source_file="res://addons/curved_lines_2d/examples/synced_svg/snail.svg"
+dest_files=["res://.godot/imported/snail.svg-54a25bf88937ec41164536680f7641bf.ctex"]
 
 [params]
 
