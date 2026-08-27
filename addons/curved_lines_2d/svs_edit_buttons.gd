@@ -36,6 +36,14 @@ func hide_convert_to_svs() -> void:
 	%ConvertToSVS.hide()
 
 
+func show_knife() -> void:
+	%Knife.show()
+
+
+func hide_knife() -> void:
+	%Knife.hide()
+
+
 func set_default_mode(svs_is_selected := false) -> void:
 	%DefaultEdit.button_pressed = true
 
@@ -69,6 +77,11 @@ func _on_brush_toggled(toggled_on: bool) -> void:
 func _on_pencil_toggled(toggled_on: bool) -> void:
 	if toggled_on:
 		mode_changed.emit(CurvedLines2D.SVSEditMode.PENCIL)
+
+
+func _on_knife_toggled(toggled_on: bool) -> void:
+	if toggled_on:
+		mode_changed.emit(CurvedLines2D.SVSEditMode.KNIFE)
 
 
 func _on_merge_toggled(toggled_on: bool) -> void:
@@ -111,4 +124,5 @@ func _unhandled_input(event: InputEvent) -> void:
 			%Pencil.button_pressed = true
 		if (event as InputEventKey).keycode == KEY_B and Input.is_key_pressed(KEY_SHIFT):
 			%Brush.button_pressed = true
-
+		if (event as InputEventKey).keycode == KEY_K and %Knife.visible:
+			%Knife.button_pressed = true
