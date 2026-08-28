@@ -4,7 +4,7 @@ extends Node2D
 ## resulting from an import via [SVGImporter] synchronized with changes
 ## to its source svg file.
 ##
-## Because it is managed by the [CurvedLines2D] editor plugin code, it
+## Because it is managed by the [CurvedLines2D] editor plugin code, sync
 ## will only start when triggered via the Import SVG File Tab, or, when
 ## created manually, by saving and reopening your scene
 class_name SyncedSVGRoot

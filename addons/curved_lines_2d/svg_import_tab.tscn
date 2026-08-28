@@ -62,6 +62,8 @@ size_flags_stretch_ratio = 10.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer" unique_id=550337677]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="KeepDrawablePath2DNodeCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=1756831126]
 layout_mode = 2
@@ -80,7 +82,16 @@ button_pressed = true
 text = "Lock imported shapes in editor *"
 icon = ExtResource("2_v8p2q")
 
+[node name="UseAutoSyncCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=2055249981]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Checking this on will give the imported nodes a SyncedSVGRoot parent.
+
+While in editor mode, the plugin keeps track of changes in the SVG file used for import and triggers a reimport for all the children of the corresponding SyncedSVGRoot"
+text = "Automatic Synchronization with SyncedSVGRoot *"
+
 [node name="AntialiasedCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=1468204944]
+unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "It's probably better to use project settings for this, but checking this on will ensure that the antialised property is checked on for imported Line2D and Polygon2D"
 text = "Flag on antialiased for Polygon2D and Line2D*"
@@ -157,8 +168,5 @@ text = "Watch an explainer on Youtube"
 uri = "https://youtu.be/5PIVoQcm8QE"
 
 [connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/KeepDrawablePath2DNodeCheckBox" to="." method="_on_keep_drawable_path_2d_node_check_box_toggled"]
-[connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/LockShapesCheckBox" to="." method="_on_lock_shapes_check_box_toggled"]
-[connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/AntialiasedCheckBox" to="." method="_on_antialiased_check_box_toggled"]
-[connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/UseLine2DCheckBox" to="." method="_on_use_line_2d_check_box_toggled"]
 [connection signal="type_selected" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
 [connection signal="pressed" from="VBoxContainer2/PanelContainer/VBoxContainer2/OpenFileDialogButton" to="." method="_on_open_file_dialog_button_pressed"]

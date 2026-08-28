@@ -975,3 +975,18 @@ static func instantiate_from_synced_svg_root(svg_root : SyncedSVGRoot, undo_redo
 		svg_root.tol_deg, svg_root.max_stg, svg_root.using_antialiased_line_2d,
 		undo_redo, on_log
 	)
+
+
+func get_synced_svg_root_instance() -> SyncedSVGRoot:
+	var svg_root := SyncedSVGRoot.new()
+	svg_root.is_svs = import_as_svs
+	svg_root.is_lock = lock_shapes
+	svg_root.is_aa = antialiased_shapes
+	svg_root.is_line_2d = import_stroke_as_line_2d
+	svg_root.coll_type = collision_object_type
+	svg_root.is_update_curve_at_runtime = update_curve_at_runtime
+	svg_root.is_resource_local_to_scene = resource_local_to_scene
+	svg_root.tol_deg = tolerance_degrees
+	svg_root.max_stg = max_stages
+	svg_root.using_antialiased_line_2d = use_antialiased_line_2d
+	return svg_root

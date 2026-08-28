@@ -2993,11 +2993,21 @@ func _reimport_synchronized_svg_file(svg_root : SyncedSVGRoot, new_checksum : St
 	undo_redo.add_do_method(svg_root, "remove_child", svg_root.get_child(0))
 	undo_redo.add_undo_method(svg_root, "add_child", svg_root.get_child(0))
 	undo_redo.commit_action()
-	var svg_importer := SVGImporter.instantiate_from_synced_svg_root(svg_root, undo_redo, print)
+	var svg_importer := SVGImporter.instantiate_from_synced_svg_root(svg_root, undo_redo, _pretty_print_svg_import_msg)
 	await svg_importer.load_svg(svg_root.svg_resource_path,
 			scene_root, [svg_root])
 
 
+func _pretty_print_svg_import_msg(msg : String, lvl : SVGImporter.LogLevel) -> void:
+	match lvl:
+		SVGImporter.LogLevel.ERROR:
+			print_rich("[color=red]%s" % msg)
+		SVGImporter.LogLevel.WARN:
+			print_rich("[color=yellow]%s" % msg)
+		SVGImporter.LogLevel.DEBUG:
+			print_rich("[color=gray]%s" % msg)
+		SVGImporter.LogLevel.INFO,_:
+			print(msg)
 
 static func _polygon_can_be_drawn(points) -> bool:
 	return Geometry2D.triangulate_polygon(PackedVector2Array(points)).size() > 0
