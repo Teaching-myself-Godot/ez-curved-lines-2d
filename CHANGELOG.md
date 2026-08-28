@@ -1,11 +1,15 @@
 # Changelog
 
-## 2.33.0
+## 2.33.1
 
 ### Added
 
 - Import SVG files as nodes at runtime
 - ScalableVectorShape2D now also handles `assigned_node_changed` signal at runtime
+
+### Changed 
+
+- Bugfix 4.8-dev4: new localizer for 2D editor buttons control
 
 ## 2.32.0 - Redemption
 
