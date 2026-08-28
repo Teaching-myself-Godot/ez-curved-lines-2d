@@ -2978,14 +2978,16 @@ func _on_resources_reloaded(resources : PackedStringArray) -> void:
 		return
 	for path in resources:
 		for svg_root : SyncedSVGRoot in root.find_children("*", "SyncedSVGRoot"):
-			var checksum := FileAccess.get_md5(path)
-			if path == svg_root.svg_resource_path and checksum != svg_root.checksum:
-				_reimport_synchronized_svg_file(svg_root, checksum)
+			if path == svg_root.svg_resource_path:
+				_reimport_synchronized_svg_file(svg_root)
 
 
-func _reimport_synchronized_svg_file(svg_root : SyncedSVGRoot, new_checksum : String) -> void:
+func _reimport_synchronized_svg_file(svg_root : SyncedSVGRoot) -> void:
 	var scene_root := EditorInterface.get_edited_scene_root()
 	if not is_instance_valid(scene_root):
+		return
+	var new_checksum := FileAccess.get_md5(svg_root.svg_resource_path)
+	if new_checksum == svg_root.checksum:
 		return
 	undo_redo.create_action("Resynchronize SVG")
 	undo_redo.add_do_property(svg_root, "checksum", new_checksum)
