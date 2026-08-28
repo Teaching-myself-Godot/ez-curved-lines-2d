@@ -163,7 +163,6 @@ var _last_brush_pos := Vector2.ZERO
 var _current_bone_idx := 0
 var _last_skeleton : Skeleton2D = null
 
-
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = load("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
 	plugin = load("res://addons/curved_lines_2d/line_2d_generator_inspector_plugin.gd").new()
@@ -220,7 +219,7 @@ func _enter_tree():
 	scene_changed.connect(_on_scene_changed)
 
 	svs_edit_buttons = load("res://addons/curved_lines_2d/svs_edit_buttons.tscn").instantiate()
-	var canvas_editor_buttons_container = EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*").find_child("*HFlowContainer*", true, false)
+	var canvas_editor_buttons_container = _find_canvas_item_editor_control().find_child("*HFlowContainer*", true, false)
 	canvas_editor_buttons_container.add_child(svs_edit_buttons)
 	_update_brush()
 
@@ -231,6 +230,13 @@ func _enter_tree():
 	svs_edit_buttons.flip_horizontal.connect(_flip_svs_horizontal)
 	svs_edit_buttons.flip_vertical.connect(_flip_svs_vertical)
 	svs_edit_buttons.convert_to_svs.connect(_extract_svs_from_selected_node)
+
+
+func _find_canvas_item_editor_control() -> Node:
+	var candidate := EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*")
+	if candidate:
+		return candidate
+	return EditorInterface.get_base_control().find_child("2D", true, false)
 
 
 func select_node_reversibly(target_node : Node) -> void:
@@ -583,7 +589,7 @@ func _find_scalable_vector_shape_2d_nodes_at(pos : Vector2) -> Array[Node]:
 
 func _is_change_pivot_button_active() -> bool:
 	var results = (
-			EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*")
+			_find_canvas_item_editor_control()
 					.find_children("*Button*", "", true, false)
 	)
 	if Engine.get_version_info()["minor"] >= 7:
@@ -600,7 +606,7 @@ func _get_select_mode_button() -> Button:
 		return select_mode_button
 	else:
 		select_mode_button = (
-			EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*")
+			_find_canvas_item_editor_control()
 					.find_child("*Button*", true, false)
 		)
 		return select_mode_button
@@ -2201,14 +2207,14 @@ func _toggle_loop_if_applies(svs : ScalableVectorShape2D, idx : int) -> void:
 
 
 func _get_vp_h_scroll_bar() -> HScrollBar:
-	var editor_vp := EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*")
+	var editor_vp := _find_canvas_item_editor_control()
 	if editor_vp == null:
 		return null
 	return editor_vp.find_child("*HScrollBar*", true, false)
 
 
 func _get_vp_v_scroll_bar() -> VScrollBar:
-	var editor_vp := EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*")
+	var editor_vp := _find_canvas_item_editor_control()
 	if editor_vp == null:
 		return null
 	return editor_vp.find_child("*VScrollBar*", true, false)
