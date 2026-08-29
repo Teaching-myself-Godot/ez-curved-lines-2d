@@ -163,6 +163,9 @@ var _last_brush_pos := Vector2.ZERO
 var _current_bone_idx := 0
 var _last_skeleton : Skeleton2D = null
 
+# Generalized state handling helpers
+var _dragging_selection := false
+
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = load("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
 	plugin = load("res://addons/curved_lines_2d/line_2d_generator_inspector_plugin.gd").new()
@@ -2752,8 +2755,10 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return _handle_bone_paint_input(event)
 
 
+
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		_lmb_is_down_inside_viewport = (event as InputEventMouseButton).pressed
+
 	if (in_undo_redo_transaction and event is InputEventMouseButton
 			and event.button_index == MOUSE_BUTTON_LEFT
 			and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)):
@@ -2793,6 +2798,10 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		)
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if is_instance_valid(current_selection) and not (event as InputEventMouseButton).pressed:
+			if _dragging_selection:
+				_dragging_selection = false
+				return false
 		var mouse_pos := _svp_mouse_pos(
 				EditorInterface.get_editor_viewport_2d().get_mouse_position(),
 				current_selection)
@@ -2924,6 +2933,9 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return true
 
 	if event is InputEventMouseMotion:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and is_instance_valid(current_selection):
+			_dragging_selection = true
+
 		var mouse_pos := _svp_mouse_pos(
 				EditorInterface.get_editor_viewport_2d().get_mouse_position(),
 				current_selection)
