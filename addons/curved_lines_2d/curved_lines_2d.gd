@@ -2993,11 +2993,11 @@ func _reimport_synchronized_svg_file(svg_root : SyncedSVGRoot) -> void:
 	if not is_instance_valid(scene_root):
 		return
 	var new_checksum := FileAccess.get_md5(svg_root.svg_resource_path)
-	if new_checksum == svg_root.checksum:
+	if new_checksum == svg_root.get_meta("_checksum"):
 		return
 	undo_redo.create_action("Resynchronize SVG")
-	undo_redo.add_do_property(svg_root, "checksum", new_checksum)
-	undo_redo.add_undo_property(svg_root, "checksum", svg_root.checksum)
+	undo_redo.add_do_method(svg_root, "set_meta", "_checksum", new_checksum)
+	undo_redo.add_undo_method(svg_root, "set_meta", "_checksum", svg_root.get_meta('_checksum'))
 	undo_redo.add_do_method(svg_root, "remove_child", svg_root.get_child(0))
 	undo_redo.add_undo_method(svg_root, "add_child", svg_root.get_child(0))
 	undo_redo.commit_action()

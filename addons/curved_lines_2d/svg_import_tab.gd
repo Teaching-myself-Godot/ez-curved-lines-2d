@@ -83,7 +83,7 @@ func _load_svg(svg_file_path : String) -> void:
 	if %UseAutoSyncCheckBox.button_pressed:
 		var svg_sync_root := svg_importer.get_synced_svg_root_instance()
 		svg_sync_root.svg_resource_path = svg_file_path
-		svg_sync_root.checksum = FileAccess.get_md5(svg_file_path)
+		svg_sync_root.set_meta("_checksum", FileAccess.get_md5(svg_file_path))
 		svg_sync_root.name = "SyncedSVGRoot"
 		var parent := selection.pop_back()
 		if parent == null:

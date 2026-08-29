@@ -10,7 +10,6 @@ extends Node2D
 class_name SyncedSVGRoot
 
 @export var svg_resource_path : String
-@export var checksum : String
 
 @export var is_svs := true
 @export var is_lock := true
