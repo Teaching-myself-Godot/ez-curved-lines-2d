@@ -3007,15 +3007,21 @@ func _reimport_synchronized_svg_file(svg_root : SyncedSVGRoot) -> void:
 	var new_checksum := FileAccess.get_md5(svg_root.svg_resource_path)
 	if new_checksum == svg_root.get_meta("_checksum"):
 		return
+	if svg_root.has_meta("is_importing"):
+		return
+	svg_root.set_meta("is_importing", true)
 	undo_redo.create_action("Resynchronize SVG")
 	undo_redo.add_do_method(svg_root, "set_meta", "_checksum", new_checksum)
 	undo_redo.add_undo_method(svg_root, "set_meta", "_checksum", svg_root.get_meta('_checksum'))
-	undo_redo.add_do_method(svg_root, "remove_child", svg_root.get_child(0))
-	undo_redo.add_undo_method(svg_root, "add_child", svg_root.get_child(0))
+	var ch := svg_root.get_child(0)
+	if is_instance_valid(ch):
+		undo_redo.add_do_method(svg_root, "remove_child", ch)
+		undo_redo.add_undo_method(svg_root, "add_child", ch)
 	undo_redo.commit_action()
 	var svg_importer := SVGImporter.instantiate_from_synced_svg_root(svg_root, undo_redo, _pretty_print_svg_import_msg)
 	await svg_importer.load_svg(svg_root.svg_resource_path,
 			scene_root, [svg_root])
+	svg_root.remove_meta("is_importing")
 
 
 func _pretty_print_svg_import_msg(msg : String, lvl : SVGImporter.LogLevel) -> void:
@@ -3025,7 +3031,7 @@ func _pretty_print_svg_import_msg(msg : String, lvl : SVGImporter.LogLevel) -> v
 		SVGImporter.LogLevel.WARN:
 			print_rich("[color=yellow]%s" % msg)
 		SVGImporter.LogLevel.DEBUG:
-			print_rich("[color=gray]%s" % msg)
+			print_rich("[color=888888]%s" % msg)
 		SVGImporter.LogLevel.INFO,_:
 			print(msg)
 

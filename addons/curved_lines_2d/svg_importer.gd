@@ -99,7 +99,11 @@ func load_svg(file_path : String, scene_root := Node2D.new(), selected_nodes : A
 	undo_redo.commit_action(false)
 
 	if not import_as_svs:
+		# TODO: #403 will return refences to all ScalableVectorScape2D, of which
+		# correct draw state could be derived in stead of awaiting 2 draw frames
 		await RenderingServer.frame_post_draw
+		await RenderingServer.frame_post_draw
+
 		SVSSceneExporter.copy_baked_node(svg_root, parent_node, scene_root)
 		parent_node.remove_child(svg_root)
 		return parent_node
