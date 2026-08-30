@@ -9,9 +9,17 @@ extends Node2D
 ## created manually, by saving and reopening your scene
 class_name SyncedSVGRoot
 
+signal resources_changed(resource_paths : PackedStringArray)
+
 @export var svg_resource_path : String
 
-@export var is_svs := true
+@export var is_svs := true:
+	set(x):
+		is_svs = x
+		if Engine.is_editor_hint():
+			set_meta("_checksum", "invalidated")
+			resources_changed.emit([svg_resource_path])
+
 @export var is_lock := true
 @export var is_aa := false
 @export var is_line_2d := true

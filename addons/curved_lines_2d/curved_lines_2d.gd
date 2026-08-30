@@ -551,6 +551,10 @@ func _on_selection_changed():
 		svs_edit_buttons.hide_knife()
 		if _svs_edit_mode == SVSEditMode.KNIFE:
 			svs_edit_buttons.set_default_mode()
+	if current_selection is SyncedSVGRoot:
+		var x := current_selection as SyncedSVGRoot
+		if not x.resources_changed.is_connected(_on_resources_reloaded):
+			x.resources_changed.connect(_on_resources_reloaded)
 	update_overlays()
 
 
@@ -3010,15 +3014,11 @@ func _reimport_synchronized_svg_file(svg_root : SyncedSVGRoot) -> void:
 	if svg_root.has_meta("is_importing"):
 		return
 	svg_root.set_meta("is_importing", true)
-	undo_redo.create_action("Resynchronize SVG")
-	undo_redo.add_do_method(svg_root, "set_meta", "_checksum", new_checksum)
-	undo_redo.add_undo_method(svg_root, "set_meta", "_checksum", svg_root.get_meta('_checksum'))
 	var ch := svg_root.get_child(0)
 	if is_instance_valid(ch):
-		undo_redo.add_do_method(svg_root, "remove_child", ch)
-		undo_redo.add_undo_method(svg_root, "add_child", ch)
-	undo_redo.commit_action()
-	var svg_importer := SVGImporter.instantiate_from_synced_svg_root(svg_root, undo_redo, _pretty_print_svg_import_msg)
+		svg_root.remove_child(ch)
+	var svg_importer := SVGImporter.instantiate_from_synced_svg_root(svg_root,
+			SVGImporter.get_runtime_handler(), _pretty_print_svg_import_msg)
 	await svg_importer.load_svg(svg_root.svg_resource_path,
 			scene_root, [svg_root])
 	svg_root.remove_meta("is_importing")
