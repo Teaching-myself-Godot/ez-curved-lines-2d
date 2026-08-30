@@ -86,7 +86,6 @@ func load_svg(file_path : String, scene_root := Node2D.new(), selected_nodes : A
 	log_message("Importing SVG file: %s" % file_path, LogLevel.INFO)
 	var svg_root := Node2D.new()
 	svg_root.name = file_path.get_file().replace(".svg", "").to_pascal_case()
-	undo_redo.create_action("Import SVG file as Nodes: %s" % svg_root.name)
 	svg_root.set_meta(SVG_ROOT_META_NAME, true)
 
 	_managed_add_child_and_set_owner(parent_node, svg_root, scene_root)
@@ -96,7 +95,7 @@ func load_svg(file_path : String, scene_root := Node2D.new(), selected_nodes : A
 
 	var svg_xml_node : SVGXMLElement = parse_svg_xml_file(xml_parser)
 	process_svg_xml_tree(svg_xml_node, scene_root, svg_root, current_node, svg_gradients)
-	undo_redo.commit_action(false)
+
 
 	if not import_as_svs:
 		# TODO: #403 will return refences to all ScalableVectorScape2D, of which
@@ -104,10 +103,30 @@ func load_svg(file_path : String, scene_root := Node2D.new(), selected_nodes : A
 		await RenderingServer.frame_post_draw
 		await RenderingServer.frame_post_draw
 
-		SVSSceneExporter.copy_baked_node(svg_root, parent_node, scene_root)
+		var final_svg_root = SVSSceneExporter.copy_baked_node(svg_root, parent_node, scene_root)
 		parent_node.remove_child(svg_root)
+		undo_redo.create_action("Import SVG file as Nodes: %s" % final_svg_root.name)
+		undo_redo.add_do_method(parent_node, "add_child", final_svg_root, true)
+		_recursive_set_owner(final_svg_root, scene_root, scene_root)
+		undo_redo.add_undo_method(parent_node, "remove_child", final_svg_root)
+		undo_redo.commit_action(false)
 		return parent_node
+
+	undo_redo.create_action("Import SVG file as Nodes: %s" % svg_root.name)
+	undo_redo.add_do_method(parent_node, "add_child", svg_root, true)
+	_recursive_set_owner(svg_root, scene_root, scene_root)
+	undo_redo.add_undo_method(parent_node, "remove_child", svg_root)
+	undo_redo.commit_action(false)
 	return svg_root
+
+
+func _recursive_set_owner(node : Node, new_owner : Node, root : Node):
+	if node.owner != root:
+		return
+	undo_redo.add_do_property(node, 'owner', new_owner)
+	undo_redo.add_undo_reference(node)
+	for child in node.get_children():
+		_recursive_set_owner(child, new_owner, root)
 
 
 func parse_svg_xml_file(xml_parser : XMLParser) -> SVGXMLElement:
@@ -580,8 +599,6 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 		# append_array is used here, because clip paths may already have been added via the
 		# `create_path2d(...)` call chain.
 		new_path.clip_paths.append_array(clips)
-		undo_redo.add_do_property(new_path, 'clip_paths', new_path.clip_paths)
-		undo_redo.add_undo_property(new_path, 'clip_paths', [])
 
 
 func create_path2d(path_name: String, parent: Node, curve: Curve2D, arcs: Array[ScalableArc],
@@ -621,8 +638,6 @@ func _apply_clip_path_by_href(href : String, svs : ScalableVectorShape2D, scene_
 
 	log_message("Processing %d clip-paths for %s" % [new_clip_paths.size(), svs.name], LogLevel.DEBUG)
 	svs.clip_paths = new_clip_paths
-	undo_redo.add_do_property(svs, 'clip_paths', new_clip_paths)
-	undo_redo.add_undo_property(svs, 'clip_paths', [])
 
 
 func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform : Transform2D,
@@ -909,13 +924,8 @@ func _managed_add_child_and_set_owner(parent : Node, child : Node,
 	if not child.get_parent() == parent:
 		parent.add_child(child, true)
 	child.set_owner(scene_root)
-	undo_redo.add_do_method(parent, 'add_child', child, true)
-	undo_redo.add_do_method(child, 'set_owner', scene_root)
-	undo_redo.add_do_reference(child)
-	undo_redo.add_undo_method(parent, 'remove_child', child)
 	if not as_property.is_empty():
 		parent.call("set", as_property, child)
-		undo_redo.add_do_property(parent, as_property, child)
 
 
 static func parse_attribute_string(raw_attribute_str : String) -> String:
@@ -965,6 +975,9 @@ class UndoRedoHandler:
 		pass
 
 	func commit_action(_apply : bool) -> void:
+		pass
+
+	func add_undo_reference(_thing : Object) -> void:
 		pass
 
 
