@@ -62,12 +62,19 @@ enum ShapeType {
 }
 
 enum CollisionObjectType {
+	## Do not add colliders
 	NONE,
+	## Set [member collision_object] to [StaticBody2D]
 	STATIC_BODY_2D,
+	## Set [member collision_object] to [Area2D]
 	AREA_2D,
+	## Set [member collision_object] to [AnimatableBody2D]
 	ANIMATABLE_BODY_2D,
+	## Set [member collision_object] to [RigidBody2D]
 	RIGID_BODY_2D,
+	## Set [member collision_object] to [CharacterBody2D]
 	CHARACTER_BODY_2D,
+	## Set [member collision_object] to [PhysicalBone2D]
 	PHYSICAL_BONE_2D
 }
 
