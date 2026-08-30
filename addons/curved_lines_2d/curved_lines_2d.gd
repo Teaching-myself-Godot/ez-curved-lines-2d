@@ -2999,6 +2999,8 @@ func _on_resources_reloaded(resources : PackedStringArray) -> void:
 	if not is_instance_valid(root):
 		return
 	for path in resources:
+		if root is SyncedSVGRoot and path == root.svg_resource_path:
+			_reimport_synchronized_svg_file(root)
 		for svg_root : SyncedSVGRoot in root.find_children("*", "SyncedSVGRoot"):
 			if path == svg_root.svg_resource_path:
 				_reimport_synchronized_svg_file(svg_root)
@@ -3006,15 +3008,21 @@ func _on_resources_reloaded(resources : PackedStringArray) -> void:
 
 func _reimport_synchronized_svg_file(svg_root : SyncedSVGRoot) -> void:
 	var scene_root := EditorInterface.get_edited_scene_root()
+	if svg_root.owner and svg_root.owner != scene_root:
+		_pretty_print_svg_import_msg("", SVGImporter.LogLevel.DEBUG)
 	if not is_instance_valid(scene_root):
 		return
 	var new_checksum := FileAccess.get_md5(svg_root.svg_resource_path)
 	if new_checksum == svg_root.get_meta("_checksum"):
 		return
+	var ch := svg_root.get_child(0)
+	if is_instance_valid(ch) and ch.owner != scene_root:
+		_pretty_print_svg_import_msg("⚠️ Synchronized SVG in external scene changed, it can only be resynced in that scene %s" % str(svg_root), SVGImporter.LogLevel.DEBUG)
+		return
 	if svg_root.has_meta("is_importing"):
 		return
 	svg_root.set_meta("is_importing", true)
-	var ch := svg_root.get_child(0)
+	svg_root.set_meta("_checksum", new_checksum)
 	if is_instance_valid(ch):
 		svg_root.remove_child(ch)
 	var svg_importer := SVGImporter.instantiate_from_synced_svg_root(svg_root,
@@ -3022,6 +3030,7 @@ func _reimport_synchronized_svg_file(svg_root : SyncedSVGRoot) -> void:
 	await svg_importer.load_svg(svg_root.svg_resource_path,
 			scene_root, [svg_root])
 	svg_root.remove_meta("is_importing")
+	EditorInterface.mark_scene_as_unsaved()
 
 
 func _pretty_print_svg_import_msg(msg : String, lvl : SVGImporter.LogLevel) -> void:
