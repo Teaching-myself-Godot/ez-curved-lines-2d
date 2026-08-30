@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://brsj6injyvx8a"
-path="res://.godot/imported/jaques.svg-a67d27c3145330a949dc71477afbb4cb.ctex"
+path="res://.godot/imported/jacques.svg-706468a24e2ebbe8aa01b58a677684fa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/curved_lines_2d/examples/synced_svg/jaques.svg"
-dest_files=["res://.godot/imported/jaques.svg-a67d27c3145330a949dc71477afbb4cb.ctex"]
+source_file="res://addons/curved_lines_2d/examples/synced_svg/jacques.svg"
+dest_files=["res://.godot/imported/jacques.svg-706468a24e2ebbe8aa01b58a677684fa.ctex"]
 
 [params]
 
