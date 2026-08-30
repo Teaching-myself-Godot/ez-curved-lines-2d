@@ -14,18 +14,28 @@ signal resources_changed(resource_paths : PackedStringArray)
 @export var svg_resource_path : String
 
 @export var is_svs := true:
-	set(x):
-		is_svs = x
-		if Engine.is_editor_hint():
-			set_meta("_checksum", "invalidated")
-			resources_changed.emit([svg_resource_path])
+	set(x): is_svs = x; _on_property_changed()
+@export var is_lock := true:
+	set(x): is_lock = x; _on_property_changed()
+@export var is_aa := false:
+	set(x): is_aa = x; _on_property_changed()
+@export var is_line_2d := true:
+	set(x): is_line_2d = x; _on_property_changed()
+@export var coll_type := ScalableVectorShape2D.CollisionObjectType.NONE:
+	set(x): coll_type = x; _on_property_changed()
+@export var is_update_curve_at_runtime := true:
+	set(x): is_update_curve_at_runtime = x; _on_property_changed()
+@export var is_resource_local_to_scene := true:
+	set(x): is_resource_local_to_scene = x; _on_property_changed()
+@export var tol_deg := 4.0:
+	set(x): tol_deg = x; _on_property_changed()
+@export var max_stg := 5:
+	set(x): max_stg = x; _on_property_changed()
+@export var using_antialiased_line_2d := false:
+	set(x): using_antialiased_line_2d = x; _on_property_changed()
 
-@export var is_lock := true
-@export var is_aa := false
-@export var is_line_2d := true
-@export var coll_type := ScalableVectorShape2D.CollisionObjectType.NONE
-@export var is_update_curve_at_runtime := true
-@export var is_resource_local_to_scene := true
-@export var tol_deg := 4.0
-@export var max_stg := 5
-@export var using_antialiased_line_2d := false
+
+func _on_property_changed() -> void:
+	if Engine.is_editor_hint():
+		set_meta("_checksum", "invalidated")
+		resources_changed.emit([svg_resource_path])
