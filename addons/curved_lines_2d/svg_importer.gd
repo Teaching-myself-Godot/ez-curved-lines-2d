@@ -679,16 +679,8 @@ func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform :
 	svs.curve.resource_local_to_scene = resource_local_to_scene
 	svs.tolerance_degrees = tolerance_degrees
 	svs.max_stages = max_stages
-	var gradient_point_parent : Node2D = parent
-	if transform == Transform2D.IDENTITY:
-		_managed_add_child_and_set_owner(parent, svs, scene_root)
-	else:
-		var transform_node := Node2D.new()
-		transform_node.name = svs.name + "Transform"
-		transform_node.transform = transform
-		_managed_add_child_and_set_owner(parent, transform_node, scene_root)
-		_managed_add_child_and_set_owner(transform_node, svs, scene_root)
-		gradient_point_parent = transform_node
+	svs.transform = transform * svs.transform
+	_managed_add_child_and_set_owner(parent, svs, scene_root)
 
 	if style.has("opacity"):
 		svs.modulate.a = float(style["opacity"])
@@ -702,7 +694,7 @@ func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform :
 	if not is_cutout:
 		for func_name in PAINT_ORDER_MAP[get_paint_order(style)]:
 			call(func_name, svs, style, scene_root, gradients,
-					gradient_point_parent, image_texture)
+					parent, image_texture)
 
 	if "clip-path" in style:
 		_apply_clip_path_by_href(style["clip-path"], svs, scene_root)
