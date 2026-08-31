@@ -13,7 +13,7 @@
 - Bugfix 4.8-dev4: new localizer for 2D editor buttons control
 - Bugfix: fixes editor crash once every indeterminate of times when releasing mouse over `ScalableVectorShape2D` bounding box while dragging when another node is selected - also selection now remains on selected node. 
 - Bugfix: SVG Import without `ScalableVectorShape2D` now supports undo/redo
-
+- Fix: SVG Import no longer requires an extra parent node to apply matrix transforms
 
 ## 2.32.0 - Redemption
 
