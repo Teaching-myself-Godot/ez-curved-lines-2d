@@ -73,7 +73,7 @@ func log_message(msg : String, log_level : LogLevel = LogLevel.INFO) -> void:
 	log_consumer.call(msg, log_level)
 
 
-func load_svg(file_path : String, scene_root := Node2D.new(), selected_nodes : Array[Node] = []) -> Node:
+func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nodes : Array[Node] = []) -> Node:
 	var xml_parser = XMLParser.new()
 	var parent_node := scene_root if selected_nodes.is_empty() else selected_nodes[0]
 	if not scene_root is Node:
