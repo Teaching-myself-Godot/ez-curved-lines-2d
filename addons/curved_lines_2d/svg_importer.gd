@@ -7,6 +7,7 @@ const PLC_EXP = "__PLC_EXP__"
 
 const SVG_ROOT_META_NAME := "svg_root"
 const SVG_STYLE_META_NAME := "svg_style"
+const IS_SVG_GROUP_META_NAME := "is_svg_group"
 
 const PAINT_ORDER_MAP := {
 	"normal": ['add_fill_to_path', 'add_stroke_to_path', 'add_collision_to_path'],
@@ -94,14 +95,16 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 	var svg_gradients : Array[Dictionary] = []
 
 	var svg_xml_node : SVGXMLElement = parse_svg_xml_file(xml_parser)
-	process_svg_xml_tree(svg_xml_node, scene_root, svg_root, current_node, svg_gradients)
 
+	process_svg_xml_tree(svg_xml_node, scene_root, svg_root, current_node, svg_gradients)
+	# global_position will be used to recenter Node2D so await at least one draw operation
+	await RenderingServer.frame_post_draw
+	# just to be safe, await another for very big files
+	await RenderingServer.frame_post_draw
+	for svg_group_node in  svg_root.find_children("*", "Node2D").filter(func(nd): return nd.has_meta(IS_SVG_GROUP_META_NAME)):
+		recenter_group_node_in_extent(svg_group_node)
 
 	if not import_as_svs:
-		# TODO: #403 will return refences to all ScalableVectorScape2D, of which
-		# correct draw state could be derived in stead of awaiting 2 draw frames
-		await RenderingServer.frame_post_draw
-		await RenderingServer.frame_post_draw
 
 		var final_svg_root = SVSSceneExporter.copy_baked_node(svg_root, parent_node, scene_root)
 		parent_node.remove_child(svg_root)
@@ -120,13 +123,37 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 	return svg_root
 
 
-func _recursive_set_owner(node : Node, new_owner : Node, root : Node):
+func _recursive_set_owner(node : Node, new_owner : Node, root : Node) -> void:
 	if node.owner != root:
 		return
 	undo_redo.add_do_property(node, 'owner', new_owner)
 	undo_redo.add_undo_reference(node)
 	for child in node.get_children():
 		_recursive_set_owner(child, new_owner, root)
+
+
+func recenter_group_node_in_extent(g : Node2D) -> void:
+	var child_list := g.get_children()
+	var min_x := INF
+	var min_y := INF
+	var max_x := -INF
+	var max_y := -INF
+	while child_list.size() > 0:
+		var child : Node = child_list.pop_back()
+		child_list.append_array(child.get_children())
+		if child is ScalableVectorShape2D:
+			var box = child.get_bounding_rect(true)
+			min_x = min_x if box.position.x > min_x else box.position.x
+			min_y = min_y if box.position.y > min_y else box.position.y
+			max_x = max_x if box.position.x + box.size.x  < max_x else box.position.x + box.size.x
+			max_y = max_y if box.position.y + box.size.y < max_y else box.position.y + box.size.y
+	var extent := Rect2(min_x, min_y, max_x - min_x, max_y - min_y)
+	print("Group extent = ", [Vector2(min_x, min_y), Vector2(max_x, max_y)], " - center = ", extent.get_center())
+	var delta := extent.get_center() - g.global_position
+	g.global_position = extent.get_center()
+	for ch in g.get_children():
+		if ch is Node2D:
+			ch.global_position -= delta
 
 
 func parse_svg_xml_file(xml_parser : XMLParser) -> SVGXMLElement:
@@ -255,7 +282,7 @@ func process_group(element:SVGXMLElement, current_node : Node2D, scene_root : No
 	new_group.transform = get_svg_transform(element)
 	var style := element.get_merged_styles(log_message)
 	new_group.set_meta(SVG_STYLE_META_NAME, style)
-
+	new_group.set_meta(IS_SVG_GROUP_META_NAME, true)
 	if style.has("display") and style['display'] == "none":
 		new_group.visible = false
 	_managed_add_child_and_set_owner(current_node, new_group, scene_root)

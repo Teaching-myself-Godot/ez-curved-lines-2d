@@ -1040,13 +1040,17 @@ func get_center() -> Vector2:
 
 
 ## Calculate and return the bounding rect in local space
-func get_bounding_rect() -> Rect2:
+func get_bounding_rect(as_global := false) -> Rect2:
 	if not curve:
 		return Rect2(Vector2.ZERO, Vector2.ZERO)
 	var points := self.tessellate()
 	if points.size() < 1:
 		# Cannot calculate a center for 0 points
 		return Rect2(Vector2.ZERO, Vector2.ZERO)
+	if as_global:
+		return Geometry2DUtil.get_polygon_bounding_rect(global_transform * points).grow(
+				stroke_width / 2.0 if is_instance_valid(line) or is_instance_valid(poly_stroke) else 0
+		)
 	return Geometry2DUtil.get_polygon_bounding_rect(points)
 
 
