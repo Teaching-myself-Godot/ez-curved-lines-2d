@@ -694,17 +694,18 @@ func add_stroke_to_path(new_path : ScalableVectorShape2D, style: Dictionary, sce
 			var svg_gradient = get_gradient_by_href(href, gradients)
 			if svg_gradient.is_empty():
 				log_message("⚠️ Cannot find gradient for href=%s" % href, LogLevel.WARN)
-			var gradiant_data
+			var gradient_data := {}
 			if "xlink:href" in svg_gradient:
-				gradiant_data = get_gradient_by_href(svg_gradient["xlink:href"], gradients)
+				gradient_data = get_gradient_by_href(svg_gradient["xlink:href"], gradients)
 			elif "href" in svg_gradient:
-				gradiant_data = get_gradient_by_href(svg_gradient["href"], gradients)
+				gradient_data = get_gradient_by_href(svg_gradient["href"], gradients)
 			if stroke is Line2D:
-				if !gradiant_data.has("inkscape:swatch"):
+				if !gradient_data.has("inkscape:swatch"):
 					log_message("⚠️ Gradient stroke style not supported by Line2D: " + style["stroke"])
-				else: 
-					new_path.stroke_color = Color(gradiant_data["stops"][0]["style"]["stop-color"],
-					float(gradiant_data["stops"][0]["style"]["stop-opacity"]))
+				else:
+					new_path.stroke_color = Color(gradient_data["stops"][0]["style"]["stop-color"],
+							float(gradient_data["stops"][0]["style"]["stop-opacity"])
+					)
 			else:
 				add_gradient_to_fill(new_path, svg_gradient, stroke, scene_root, gradients, gradient_point_parent)
 		elif style["stroke"].begins_with("rgba"):
