@@ -6,6 +6,7 @@
 
 - Import SVG files as nodes at runtime
 - ScalableVectorShape2D now also handles `assigned_node_changed` signal at runtime
+- Support for colors set by `inkscape:swatch` on strokes (thanks @claire-aware)
 
 ### Changed 
 
