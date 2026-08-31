@@ -645,6 +645,9 @@ func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform :
 	svs.tolerance_degrees = tolerance_degrees
 	svs.max_stages = max_stages
 	svs.transform = transform * svs.transform
+	var gradients_dupe := gradients.duplicate(true)
+	for i in gradients_dupe.size():
+		gradients_dupe[i]["parent_transform"] = transform
 	_managed_add_child_and_set_owner(parent, svs, scene_root)
 
 	if style.has("opacity"):
@@ -658,7 +661,7 @@ func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform :
 
 	if not is_cutout:
 		for func_name in PAINT_ORDER_MAP[get_paint_order(style)]:
-			call(func_name, svs, style, scene_root, gradients,
+			call(func_name, svs, style, scene_root, gradients_dupe,
 					parent, image_texture)
 
 	if "clip-path" in style:
@@ -813,7 +816,7 @@ func add_gradient_to_fill(new_path : ScalableVectorShape2D, svg_gradient: Dictio
 	texture.gradient.offsets = gradient_data.keys()
 
 	if svg_gradient["is_radial"] and "cx" in svg_gradient and "cy" in svg_gradient and "r" in svg_gradient:
-		var gradient_transform = (
+		var gradient_transform = (svg_gradient["parent_transform"] if "parent_transform" in svg_gradient else Transform2D.IDENTITY) * (
 			process_svg_transform(svg_gradient["gradientTransform"]) if "gradientTransform" in svg_gradient else
 			Transform2D.IDENTITY
 		)
@@ -823,7 +826,7 @@ func add_gradient_to_fill(new_path : ScalableVectorShape2D, svg_gradient: Dictio
 				box, texture, fill_from, fill_to, gradient_transform)
 		texture.fill = GradientTexture2D.FILL_RADIAL
 	elif "x1" in svg_gradient and "y1" in svg_gradient and "x2" in svg_gradient and "y2" in svg_gradient:
-		var gradient_transform = (
+		var gradient_transform = (svg_gradient["parent_transform"] if "parent_transform" in svg_gradient else Transform2D.IDENTITY) * (
 			process_svg_transform(svg_gradient["gradientTransform"]) if "gradientTransform" in svg_gradient else
 			Transform2D.IDENTITY
 		)
