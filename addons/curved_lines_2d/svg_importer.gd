@@ -154,7 +154,6 @@ func recenter_group_node_in_extent(g : Node2D) -> void:
 			max_x = max_x if box.position.x + box.size.x  < max_x else box.position.x + box.size.x
 			max_y = max_y if box.position.y + box.size.y < max_y else box.position.y + box.size.y
 	var extent := Rect2(min_x, min_y, max_x - min_x, max_y - min_y)
-	print("Group extent = ", [Vector2(min_x, min_y), Vector2(max_x, max_y)], " - center = ", extent.get_center())
 	var delta := extent.get_center() - g.global_position
 	g.global_position = extent.get_center()
 	for ch in g.get_children():
@@ -303,6 +302,14 @@ func get_element_label(element: SVGXMLElement, alt_name : String) -> String:
 	return alt_name
 
 
+func store_inkscape_transform_center_md(element : SVGXMLElement, nd : Node2D) -> void:
+	if element.has_attribute(INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME) and element.has_attribute(INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME):
+		nd.set_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME, Vector2(
+			float(element.get_named_attribute_value(INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME)),
+			float(element.get_named_attribute_value(INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME))
+		))
+
+
 func process_group(element:SVGXMLElement, current_node : Node2D, scene_root : Node, alt_name := "Group") -> Node2D:
 	var new_group = Node2D.new()
 	new_group.name = get_element_label(element, alt_name)
@@ -310,11 +317,7 @@ func process_group(element:SVGXMLElement, current_node : Node2D, scene_root : No
 	var style := element.get_merged_styles(log_message)
 	new_group.set_meta(SVG_STYLE_META_NAME, style)
 	new_group.set_meta(IS_SVG_GROUP_META_NAME, true)
-	if element.has_attribute(INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME) and element.has_attribute(INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME):
-		new_group.set_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME, Vector2(
-			float(element.get_named_attribute_value(INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME)),
-			float(element.get_named_attribute_value(INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME))
-		))
+	store_inkscape_transform_center_md(element, new_group)
 	if style.has("display") and style['display'] == "none":
 		new_group.visible = false
 	_managed_add_child_and_set_owner(current_node, new_group, scene_root)
@@ -350,11 +353,7 @@ func create_path_from_ellipse(element:SVGXMLElement, path_name : String, rx : fl
 	new_ellipse.name = path_name
 	_post_process_shape(new_ellipse, current_node, get_svg_transform(element),
 			element.get_merged_styles(log_message), scene_root, gradients)
-	if element.has_attribute(INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME) and element.has_attribute(INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME):
-		new_ellipse.set_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME, Vector2(
-			float(element.get_named_attribute_value(INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME)),
-			float(element.get_named_attribute_value(INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME))
-		))
+	store_inkscape_transform_center_md(element, new_ellipse)
 
 
 func process_svg_image(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
@@ -389,6 +388,7 @@ func process_svg_image(element:SVGXMLElement, current_node : Node2D, scene_root 
 
 	_post_process_shape(new_image_rect, current_node, get_svg_transform(element),
 			element.get_merged_styles(log_message), scene_root, gradients, false, image_texture)
+	store_inkscape_transform_center_md(element, new_image_rect)
 
 
 func process_svg_rectangle(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
@@ -412,6 +412,7 @@ func process_svg_rectangle(element:SVGXMLElement, current_node : Node2D, scene_r
 	new_rect.name = get_element_label(element, "Rectangle")
 	_post_process_shape(new_rect, current_node, get_svg_transform(element),
 			element.get_merged_styles(log_message), scene_root, gradients)
+	store_inkscape_transform_center_md(element, new_rect)
 
 
 func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_root : Node, is_closed : bool,
@@ -424,8 +425,9 @@ func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_roo
 	for p_idx in range(0, points_split.size(), 2):
 		curve.add_point(Vector2(float(points_split[p_idx]), float(points_split[p_idx + 1])))
 	var path_name = get_element_label(element, "Polygon" if is_closed else "Polyline")
-	create_path2d(path_name, current_node, curve, [], get_svg_transform(element),
+	var new_poly := create_path2d(path_name, current_node, curve, [], get_svg_transform(element),
 			element.get_merged_styles(log_message), scene_root, gradients, is_closed)
+	store_inkscape_transform_center_md(element, new_poly)
 
 
 func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
@@ -664,6 +666,7 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 		# append_array is used here, because clip paths may already have been added via the
 		# `create_path2d(...)` call chain.
 		new_path.clip_paths.append_array(clips)
+		store_inkscape_transform_center_md(element, new_path)
 
 
 func create_path2d(path_name: String, parent: Node, curve: Curve2D, arcs: Array[ScalableArc],
