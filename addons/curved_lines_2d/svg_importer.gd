@@ -304,10 +304,10 @@ func get_element_label(element: SVGXMLElement, alt_name : String) -> String:
 
 
 func store_inkscape_transform_center_md(element : SVGXMLElement, nd : Node2D) -> void:
-	if element.has_attribute(INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME) and element.has_attribute(INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME):
+	if element.has_attribute(INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME) or element.has_attribute(INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME):
 		nd.set_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME, Vector2(
-			float(element.get_named_attribute_value(INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME)),
-			float(element.get_named_attribute_value(INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME))
+			float(element.get_named_attribute_value_safe(INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME)),
+			float(element.get_named_attribute_value_safe(INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME))
 		))
 
 
