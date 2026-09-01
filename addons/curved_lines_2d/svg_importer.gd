@@ -9,7 +9,8 @@ const SVG_ROOT_META_NAME := "svg_root"
 const SVG_STYLE_META_NAME := "svg_style"
 const IS_SVG_GROUP_META_NAME := "is_svg_group"
 const INKSCAPE_TRANSFORM_CENTER_META_NAME := "transform_center"
-
+const INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME := "inkscape:transform-center-x"
+const INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME := "inkscape:transform-center-y"
 
 const PAINT_ORDER_MAP := {
 	"normal": ['add_fill_to_path', 'add_stroke_to_path', 'add_collision_to_path'],
@@ -107,6 +108,9 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 		recenter_group_node_in_extent(svg_group_node)
 		realign_offset_for_group_node(svg_group_node)
 
+	for svs : ScalableVectorShape2D in svg_root.find_children("*", "ScalableVectorShape2D"):
+		realign_offset_for_svs(svs)
+
 	if not import_as_svs:
 		var final_svg_root = SVSSceneExporter.copy_baked_node(svg_root, parent_node, scene_root)
 		parent_node.remove_child(svg_root)
@@ -168,6 +172,15 @@ func realign_offset_for_group_node(g : Node2D) -> void:
 		for ch in g.get_children():
 			if ch is Node2D:
 				ch.global_position -= delta
+
+
+func realign_offset_for_svs(svs : ScalableVectorShape2D) -> void:
+	if svs.has_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME):
+		var transform_center : Vector2 = svs.get_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME)
+		var before := svs.global_position
+		svs.global_position.x += transform_center.x * svs.global_scale.x
+		svs.global_position.y -= transform_center.y * svs.global_scale.y
+		svs.translate_points_by(before - svs.global_position)
 
 
 func parse_svg_xml_file(xml_parser : XMLParser) -> SVGXMLElement:
@@ -297,10 +310,10 @@ func process_group(element:SVGXMLElement, current_node : Node2D, scene_root : No
 	var style := element.get_merged_styles(log_message)
 	new_group.set_meta(SVG_STYLE_META_NAME, style)
 	new_group.set_meta(IS_SVG_GROUP_META_NAME, true)
-	if element.has_attribute("inkscape:transform-center-x") and element.has_attribute("inkscape:transform-center-y"):
+	if element.has_attribute(INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME) and element.has_attribute(INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME):
 		new_group.set_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME, Vector2(
-			float(element.get_named_attribute_value("inkscape:transform-center-x")),
-			float(element.get_named_attribute_value("inkscape:transform-center-y"))
+			float(element.get_named_attribute_value(INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME)),
+			float(element.get_named_attribute_value(INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME))
 		))
 	if style.has("display") and style['display'] == "none":
 		new_group.visible = false
@@ -337,6 +350,12 @@ func create_path_from_ellipse(element:SVGXMLElement, path_name : String, rx : fl
 	new_ellipse.name = path_name
 	_post_process_shape(new_ellipse, current_node, get_svg_transform(element),
 			element.get_merged_styles(log_message), scene_root, gradients)
+	if element.has_attribute(INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME) and element.has_attribute(INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME):
+		new_ellipse.set_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME, Vector2(
+			float(element.get_named_attribute_value(INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME)),
+			float(element.get_named_attribute_value(INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME))
+		))
+
 
 func process_svg_image(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
 		gradients : Array[Dictionary]) -> void:
