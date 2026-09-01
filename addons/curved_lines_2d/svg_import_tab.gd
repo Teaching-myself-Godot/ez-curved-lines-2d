@@ -65,6 +65,7 @@ func _load_svg(svg_file_path : String) -> void:
 	var undo_redo := EditorInterface.get_editor_undo_redo()
 	var svg_importer := SVGImporter.new(
 		import_as_svs, %LockShapesCheckBox.button_pressed,
+		%MarkAsGroupCheckBox.button_pressed,
 		%AntialiasedCheckBox.button_pressed,
 		%UseLine2DCheckBox.button_pressed,
 		collision_object_type,

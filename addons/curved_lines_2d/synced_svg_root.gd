@@ -24,6 +24,10 @@ signal resources_changed(resource_paths : PackedStringArray)
 ## If true, lock the assigned [Polygon2D], [Line2D] and [Polygon2D] nodes in the editor
 @export var is_lock := true:
 	set(x): is_lock = x; _on_property_changed()
+## If true, mark all the Node2D that come from SVG <g> tags a group in Godot as well.
+## Do the same for ScalableVectorShape2D.
+@export var mark_groups := false:
+	set(x): mark_groups = x; _on_property_changed()
 ## If true, flag on the antialiased field for [Line2D] and [Polygon2D]
 @export var is_aa := false:
 	set(x): is_aa = x; _on_property_changed()

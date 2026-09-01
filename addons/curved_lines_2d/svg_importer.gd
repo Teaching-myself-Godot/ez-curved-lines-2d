@@ -39,6 +39,7 @@ enum LogLevel { DEBUG, INFO, WARN, ERROR }
 ## Settings
 var import_as_svs := true
 var lock_shapes := true
+var mark_as_group := false
 var antialiased_shapes := false
 var import_stroke_as_line_2d := true
 var collision_object_type := ScalableVectorShape2D.CollisionObjectType.NONE
@@ -51,7 +52,8 @@ var use_antialiased_line_2d = false
 var undo_redo : Variant = null
 var log_consumer : Callable = func(msg: String, log_level : LogLevel): pass
 
-func _init(is_svs := true, is_lock := true, is_aa := false, is_line_2d := true,
+func _init(is_svs := true, is_lock := true, mark_groups := false,
+		is_aa := false, is_line_2d := true,
 		coll_type := ScalableVectorShape2D.CollisionObjectType.NONE,
 		is_update_curve_at_runtime := true,
 		is_resource_local_to_scene := true,
@@ -61,6 +63,7 @@ func _init(is_svs := true, is_lock := true, is_aa := false, is_line_2d := true,
 		on_log := func(msg: String, log_level : LogLevel): pass) -> void:
 	import_as_svs = is_svs
 	lock_shapes = is_lock
+	mark_as_group = mark_groups
 	antialiased_shapes = is_aa
 	import_stroke_as_line_2d = is_line_2d
 	collision_object_type = coll_type
@@ -91,7 +94,6 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 	var svg_root := Node2D.new()
 	svg_root.name = file_path.get_file().replace(".svg", "").to_pascal_case()
 	svg_root.set_meta(SVG_ROOT_META_NAME, true)
-
 	_managed_add_child_and_set_owner(parent_node, svg_root, scene_root)
 
 	var current_node := svg_root
@@ -102,8 +104,6 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 	process_svg_xml_tree(svg_xml_node, scene_root, svg_root, current_node, svg_gradients)
 	# global_position will be used to recenter Node2D so await at least one draw operation
 	await RenderingServer.frame_post_draw
-	# just to be safe, await another for very big files
-	await RenderingServer.frame_post_draw
 	for svg_group_node in  svg_root.find_children("*", "Node2D").filter(func(nd): return nd.has_meta(IS_SVG_GROUP_META_NAME)):
 		recenter_group_node_in_extent(svg_group_node)
 		realign_offset_for_group_node(svg_group_node)
@@ -112,6 +112,8 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 		realign_offset_for_svs(svs)
 
 	if not import_as_svs:
+		# await another render frame for translations to tessellate
+		await RenderingServer.frame_post_draw
 		var final_svg_root = SVSSceneExporter.copy_baked_node(svg_root, parent_node, scene_root)
 		parent_node.remove_child(svg_root)
 		undo_redo.create_action("Import SVG file as Nodes: %s" % final_svg_root.name)
@@ -290,7 +292,6 @@ func parse_gradient(gradient_xml : SVGXMLElement) -> Dictionary:
 					"offset": float(element.get_named_attribute_value_safe("offset")),
 					"id": element.get_named_attribute_value_safe("id")
 				})
-
 	return new_gradient
 
 
@@ -320,6 +321,8 @@ func process_group(element:SVGXMLElement, current_node : Node2D, scene_root : No
 	store_inkscape_transform_center_md(element, new_group)
 	if style.has("display") and style['display'] == "none":
 		new_group.visible = false
+	if mark_as_group:
+		new_group.set_meta("_edit_group_", true)
 	_managed_add_child_and_set_owner(current_node, new_group, scene_root)
 	return new_group
 
@@ -721,6 +724,8 @@ func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform :
 	var gradients_dupe := gradients.duplicate(true)
 	for i in gradients_dupe.size():
 		gradients_dupe[i]["parent_transform"] = transform
+	if mark_as_group and import_as_svs:
+		svs.set_meta("_edit_group_", true)
 	_managed_add_child_and_set_owner(parent, svs, scene_root)
 
 	if style.has("opacity"):
@@ -1059,7 +1064,7 @@ static func get_runtime_handler() -> UndoRedoHandler:
 
 static func instantiate_from_synced_svg_root(svg_root : SyncedSVGRoot, undo_redo : Variant, on_log : Callable) -> SVGImporter:
 	return SVGImporter.new(
-		svg_root.is_svs, svg_root.is_lock, svg_root.is_aa, svg_root.is_line_2d,
+		svg_root.is_svs, svg_root.is_lock, svg_root.mark_groups, svg_root.is_aa, svg_root.is_line_2d,
 		svg_root.coll_type, svg_root.is_update_curve_at_runtime, svg_root.is_resource_local_to_scene,
 		svg_root.tol_deg, svg_root.max_stg, svg_root.using_antialiased_line_2d,
 		undo_redo, on_log
@@ -1070,6 +1075,7 @@ func get_synced_svg_root_instance() -> SyncedSVGRoot:
 	var svg_root := SyncedSVGRoot.new()
 	svg_root.is_svs = import_as_svs
 	svg_root.is_lock = lock_shapes
+	svg_root.mark_groups = mark_as_group
 	svg_root.is_aa = antialiased_shapes
 	svg_root.is_line_2d = import_stroke_as_line_2d
 	svg_root.coll_type = collision_object_type
