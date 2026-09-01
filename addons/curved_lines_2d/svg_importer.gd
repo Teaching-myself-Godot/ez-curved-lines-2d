@@ -165,8 +165,8 @@ func realign_offset_for_group_node(g : Node2D) -> void:
 	if g.has_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME):
 		var transform_center : Vector2 = g.get_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME)
 		var before := g.global_position
-		g.global_position.x += transform_center.x * g.global_scale.x
-		g.global_position.y -= transform_center.y * g.global_scale.y
+		g.global_position.x += transform_center.x * absf(g.global_scale.x)
+		g.global_position.y -= transform_center.y * absf(g.global_scale.y)
 		var delta := g.global_position - before
 		for ch in g.get_children():
 			if ch is Node2D:
@@ -177,8 +177,8 @@ func realign_offset_for_svs(svs : ScalableVectorShape2D) -> void:
 	if svs.has_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME):
 		var transform_center : Vector2 = svs.get_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME)
 		var before := svs.global_position
-		svs.global_position.x += transform_center.x * svs.global_scale.x
-		svs.global_position.y -= transform_center.y * svs.global_scale.y
+		svs.global_position.x += transform_center.x * absf(svs.global_scale.x)
+		svs.global_position.y -= transform_center.y * absf(svs.global_scale.y)
 		svs.translate_points_by(before - svs.global_position)
 
 
