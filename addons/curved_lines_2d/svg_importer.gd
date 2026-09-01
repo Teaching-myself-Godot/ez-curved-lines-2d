@@ -162,8 +162,8 @@ func realign_offset_for_group_node(g : Node2D) -> void:
 	if g.has_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME):
 		var transform_center : Vector2 = g.get_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME)
 		var before := g.global_position
-		g.global_position.x += transform_center.x
-		g.global_position.y -= transform_center.y
+		g.global_position.x += transform_center.x * g.global_scale.x
+		g.global_position.y -= transform_center.y * g.global_scale.y
 		var delta := g.global_position - before
 		for ch in g.get_children():
 			if ch is Node2D:
