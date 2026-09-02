@@ -172,7 +172,7 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 		if not button.pressed.is_connected((object as SyncedSVGRoot)._on_property_changed):
 			button.pressed.connect((object as SyncedSVGRoot)._on_property_changed)
 	elif object is SyncedSVGRoot:
-		if name == "is_lock" or name == "is_update_curve_at_runtime" or name == "is_resource_local_to_scene":
+		if name == "is_update_curve_at_runtime" or name == "is_resource_local_to_scene":
 			if not (object as SyncedSVGRoot).is_svs:
 				return true
 	return false

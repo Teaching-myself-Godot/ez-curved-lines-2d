@@ -140,7 +140,7 @@ func _recursive_set_owner(node : Node, new_owner : Node, root : Node) -> void:
 		_recursive_set_owner(child, new_owner, root)
 
 
-func recenter_group_node_in_extent(g : Node2D) -> void:
+func get_extent(g : Node2D) -> Rect2:
 	var child_list := g.get_children()
 	var min_x := INF
 	var min_y := INF
@@ -155,7 +155,11 @@ func recenter_group_node_in_extent(g : Node2D) -> void:
 			min_y = min_y if box.position.y > min_y else box.position.y
 			max_x = max_x if box.position.x + box.size.x  < max_x else box.position.x + box.size.x
 			max_y = max_y if box.position.y + box.size.y < max_y else box.position.y + box.size.y
-	var extent := Rect2(min_x, min_y, max_x - min_x, max_y - min_y)
+	return Rect2(min_x, min_y, max_x - min_x, max_y - min_y)
+
+
+func recenter_group_node_in_extent(g : Node2D) -> void:
+	var extent := get_extent(g)
 	var delta := extent.get_center() - g.global_position
 	g.global_position = extent.get_center()
 	for ch in g.get_children():
@@ -177,10 +181,11 @@ func realign_offset_for_group_node(g : Node2D, image_scale : Vector2) -> void:
 
 func realign_offset_for_svs(svs : ScalableVectorShape2D, image_scale : Vector2) -> void:
 	if svs.has_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME):
+		var extent := svs.get_bounding_rect(true)
 		var transform_center : Vector2 = svs.get_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME)
 		var before := svs.global_position
-		svs.global_position.x += transform_center.x * image_scale.x
-		svs.global_position.y -= transform_center.y * image_scale.y
+		svs.global_position.x = extent.get_center().x + (transform_center.x * image_scale.x)
+		svs.global_position.y = extent.get_center().y - (transform_center.y * image_scale.y)
 		svs.translate_points_by(before - svs.global_position)
 
 
@@ -714,7 +719,7 @@ func _apply_clip_path_by_href(href : String, svs : ScalableVectorShape2D, scene_
 func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform : Transform2D,
 			style : Dictionary, scene_root : Node, gradients : Array[Dictionary],
 			is_cutout := false, image_texture : ImageTexture = null) -> void:
-	svs.lock_assigned_shapes = import_as_svs and lock_shapes
+	svs.lock_assigned_shapes = lock_shapes
 	svs.update_curve_at_runtime = update_curve_at_runtime
 	svs.arc_list.resource_local_to_scene = resource_local_to_scene
 	svs.curve.resource_local_to_scene = resource_local_to_scene

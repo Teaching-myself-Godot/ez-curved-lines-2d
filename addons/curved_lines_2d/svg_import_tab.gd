@@ -129,7 +129,6 @@ func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVec
 
 func _on_keep_drawable_path_2d_node_check_box_toggled(toggled_on: bool) -> void:
 	import_as_svs = toggled_on
-	%LockShapesCheckBox.visible = toggled_on
 
 
 func _on_open_file_dialog_button_pressed() -> void:
