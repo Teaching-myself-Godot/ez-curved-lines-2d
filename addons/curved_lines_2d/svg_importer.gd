@@ -106,10 +106,10 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 	await RenderingServer.frame_post_draw
 	for svg_group_node in  svg_root.find_children("*", "Node2D").filter(func(nd): return nd.has_meta(IS_SVG_GROUP_META_NAME)):
 		recenter_group_node_in_extent(svg_group_node)
-		realign_offset_for_group_node(svg_group_node)
+		realign_offset_for_group_node(svg_group_node, svg_root.scale)
 
 	for svs : ScalableVectorShape2D in svg_root.find_children("*", "ScalableVectorShape2D"):
-		realign_offset_for_svs(svs)
+		realign_offset_for_svs(svs, svg_root.scale)
 
 	if not import_as_svs:
 		# await another render frame for translations to tessellate
@@ -163,24 +163,24 @@ func recenter_group_node_in_extent(g : Node2D) -> void:
 			ch.global_position -= delta
 
 
-func realign_offset_for_group_node(g : Node2D) -> void:
+func realign_offset_for_group_node(g : Node2D, image_scale : Vector2) -> void:
 	if g.has_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME):
 		var transform_center : Vector2 = g.get_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME)
 		var before := g.global_position
-		g.global_position.x += transform_center.x * absf(g.global_scale.x)
-		g.global_position.y -= transform_center.y * absf(g.global_scale.y)
+		g.global_position.x += transform_center.x * image_scale.x
+		g.global_position.y -= transform_center.y * image_scale.y
 		var delta := g.global_position - before
 		for ch in g.get_children():
 			if ch is Node2D:
 				ch.global_position -= delta
 
 
-func realign_offset_for_svs(svs : ScalableVectorShape2D) -> void:
+func realign_offset_for_svs(svs : ScalableVectorShape2D, image_scale : Vector2) -> void:
 	if svs.has_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME):
 		var transform_center : Vector2 = svs.get_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME)
 		var before := svs.global_position
-		svs.global_position.x += transform_center.x * absf(svs.global_scale.x)
-		svs.global_position.y -= transform_center.y * absf(svs.global_scale.y)
+		svs.global_position.x += transform_center.x * image_scale.x
+		svs.global_position.y -= transform_center.y * image_scale.y
 		svs.translate_points_by(before - svs.global_position)
 
 
