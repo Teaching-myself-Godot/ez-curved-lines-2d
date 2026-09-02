@@ -566,6 +566,22 @@ func _on_scene_changed(scn : Node):
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(anim_pl)
 	else:
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(null)
+	_check_for_synced_svg_changes(scn)
+
+
+func _check_for_synced_svg_changes(scn : Node) -> void:
+	for svg_root : SyncedSVGRoot in scn.find_children("*", "SyncedSVGRoot"):
+		_print_warning_if_synced_svg_file_changed(svg_root)
+	if scn is SyncedSVGRoot:
+		_print_warning_if_synced_svg_file_changed(scn)
+
+
+func _print_warning_if_synced_svg_file_changed(svg_root : SyncedSVGRoot) -> void:
+	if svg_root.get_child_count() > 0:
+		if svg_root.get_child(0).owner != EditorInterface.get_edited_scene_root():
+			return
+	if FileAccess.get_md5(svg_root.svg_resource_path) != svg_root.get_meta("_checksum"):
+		push_warning("Warning: external svg file changed since last sync: " + svg_root.svg_resource_path + " in " + str(svg_root))
 
 
 func _handles(object: Object) -> bool:
