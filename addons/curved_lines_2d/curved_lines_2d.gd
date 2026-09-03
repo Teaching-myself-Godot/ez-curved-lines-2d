@@ -570,6 +570,8 @@ func _on_scene_changed(scn : Node):
 
 
 func _check_for_synced_svg_changes(scn : Node) -> void:
+	if not is_instance_valid(scn):
+		return
 	for svg_root : SyncedSVGRoot in scn.find_children("*", "SyncedSVGRoot"):
 		_print_warning_if_synced_svg_file_changed(svg_root)
 	if scn is SyncedSVGRoot:
