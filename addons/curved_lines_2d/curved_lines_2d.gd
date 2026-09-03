@@ -3026,8 +3026,6 @@ func _on_resources_reloaded(resources : PackedStringArray) -> void:
 
 func _reimport_synchronized_svg_file(svg_root : SyncedSVGRoot) -> void:
 	var scene_root := EditorInterface.get_edited_scene_root()
-	if svg_root.owner and svg_root.owner != scene_root:
-		_pretty_print_svg_import_msg("", SVGImporter.LogLevel.DEBUG)
 	if not is_instance_valid(scene_root):
 		return
 	var new_checksum := FileAccess.get_md5(svg_root.svg_resource_path)
