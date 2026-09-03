@@ -50,6 +50,7 @@ You can find the rest of the explainer videos on this playlist:
 	- [`Line2D` Stroke versus `Polygon2D` Stroke](#line2d-stroke-versus-polygon2d-stroke)
 	- [The import log](#the-import-log)
 	- [Importing SVG as nodes at runtime via gdscript](#importing-svg-as-nodes-at-runtime-via-gdscript)
+	- [Synchronize with external SGV files automatically using `SyncedSVGRoot`](#synchronize-with-external-sgv-files-automatically-using-syncedsvgroot)
 - [The Project Settings Dock](#the-project-settings-dock)
 	- [Editor Settings (how the 2D Viewport should behave):](#editor-settings-how-the-2d-viewport-should-behave)
 	- [Curve Settings](#curve-settings)
@@ -213,8 +214,6 @@ Read more about [manipulating shapes](#manipulating-shapes)
 
 # The Import SVG File Dock
 
-![svg importer dock](./addons/curved_lines_2d/screenshots/svg_importer_dock.png)
-
 ## Watch an explainer on Youtube
 
 [![watch explainer on youtube](./addons/curved_lines_2d/video_thumbnails/importing-svg-files-splash.webp)](https://youtu.be/5PIVoQcm8QE)
@@ -222,10 +221,15 @@ Read more about [manipulating shapes](#manipulating-shapes)
 
 ## Using the Import SVG File Dock
 
+![svg importer dock](./addons/curved_lines_2d/screenshots/svg_importer_dock.png)
+
+
 On the left side of this panel is a form with a couple of options:
 
-- Import as ScalableVectorShape2D: check this Off if you want to import the svg file with only built-in godot nodes, without being able to edit/animate the curves in the editor.
-- Lock imported shapes in editor: this simply flags on the lock so that the `Polygon2D`, `Line2D`, etc are not selected on click, but the owning ScalableVectorShape2D is
+- Import as ScalableVectorShape2D: check this Off if you want to import the svg file with only built-in godot  nodes (`Polygon2D`, `Line2D`, `CollisionPolygon2D`), without being able to edit/animate the curves in the editor.
+- Lock imported shapes in editor: this simply flags on the lock so that the `Polygon2D`, `Line2D`, etc. are not selected on click
+- Mark groups in editor: Mark all the Node2D that come from SVG `<g>` tags a group in Godot as well. Do the same for `ScalableVectorShape2D`.
+- Automatic Synchronization with `SyncedSVGRoot`: surround the imported SVG nodes with a helper `@tool` node [`SyncedSVGRoot`](#synchronize-with-external-sgv-files-automatically-using-syncedsvgroot), which tracks changes to the source svg file and automatically triggers a reimport.
 - Flag on antialiased on Polygon2D and Line2D: flags on the `antialiased` property of either
 - Use Line2D for Strokes: when flagged Off a `Polygon2D` is used for strokes in stead of a Line2D
 - Pick a `CollisionObject2D` type to also generate collision polygons when importing the svg file
@@ -253,6 +257,18 @@ As of release 2.33 you can import SVG files as nodes in your gdscript runtime.
 Please refer to the script in this example to accomplish that:
 
 [`res://addons/curved_lines_2d/examples/import_svg_at_runtime/`](./addons/curved_lines_2d/examples/import_svg_at_runtime/)
+
+## Synchronize with external SGV files automatically using `SyncedSVGRoot`
+
+As of release `2.34` the `SyncedSVGRoot` tool node helps keep your imported version of the SVG file synchronized with an external file by reimporting all the nodes. 
+
+This works in a similar way as with imported blender models, with a couple of differences (like all the nodes being editable)
+
+Automatic sync only works while the scene with `SyncedSVGRoot` is open _and_ the `SyncedSVGRoot` is not part of an external scene. In that case file changes are still detected but pushed as a warning. You can then open the scene with the `SyncedSVGRoot` in it and press the "Reimport" button in the inspector:
+
+![SyncedSVGRoot in the inspector](./addons/curved_lines_2d/screenshots/synced-svg-root-inspector.png)
+
+A copy of all the settings chosen in the original import is also kept track of in this node and changing any of those settings will also trigger a reimport.
 
 # The Project Settings Dock
 
