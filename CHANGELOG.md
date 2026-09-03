@@ -1,5 +1,16 @@
 # Changelog
 
+
+## 2.34.0 - SyncSkape
+
+### Added
+
+- `SyncedSVGRoot`, an opt-in helper node that keeps imported SVG synchronized with an external file by checking the md5 sum and automatically reimporting when anything changed
+- Locking shapes in SVG importer now also applies when not importing as `ScalableVectorShape2D`
+- A new opt-in flag to import svg `<g>`-groups as an edit group as well as `ScalableVectorShape2D` 
+- Support for inkscape based pivot points mapped from the `inkscape:transform-center-{xy}` attribute
+
+
 ## 2.33.3
 
 ### Added
