@@ -773,13 +773,15 @@ func add_stroke_to_path(new_path : ScalableVectorShape2D, style: Dictionary, sce
 			if svg_gradient.is_empty():
 				log_message("⚠️ Cannot find gradient for href=%s" % href, LogLevel.WARN)
 			var gradient_data := {}
+			if svg_gradient.has("inkscape:swatch"):
+				gradient_data = svg_gradient
 			if "xlink:href" in svg_gradient:
 				gradient_data = get_gradient_by_href(svg_gradient["xlink:href"], gradients)
 			elif "href" in svg_gradient:
 				gradient_data = get_gradient_by_href(svg_gradient["href"], gradients)
 			if stroke is Line2D:
 				if !gradient_data.has("inkscape:swatch"):
-					log_message("⚠️ Gradient stroke style not supported by Line2D: " + style["stroke"])
+					log_message("⚠️ Gradient stroke style not supported by Line2D: " + style["stroke"] + "(" + str(svg_gradient) + ","+ str(gradient_data) + ")")
 				else:
 					new_path.stroke_color = Color(gradient_data["stops"][0]["style"]["stop-color"],
 							float(gradient_data["stops"][0]["style"]["stop-opacity"])
