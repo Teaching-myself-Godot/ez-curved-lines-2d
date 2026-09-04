@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bp5vvj23w57js" path="res://addons/curved_lines_2d/svg_import_tab.gd" id="1_dlf5g"]
 [ext_resource type="Texture2D" uid="uid://b8ludy6aqsejg" path="res://addons/curved_lines_2d/LockViewport.svg" id="2_v8p2q"]
 [ext_resource type="PackedScene" uid="uid://cjbkvx1pj7gq2" path="res://addons/curved_lines_2d/collision_object_type_option_button.tscn" id="3_tqnmm"]
+[ext_resource type="Texture2D" uid="uid://hkpwhymy8yax" path="res://addons/curved_lines_2d/Group.svg" id="3_v8p2q"]
 [ext_resource type="LabelSettings" uid="uid://bspk1rkq1cmhx" path="res://addons/curved_lines_2d/info_label_settings.tres" id="4_4seqe"]
 [ext_resource type="PackedScene" uid="uid://cmoxkoulpd7so" path="res://addons/curved_lines_2d/link_button_with_copy_hint.tscn" id="5_wpk81"]
 
@@ -62,6 +63,8 @@ size_flags_stretch_ratio = 10.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer" unique_id=550337677]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="KeepDrawablePath2DNodeCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=1756831126]
 layout_mode = 2
@@ -69,7 +72,7 @@ tooltip_text = "- When checked on, all shapes in the SVG file will be imported a
 - Checking this off will only add builtin nodes the scene (Line2D, Polygon2D, CollisionPolygon2D as child of Node2D). It will print errors, because of missing references.
 - If you're unsure, it is advised to keep this checked on."
 button_pressed = true
-text = "Import as ScalableVectorShape2D*"
+text = "Import as ScalableVectorShape2D"
 
 [node name="LockShapesCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=1380672106]
 unique_name_in_owner = true
@@ -77,13 +80,29 @@ layout_mode = 2
 tooltip_text = "- Adds a lock to the Line2D, Polygon2D and CollisionPolygon2D assigned to the ScalableVectorShape2D
 - This lock makes sure these nodes are not transformed via the 2D editor"
 button_pressed = true
-text = "Lock imported shapes in editor *"
+text = "Lock imported shapes in editor"
 icon = ExtResource("2_v8p2q")
 
+[node name="MarkAsGroupCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=647548946]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Mark all the Node2D that come from SVG <g> tags a group in Godot as well. Do the same for ScalableVectorShape2D."
+text = "Mark groups in editor"
+icon = ExtResource("3_v8p2q")
+
+[node name="UseAutoSyncCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=2055249981]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Checking this on will give the imported nodes a SyncedSVGRoot parent.
+
+While in editor mode, the plugin keeps track of changes in the SVG file used for import and triggers a reimport for all the children of the corresponding SyncedSVGRoot"
+text = "Automatic Synchronization with SyncedSVGRoot"
+
 [node name="AntialiasedCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=1468204944]
+unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "It's probably better to use project settings for this, but checking this on will ensure that the antialised property is checked on for imported Line2D and Polygon2D"
-text = "Flag on antialiased for Polygon2D and Line2D*"
+text = "Flag on antialiased for Polygon2D and Line2D"
 
 [node name="UseLine2DCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=45145165]
 unique_name_in_owner = true
@@ -97,7 +116,7 @@ tooltip_text = "Use a Line2D node to represent the stroke with in stead of a Pol
 - Line2D can be textured directionally in stead of like a Fill texture
 - Line2D can set different Begin and End Cap Modes where Polygon2D can only pick one"
 button_pressed = true
-text = "Use Line2D for Strokes*"
+text = "Use Line2D for Strokes"
 
 [node name="CollisionObjectTypeOptionButton" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=1316342792 instance=ExtResource("3_tqnmm")]
 layout_mode = 2
@@ -157,8 +176,5 @@ text = "Watch an explainer on Youtube"
 uri = "https://youtu.be/5PIVoQcm8QE"
 
 [connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/KeepDrawablePath2DNodeCheckBox" to="." method="_on_keep_drawable_path_2d_node_check_box_toggled"]
-[connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/LockShapesCheckBox" to="." method="_on_lock_shapes_check_box_toggled"]
-[connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/AntialiasedCheckBox" to="." method="_on_antialiased_check_box_toggled"]
-[connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/UseLine2DCheckBox" to="." method="_on_use_line_2d_check_box_toggled"]
 [connection signal="type_selected" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
 [connection signal="pressed" from="VBoxContainer2/PanelContainer/VBoxContainer2/OpenFileDialogButton" to="." method="_on_open_file_dialog_button_pressed"]

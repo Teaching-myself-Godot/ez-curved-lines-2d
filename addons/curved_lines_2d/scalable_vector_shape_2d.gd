@@ -62,12 +62,19 @@ enum ShapeType {
 }
 
 enum CollisionObjectType {
+	## Do not add colliders
 	NONE,
+	## Set [member collision_object] to [StaticBody2D]
 	STATIC_BODY_2D,
+	## Set [member collision_object] to [Area2D]
 	AREA_2D,
+	## Set [member collision_object] to [AnimatableBody2D]
 	ANIMATABLE_BODY_2D,
+	## Set [member collision_object] to [RigidBody2D]
 	RIGID_BODY_2D,
+	## Set [member collision_object] to [CharacterBody2D]
 	CHARACTER_BODY_2D,
+	## Set [member collision_object] to [PhysicalBone2D]
 	PHYSICAL_BONE_2D
 }
 
@@ -1033,13 +1040,17 @@ func get_center() -> Vector2:
 
 
 ## Calculate and return the bounding rect in local space
-func get_bounding_rect() -> Rect2:
+func get_bounding_rect(as_global := false) -> Rect2:
 	if not curve:
 		return Rect2(Vector2.ZERO, Vector2.ZERO)
 	var points := self.tessellate()
 	if points.size() < 1:
 		# Cannot calculate a center for 0 points
 		return Rect2(Vector2.ZERO, Vector2.ZERO)
+	if as_global:
+		return Geometry2DUtil.get_polygon_bounding_rect(global_transform * points).grow(
+				stroke_width / 2.0 if is_instance_valid(line) or is_instance_valid(poly_stroke) else 0
+		)
 	return Geometry2DUtil.get_polygon_bounding_rect(points)
 
 

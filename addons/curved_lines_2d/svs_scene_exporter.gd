@@ -108,6 +108,8 @@ static func copy_baked_node(src_node : Node, dst_parent : Node, dst_owner : Node
 			break
 		if prop.name in dst_node:
 			dst_node.set(prop.name, src_node.get(prop.name))
+	for meta_key in src_node.get_meta_list():
+		dst_node.set_meta(meta_key, src_node.get_meta(meta_key))
 
 	dst_node.owner = dst_owner
 	for ch in src_node.get_children().filter(func(ch): return ch != dst_parent):

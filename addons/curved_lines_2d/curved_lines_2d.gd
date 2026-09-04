@@ -198,8 +198,8 @@ func _enter_tree():
 	add_control_to_bottom_panel(scalable_vector_shapes_2d_dock as Control, "Scalable Vector Shapes 2D")
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
 	undo_redo.version_changed.connect(_on_undo_redo_version_changed)
+	EditorInterface.get_resource_filesystem().resources_reimported.connect(_on_resources_reloaded)
 	make_bottom_panel_item_visible(scalable_vector_shapes_2d_dock)
-
 	set_global_position_popup_panel = load("res://addons/curved_lines_2d/set_global_position_popup_panel.tscn").instantiate()
 	arc_settings_popup_panel = load("res://addons/curved_lines_2d/arc_settings_popup_panel.tscn").instantiate()
 	EditorInterface.get_base_control().add_child(set_global_position_popup_panel)
@@ -220,7 +220,6 @@ func _enter_tree():
 	if not scalable_vector_shapes_2d_dock.brush_changed.is_connected(_update_brush):
 		scalable_vector_shapes_2d_dock.brush_changed.connect(_update_brush)
 	scene_changed.connect(_on_scene_changed)
-
 	svs_edit_buttons = load("res://addons/curved_lines_2d/svs_edit_buttons.tscn").instantiate()
 	var canvas_editor_buttons_container = _find_canvas_item_editor_control().find_child("*HFlowContainer*", true, false)
 	canvas_editor_buttons_container.add_child(svs_edit_buttons)
@@ -552,6 +551,10 @@ func _on_selection_changed():
 		svs_edit_buttons.hide_knife()
 		if _svs_edit_mode == SVSEditMode.KNIFE:
 			svs_edit_buttons.set_default_mode()
+	if current_selection is SyncedSVGRoot:
+		var x := current_selection as SyncedSVGRoot
+		if not x.resources_changed.is_connected(_on_resources_reloaded):
+			x.resources_changed.connect(_on_resources_reloaded)
 	update_overlays()
 
 
@@ -563,6 +566,24 @@ func _on_scene_changed(scn : Node):
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(anim_pl)
 	else:
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(null)
+	_check_for_synced_svg_changes(scn)
+
+
+func _check_for_synced_svg_changes(scn : Node) -> void:
+	if not is_instance_valid(scn):
+		return
+	for svg_root : SyncedSVGRoot in scn.find_children("*", "SyncedSVGRoot"):
+		_print_warning_if_synced_svg_file_changed(svg_root)
+	if scn is SyncedSVGRoot:
+		_print_warning_if_synced_svg_file_changed(scn)
+
+
+func _print_warning_if_synced_svg_file_changed(svg_root : SyncedSVGRoot) -> void:
+	if svg_root.get_child_count() > 0:
+		if svg_root.get_child(0).owner != EditorInterface.get_edited_scene_root():
+			return
+	if FileAccess.get_md5(svg_root.svg_resource_path) != svg_root.get_meta("_checksum"):
+		push_warning("Warning: external svg file changed since last sync: " + svg_root.svg_resource_path + " in " + str(svg_root))
 
 
 func _handles(object: Object) -> bool:
@@ -2990,6 +3011,55 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		update_overlays()
 	return false
 
+
+func _on_resources_reloaded(resources : PackedStringArray) -> void:
+	var root := EditorInterface.get_edited_scene_root()
+	if not is_instance_valid(root):
+		return
+	for path in resources:
+		if root is SyncedSVGRoot and path == root.svg_resource_path:
+			_reimport_synchronized_svg_file(root)
+		for svg_root : SyncedSVGRoot in root.find_children("*", "SyncedSVGRoot"):
+			if path == svg_root.svg_resource_path:
+				_reimport_synchronized_svg_file(svg_root)
+
+
+func _reimport_synchronized_svg_file(svg_root : SyncedSVGRoot) -> void:
+	var scene_root := EditorInterface.get_edited_scene_root()
+	if not is_instance_valid(scene_root):
+		return
+	var new_checksum := FileAccess.get_md5(svg_root.svg_resource_path)
+	if new_checksum == svg_root.get_meta("_checksum"):
+		return
+	var ch := svg_root.get_child(0)
+	if is_instance_valid(ch) and ch.owner != scene_root:
+		_pretty_print_svg_import_msg("⚠️ Synchronized SVG in external scene changed, it can only be resynced in that scene %s" % str(svg_root), SVGImporter.LogLevel.DEBUG)
+		return
+	if svg_root.has_meta("is_importing"):
+		return
+	svg_root.set_meta("is_importing", true)
+	svg_root.set_meta("_checksum", new_checksum)
+	if is_instance_valid(ch):
+		svg_root.remove_child(ch)
+	var svg_importer := SVGImporter.instantiate_from_synced_svg_root(svg_root,
+			SVGImporter.get_runtime_handler(), _pretty_print_svg_import_msg)
+	await svg_importer.load_svg(svg_root.svg_resource_path,
+			scene_root, [svg_root])
+	svg_root.remove_meta("is_importing")
+	svg_root.update_configuration_warnings()
+	EditorInterface.mark_scene_as_unsaved()
+
+
+func _pretty_print_svg_import_msg(msg : String, lvl : SVGImporter.LogLevel) -> void:
+	match lvl:
+		SVGImporter.LogLevel.ERROR:
+			print_rich("[color=red]%s" % msg)
+		SVGImporter.LogLevel.WARN:
+			print_rich("[color=yellow]%s" % msg)
+		SVGImporter.LogLevel.DEBUG:
+			print_rich("[color=888888]%s" % msg)
+		SVGImporter.LogLevel.INFO,_:
+			print(msg)
 
 static func _polygon_can_be_drawn(points) -> bool:
 	return Geometry2D.triangulate_polygon(PackedVector2Array(points)).size() > 0

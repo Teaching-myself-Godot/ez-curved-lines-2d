@@ -7,6 +7,10 @@ const PLC_EXP = "__PLC_EXP__"
 
 const SVG_ROOT_META_NAME := "svg_root"
 const SVG_STYLE_META_NAME := "svg_style"
+const IS_SVG_GROUP_META_NAME := "is_svg_group"
+const INKSCAPE_TRANSFORM_CENTER_META_NAME := "transform_center"
+const INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME := "inkscape:transform-center-x"
+const INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME := "inkscape:transform-center-y"
 
 const PAINT_ORDER_MAP := {
 	"normal": ['add_fill_to_path', 'add_stroke_to_path', 'add_collision_to_path'],
@@ -35,6 +39,7 @@ enum LogLevel { DEBUG, INFO, WARN, ERROR }
 ## Settings
 var import_as_svs := true
 var lock_shapes := true
+var mark_as_group := false
 var antialiased_shapes := false
 var import_stroke_as_line_2d := true
 var collision_object_type := ScalableVectorShape2D.CollisionObjectType.NONE
@@ -47,7 +52,8 @@ var use_antialiased_line_2d = false
 var undo_redo : Variant = null
 var log_consumer : Callable = func(msg: String, log_level : LogLevel): pass
 
-func _init(is_svs := true, is_lock := true, is_aa := false, is_line_2d := true,
+func _init(is_svs := true, is_lock := true, mark_groups := false,
+		is_aa := false, is_line_2d := true,
 		coll_type := ScalableVectorShape2D.CollisionObjectType.NONE,
 		is_update_curve_at_runtime := true,
 		is_resource_local_to_scene := true,
@@ -57,6 +63,7 @@ func _init(is_svs := true, is_lock := true, is_aa := false, is_line_2d := true,
 		on_log := func(msg: String, log_level : LogLevel): pass) -> void:
 	import_as_svs = is_svs
 	lock_shapes = is_lock
+	mark_as_group = mark_groups
 	antialiased_shapes = is_aa
 	import_stroke_as_line_2d = is_line_2d
 	collision_object_type = coll_type
@@ -87,17 +94,25 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 	var svg_root := Node2D.new()
 	svg_root.name = file_path.get_file().replace(".svg", "").to_pascal_case()
 	svg_root.set_meta(SVG_ROOT_META_NAME, true)
-
 	_managed_add_child_and_set_owner(parent_node, svg_root, scene_root)
 
 	var current_node := svg_root
 	var svg_gradients : Array[Dictionary] = []
 
 	var svg_xml_node : SVGXMLElement = parse_svg_xml_file(xml_parser)
-	process_svg_xml_tree(svg_xml_node, scene_root, svg_root, current_node, svg_gradients)
 
+	process_svg_xml_tree(svg_xml_node, scene_root, svg_root, current_node, svg_gradients)
+	# global_position will be used to recenter Node2D so await at least one draw operation
+	await RenderingServer.frame_post_draw
+	for svg_group_node in  svg_root.find_children("*", "Node2D").filter(func(nd): return nd.has_meta(IS_SVG_GROUP_META_NAME)):
+		recenter_group_node_in_extent(svg_group_node)
+		realign_offset_for_group_node(svg_group_node, svg_root.scale)
+
+	for svs : ScalableVectorShape2D in svg_root.find_children("*", "ScalableVectorShape2D"):
+		realign_offset_for_svs(svs, svg_root.scale)
 
 	if not import_as_svs:
+		# await another render frame for translations to tessellate
 		await RenderingServer.frame_post_draw
 		var final_svg_root = SVSSceneExporter.copy_baked_node(svg_root, parent_node, scene_root)
 		parent_node.remove_child(svg_root)
@@ -116,13 +131,62 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 	return svg_root
 
 
-func _recursive_set_owner(node : Node, new_owner : Node, root : Node):
+func _recursive_set_owner(node : Node, new_owner : Node, root : Node) -> void:
 	if node.owner != root:
 		return
 	undo_redo.add_do_property(node, 'owner', new_owner)
 	undo_redo.add_undo_reference(node)
 	for child in node.get_children():
 		_recursive_set_owner(child, new_owner, root)
+
+
+func get_extent(g : Node2D) -> Rect2:
+	var child_list := g.get_children()
+	var min_x := INF
+	var min_y := INF
+	var max_x := -INF
+	var max_y := -INF
+	while child_list.size() > 0:
+		var child : Node = child_list.pop_back()
+		child_list.append_array(child.get_children())
+		if child is ScalableVectorShape2D:
+			var box = child.get_bounding_rect(true)
+			min_x = min_x if box.position.x > min_x else box.position.x
+			min_y = min_y if box.position.y > min_y else box.position.y
+			max_x = max_x if box.position.x + box.size.x  < max_x else box.position.x + box.size.x
+			max_y = max_y if box.position.y + box.size.y < max_y else box.position.y + box.size.y
+	return Rect2(min_x, min_y, max_x - min_x, max_y - min_y)
+
+
+func recenter_group_node_in_extent(g : Node2D) -> void:
+	var extent := get_extent(g)
+	var delta := extent.get_center() - g.global_position
+	g.global_position = extent.get_center()
+	for ch in g.get_children():
+		if ch is Node2D:
+			ch.global_position -= delta
+
+
+func realign_offset_for_group_node(g : Node2D, image_scale : Vector2) -> void:
+	if g.has_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME):
+		var transform_center : Vector2 = g.get_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME)
+		var before := g.global_position
+		g.global_position.x += transform_center.x * image_scale.x
+		g.global_position.y -= transform_center.y * image_scale.y
+		var delta := g.global_position - before
+		for ch in g.get_children():
+			if ch is Node2D:
+				ch.global_position -= delta
+
+
+func realign_offset_for_svs(svs : ScalableVectorShape2D, image_scale : Vector2) -> void:
+	if svs.has_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME):
+		var extent := svs.get_bounding_rect(true)
+		var transform_center : Vector2 = svs.get_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME)
+		var before := svs.global_position
+		svs.global_position.x = extent.get_center().x + (transform_center.x * image_scale.x)
+		svs.global_position.y = extent.get_center().y - (transform_center.y * image_scale.y)
+		svs.translate_points_by(before - svs.global_position)
 
 
 func parse_svg_xml_file(xml_parser : XMLParser) -> SVGXMLElement:
@@ -142,6 +206,7 @@ func parse_svg_xml_file(xml_parser : XMLParser) -> SVGXMLElement:
 			if not xml_parser.is_empty():
 				svg_xml_node = new_svg_xml_node
 	return svg_xml_node
+
 
 func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root :
 			Node2D, current_node : Node2D, svg_gradients : Array[Dictionary]) -> void:
@@ -232,7 +297,6 @@ func parse_gradient(gradient_xml : SVGXMLElement) -> Dictionary:
 					"offset": float(element.get_named_attribute_value_safe("offset")),
 					"id": element.get_named_attribute_value_safe("id")
 				})
-
 	return new_gradient
 
 
@@ -244,15 +308,26 @@ func get_element_label(element: SVGXMLElement, alt_name : String) -> String:
 	return alt_name
 
 
+func store_inkscape_transform_center_md(element : SVGXMLElement, nd : Node2D) -> void:
+	if element.has_attribute(INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME) or element.has_attribute(INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME):
+		nd.set_meta(INKSCAPE_TRANSFORM_CENTER_META_NAME, Vector2(
+			float(element.get_named_attribute_value_safe(INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME)),
+			float(element.get_named_attribute_value_safe(INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME))
+		))
+
+
 func process_group(element:SVGXMLElement, current_node : Node2D, scene_root : Node, alt_name := "Group") -> Node2D:
 	var new_group = Node2D.new()
 	new_group.name = get_element_label(element, alt_name)
 	new_group.transform = get_svg_transform(element)
 	var style := element.get_merged_styles(log_message)
 	new_group.set_meta(SVG_STYLE_META_NAME, style)
-
+	new_group.set_meta(IS_SVG_GROUP_META_NAME, true)
+	store_inkscape_transform_center_md(element, new_group)
 	if style.has("display") and style['display'] == "none":
 		new_group.visible = false
+	if mark_as_group:
+		new_group.set_meta("_edit_group_", true)
 	_managed_add_child_and_set_owner(current_node, new_group, scene_root)
 	return new_group
 
@@ -286,6 +361,8 @@ func create_path_from_ellipse(element:SVGXMLElement, path_name : String, rx : fl
 	new_ellipse.name = path_name
 	_post_process_shape(new_ellipse, current_node, get_svg_transform(element),
 			element.get_merged_styles(log_message), scene_root, gradients)
+	store_inkscape_transform_center_md(element, new_ellipse)
+
 
 func process_svg_image(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
 		gradients : Array[Dictionary]) -> void:
@@ -319,6 +396,7 @@ func process_svg_image(element:SVGXMLElement, current_node : Node2D, scene_root 
 
 	_post_process_shape(new_image_rect, current_node, get_svg_transform(element),
 			element.get_merged_styles(log_message), scene_root, gradients, false, image_texture)
+	store_inkscape_transform_center_md(element, new_image_rect)
 
 
 func process_svg_rectangle(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
@@ -342,6 +420,7 @@ func process_svg_rectangle(element:SVGXMLElement, current_node : Node2D, scene_r
 	new_rect.name = get_element_label(element, "Rectangle")
 	_post_process_shape(new_rect, current_node, get_svg_transform(element),
 			element.get_merged_styles(log_message), scene_root, gradients)
+	store_inkscape_transform_center_md(element, new_rect)
 
 
 func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_root : Node, is_closed : bool,
@@ -354,8 +433,9 @@ func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_roo
 	for p_idx in range(0, points_split.size(), 2):
 		curve.add_point(Vector2(float(points_split[p_idx]), float(points_split[p_idx + 1])))
 	var path_name = get_element_label(element, "Polygon" if is_closed else "Polyline")
-	create_path2d(path_name, current_node, curve, [], get_svg_transform(element),
+	var new_poly := create_path2d(path_name, current_node, curve, [], get_svg_transform(element),
 			element.get_merged_styles(log_message), scene_root, gradients, is_closed)
+	store_inkscape_transform_center_md(element, new_poly)
 
 
 func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
@@ -594,6 +674,7 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 		# append_array is used here, because clip paths may already have been added via the
 		# `create_path2d(...)` call chain.
 		new_path.clip_paths.append_array(clips)
+		store_inkscape_transform_center_md(element, new_path)
 
 
 func create_path2d(path_name: String, parent: Node, curve: Curve2D, arcs: Array[ScalableArc],
@@ -638,7 +719,7 @@ func _apply_clip_path_by_href(href : String, svs : ScalableVectorShape2D, scene_
 func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform : Transform2D,
 			style : Dictionary, scene_root : Node, gradients : Array[Dictionary],
 			is_cutout := false, image_texture : ImageTexture = null) -> void:
-	svs.lock_assigned_shapes = import_as_svs and lock_shapes
+	svs.lock_assigned_shapes = lock_shapes
 	svs.update_curve_at_runtime = update_curve_at_runtime
 	svs.arc_list.resource_local_to_scene = resource_local_to_scene
 	svs.curve.resource_local_to_scene = resource_local_to_scene
@@ -648,6 +729,8 @@ func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform :
 	var gradients_dupe := gradients.duplicate(true)
 	for i in gradients_dupe.size():
 		gradients_dupe[i]["parent_transform"] = transform
+	if mark_as_group and import_as_svs:
+		svs.set_meta("_edit_group_", true)
 	_managed_add_child_and_set_owner(parent, svs, scene_root)
 
 	if style.has("opacity"):
@@ -690,13 +773,15 @@ func add_stroke_to_path(new_path : ScalableVectorShape2D, style: Dictionary, sce
 			if svg_gradient.is_empty():
 				log_message("⚠️ Cannot find gradient for href=%s" % href, LogLevel.WARN)
 			var gradient_data := {}
+			if svg_gradient.has("inkscape:swatch"):
+				gradient_data = svg_gradient
 			if "xlink:href" in svg_gradient:
 				gradient_data = get_gradient_by_href(svg_gradient["xlink:href"], gradients)
 			elif "href" in svg_gradient:
 				gradient_data = get_gradient_by_href(svg_gradient["href"], gradients)
 			if stroke is Line2D:
 				if !gradient_data.has("inkscape:swatch"):
-					log_message("⚠️ Gradient stroke style not supported by Line2D: " + style["stroke"])
+					log_message("⚠️ Gradient stroke style not supported by Line2D: " + style["stroke"] + "(" + str(svg_gradient) + ","+ str(gradient_data) + ")")
 				else:
 					new_path.stroke_color = Color(gradient_data["stops"][0]["style"]["stop-color"],
 							float(gradient_data["stops"][0]["style"]["stop-opacity"])
@@ -982,3 +1067,28 @@ class UndoRedoHandler:
 
 static func get_runtime_handler() -> UndoRedoHandler:
 	return UndoRedoHandler.new()
+
+
+static func instantiate_from_synced_svg_root(svg_root : SyncedSVGRoot, undo_redo : Variant, on_log : Callable) -> SVGImporter:
+	return SVGImporter.new(
+		svg_root.is_svs, svg_root.is_lock, svg_root.mark_groups, svg_root.is_aa, svg_root.is_line_2d,
+		svg_root.coll_type, svg_root.is_update_curve_at_runtime, svg_root.is_resource_local_to_scene,
+		svg_root.tol_deg, svg_root.max_stg, svg_root.using_antialiased_line_2d,
+		undo_redo, on_log
+	)
+
+
+func get_synced_svg_root_instance() -> SyncedSVGRoot:
+	var svg_root := SyncedSVGRoot.new()
+	svg_root.is_svs = import_as_svs
+	svg_root.is_lock = lock_shapes
+	svg_root.mark_groups = mark_as_group
+	svg_root.is_aa = antialiased_shapes
+	svg_root.is_line_2d = import_stroke_as_line_2d
+	svg_root.coll_type = collision_object_type
+	svg_root.is_update_curve_at_runtime = update_curve_at_runtime
+	svg_root.is_resource_local_to_scene = resource_local_to_scene
+	svg_root.tol_deg = tolerance_degrees
+	svg_root.max_stg = max_stages
+	svg_root.using_antialiased_line_2d = use_antialiased_line_2d
+	return svg_root

@@ -9,9 +9,6 @@ var debug_label_settings : LabelSettings = null
 ## Settings
 var collision_object_type := ScalableVectorShape2D.CollisionObjectType.NONE
 var import_as_svs := true
-var lock_shapes := true
-var antialiased_shapes := false
-var import_stroke_as_line_2d := true
 var import_file_dialog : EditorFileDialog = null
 var warning_dialog : AcceptDialog = null
 var undo_redo : EditorUndoRedoManager = null
@@ -65,22 +62,44 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 
 
 func _load_svg(svg_file_path : String) -> void:
+	var undo_redo := EditorInterface.get_editor_undo_redo()
 	var svg_importer := SVGImporter.new(
-		import_as_svs, lock_shapes, antialiased_shapes, import_stroke_as_line_2d,
+		import_as_svs, %LockShapesCheckBox.button_pressed,
+		%MarkAsGroupCheckBox.button_pressed,
+		%AntialiasedCheckBox.button_pressed,
+		%UseLine2DCheckBox.button_pressed,
 		collision_object_type,
 		CurvedLines2D._is_setting_update_curve_at_runtime(),
 		CurvedLines2D._is_making_curve_resources_local_to_scene(),
 		CurvedLines2D._get_default_tolerance_degrees(),
 		CurvedLines2D._get_default_max_stages(),
 		CurvedLines2D._use_antialiased_line_2d(),
-		EditorInterface.get_editor_undo_redo(),
+		undo_redo,
 	 	log_message
 	)
 	for child in %ImportLogContainer.get_children():
 		child.queue_free()
+	var selection := EditorInterface.get_selection().get_selected_nodes()
+
+	if %UseAutoSyncCheckBox.button_pressed:
+		var svg_sync_root := svg_importer.get_synced_svg_root_instance()
+		svg_sync_root.svg_resource_path = svg_file_path
+		svg_sync_root.set_meta("_checksum", FileAccess.get_md5(svg_file_path))
+		svg_sync_root.name = "SyncedSVGRoot"
+		var parent := selection.pop_back()
+		if parent == null:
+			parent = EditorInterface.get_edited_scene_root()
+		undo_redo.create_action("Prepare SyncedSVGRoot for import")
+		undo_redo.add_do_method(parent, 'add_child', svg_sync_root, true)
+		undo_redo.add_do_method(svg_sync_root, 'set_owner', EditorInterface.get_edited_scene_root())
+		undo_redo.add_do_reference(svg_sync_root)
+		undo_redo.add_undo_method(parent, 'remove_child', svg_sync_root)
+		undo_redo.commit_action()
+		selection = [svg_sync_root]
+
 	var svg_root := await svg_importer.load_svg(svg_file_path,
 		EditorInterface.get_edited_scene_root(),
-		EditorInterface.get_selection().get_selected_nodes()
+		selection
 	)
 
 	log_message("Import finished.\n\nThe SVG importer is still incrementally improving (slowly).")
@@ -110,20 +129,7 @@ func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVec
 
 func _on_keep_drawable_path_2d_node_check_box_toggled(toggled_on: bool) -> void:
 	import_as_svs = toggled_on
-	%LockShapesCheckBox.visible = toggled_on
-
-
-func _on_lock_shapes_check_box_toggled(toggled_on: bool) -> void:
-	lock_shapes = toggled_on
-
-
-func _on_antialiased_check_box_toggled(toggled_on: bool) -> void:
-	antialiased_shapes = toggled_on
 
 
 func _on_open_file_dialog_button_pressed() -> void:
 	import_file_dialog.popup_file_dialog()
-
-
-func _on_use_line_2d_check_box_toggled(toggled_on: bool) -> void:
-	import_stroke_as_line_2d = toggled_on

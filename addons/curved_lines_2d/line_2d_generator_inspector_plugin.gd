@@ -18,7 +18,8 @@ func _can_handle(obj) -> bool:
 		obj is TextureRect or
 		obj is Button or
 		obj is TextureButton or
-		obj is DynamicOutline2D
+		obj is DynamicOutline2D or
+		obj is SyncedSVGRoot
 	)
 
 
@@ -164,6 +165,16 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 			name == "expand_icon" or name == "ignore_texture_size"
 		):
 			return true
+	elif object is SyncedSVGRoot and name == "svg_resource_path":
+		var button := Button.new()
+		button.text = "Reimport"
+		add_custom_control(button)
+		if not button.pressed.is_connected((object as SyncedSVGRoot)._on_property_changed):
+			button.pressed.connect((object as SyncedSVGRoot)._on_property_changed)
+	elif object is SyncedSVGRoot:
+		if name == "is_update_curve_at_runtime" or name == "is_resource_local_to_scene":
+			if not (object as SyncedSVGRoot).is_svs:
+				return true
 	return false
 
 
