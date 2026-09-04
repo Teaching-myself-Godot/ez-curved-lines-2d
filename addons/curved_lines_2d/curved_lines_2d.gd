@@ -3046,6 +3046,7 @@ func _reimport_synchronized_svg_file(svg_root : SyncedSVGRoot) -> void:
 	await svg_importer.load_svg(svg_root.svg_resource_path,
 			scene_root, [svg_root])
 	svg_root.remove_meta("is_importing")
+	svg_root.update_configuration_warnings()
 	EditorInterface.mark_scene_as_unsaved()
 
 

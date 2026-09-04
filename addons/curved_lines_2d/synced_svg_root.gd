@@ -61,7 +61,7 @@ func _on_property_changed() -> void:
 	if Engine.is_editor_hint():
 		set_meta("_checksum", "invalidated")
 		resources_changed.emit([svg_resource_path])
-		
+
 
 func _get_configuration_warnings() -> PackedStringArray:
 	if FileAccess.get_md5(svg_resource_path) != get_meta("_checksum"):
