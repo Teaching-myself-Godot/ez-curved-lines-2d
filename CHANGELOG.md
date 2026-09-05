@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 2.34.0 - SyncSkape
+## 2.34.1 - SyncSkape
 
 ### Added
 
@@ -10,6 +10,9 @@
 - A new opt-in flag to import svg `<g>`-groups as an edit group as well as `ScalableVectorShape2D` 
 - Support for inkscape based pivot points mapped from the `inkscape:transform-center-{xy}` attribute
 
+### Changed
+
+- fix: `ScalableVectorShape2D` that is a descendant of a node with `"_edit_group_"` toggled on is not selected on click anymore.
 
 ## 2.33.3
 
