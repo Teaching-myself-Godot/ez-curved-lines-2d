@@ -604,6 +604,7 @@ func _find_scalable_vector_shape_2d_nodes_at(pos : Vector2) -> Array[Node]:
 	if is_instance_valid(EditorInterface.get_edited_scene_root()):
 		return (_find_scalable_vector_shape_2d_nodes()
 					.filter(func(x : ScalableVectorShape2D): return not x.has_meta("_edit_lock_"))
+					.filter(func(x : ScalableVectorShape2D): return not _is_inside_edit_group(x))
 					.filter(func(x : ScalableVectorShape2D): return x.is_visible_in_tree())
 					.filter(func(x : ScalableVectorShape2D): return x.owner == EditorInterface.get_edited_scene_root())
 					.filter(func(x : ScalableVectorShape2D): return x.has_point(_svp_mouse_pos(pos, x)))
@@ -941,6 +942,17 @@ func _svp_mouse_pos(pos : Vector2, n : Node) -> Vector2:
 			return (n as SubViewport).get_mouse_position()
 		n = n.get_parent()
 	return pos
+
+
+func _is_inside_edit_group(svs : ScalableVectorShape2D) -> bool:
+	if svs == EditorInterface.get_edited_scene_root():
+		return false
+	var n := svs.get_parent()
+	while is_instance_valid(n) and not n == EditorInterface.get_edited_scene_root():
+		if n.has_meta("_edit_group_"):
+			return true
+		n = n.get_parent()
+	return false
 
 
 func _set_handle_hover(g_mouse_pos : Vector2, svs : ScalableVectorShape2D) -> void:
