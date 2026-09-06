@@ -253,6 +253,18 @@ static func will_self_intersect_at(poly : Array[Vector2], next_point : Vector2) 
 	return null
 
 
+static func get_self_intersections(poly : PackedVector2Array) -> Array[Vector2]:
+	if poly.size() < 3:
+		return []
+	var intersections : Array[Vector2] = []
+	for i in range(1, poly.size() - 2):
+		var next_point := poly[i + 1]
+		var result = will_self_intersect_at(poly.slice(0, i), next_point)
+		if result:
+			intersections.append(result[1])
+	return intersections
+
+
 static func get_progress_ratio_for_point_on_curve(p : Vector2, c : Curve2D, max_stages := 5,
 		tolerance_degrees := 4.0, r := 0.01) -> float:
 	# Heuristic to find progress_ratio of cpc

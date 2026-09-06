@@ -671,9 +671,9 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 							Transform2D.IDENTITY, {}, scene_root, gradients, cutout.get_meta("is_closed"), new_path))
 			cutout.free()
 		shape.free()
-		# append_array is used here, because clip paths may already have been added via the
-		# `create_path2d(...)` call chain.
-		new_path.clip_paths.append_array(clips)
+
+		# reassign clip_paths here to make sure signals are connected appropriately
+		new_path.clip_paths = new_path.clip_paths + clips
 		store_inkscape_transform_center_md(element, new_path)
 
 
