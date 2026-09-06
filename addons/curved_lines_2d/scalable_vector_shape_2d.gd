@@ -1520,7 +1520,6 @@ func _get_configuration_warnings() -> PackedStringArray:
 	if should_revalidate_curve:
 		should_revalidate_curve = false
 		if is_instance_valid(polygon) or is_instance_valid(collision_object):
-			var tm_before := Time.get_ticks_usec()
 			self_intersections = Geometry2DUtil.get_self_intersections(self.tessellate())
 		else:
 			self_intersections = []
