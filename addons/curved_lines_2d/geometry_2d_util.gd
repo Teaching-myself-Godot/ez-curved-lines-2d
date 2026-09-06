@@ -257,11 +257,12 @@ static func get_self_intersections(poly : PackedVector2Array) -> Array[Vector2]:
 	if poly.size() < 3:
 		return []
 	var intersections : Array[Vector2] = []
-	for i in range(1, poly.size() - 2):
-		var next_point := poly[i + 1]
+	for i in range(1, poly.size()):
+		var next_point := poly[i + 1] if i < poly.size() - 1 else poly[0]
 		var result = will_self_intersect_at(poly.slice(0, i), next_point)
-		if result:
+		if result and not poly[0].distance_squared_to(result[1]) < 0.0001:
 			intersections.append(result[1])
+
 	return intersections
 
 
