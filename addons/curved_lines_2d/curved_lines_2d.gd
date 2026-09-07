@@ -959,13 +959,20 @@ func _set_handle_hover(g_mouse_pos : Vector2, svs : ScalableVectorShape2D) -> vo
 	var mouse_pos := _vp_transform(g_mouse_pos)
 	var handles = svs.get_curve_handles()
 	var gradient_handles = svs.get_gradient_handles()
-	svs.remove_meta(META_NAME_HOVER_POINT_IDX)
-	svs.remove_meta(META_NAME_HOVER_CP_IN_IDX)
-	svs.remove_meta(META_NAME_HOVER_CP_OUT_IDX)
-	svs.remove_meta(META_NAME_HOVER_GRADIENT_FROM)
-	svs.remove_meta(META_NAME_HOVER_GRADIENT_TO)
-	svs.remove_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX)
-	svs.remove_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE)
+	if svs.has_meta(META_NAME_HOVER_POINT_IDX):
+		svs.remove_meta(META_NAME_HOVER_POINT_IDX)
+	if svs.has_meta(META_NAME_HOVER_CP_IN_IDX):
+		svs.remove_meta(META_NAME_HOVER_CP_IN_IDX)
+	if svs.has_meta(META_NAME_HOVER_CP_OUT_IDX):
+		svs.remove_meta(META_NAME_HOVER_CP_OUT_IDX)
+	if svs.has_meta(META_NAME_HOVER_GRADIENT_FROM):
+		svs.remove_meta(META_NAME_HOVER_GRADIENT_FROM)
+	if svs.has_meta(META_NAME_HOVER_GRADIENT_TO):
+		svs.remove_meta(META_NAME_HOVER_GRADIENT_TO)
+	if svs.has_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX):
+		svs.remove_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX)
+	if svs.has_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE):
+		svs.remove_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE)
 	var mul := _get_svp_transform(svs)
 	for i in range(handles.size()):
 		var handle = handles[i]
@@ -2975,7 +2982,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				EditorInterface.get_editor_viewport_2d().get_mouse_position(),
 				current_selection)
 		for result in _find_scalable_vector_shape_2d_nodes():
-			result.remove_meta(META_NAME_SELECT_HINT)
+			if result.has_meta(META_NAME_SELECT_HINT):
+				result.remove_meta(META_NAME_SELECT_HINT)
 
 		if _is_svs_valid(current_selection) and not _handle_has_hover(current_selection) and current_selection.has_meta(META_NAME_HOVER_CLOSEST_POINT):
 			if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
@@ -2983,7 +2991,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				return true
 
 		if _is_svs_valid(current_selection):
-			current_selection.remove_meta(META_NAME_HOVER_CLOSEST_POINT)
+			if current_selection.has_meta(META_NAME_HOVER_CLOSEST_POINT):
+				current_selection.remove_meta(META_NAME_HOVER_CLOSEST_POINT)
 
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and _is_svs_valid(current_selection):
 			if _handle_has_hover(current_selection):
