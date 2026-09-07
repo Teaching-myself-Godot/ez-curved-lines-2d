@@ -39,35 +39,6 @@ const SETTING_NAME_BRUSH_SIZE_X := "addons/curved_lines_2d/brush_size_x"
 const SETTING_NAME_BRUSH_SIZE_Y := "addons/curved_lines_2d/brush_size_y"
 const SETTING_NAME_BRUSH_ROTATION := "addons/curved_lines_2d/brush_rotation"
 
-#const META_NAME_HOVER_POINT_IDX := "_hover_point_idx_"
-var _hover_point_idx : int = -1
-#const META_NAME_HOVER_CP_IN_IDX := "_hover_cp_in_idx_"
-var _hover_cp_in_idx : int = -1
-#const META_NAME_HOVER_CP_OUT_IDX := "_hover_cp_out_idx_"
-var _hover_cp_out_idx : int = -1
-#const META_NAME_HOVER_CLOSEST_POINT := "_hover_closest_point_on_curve_"
-var _hover_closest_point_on_curve : ClosestPointOnCurveMeta = null
-#const META_NAME_HOVER_GRADIENT_FROM := "_hover_gradient_from_"
-var _hover_gradient_from := false
-#const META_NAME_HOVER_GRADIENT_TO := "_hover_gradient_to_"
-var _hover_gradient_to := false
-#const META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX := "_hover_gradient_color_stop_idx_"
-var _hover_gradient_color_stop_idx : int = -1
-#const META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE := "_hover_closest_point_on_gradient_"
-var _hover_closest_point_on_gradient := Vector2.INF
-#const HOVER_META_NAMES : Array[String] = [
-	#META_NAME_HOVER_POINT_IDX,
-	#META_NAME_HOVER_CP_IN_IDX,
-	#META_NAME_HOVER_CP_OUT_IDX,
-	#META_NAME_HOVER_CLOSEST_POINT,
-	#META_NAME_HOVER_GRADIENT_FROM,
-	#META_NAME_HOVER_GRADIENT_TO,
-	#META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX,
-	#META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE,
-#]
-
-#const META_NAME_SELECT_HINT := "_select_hint_"
-var _select_hinted_svs : Array[ScalableVectorShape2D] = []
 const VIEWPORT_ORANGE := Color(0.737, 0.463, 0.337)
 const WIDTH_CURVE_EDIT_CLAMP_DISTANCE := 25.0
 const CLOSE_TO_MOUSE_RADIUS := 20.0
@@ -150,6 +121,17 @@ var _drag_start := Vector2.ZERO
 var _prev_uniform_rotate_angle := 0.0
 var _stored_natural_center := Vector2.ZERO
 var _lmb_is_down_inside_viewport := false
+
+# Hover state helpers
+var _hover_point_idx : int = -1
+var _hover_cp_in_idx : int = -1
+var _hover_cp_out_idx : int = -1
+var _hover_closest_point_on_curve : ClosestPointOnCurveMeta = null
+var _hover_gradient_from := false
+var _hover_gradient_to := false
+var _hover_gradient_color_stop_idx : int = -1
+var _hover_closest_point_on_gradient := Vector2.INF
+var _select_hinted_svs : Array[ScalableVectorShape2D] = []
 
 # Merge points helper vars
 var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
