@@ -14,6 +14,8 @@
 ### Changed
 
 - fix: `ScalableVectorShape2D` that is a descendant of a node with `"_edit_group_"` toggled on is not selected on click anymore.
+- bugfix: Makes clip paths for holes connect signals correctly again after svg import
+- editor performance fix: Make sure `remove_meta("key")` is only called when node `has_meta("key")` (not checking used to be fast in godot 4.4ß)
 
 ## 2.33.3
 
