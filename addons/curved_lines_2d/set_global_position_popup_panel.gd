@@ -5,7 +5,7 @@ signal value_changed(value : Vector2, meta_name : String, point_idx : int)
 
 var x_pos_input : EditorSpinSlider
 var y_pos_input : EditorSpinSlider
-var meta_name := CurvedLines2D.META_NAME_HOVER_POINT_IDX
+var meta_name := "_hover_point_idx"
 var point_idx : int = 0
 var _dragging := false
 var _drag_start := Vector2.ZERO
