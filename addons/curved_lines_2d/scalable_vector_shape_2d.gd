@@ -1515,14 +1515,21 @@ func tessellate_arc_segment(start : Vector2, arc_radius : Vector2, arc_rotation_
 	return points
 
 
+func _validate_fill() -> void:
+	if is_instance_valid(polygon) and clip_paths.is_empty():
+		if Geometry2D.triangulate_polygon(self.tessellate()).is_empty():
+			self_intersections = Geometry2DUtil.get_self_intersections(self.tessellate())
+		else:
+			self_intersections = []
+	else:
+		self_intersections = []
+
+
 func _get_configuration_warnings() -> PackedStringArray:
 	var warnings := PackedStringArray()
 	if should_revalidate_curve:
 		should_revalidate_curve = false
-		if is_instance_valid(polygon) or is_instance_valid(collision_object):
-			self_intersections = Geometry2DUtil.get_self_intersections(self.tessellate())
-		else:
-			self_intersections = []
+		_validate_fill()
 	if not self_intersections.is_empty():
 		warnings.append("Cannot create reliable fill due to self-intersection in outline.")
 	return warnings
