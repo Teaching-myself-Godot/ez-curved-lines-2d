@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 2.34.1 - SyncSkape
+## 2.34.2 - SyncSkape
 
 ### Added
 
@@ -9,6 +9,7 @@
 - Locking shapes in SVG importer now also applies when not importing as `ScalableVectorShape2D`
 - A new opt-in flag to import svg `<g>`-groups as an edit group as well as `ScalableVectorShape2D` 
 - Support for inkscape based pivot points mapped from the `inkscape:transform-center-{xy}` attribute
+- When a shape's fill cannot be drawn due to a self-intersecting outline, show a configuration warning and highlight the self-intersections in the 2D Viewport.
 
 ### Changed
 
