@@ -427,6 +427,8 @@ var cached_clipped_polygons : Array[PackedVector2Array] = []
 var cached_poly_strokes : Array[PackedVector2Array] = []
 var deformation_cache : Dictionary[Bone2D, Transform2D] = {}
 var should_update_curve := false
+var should_revalidate_curve := false
+var self_intersections : Array[Vector2] = []
 
 # Wire up signals at runtime
 func _ready():
@@ -474,6 +476,7 @@ func _enter_tree():
 
 
 	if Engine.is_editor_hint():
+		should_revalidate_curve = true
 		if not curve.changed.is_connected(curve_changed):
 			curve.changed.connect(curve_changed)
 		if not arc_list.changed.is_connected(curve_changed):
@@ -525,6 +528,7 @@ func _process(_delta: float) -> void:
 	if should_update_curve:
 		_update_curve()
 		should_update_curve = false
+		should_revalidate_curve = true
 
 
 func _on_clip_paths_changed():
@@ -585,6 +589,7 @@ func _on_dimensions_changed():
 
 func _on_assigned_node_changed(_x : Variant = null):
 	if Engine.is_editor_hint() or update_curve_at_runtime:
+		should_revalidate_curve = true
 		if not curve.changed.is_connected(curve_changed):
 			curve.changed.connect(curve_changed)
 		if not arc_list.changed.is_connected(curve_changed):
@@ -1507,6 +1512,26 @@ func tessellate_arc_segment(start : Vector2, arc_radius : Vector2, arc_rotation_
 		else:
 			points.append(end)
 	return points
+
+
+func _validate_fill() -> void:
+	if is_instance_valid(polygon) and clip_paths.is_empty():
+		if Geometry2D.triangulate_polygon(self.tessellate()).is_empty():
+			self_intersections = Geometry2DUtil.get_self_intersections(self.tessellate())
+		else:
+			self_intersections = []
+	else:
+		self_intersections = []
+
+
+func _get_configuration_warnings() -> PackedStringArray:
+	var warnings := PackedStringArray()
+	if should_revalidate_curve:
+		should_revalidate_curve = false
+		_validate_fill()
+	if not self_intersections.is_empty():
+		warnings.append("Cannot create reliable fill due to self-intersection in outline.")
+	return warnings
 
 
 ## Convert an existing [Curve2D] instance to a (rounded) rectangle.

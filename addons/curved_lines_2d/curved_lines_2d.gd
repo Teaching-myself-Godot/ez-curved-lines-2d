@@ -1017,7 +1017,9 @@ func _draw_curve_def(viewport_control : Control, svs : ScalableVectorShape2D, co
 		last_p = p
 	if is_instance_valid(svs.line) and svs.line.closed and points.size() > 1:
 		viewport_control.draw_dashed_line(last_p, points[0], color, width, 5.0, true, antialiased)
-
+	for p in svs.self_intersections:
+		_draw_crosshair(viewport_control, _vp_transform(svs.to_global(p) * mul), 3, 10, Color.YELLOW, 4)
+		_draw_crosshair(viewport_control, _vp_transform(svs.to_global(p) * mul), 2, 10, Color.RED, 2)
 
 
 func _draw_crosshair(viewport_control : Control, p : Vector2, orbit := 2.0, outer_orbit := 6.0,
