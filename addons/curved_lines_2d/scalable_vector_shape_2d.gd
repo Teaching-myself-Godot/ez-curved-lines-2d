@@ -692,7 +692,6 @@ func get_deformed_curve() -> Curve2D:
 func tessellate() -> PackedVector2Array:
 	if not cached_outline.is_empty():
 		return cached_outline
-
 	var the_curve := get_deformed_curve()
 
 	if not arc_list or arc_list.arcs.is_empty():
