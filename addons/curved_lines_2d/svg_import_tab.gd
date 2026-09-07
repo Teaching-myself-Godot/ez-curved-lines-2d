@@ -111,6 +111,8 @@ func _load_svg(svg_file_path : String) -> void:
 	var selection_target = (
 			svg_root.find_children("*", "ScalableVectorShape2D")
 				.filter(func(n : CanvasItem): return n.is_visible_in_tree()).pop_front()
+				if is_instance_valid(svg_root) else
+			EditorInterface.get_edited_scene_root()
 	)
 	if not is_instance_valid(selection_target):
 		selection_target = svg_root
