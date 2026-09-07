@@ -253,10 +253,12 @@ static func will_self_intersect_at(poly : Array[Vector2], next_point : Vector2) 
 	return null
 
 
-static func get_self_intersections(poly : PackedVector2Array) -> Array[Vector2]:
-	if poly.size() < 3:
+static func get_self_intersections(poly_in : PackedVector2Array) -> Array[Vector2]:
+	if poly_in.size() < 3:
 		return []
 	var intersections : Array[Vector2] = []
+	var poly := poly_in.duplicate()
+	poly.append(poly_in[0])
 	for i in range(1, poly.size()):
 		var next_point := poly[i] if i < poly.size() - 1 else poly[0]
 		var result = will_self_intersect_at(poly.slice(0, i), next_point)
