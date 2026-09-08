@@ -39,27 +39,6 @@ const SETTING_NAME_BRUSH_SIZE_X := "addons/curved_lines_2d/brush_size_x"
 const SETTING_NAME_BRUSH_SIZE_Y := "addons/curved_lines_2d/brush_size_y"
 const SETTING_NAME_BRUSH_ROTATION := "addons/curved_lines_2d/brush_rotation"
 
-const META_NAME_HOVER_POINT_IDX := "_hover_point_idx_"
-const META_NAME_HOVER_CP_IN_IDX := "_hover_cp_in_idx_"
-const META_NAME_HOVER_CP_OUT_IDX := "_hover_cp_out_idx_"
-const META_NAME_HOVER_CLOSEST_POINT := "_hover_closest_point_on_curve_"
-const META_NAME_HOVER_GRADIENT_FROM := "_hover_gradient_from_"
-const META_NAME_HOVER_GRADIENT_TO := "_hover_gradient_to_"
-const META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX := "_hover_gradient_color_stop_idx_"
-const META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE := "_hover_closest_point_on_gradient_"
-const HOVER_META_NAMES : Array[String] = [
-	META_NAME_HOVER_POINT_IDX,
-	META_NAME_HOVER_CP_IN_IDX,
-	META_NAME_HOVER_CP_OUT_IDX,
-	META_NAME_HOVER_CLOSEST_POINT,
-	META_NAME_HOVER_GRADIENT_FROM,
-	META_NAME_HOVER_GRADIENT_TO,
-	META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX,
-	META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE,
-]
-
-const META_NAME_SELECT_HINT := "_select_hint_"
-
 const VIEWPORT_ORANGE := Color(0.737, 0.463, 0.337)
 const WIDTH_CURVE_EDIT_CLAMP_DISTANCE := 25.0
 const CLOSE_TO_MOUSE_RADIUS := 20.0
@@ -142,6 +121,17 @@ var _drag_start := Vector2.ZERO
 var _prev_uniform_rotate_angle := 0.0
 var _stored_natural_center := Vector2.ZERO
 var _lmb_is_down_inside_viewport := false
+
+# Hover state helpers
+var _hover_point_idx : int = -1
+var _hover_cp_in_idx : int = -1
+var _hover_cp_out_idx : int = -1
+var _hover_closest_point_on_curve : ClosestPointOnCurveMeta = null
+var _hover_gradient_from := false
+var _hover_gradient_to := false
+var _hover_gradient_color_stop_idx : int = -1
+var _hover_closest_point_on_gradient := Vector2.INF
+var _select_hinted_svs : Array[ScalableVectorShape2D] = []
 
 # Merge points helper vars
 var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
@@ -246,12 +236,19 @@ func select_node_reversibly(target_node : Node) -> void:
 		EditorInterface.edit_node(target_node)
 
 
+func _reset_hover_states() -> void:
+	_hover_point_idx = -1
+	_hover_cp_in_idx = -1
+	_hover_cp_out_idx = -1
+	_hover_closest_point_on_curve = null
+	_hover_gradient_from = false
+	_hover_gradient_to = false
+	_hover_gradient_color_stop_idx = -1
+	_hover_closest_point_on_gradient = Vector2.INF
+
+
 func _on_undo_redo_version_changed() -> void:
-	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
-	if _is_svs_valid(sel):
-		for meta_key in sel.get_meta_list():
-			if meta_key in HOVER_META_NAMES:
-				sel.remove_meta(meta_key)
+	_reset_hover_states()
 	update_overlays()
 
 
@@ -664,53 +661,53 @@ func _is_svs_valid(svs : Object) -> bool:
 
 func _get_hovered_handle_metadata(svs : ScalableVectorShape2D) -> Dictionary:
 
-	if svs.has_meta(META_NAME_HOVER_POINT_IDX):
+	if _hover_point_idx > -1:
 		return {
 			'global_pos': svs.to_global(svs.curve.get_point_position(
-				svs.get_meta(META_NAME_HOVER_POINT_IDX)
+				_hover_point_idx
 			)),
-			'meta_name': META_NAME_HOVER_POINT_IDX,
-			'point_idx': svs.get_meta(META_NAME_HOVER_POINT_IDX)
+			'meta_name': "_hover_point_idx_",
+			'point_idx': _hover_point_idx
 		}
-	elif svs.has_meta(META_NAME_HOVER_CP_IN_IDX):
+	elif _hover_cp_in_idx > -1:
 		return {
 			'global_pos': svs.to_global(svs.curve.get_point_position(
-				svs.get_meta(META_NAME_HOVER_CP_IN_IDX)
+				_hover_cp_in_idx
 			) + svs.curve.get_point_in(
-				svs.get_meta(META_NAME_HOVER_CP_IN_IDX)
+				_hover_cp_in_idx
 			)),
-			'meta_name': META_NAME_HOVER_CP_IN_IDX,
-			'point_idx': svs.get_meta(META_NAME_HOVER_CP_IN_IDX)
+			'meta_name': "_hover_cp_in_idx_",
+			'point_idx': _hover_cp_in_idx
 		}
-	elif svs.has_meta(META_NAME_HOVER_CP_OUT_IDX):
+	elif _hover_cp_out_idx > -1:
 		return {
 			'global_pos': svs.to_global(svs.curve.get_point_position(
-				svs.get_meta(META_NAME_HOVER_CP_OUT_IDX)
+				_hover_cp_out_idx
 			) + svs.curve.get_point_out(
-				svs.get_meta(META_NAME_HOVER_CP_OUT_IDX)
+				_hover_cp_out_idx
 			)),
-			'meta_name': META_NAME_HOVER_CP_OUT_IDX,
-			'point_idx': svs.get_meta(META_NAME_HOVER_CP_OUT_IDX)
+			'meta_name': "_hover_cp_out_idx_",
+			'point_idx': _hover_cp_out_idx
 		}
 	return {}
 
 
 func _curve_control_has_hover(svs : ScalableVectorShape2D) -> bool:
 	return (
-		svs.has_meta(META_NAME_HOVER_POINT_IDX) or
-		svs.has_meta(META_NAME_HOVER_CP_IN_IDX) or
-		svs.has_meta(META_NAME_HOVER_CP_OUT_IDX)
+		_hover_point_idx > -1 or
+		_hover_cp_in_idx > -1 or
+		_hover_cp_out_idx > -1
 	)
 
 
 func _handle_has_hover(svs : ScalableVectorShape2D) -> bool:
 	return (
-		svs.has_meta(META_NAME_HOVER_POINT_IDX) or
-		svs.has_meta(META_NAME_HOVER_CP_IN_IDX) or
-		svs.has_meta(META_NAME_HOVER_CP_OUT_IDX) or
-		svs.has_meta(META_NAME_HOVER_GRADIENT_FROM) or
-		svs.has_meta(META_NAME_HOVER_GRADIENT_TO) or
-		svs.has_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX)
+		_hover_point_idx > -1 or
+		_hover_cp_in_idx > -1 or
+		_hover_cp_out_idx > -1 or
+		_hover_gradient_from or
+		_hover_gradient_to or
+		_hover_gradient_color_stop_idx > -1
 	)
 
 
@@ -802,9 +799,9 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 	for i in range(handles.size()):
 		var handle = handles[i]
 
-		var is_hovered : bool = svs.get_meta(META_NAME_HOVER_POINT_IDX, -1) == i
-		var cp_in_is_hovered : bool = svs.get_meta(META_NAME_HOVER_CP_IN_IDX, -1) == i
-		var cp_out_is_hovered : bool = svs.get_meta(META_NAME_HOVER_CP_OUT_IDX, -1) == i
+		var is_hovered : bool = _hover_point_idx == i
+		var cp_in_is_hovered : bool = _hover_cp_in_idx == i
+		var cp_out_is_hovered : bool = _hover_cp_out_idx == i
 		var color := VIEWPORT_ORANGE if is_hovered else Color.WHITE
 		var width := 2 if is_hovered else 1
 		if is_hovered:
@@ -881,11 +878,11 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 		var p2 := _vp_transform(gradient_handles['fill_to_pos'] * mul)
 		var hint_color := svs.shape_hint_color if svs.shape_hint_color else Color.LIME_GREEN
 
-		if svs.has_meta(META_NAME_HOVER_GRADIENT_FROM):
+		if _hover_gradient_from:
 			hint_txt = "- Drag to move gradient start position"
 			viewport_control.draw_circle(p1, 16, hint_color)
 			viewport_control.draw_circle(p1, 12, Color.WHITE, false, 0.5, true)
-		if svs.has_meta(META_NAME_HOVER_GRADIENT_TO):
+		if _hover_gradient_to:
 			hint_txt = "- Drag to move gradient end position"
 			viewport_control.draw_circle(p2, 16, hint_color)
 			viewport_control.draw_circle(p2, 12, Color.WHITE, false, 0.5, true)
@@ -898,22 +895,22 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 		for idx in range(gradient_handles['stop_positions'].size()):
 			var p := _vp_transform(gradient_handles['stop_positions'][idx] * mul)
 			var color := (Color.WHITE
-					if svs.get_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX, -1) == idx
+					if _hover_gradient_color_stop_idx == idx
 					else Color.WEB_GRAY)
 			viewport_control.draw_circle(p, 5, gradient_handles["stop_colors"][idx])
 			viewport_control.draw_circle(p, 5, color, false, 0.5, true)
 
-		var p1_color := Color.WHITE if svs.has_meta(META_NAME_HOVER_GRADIENT_FROM) else hint_color
-		var p2_color := Color.WHITE if svs.has_meta(META_NAME_HOVER_GRADIENT_TO) else hint_color
+		var p1_color := Color.WHITE if _hover_gradient_from else hint_color
+		var p2_color := Color.WHITE if _hover_gradient_to else hint_color
 		_draw_crosshair(viewport_control, p1 , 8, 8, p1_color, 1)
 		_draw_crosshair(viewport_control, p2 , 8, 8, p2_color, 1)
-		if svs.has_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX):
+		if _hover_gradient_color_stop_idx > -1:
 			hint_txt = "- Drag to move color stop\n- Right click to remove color stop"
-		if (svs.has_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE)
+		if (_hover_closest_point_on_gradient != Vector2.INF
 				and not _is_ctrl_or_cmd_pressed()
 				and not Input.is_key_pressed(KEY_SHIFT)):
 			_draw_crosshair(viewport_control,
-					_vp_transform(svs.get_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE) * mul))
+					_vp_transform(_hover_closest_point_on_gradient * mul))
 			hint_txt = "- Double click to add color stop here"
 	if not point_txt.is_empty():
 		_draw_point_number(viewport_control, point_hint_pos * mul, point_txt)
@@ -959,48 +956,35 @@ func _set_handle_hover(g_mouse_pos : Vector2, svs : ScalableVectorShape2D) -> vo
 	var mouse_pos := _vp_transform(g_mouse_pos)
 	var handles = svs.get_curve_handles()
 	var gradient_handles = svs.get_gradient_handles()
-	if svs.has_meta(META_NAME_HOVER_POINT_IDX):
-		svs.remove_meta(META_NAME_HOVER_POINT_IDX)
-	if svs.has_meta(META_NAME_HOVER_CP_IN_IDX):
-		svs.remove_meta(META_NAME_HOVER_CP_IN_IDX)
-	if svs.has_meta(META_NAME_HOVER_CP_OUT_IDX):
-		svs.remove_meta(META_NAME_HOVER_CP_OUT_IDX)
-	if svs.has_meta(META_NAME_HOVER_GRADIENT_FROM):
-		svs.remove_meta(META_NAME_HOVER_GRADIENT_FROM)
-	if svs.has_meta(META_NAME_HOVER_GRADIENT_TO):
-		svs.remove_meta(META_NAME_HOVER_GRADIENT_TO)
-	if svs.has_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX):
-		svs.remove_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX)
-	if svs.has_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE):
-		svs.remove_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE)
+	_reset_hover_states()
 	var mul := _get_svp_transform(svs)
 	for i in range(handles.size()):
 		var handle = handles[i]
 		if mouse_pos.distance_to(_vp_transform(handle['point_position'])) < 10:
-			svs.set_meta(META_NAME_HOVER_POINT_IDX, i)
+			_hover_point_idx = i
 		elif mouse_pos.distance_to(_vp_transform(handle['in_position'])) < 10:
-			svs.set_meta(META_NAME_HOVER_CP_IN_IDX, i)
+			_hover_cp_in_idx = i
 		elif mouse_pos.distance_to(_vp_transform(handle['out_position'])) < 10:
-			svs.set_meta(META_NAME_HOVER_CP_OUT_IDX, i)
+			_hover_cp_out_idx = i
 	if not gradient_handles.is_empty() and not _handle_has_hover(svs):
 		var stop_idx = gradient_handles['stop_positions'].find_custom(func(p):
 					return mouse_pos.distance_to(_vp_transform(p)) < 6)
 		if stop_idx > -1:
-			svs.set_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX, stop_idx)
+			_hover_gradient_color_stop_idx = stop_idx
 		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_from_pos'])) < CLOSE_TO_MOUSE_RADIUS:
-			svs.set_meta(META_NAME_HOVER_GRADIENT_FROM, true)
+			_hover_gradient_from = true
 		elif mouse_pos.distance_to(_vp_transform(gradient_handles['fill_to_pos'])) < CLOSE_TO_MOUSE_RADIUS:
-			svs.set_meta(META_NAME_HOVER_GRADIENT_TO, true)
+			_hover_gradient_to = true
 		else:
 			var p := Geometry2D.get_closest_point_to_segment(g_mouse_pos,
 					gradient_handles['fill_from_pos'],
 					gradient_handles['fill_to_pos'])
 			if _vp_transform(g_mouse_pos).distance_to(_vp_transform(p)) < 10:
-				svs.set_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE, p)
+				_hover_closest_point_on_gradient = p
 
 	var closest_point_on_curve := svs.get_closest_point_on_curve(g_mouse_pos)
 	if _vp_transform(g_mouse_pos).distance_to(_vp_transform(closest_point_on_curve.point_position)) < 15:
-		svs.set_meta(META_NAME_HOVER_CLOSEST_POINT, closest_point_on_curve)
+		_hover_closest_point_on_curve = closest_point_on_curve
 
 
 func _draw_curve(viewport_control : Control, svs : ScalableVectorShape2D,
@@ -1090,7 +1074,7 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 		_draw_hint(viewport_control, "- Click to add point here (Ctrl held)")
 	elif Input.is_key_pressed(KEY_SHIFT):
 		_draw_hint(viewport_control, "- Use mousewheel to resize shape (Shift held)")
-	elif not svs.has_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE):
+	elif _hover_closest_point_on_gradient == Vector2.INF:
 		var hint := "- Hold Ctrl to add points to selected shape (or Cmd for mac)
 				- Hold Shift to resize shape with mousewheel"
 		if only_cutout_hints:
@@ -1105,10 +1089,10 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 
 
 func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
-	if svs.has_meta(META_NAME_HOVER_CLOSEST_POINT):
+	if _hover_closest_point_on_curve:
 		var hint := ""
 		var mul := _get_svp_transform(svs)
-		var md_p : ClosestPointOnCurveMeta = svs.get_meta(META_NAME_HOVER_CLOSEST_POINT)
+		var md_p := _hover_closest_point_on_curve
 		if svs.is_arc_start(md_p.before_segment - 1):
 			var arc_start_idx := md_p.before_segment - 1
 			var arc := svs.arc_list.get_arc_for_point(arc_start_idx)
@@ -1539,7 +1523,7 @@ func _handle_paint_bone_draw(viewport_control : Control) -> void:
 func _is_editing_width_curve(svs : ScalableVectorShape2D) -> bool:
 	return (
 			_is_ctrl_or_cmd_pressed() and
-			svs.has_meta(META_NAME_HOVER_CLOSEST_POINT) and
+			_hover_closest_point_on_curve and
 			is_instance_valid(svs.line)
 	)
 
@@ -1582,13 +1566,13 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 				_draw_handles(viewport_control, result)
 			if (not _handle_has_hover(result)) or _is_ctrl_or_cmd_pressed():
 				if result.shape_type == ScalableVectorShape2D.ShapeType.PATH:
-					if result.has_meta(META_NAME_HOVER_CLOSEST_POINT):
+					if _hover_closest_point_on_curve:
 						_draw_closest_point_on_curve(viewport_control, result)
 					else:
 						_draw_add_point_hint(viewport_control, result, false)
 				else:
 						_draw_add_point_hint(viewport_control, result, true)
-		elif result.has_meta(META_NAME_SELECT_HINT):
+		elif result in _select_hinted_svs:
 			var mul := _get_svp_transform(result)
 			viewport_control.draw_polyline(result
 					.get_bounding_box()
@@ -1678,13 +1662,12 @@ func _in_other_undo_redo_transaction(other_type : UndoRedoActionType) -> bool:
 func _on_global_position_for_handle_changed(global_pos : Vector2, meta_name: String, idx : int) -> void:
 	var cur := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(cur):
-		match(meta_name):
-			META_NAME_HOVER_CP_IN_IDX:
-				_update_curve_cp_in_position(cur, global_pos, idx)
-			META_NAME_HOVER_CP_OUT_IDX:
-				_update_curve_cp_out_position(cur, global_pos, idx)
-			META_NAME_HOVER_POINT_IDX:
-				_update_curve_point_position(cur, global_pos, idx)
+		if meta_name == "_hover_cp_in_idx_":
+			_update_curve_cp_in_position(cur, global_pos, idx)
+		if meta_name == "_hover_cp_out_idx_":
+			_update_curve_cp_out_position(cur, global_pos, idx)
+		if meta_name == "_hover_point_idx_":
+			_update_curve_point_position(cur, global_pos, idx)
 		update_overlays()
 
 
@@ -1924,7 +1907,7 @@ func _remove_width_curve_point(svs : ScalableVectorShape2D) -> void:
 		return
 	if svs.line.width_curve == null:
 		return
-	var md_p : ClosestPointOnCurveMeta = svs.get_meta(META_NAME_HOVER_CLOSEST_POINT)
+	var md_p : ClosestPointOnCurveMeta = _hover_closest_point_on_curve
 	var clamped_to_existing := -1
 	for i in svs.line.width_curve.point_count:
 		var p := svs.line.width_curve.get_point_position(i)
@@ -1950,7 +1933,7 @@ func _remove_width_curve_point(svs : ScalableVectorShape2D) -> void:
 func _change_width_curve(svs : ScalableVectorShape2D, make_thicker : bool) -> void:
 	if not is_instance_valid(svs.line):
 		return
-	var md_p : ClosestPointOnCurveMeta = svs.get_meta(META_NAME_HOVER_CLOSEST_POINT)
+	var md_p : ClosestPointOnCurveMeta = _hover_closest_point_on_curve
 	if md_p.before_segment >= svs.curve.point_count:
 		return
 	var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
@@ -2170,9 +2153,9 @@ func _start_cutout_shape(svs : ScalableVectorShape2D, pos : Vector2) -> void:
 func _add_point_on_curve_segment(svs : ScalableVectorShape2D, subdivide := false) -> void:
 	if svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:
 		return
-	if not svs.has_meta(META_NAME_HOVER_CLOSEST_POINT):
+	if not _hover_closest_point_on_curve:
 		return
-	var md_closest_point : ClosestPointOnCurveMeta = svs.get_meta(META_NAME_HOVER_CLOSEST_POINT)
+	var md_closest_point : ClosestPointOnCurveMeta = _hover_closest_point_on_curve
 	if svs.is_arc_start(md_closest_point.before_segment - 1):
 		return
 	var placement_point := svs.to_undeformed_position(
@@ -2206,9 +2189,9 @@ func _subdivide_curve(svs : ScalableVectorShape2D) -> void:
 func _drag_curve_segment(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
 	if svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:
 		return
-	if not svs.has_meta(META_NAME_HOVER_CLOSEST_POINT):
+	if not _hover_closest_point_on_curve:
 		return
-	var md_closest_point : ClosestPointOnCurveMeta = svs.get_meta(META_NAME_HOVER_CLOSEST_POINT)
+	var md_closest_point : ClosestPointOnCurveMeta = _hover_closest_point_on_curve
 	if svs.is_arc_start(md_closest_point.before_segment - 1) or md_closest_point.before_segment >= svs.curve.point_count or md_closest_point.before_segment < 1:
 		return
 
@@ -2235,7 +2218,7 @@ func _drag_curve_segment(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> vo
 	svs.curve.set_point_out(idx - 1, new_point_out)
 	svs.curve.set_point_in(idx, new_point_in)
 	md_closest_point["point_position"] = mouse_pos
-	svs.set_meta(META_NAME_HOVER_CLOSEST_POINT, md_closest_point)
+	_hover_closest_point_on_curve = md_closest_point
 	update_overlays()
 
 
@@ -2826,7 +2809,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 
 	if ((_is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT))
 			or
-		(_is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and current_selection.has_meta(META_NAME_HOVER_CLOSEST_POINT))
+		(_is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and _hover_closest_point_on_curve)
 	):
 		_lock_vp_scroll()
 	else:
@@ -2852,8 +2835,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				_set_shape_origin(current_selection, mouse_pos)
 		else:
 			if _is_svs_valid(current_selection) and _handle_has_hover(current_selection):
-				if event.double_click and current_selection.has_meta(META_NAME_HOVER_POINT_IDX):
-					_toggle_loop_if_applies(current_selection, current_selection.get_meta(META_NAME_HOVER_POINT_IDX))
+				if event.double_click and _hover_point_idx > -1:
+					_toggle_loop_if_applies(current_selection, _hover_point_idx)
 				elif (_is_svs_valid(current_selection) and Input.is_key_pressed(KEY_ALT)
 						and current_selection.shape_type == ScalableVectorShape2D.ShapeType.PATH
 						and _curve_control_has_hover(current_selection)):
@@ -2877,8 +2860,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 					_add_point_on_position(current_selection, mouse_pos)
 				return true
-			elif _is_svs_valid(current_selection) and current_selection.has_meta(META_NAME_HOVER_CLOSEST_POINT):
-				var cp_md : ClosestPointOnCurveMeta = current_selection.get_meta(META_NAME_HOVER_CLOSEST_POINT)
+			elif _is_svs_valid(current_selection) and _hover_closest_point_on_curve:
+				var cp_md : ClosestPointOnCurveMeta = _hover_closest_point_on_curve
 				if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and current_selection.is_arc_start(cp_md.before_segment - 1):
 					arc_settings_popup_panel.popup_with_value(current_selection.arc_list.get_arc_for_point(cp_md.before_segment - 1))
 				elif not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and Input.is_key_pressed(KEY_ALT):
@@ -2886,7 +2869,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				elif event.double_click:
 					_add_point_on_curve_segment(current_selection)
 				return true
-			elif _is_svs_valid(current_selection) and current_selection.has_meta(META_NAME_HOVER_CLOSEST_POINT_ON_GRADIENT_LINE):
+			elif _is_svs_valid(current_selection) and _hover_closest_point_on_gradient != Vector2.INF:
 				if event.double_click:
 					_add_color_stop(current_selection, mouse_pos)
 				return true
@@ -2924,27 +2907,27 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			return true
 		if _is_svs_valid(current_selection) and _handle_has_hover(current_selection) and not _is_editing_width_curve(current_selection):
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not _is_ctrl_or_cmd_pressed():
-				if current_selection.has_meta(META_NAME_HOVER_POINT_IDX) and current_selection.shape_type == ScalableVectorShape2D.ShapeType.PATH:
-					_remove_point_from_curve(current_selection, current_selection.get_meta(META_NAME_HOVER_POINT_IDX))
-				elif current_selection.has_meta(META_NAME_HOVER_CP_IN_IDX):
+				if _hover_point_idx > -1 and current_selection.shape_type == ScalableVectorShape2D.ShapeType.PATH:
+					_remove_point_from_curve(current_selection, _hover_point_idx)
+				elif _hover_cp_in_idx > -1:
 					if current_selection.shape_type == ScalableVectorShape2D.ShapeType.RECT:
 						_remove_rounded_corners_from_rect(current_selection)
 					else:
-						_remove_cp_in_from_curve(current_selection, current_selection.get_meta(META_NAME_HOVER_CP_IN_IDX))
-				elif current_selection.has_meta(META_NAME_HOVER_CP_OUT_IDX):
+						_remove_cp_in_from_curve(current_selection, _hover_cp_in_idx)
+				elif _hover_cp_out_idx > -1:
 					if current_selection.shape_type == ScalableVectorShape2D.ShapeType.RECT:
 						_remove_rounded_corners_from_rect(current_selection)
 					else:
-						_remove_cp_out_from_curve(current_selection, current_selection.get_meta(META_NAME_HOVER_CP_OUT_IDX))
-				elif current_selection.has_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX):
-					_remove_color_stop(current_selection, current_selection.get_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX))
+						_remove_cp_out_from_curve(current_selection, _hover_cp_out_idx)
+				elif _hover_gradient_color_stop_idx > -1:
+					_remove_color_stop(current_selection, _hover_gradient_color_stop_idx)
 			return true
-		if _is_svs_valid(current_selection) and current_selection.has_meta(META_NAME_HOVER_CLOSEST_POINT):
+		if _is_svs_valid(current_selection) and _hover_closest_point_on_curve:
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
 				if _is_ctrl_or_cmd_pressed():
 					_remove_width_curve_point(current_selection)
 				else:
-					var cp_md = current_selection.get_meta(META_NAME_HOVER_CLOSEST_POINT)
+					var cp_md = _hover_closest_point_on_curve
 					if current_selection.is_arc_start(cp_md.before_segment - 1):
 						_remove_arc(current_selection, cp_md.before_segment - 1)
 					else:
@@ -2968,7 +2951,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 
 	if (event is InputEventMouseButton and _is_ctrl_or_cmd_pressed() and
 				_is_svs_valid(current_selection) and
-				current_selection.has_meta(META_NAME_HOVER_CLOSEST_POINT) and
+				_hover_closest_point_on_curve and
 				event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN] and
 				event.is_pressed()):
 		_change_width_curve(current_selection, event.button_index == MOUSE_BUTTON_WHEEL_UP)
@@ -2981,23 +2964,21 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		var mouse_pos := _svp_mouse_pos(
 				EditorInterface.get_editor_viewport_2d().get_mouse_position(),
 				current_selection)
-		for result in _find_scalable_vector_shape_2d_nodes():
-			if result.has_meta(META_NAME_SELECT_HINT):
-				result.remove_meta(META_NAME_SELECT_HINT)
+		_select_hinted_svs = []
 
-		if _is_svs_valid(current_selection) and not _handle_has_hover(current_selection) and current_selection.has_meta(META_NAME_HOVER_CLOSEST_POINT):
+		if _is_svs_valid(current_selection) and not _handle_has_hover(current_selection) and _hover_closest_point_on_curve:
 			if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 				_drag_curve_segment(current_selection, mouse_pos)
 				return true
 
 		if _is_svs_valid(current_selection):
-			if current_selection.has_meta(META_NAME_HOVER_CLOSEST_POINT):
-				current_selection.remove_meta(META_NAME_HOVER_CLOSEST_POINT)
+			if _hover_closest_point_on_curve:
+				_hover_closest_point_on_curve = null
 
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and _is_svs_valid(current_selection):
 			if _handle_has_hover(current_selection):
-				if current_selection.has_meta(META_NAME_HOVER_POINT_IDX):
-					var pt_idx : int = current_selection.get_meta(META_NAME_HOVER_POINT_IDX)
+				if _hover_point_idx > -1:
+					var pt_idx : int = _hover_point_idx
 					if current_selection.shape_type != ScalableVectorShape2D.ShapeType.PATH:
 						_update_rect_dimensions(current_selection, mouse_pos)
 					elif Input.is_key_pressed(KEY_SHIFT):
@@ -3007,28 +2988,28 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 							_update_curve_cp_in_position(current_selection, mouse_pos, pt_idx)
 					else:
 						_update_curve_point_position(current_selection, mouse_pos, pt_idx)
-				elif current_selection.has_meta(META_NAME_HOVER_CP_IN_IDX):
+				elif _hover_cp_in_idx > -1:
 					if current_selection.shape_type == ScalableVectorShape2D.ShapeType.RECT:
 						_update_rect_corner_radius(current_selection, mouse_pos, "rx", !Input.is_key_pressed(KEY_SHIFT))
 					else:
-						_update_curve_cp_in_position(current_selection, mouse_pos, current_selection.get_meta(META_NAME_HOVER_CP_IN_IDX))
-				elif current_selection.has_meta(META_NAME_HOVER_CP_OUT_IDX):
+						_update_curve_cp_in_position(current_selection, mouse_pos, _hover_cp_in_idx)
+				elif _hover_cp_out_idx > -1:
 					if current_selection.shape_type == ScalableVectorShape2D.ShapeType.RECT:
 						_update_rect_corner_radius(current_selection, mouse_pos, "ry", !Input.is_key_pressed(KEY_SHIFT))
 					else:
-						_update_curve_cp_out_position(current_selection, mouse_pos, current_selection.get_meta(META_NAME_HOVER_CP_OUT_IDX))
-				elif current_selection.has_meta(META_NAME_HOVER_GRADIENT_FROM):
+						_update_curve_cp_out_position(current_selection, mouse_pos, _hover_cp_out_idx)
+				elif _hover_gradient_from:
 					_update_gradient_from_position(current_selection, mouse_pos)
-				elif current_selection.has_meta(META_NAME_HOVER_GRADIENT_TO):
+				elif _hover_gradient_to:
 					_update_gradient_to_position(current_selection, mouse_pos)
-				elif current_selection.has_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX):
+				elif _hover_gradient_color_stop_idx > -1:
 					_update_gradient_stop_color_pos(current_selection, mouse_pos,
-							current_selection.get_meta(META_NAME_HOVER_GRADIENT_COLOR_STOP_IDX))
+							_hover_gradient_color_stop_idx)
 				update_overlays()
 				return true
 		else:
 			for result : ScalableVectorShape2D in _find_scalable_vector_shape_2d_nodes_at(mouse_pos):
-				result.set_meta(META_NAME_SELECT_HINT, true)
+				_select_hinted_svs.append(result)
 			if _is_svs_valid(current_selection):
 				_set_handle_hover(mouse_pos, current_selection)
 		update_overlays()

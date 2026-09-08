@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 2.34.2 - SyncSkape
+## 2.34.3 - Inkscape Sync
 
 ### Added
 
@@ -15,7 +15,7 @@
 
 - fix: `ScalableVectorShape2D` that is a descendant of a node with `"_edit_group_"` toggled on is not selected on click anymore.
 - bugfix: Makes clip paths for holes connect signals correctly again after svg import
-- editor performance fix: Make sure `remove_meta("key")` is only called when node `has_meta("key")` (not checking used to be fast in godot 4.4ß)
+- editor performance fix: replace all instances of using node metadata to store hover state with editor plugin variables
 
 ## 2.33.3
 
