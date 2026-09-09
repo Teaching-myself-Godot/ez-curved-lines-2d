@@ -1,0 +1,124 @@
+[gd_scene format=3 uid="uid://borfju00ut7l1"]
+
+[ext_resource type="Texture2D" uid="uid://df3uca05win75" path="res://addons/curved_lines_2d/examples/mockup.png" id="1_trri6"]
+
+[node name="CreateTab" type="Control" unique_id=1764238898]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1865403243]
+layout_mode = 0
+offset_right = 1120.0
+offset_bottom = 400.0
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+
+[node name="Mockup2" type="Sprite2D" parent="." unique_id=1231292417]
+position = Vector2(458, 0)
+texture = ExtResource("1_trri6")
+centered = false
+region_enabled = true
+region_rect = Rect2(688, 0, 664, 112)
+
+[node name="Mockup" type="Sprite2D" parent="." unique_id=684671494]
+texture = ExtResource("1_trri6")
+centered = false
+region_enabled = true
+region_rect = Rect2(0, 0, 576, 112)
+
+[node name="Mockup3" type="Sprite2D" parent="." unique_id=1412570585]
+position = Vector2(576, 56)
+texture = ExtResource("1_trri6")
+centered = false
+region_enabled = true
+region_rect = Rect2(0, 112, 264, 40)
+
+[node name="Mockup4" type="Sprite2D" parent="." unique_id=442860403]
+position = Vector2(832, 104)
+texture = ExtResource("1_trri6")
+centered = false
+region_enabled = true
+region_rect = Rect2(264, 112, 152, 136)
+
+[node name="Mockup7" type="Sprite2D" parent="." unique_id=578475062]
+position = Vector2(704, 104)
+texture = ExtResource("1_trri6")
+centered = false
+region_enabled = true
+region_rect = Rect2(128, 152, 136, 80)
+
+[node name="Mockup5" type="Sprite2D" parent="." unique_id=2137300719]
+position = Vector2(984, 104)
+texture = ExtResource("1_trri6")
+centered = false
+region_enabled = true
+region_rect = Rect2(424, 120, 120, 120)
+
+[node name="Mockup6" type="Sprite2D" parent="." unique_id=732845653]
+position = Vector2(584, 104)
+texture = ExtResource("1_trri6")
+centered = false
+region_enabled = true
+region_rect = Rect2(8, 192, 120, 48)
+
+[node name="Mockup9" type="Sprite2D" parent="." unique_id=1226785153]
+position = Vector2(16, 112)
+texture = ExtResource("1_trri6")
+centered = false
+region_enabled = true
+region_rect = Rect2(8, 152, 120, 40)
+
+[node name="Mockup10" type="Sprite2D" parent="." unique_id=1876470600]
+position = Vector2(8, 152)
+texture = ExtResource("1_trri6")
+centered = false
+region_enabled = true
+region_rect = Rect2(552, 120, 128, 120)
+
+[node name="Mockup11" type="Sprite2D" parent="." unique_id=1678779284]
+position = Vector2(160, 160)
+texture = ExtResource("1_trri6")
+centered = false
+region_enabled = true
+region_rect = Rect2(696, 120, 272, 120)
+
+[node name="Mockup13" type="Sprite2D" parent="." unique_id=886875359]
+position = Vector2(16, 312)
+texture = ExtResource("1_trri6")
+centered = false
+region_enabled = true
+region_rect = Rect2(984, 200, 344, 40)
+
+[node name="Mockup12" type="Sprite2D" parent="." unique_id=229079555]
+position = Vector2(16, 272)
+texture = ExtResource("1_trri6")
+centered = false
+region_enabled = true
+region_rect = Rect2(984, 128, 128, 32)
+
+[node name="ColorRect2" type="ColorRect" parent="." unique_id=714274508]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 104.0
+offset_right = 536.0
+offset_bottom = 368.0
+color = Color(0, 0, 0.27058825, 0.14509805)
+
+[node name="ColorRect3" type="ColorRect" parent="." unique_id=1356166677]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 48.0
+offset_right = 312.0
+offset_bottom = 104.0
+color = Color(0, 0, 0.27058825, 0.14509805)
+
+[node name="ColorRect4" type="ColorRect" parent="." unique_id=793954305]
+layout_mode = 0
+offset_left = 576.0
+offset_top = 48.0
+offset_right = 1104.0
+offset_bottom = 240.0
+color = Color(0, 0.1254902, 0, 0.14509805)
