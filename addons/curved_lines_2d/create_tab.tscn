@@ -13,7 +13,7 @@ grow_vertical = 2
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1865403243]
 layout_mode = 0
 offset_right = 1120.0
-offset_bottom = 400.0
+offset_bottom = 368.0
 color = Color(0.16078432, 0.16078432, 0.16078432, 1)
 
 [node name="Mockup2" type="Sprite2D" parent="." unique_id=1231292417]
