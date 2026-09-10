@@ -1,124 +1,354 @@
 [gd_scene format=3 uid="uid://borfju00ut7l1"]
 
 [ext_resource type="Texture2D" uid="uid://df3uca05win75" path="res://addons/curved_lines_2d/examples/mockup.png" id="1_trri6"]
+[ext_resource type="StyleBox" uid="uid://hjtwi4stcxmu" path="res://addons/curved_lines_2d/icons/button_default_stylebox.tres" id="2_2chn8"]
+[ext_resource type="StyleBox" uid="uid://ddx1ye7r3r4lf" path="res://addons/curved_lines_2d/icons/button_pressed_stylebox.tres" id="3_hti8q"]
+[ext_resource type="StyleBox" uid="uid://bo0x8scw4k70k" path="res://addons/curved_lines_2d/icons/button_hover_stylebox.tres" id="4_powka"]
+[ext_resource type="Texture2D" uid="uid://b0edng6qet3bh" path="res://addons/curved_lines_2d/icons/edit.svg" id="5_dv24s"]
+[ext_resource type="Texture2D" uid="uid://1wn28rw8e06s" path="res://addons/curved_lines_2d/icons/pencil.svg" id="6_25oso"]
+[ext_resource type="Texture2D" uid="uid://b0ou57halsrct" path="res://addons/curved_lines_2d/icons/UniformTranslate.svg" id="6_dv24s"]
+[ext_resource type="Texture2D" uid="uid://cse1ocndh7mk0" path="res://addons/curved_lines_2d/icons/UniformScale.svg" id="7_25oso"]
+[ext_resource type="Texture2D" uid="uid://diudaka5rb6j7" path="res://addons/curved_lines_2d/icons/UniformRotate.svg" id="8_4nv23"]
+[ext_resource type="Texture2D" uid="uid://caijfmk3bwsoa" path="res://addons/curved_lines_2d/icons/brush.svg" id="9_h5wiq"]
+[ext_resource type="Texture2D" uid="uid://cvncsxcq4s508" path="res://addons/curved_lines_2d/icons/PaintBone.svg" id="9_v84w2"]
+[ext_resource type="Texture2D" uid="uid://ditk0dp8g3wy2" path="res://addons/curved_lines_2d/icons/knife.svg" id="11_4mrje"]
+[ext_resource type="Texture2D" uid="uid://ccyp1tik6avfs" path="res://addons/curved_lines_2d/icons/FlipHorizontal.svg" id="11_w8ysd"]
+[ext_resource type="Texture2D" uid="uid://b1cfmjoj1v3ed" path="res://addons/curved_lines_2d/icons/FlipVertical.svg" id="12_v84w2"]
+[ext_resource type="Texture2D" uid="uid://wdcgmyfmhwt3" path="res://addons/curved_lines_2d/icons/circle.svg" id="12_w8ysd"]
+[ext_resource type="Texture2D" uid="uid://cqfj4o5wa6ofi" path="res://addons/curved_lines_2d/icons/square.svg" id="13_v84w2"]
 
-[node name="CreateTab" type="Control" unique_id=1764238898]
-layout_mode = 3
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dsrm6"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_dsrm6"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_4mrje"]
+color = Color(0.3403393, 0.34033933, 0.3403393, 1)
+vertical = true
+
+[node name="CreateTab" type="ScrollContainer" unique_id=935001504]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=1865403243]
-layout_mode = 0
-offset_right = 1120.0
-offset_bottom = 368.0
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=278808976]
+layer = -1
+visible = false
+
+[node name="Node2D" type="Node2D" parent="CanvasLayer" unique_id=1482954361]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/Node2D" unique_id=1865403243]
+offset_left = -6.0
+offset_top = -50.0
+offset_right = 1114.0
+offset_bottom = 318.0
 color = Color(0.16078432, 0.16078432, 0.16078432, 1)
 
-[node name="Mockup2" type="Sprite2D" parent="." unique_id=1231292417]
-position = Vector2(458, 0)
+[node name="Mockup2" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=1231292417]
+position = Vector2(452, -50)
 texture = ExtResource("1_trri6")
 centered = false
 region_enabled = true
-region_rect = Rect2(688, 0, 664, 112)
+region_rect = Rect2(688, 0, 664, 48)
 
-[node name="Mockup" type="Sprite2D" parent="." unique_id=684671494]
+[node name="Mockup8" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=733548035]
+position = Vector2(826, 54)
+texture = ExtResource("1_trri6")
+centered = false
+region_enabled = true
+region_rect = Rect2(1064, 48, 272, 48)
+
+[node name="Mockup" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=684671494]
+position = Vector2(-6, -50)
 texture = ExtResource("1_trri6")
 centered = false
 region_enabled = true
 region_rect = Rect2(0, 0, 576, 112)
 
-[node name="Mockup3" type="Sprite2D" parent="." unique_id=1412570585]
-position = Vector2(576, 56)
+[node name="Mockup3" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=1412570585]
+position = Vector2(570, 54)
 texture = ExtResource("1_trri6")
 centered = false
 region_enabled = true
 region_rect = Rect2(0, 112, 264, 40)
 
-[node name="Mockup4" type="Sprite2D" parent="." unique_id=442860403]
-position = Vector2(832, 104)
+[node name="Mockup4" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=442860403]
+position = Vector2(826, 102)
 texture = ExtResource("1_trri6")
 centered = false
 region_enabled = true
 region_rect = Rect2(264, 112, 152, 136)
 
-[node name="Mockup7" type="Sprite2D" parent="." unique_id=578475062]
-position = Vector2(704, 104)
+[node name="Mockup7" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=578475062]
+position = Vector2(698, 102)
 texture = ExtResource("1_trri6")
 centered = false
 region_enabled = true
 region_rect = Rect2(128, 152, 136, 80)
 
-[node name="Mockup5" type="Sprite2D" parent="." unique_id=2137300719]
-position = Vector2(984, 104)
+[node name="Mockup5" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=2137300719]
+position = Vector2(978, 102)
 texture = ExtResource("1_trri6")
 centered = false
 region_enabled = true
 region_rect = Rect2(424, 120, 120, 120)
 
-[node name="Mockup6" type="Sprite2D" parent="." unique_id=732845653]
-position = Vector2(584, 104)
+[node name="Mockup6" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=732845653]
+position = Vector2(578, 102)
 texture = ExtResource("1_trri6")
 centered = false
 region_enabled = true
 region_rect = Rect2(8, 192, 120, 48)
 
-[node name="Mockup9" type="Sprite2D" parent="." unique_id=1226785153]
-position = Vector2(16, 112)
+[node name="Mockup9" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=1226785153]
+position = Vector2(10, 62)
 texture = ExtResource("1_trri6")
 centered = false
 region_enabled = true
 region_rect = Rect2(8, 152, 120, 40)
 
-[node name="Mockup10" type="Sprite2D" parent="." unique_id=1876470600]
-position = Vector2(8, 152)
+[node name="Mockup10" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=1876470600]
+position = Vector2(2, 102)
 texture = ExtResource("1_trri6")
 centered = false
 region_enabled = true
 region_rect = Rect2(552, 120, 128, 120)
 
-[node name="Mockup11" type="Sprite2D" parent="." unique_id=1678779284]
-position = Vector2(160, 160)
+[node name="Mockup11" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=1678779284]
+position = Vector2(154, 110)
 texture = ExtResource("1_trri6")
 centered = false
 region_enabled = true
 region_rect = Rect2(696, 120, 272, 120)
 
-[node name="Mockup13" type="Sprite2D" parent="." unique_id=886875359]
-position = Vector2(16, 312)
+[node name="Mockup13" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=886875359]
+position = Vector2(10, 262)
 texture = ExtResource("1_trri6")
 centered = false
 region_enabled = true
 region_rect = Rect2(984, 200, 344, 40)
 
-[node name="Mockup12" type="Sprite2D" parent="." unique_id=229079555]
-position = Vector2(16, 272)
+[node name="Mockup12" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=229079555]
+position = Vector2(10, 222)
 texture = ExtResource("1_trri6")
 centered = false
 region_enabled = true
 region_rect = Rect2(984, 128, 128, 32)
 
-[node name="ColorRect2" type="ColorRect" parent="." unique_id=714274508]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 104.0
-offset_right = 536.0
-offset_bottom = 368.0
+[node name="ColorRect2" type="ColorRect" parent="CanvasLayer/Node2D" unique_id=714274508]
+offset_left = 2.0
+offset_top = 54.0
+offset_right = 530.0
+offset_bottom = 318.0
 color = Color(0, 0, 0.27058825, 0.14509805)
 
-[node name="ColorRect3" type="ColorRect" parent="." unique_id=1356166677]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 48.0
-offset_right = 312.0
-offset_bottom = 104.0
+[node name="ColorRect3" type="ColorRect" parent="CanvasLayer/Node2D" unique_id=1356166677]
+offset_left = 2.0
+offset_top = -2.0
+offset_right = 306.0
+offset_bottom = 54.0
 color = Color(0, 0, 0.27058825, 0.14509805)
 
-[node name="ColorRect4" type="ColorRect" parent="." unique_id=793954305]
-layout_mode = 0
-offset_left = 576.0
-offset_top = 48.0
-offset_right = 1104.0
-offset_bottom = 240.0
+[node name="ColorRect4" type="ColorRect" parent="CanvasLayer/Node2D" unique_id=793954305]
+offset_left = 570.0
+offset_top = 54.0
+offset_right = 1098.0
+offset_bottom = 246.0
 color = Color(0, 0.1254902, 0, 0.14509805)
+
+[node name="ColorRect5" type="ColorRect" parent="CanvasLayer/Node2D" unique_id=103878502]
+offset_left = 314.0
+offset_top = -10.0
+offset_right = 426.0
+offset_bottom = 46.0
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1948450663]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer" unique_id=1318198124]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_dsrm6")
+
+[node name="HFlowContainer" type="HFlowContainer" parent="VBoxContainer/PanelContainer" unique_id=869442149]
+layout_mode = 2
+size_flags_vertical = 2
+theme_override_constants/h_separation = 4
+
+[node name="EditButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1572018910]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = ExtResource("5_dv24s")
+expand_icon = true
+
+[node name="TranslateButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=2135973308]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = ExtResource("6_dv24s")
+expand_icon = true
+
+[node name="ResizeButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1295417530]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = ExtResource("7_25oso")
+expand_icon = true
+
+[node name="RotateButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1983587831]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = ExtResource("8_4nv23")
+expand_icon = true
+
+[node name="BonePaintButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1377374135]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = ExtResource("9_v84w2")
+expand_icon = true
+
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1147883973]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
+
+[node name="FlipHorizontalButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1244107966]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+icon = ExtResource("11_w8ysd")
+expand_icon = true
+
+[node name="FlipVerticalButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1942614303]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+icon = ExtResource("12_v84w2")
+expand_icon = true
+
+[node name="VSeparator2" type="VSeparator" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=425011772]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
+
+[node name="CircleButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1179979946]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = ExtResource("12_w8ysd")
+expand_icon = true
+
+[node name="RectangleButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=326123292]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = ExtResource("13_v84w2")
+expand_icon = true
+
+[node name="VSeparator3" type="VSeparator" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1808966385]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
+
+[node name="BrushButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1213772213]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = ExtResource("9_h5wiq")
+expand_icon = true
+
+[node name="PencilButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=648886700]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = ExtResource("6_25oso")
+expand_icon = true
+
+[node name="KnifeButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=996550358]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = ExtResource("11_4mrje")
+expand_icon = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=105941073]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3

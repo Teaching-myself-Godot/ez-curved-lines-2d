@@ -7,6 +7,7 @@ signal brush_changed()
 
 const TABS_NAME := [
 	"Project Settings",
+	"Create",
 	"Draw Settings",
 	"Create Shapes",
 	"Import SVG File",
