@@ -289,6 +289,7 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 	else:
 		svs_edit_buttons.set_default_mode()
 		svs_edit_buttons.hide()
+		scalable_vector_shapes_2d_dock.create_tab.disable_all_editors()
 
 
 func _on_svs_edit_mode_changed(new_mode : SVSEditMode) -> void:
