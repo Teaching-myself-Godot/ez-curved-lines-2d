@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 2.34.3 - Inkscape Sync
+## 2.34.4 - Inkscape Sync
 
 ### Added
 
@@ -16,6 +16,7 @@
 - fix: `ScalableVectorShape2D` that is a descendant of a node with `"_edit_group_"` toggled on is not selected on click anymore.
 - bugfix: Makes clip paths for holes connect signals correctly again after svg import
 - editor performance fix: replace all instances of using node metadata to store hover state with editor plugin variables
+- bugfix: when SyncedSVGRoot has a different scale / rotation, pivots are now placed correctly during reimport
 
 ## 2.33.3
 
