@@ -3041,6 +3041,8 @@ func _reimport_synchronized_svg_file(svg_root : SyncedSVGRoot) -> void:
 		return
 	if svg_root.has_meta("is_importing"):
 		return
+	var stored_global_transform = svg_root.global_transform
+	svg_root.global_transform = Transform2D.IDENTITY
 	svg_root.set_meta("is_importing", true)
 	svg_root.set_meta("_checksum", new_checksum)
 	if is_instance_valid(ch):
@@ -3049,6 +3051,7 @@ func _reimport_synchronized_svg_file(svg_root : SyncedSVGRoot) -> void:
 			SVGImporter.get_runtime_handler(), _pretty_print_svg_import_msg)
 	await svg_importer.load_svg(svg_root.svg_resource_path,
 			scene_root, [svg_root])
+	svg_root.global_transform = stored_global_transform
 	svg_root.remove_meta("is_importing")
 	svg_root.update_configuration_warnings()
 	EditorInterface.mark_scene_as_unsaved()
