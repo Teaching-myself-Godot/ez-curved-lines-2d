@@ -8,3 +8,9 @@ addons/DualEditor
 .vscode
 export_presets.cfg
 /*.svg*
+*.png
+*.png*
+*.tscn
+*.gd*
+*.jpg*
+.gitignore

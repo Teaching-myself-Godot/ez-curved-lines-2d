@@ -16,6 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://b1cfmjoj1v3ed" path="res://addons/curved_lines_2d/icons/FlipVertical.svg" id="12_v84w2"]
 [ext_resource type="Texture2D" uid="uid://wdcgmyfmhwt3" path="res://addons/curved_lines_2d/icons/circle.svg" id="12_w8ysd"]
 [ext_resource type="Texture2D" uid="uid://cqfj4o5wa6ofi" path="res://addons/curved_lines_2d/icons/square.svg" id="13_v84w2"]
+[ext_resource type="Texture2D" uid="uid://d1cq1dok28bm5" path="res://addons/curved_lines_2d/icons/magnet.svg" id="17_6gyyp"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dsrm6"]
 content_margin_left = 8.0
@@ -28,6 +29,13 @@ content_margin_bottom = 8.0
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_4mrje"]
 color = Color(0.3403393, 0.34033933, 0.3403393, 1)
 vertical = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6gyyp"]
+bg_color = Color(0.105882354, 0.105882354, 0.105882354, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="CreateTab" type="ScrollContainer" unique_id=935001504]
 anchors_preset = 15
@@ -57,7 +65,7 @@ region_enabled = true
 region_rect = Rect2(688, 0, 664, 48)
 
 [node name="Mockup8" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=733548035]
-position = Vector2(826, 54)
+position = Vector2(848, -2)
 texture = ExtResource("1_trri6")
 centered = false
 region_enabled = true
@@ -174,16 +182,23 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 4
 
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer" unique_id=1318198124]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=105941073]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/HBoxContainer" unique_id=1318198124]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_dsrm6")
 
-[node name="HFlowContainer" type="HFlowContainer" parent="VBoxContainer/PanelContainer" unique_id=869442149]
+[node name="HFlowContainer" type="HFlowContainer" parent="VBoxContainer/HBoxContainer/PanelContainer" unique_id=869442149]
 layout_mode = 2
 size_flags_vertical = 2
 theme_override_constants/h_separation = 4
 
-[node name="EditButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1572018910]
+[node name="EditButton" type="Button" parent="VBoxContainer/HBoxContainer/PanelContainer/HFlowContainer" unique_id=1572018910]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -197,7 +212,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = ExtResource("5_dv24s")
 expand_icon = true
 
-[node name="TranslateButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=2135973308]
+[node name="TranslateButton" type="Button" parent="VBoxContainer/HBoxContainer/PanelContainer/HFlowContainer" unique_id=2135973308]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -210,7 +225,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = ExtResource("6_dv24s")
 expand_icon = true
 
-[node name="ResizeButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1295417530]
+[node name="ResizeButton" type="Button" parent="VBoxContainer/HBoxContainer/PanelContainer/HFlowContainer" unique_id=1295417530]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -223,7 +238,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = ExtResource("7_25oso")
 expand_icon = true
 
-[node name="RotateButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1983587831]
+[node name="RotateButton" type="Button" parent="VBoxContainer/HBoxContainer/PanelContainer/HFlowContainer" unique_id=1983587831]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -236,7 +251,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = ExtResource("8_4nv23")
 expand_icon = true
 
-[node name="BonePaintButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1377374135]
+[node name="BonePaintButton" type="Button" parent="VBoxContainer/HBoxContainer/PanelContainer/HFlowContainer" unique_id=1377374135]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -249,11 +264,11 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = ExtResource("9_v84w2")
 expand_icon = true
 
-[node name="VSeparator" type="VSeparator" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1147883973]
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer/HBoxContainer/PanelContainer/HFlowContainer" unique_id=1147883973]
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
 
-[node name="FlipHorizontalButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1244107966]
+[node name="FlipHorizontalButton" type="Button" parent="VBoxContainer/HBoxContainer/PanelContainer/HFlowContainer" unique_id=1244107966]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -264,7 +279,7 @@ theme_override_styles/hover = ExtResource("4_powka")
 icon = ExtResource("11_w8ysd")
 expand_icon = true
 
-[node name="FlipVerticalButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1942614303]
+[node name="FlipVerticalButton" type="Button" parent="VBoxContainer/HBoxContainer/PanelContainer/HFlowContainer" unique_id=1942614303]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -275,11 +290,11 @@ theme_override_styles/hover = ExtResource("4_powka")
 icon = ExtResource("12_v84w2")
 expand_icon = true
 
-[node name="VSeparator2" type="VSeparator" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=425011772]
+[node name="VSeparator2" type="VSeparator" parent="VBoxContainer/HBoxContainer/PanelContainer/HFlowContainer" unique_id=425011772]
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
 
-[node name="CircleButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1179979946]
+[node name="CircleButton" type="Button" parent="VBoxContainer/HBoxContainer/PanelContainer/HFlowContainer" unique_id=1179979946]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -292,7 +307,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = ExtResource("12_w8ysd")
 expand_icon = true
 
-[node name="RectangleButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=326123292]
+[node name="RectangleButton" type="Button" parent="VBoxContainer/HBoxContainer/PanelContainer/HFlowContainer" unique_id=326123292]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -305,11 +320,11 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = ExtResource("13_v84w2")
 expand_icon = true
 
-[node name="VSeparator3" type="VSeparator" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1808966385]
+[node name="VSeparator3" type="VSeparator" parent="VBoxContainer/HBoxContainer/PanelContainer/HFlowContainer" unique_id=1808966385]
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
 
-[node name="BrushButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=1213772213]
+[node name="BrushButton" type="Button" parent="VBoxContainer/HBoxContainer/PanelContainer/HFlowContainer" unique_id=1213772213]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -322,7 +337,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = ExtResource("9_h5wiq")
 expand_icon = true
 
-[node name="PencilButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=648886700]
+[node name="PencilButton" type="Button" parent="VBoxContainer/HBoxContainer/PanelContainer/HFlowContainer" unique_id=648886700]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -335,7 +350,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = ExtResource("6_25oso")
 expand_icon = true
 
-[node name="KnifeButton" type="Button" parent="VBoxContainer/PanelContainer/HFlowContainer" unique_id=996550358]
+[node name="KnifeButton" type="Button" parent="VBoxContainer/HBoxContainer/PanelContainer/HFlowContainer" unique_id=996550358]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -348,7 +363,38 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = ExtResource("11_4mrje")
 expand_icon = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=105941073]
+[node name="PanelContainer2" type="PanelContainer" parent="VBoxContainer/HBoxContainer" unique_id=1321012284]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_dsrm6")
+
+[node name="HFlowContainer" type="HFlowContainer" parent="VBoxContainer/HBoxContainer/PanelContainer2" unique_id=1486548849]
+layout_mode = 2
+size_flags_vertical = 2
+theme_override_constants/h_separation = 4
+alignment = 2
+
+[node name="SnapButton" type="Button" parent="VBoxContainer/HBoxContainer/PanelContainer2/HFlowContainer" unique_id=932977031]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+icon = ExtResource("17_6gyyp")
+expand_icon = true
+
+[node name="SnapXEditor" type="PanelContainer" parent="VBoxContainer/HBoxContainer/PanelContainer2/HFlowContainer" unique_id=579981428]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(108, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_6gyyp")
+
+[node name="SnapYEditor" type="PanelContainer" parent="VBoxContainer/HBoxContainer/PanelContainer2/HFlowContainer" unique_id=1885787350]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(108, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_6gyyp")
