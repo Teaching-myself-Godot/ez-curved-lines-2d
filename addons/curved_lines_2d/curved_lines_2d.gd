@@ -81,7 +81,7 @@ const OPERATION_NAME_MAP := {
 enum SVSEditMode {
 	NONE, TRANSLATE, ROTATE, SCALE,
 	MERGE, BRUSH, PENCIL, PAINT_BONE,
-	KNIFE
+	KNIFE, CREATE_ELLIPSE, CREATE_RECT
 }
 
 var plugin : Line2DGeneratorInspectorPlugin
@@ -209,6 +209,8 @@ func _enter_tree():
 		scalable_vector_shapes_2d_dock.edit_tab.ellipse_created.connect(_on_ellipse_created)
 	if not scalable_vector_shapes_2d_dock.brush_changed.is_connected(_update_brush):
 		scalable_vector_shapes_2d_dock.brush_changed.connect(_update_brush)
+	if not scalable_vector_shapes_2d_dock.create_tab.mode_changed.is_connected(_on_svs_edit_mode_changed):
+		scalable_vector_shapes_2d_dock.create_tab.mode_changed.connect(_on_svs_edit_mode_changed)
 	scene_changed.connect(_on_scene_changed)
 	svs_edit_buttons = load("res://addons/curved_lines_2d/svs_edit_buttons.tscn").instantiate()
 	var canvas_editor_buttons_container = _find_canvas_item_editor_control().find_child("*HFlowContainer*", true, false)
@@ -267,6 +269,7 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 	if toggled_on and _is_svs_valid(current_selection):
 		svs_edit_buttons.show()
 		svs_edit_buttons.show_svs_editors()
+		scalable_vector_shapes_2d_dock.create_tab.enable_svs_editors()
 		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
 				_svs_edit_mode == SVSEditMode.BRUSH or _svs_edit_mode == SVSEditMode.PENCIL or
 				_svs_edit_mode == SVSEditMode.KNIFE) and
@@ -276,6 +279,7 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 	elif toggled_on and current_selection:
 		svs_edit_buttons.show()
 		svs_edit_buttons.hide_svs_editors()
+		scalable_vector_shapes_2d_dock.create_tab.disable_svs_editors()
 		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
 				_svs_edit_mode == SVSEditMode.BRUSH or _svs_edit_mode == SVSEditMode.PENCIL or
 				_svs_edit_mode == SVSEditMode.KNIFE) and
@@ -297,6 +301,7 @@ func _on_svs_edit_mode_changed(new_mode : SVSEditMode) -> void:
 		if _is_svs_valid(svs):
 			(svs as ScalableVectorShape2D).reset_skeleton_to_rest_pose()
 	_svs_edit_mode = new_mode
+	scalable_vector_shapes_2d_dock.create_tab.set_edit_mode_toggle_button(new_mode)
 	update_overlays()
 
 

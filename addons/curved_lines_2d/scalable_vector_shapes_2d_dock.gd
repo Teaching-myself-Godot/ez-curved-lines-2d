@@ -19,6 +19,7 @@ var warning_dialog : AcceptDialog
 var edit_tab : Control
 var import_tab : Control
 var draw_settings_tab : Control
+var create_tab : Control
 
 func _enter_tree() -> void:
 	for i in min(TABS_NAME.size(), get_child_count()):
@@ -27,6 +28,7 @@ func _enter_tree() -> void:
 	edit_tab = %SVSEditTab
 	import_tab = %SVGImportTab
 	draw_settings_tab = %DrawSettingsTab
+	create_tab = %CreateTab
 	warning_dialog = AcceptDialog.new()
 	EditorInterface.get_base_control().add_child(warning_dialog)
 	edit_tab.warning_dialog = warning_dialog
