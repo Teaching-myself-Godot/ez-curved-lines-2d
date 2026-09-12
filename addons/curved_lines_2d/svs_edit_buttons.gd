@@ -126,3 +126,37 @@ func _unhandled_input(event: InputEvent) -> void:
 			%Brush.button_pressed = true
 		if (event as InputEventKey).keycode == KEY_K and %Knife.visible:
 			%Knife.button_pressed = true
+
+
+func set_edit_mode_toggle_button(mode : CurvedLines2D.SVSEditMode) -> void:
+	match mode:
+		CurvedLines2D.SVSEditMode.NONE:
+			if not %DefaultEdit.button_pressed:
+				%DefaultEdit.button_pressed = true
+		CurvedLines2D.SVSEditMode.TRANSLATE:
+			if not %UniformTranslate.button_pressed:
+				%UniformTranslate.button_pressed = true
+		CurvedLines2D.SVSEditMode.SCALE:
+			if not %UniformScale.button_pressed:
+				%UniformScale.button_pressed = true
+		CurvedLines2D.SVSEditMode.ROTATE:
+			if not %UniformRotate.button_pressed:
+				%UniformRotate.button_pressed = true
+		CurvedLines2D.SVSEditMode.BRUSH:
+			if not %Brush.button_pressed:
+				%Brush.button_pressed = true
+		CurvedLines2D.SVSEditMode.PENCIL:
+			if not %Pencil.button_pressed:
+				%Pencil.button_pressed = true
+		CurvedLines2D.SVSEditMode.KNIFE:
+			if not %Knife.button_pressed:
+				%Knife.button_pressed = true
+		CurvedLines2D.SVSEditMode.PAINT_BONE:
+			if not %PaintBone.button_pressed:
+				%PaintBone.button_pressed = true
+		CurvedLines2D.SVSEditMode.MERGE:
+			if not %Merge.button_pressed:
+				%Merge.button_pressed = true
+		_:
+			for b in find_children("*", "Button"):
+				b.button_pressed = false

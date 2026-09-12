@@ -303,6 +303,7 @@ func _on_svs_edit_mode_changed(new_mode : SVSEditMode) -> void:
 			(svs as ScalableVectorShape2D).reset_skeleton_to_rest_pose()
 	_svs_edit_mode = new_mode
 	scalable_vector_shapes_2d_dock.create_tab.set_edit_mode_toggle_button(new_mode)
+	svs_edit_buttons.set_edit_mode_toggle_button(new_mode)
 	update_overlays()
 
 

@@ -5,7 +5,6 @@ signal mode_changed(new_mode : CurvedLines2D.SVSEditMode)
 
 
 func _ready() -> void:
-	show_details_for_current_mode()
 	%CircleButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.CREATE_ELLIPSE))
 	%RectangleButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.CREATE_RECT))
 	%EditButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.NONE))
@@ -22,6 +21,7 @@ func _ready() -> void:
 func _on_mode_toggled(toggled_on : bool, mode : CurvedLines2D.SVSEditMode) -> void:
 	if toggled_on:
 		mode_changed.emit(mode)
+		show_details_for_current_mode(mode)
 
 
 func set_edit_mode_toggle_button(mode : CurvedLines2D.SVSEditMode) -> void:
@@ -62,11 +62,10 @@ func set_edit_mode_toggle_button(mode : CurvedLines2D.SVSEditMode) -> void:
 		_:
 			if not %EditButton.button_pressed:
 				%EditButton.button_pressed = true
-	show_details_for_current_mode()
 
 
-func show_details_for_current_mode() -> void:
-	push_warning("TODO: show currect details for: ", (%EditButton.button_group as ButtonGroup).get_pressed_button())
+func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
+	push_warning("TODO: show current details for: ", mode)
 
 
 func enable_svs_editors() -> void:
