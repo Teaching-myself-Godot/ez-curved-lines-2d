@@ -134,7 +134,7 @@ custom_minimum_size = Vector2(42, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 text = "Fill"
-color = Color(0.402344, 0, 0, 1)
+color = Color(0.6923286, 0.58203125, 1, 1)
 
 [node name="StrokeCheckButton" type="CheckButton" parent="VBoxContainer/DrawSettingsContainer" unique_id=548959189]
 unique_name_in_owner = true
@@ -143,6 +143,7 @@ size_flags_horizontal = 8
 tooltip_text = "- Toggled On: when creating a new shape via this panel, a Stroke (Line2D) of this color will be automatically added
 - When a new ScalableVectorShape2D is generated via the Scene Tree or the 2D Viewport using add node, a Stroke will _not_ be automatically assigned.
 - When generating a Stroke via the Inspector button for ScalableVectorShape2D, the color configured here will be automatically picked."
+button_pressed = true
 text = "Stroke*"
 alignment = 2
 
@@ -152,6 +153,7 @@ custom_minimum_size = Vector2(42, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 text = "Fill"
+color = Color(1, 1, 1, 1)
 
 [node name="CollisionObjectTypeOptionButton" parent="VBoxContainer/DrawSettingsContainer" unique_id=1516514360 instance=ExtResource("2_kh00m")]
 unique_name_in_owner = true

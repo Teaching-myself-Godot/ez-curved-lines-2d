@@ -203,10 +203,6 @@ func _enter_tree():
 		scalable_vector_shapes_2d_dock.shape_created.connect(_on_shape_created)
 	if not scalable_vector_shapes_2d_dock.set_shape_preview.is_connected(_on_shape_preview):
 		scalable_vector_shapes_2d_dock.set_shape_preview.connect(_on_shape_preview)
-	if not scalable_vector_shapes_2d_dock.edit_tab.rect_created.is_connected(_on_rect_created):
-		scalable_vector_shapes_2d_dock.edit_tab.rect_created.connect(_on_rect_created)
-	if not scalable_vector_shapes_2d_dock.edit_tab.ellipse_created.is_connected(_on_ellipse_created):
-		scalable_vector_shapes_2d_dock.edit_tab.ellipse_created.connect(_on_ellipse_created)
 	if not scalable_vector_shapes_2d_dock.brush_changed.is_connected(_update_brush):
 		scalable_vector_shapes_2d_dock.brush_changed.connect(_update_brush)
 	if not scalable_vector_shapes_2d_dock.create_tab.mode_changed.is_connected(_on_svs_edit_mode_changed):
