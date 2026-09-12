@@ -2,7 +2,8 @@
 extends Control
 
 signal mode_changed(new_mode : CurvedLines2D.SVSEditMode)
-
+signal flip_horizontal()
+signal flip_vertical()
 
 func _ready() -> void:
 	%CircleButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.CREATE_ELLIPSE))
@@ -16,6 +17,8 @@ func _ready() -> void:
 	%KnifeButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.KNIFE))
 	%BonePaintButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.PAINT_BONE))
 	%MergeButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.MERGE))
+	%FlipHorizontalButton.pressed.connect(flip_horizontal.emit)
+	%FlipVerticalButton.pressed.connect(flip_vertical.emit)
 
 
 func _on_mode_toggled(toggled_on : bool, mode : CurvedLines2D.SVSEditMode) -> void:

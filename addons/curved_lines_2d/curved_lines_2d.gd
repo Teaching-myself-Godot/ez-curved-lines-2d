@@ -211,6 +211,9 @@ func _enter_tree():
 		scalable_vector_shapes_2d_dock.brush_changed.connect(_update_brush)
 	if not scalable_vector_shapes_2d_dock.create_tab.mode_changed.is_connected(_on_svs_edit_mode_changed):
 		scalable_vector_shapes_2d_dock.create_tab.mode_changed.connect(_on_svs_edit_mode_changed)
+
+	scalable_vector_shapes_2d_dock.create_tab.flip_horizontal.connect(_flip_svs_horizontal)
+	scalable_vector_shapes_2d_dock.create_tab.flip_vertical.connect(_flip_svs_vertical)
 	scene_changed.connect(_on_scene_changed)
 	svs_edit_buttons = load("res://addons/curved_lines_2d/svs_edit_buttons.tscn").instantiate()
 	var canvas_editor_buttons_container = _find_canvas_item_editor_control().find_child("*HFlowContainer*", true, false)
