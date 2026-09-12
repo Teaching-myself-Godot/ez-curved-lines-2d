@@ -49,7 +49,6 @@ script = ExtResource("1_vur25")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=278808976]
 layer = -1
-visible = false
 
 [node name="Node2D" type="Node2D" parent="CanvasLayer" unique_id=1482954361]
 
@@ -188,7 +187,7 @@ theme_override_constants/separation = 4
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=105941073]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+size_flags_vertical = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/HBoxContainer" unique_id=1318198124]
 layout_mode = 2
@@ -415,22 +414,22 @@ expand_icon = true
 
 [node name="PanelContainer2" type="PanelContainer" parent="VBoxContainer/HBoxContainer" unique_id=1321012284]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 8
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_dsrm6")
 
-[node name="HFlowContainer" type="HFlowContainer" parent="VBoxContainer/HBoxContainer/PanelContainer2" unique_id=1486548849]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/PanelContainer2" unique_id=1670831685]
 layout_mode = 2
 size_flags_vertical = 2
-theme_override_constants/h_separation = 4
 alignment = 2
 
-[node name="SnapButton" type="Button" parent="VBoxContainer/HBoxContainer/PanelContainer2/HFlowContainer" unique_id=932977031]
+[node name="SnapButton" type="Button" parent="VBoxContainer/HBoxContainer/PanelContainer2/HBoxContainer" unique_id=932977031]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
+tooltip_text = "Toggle Snap to Pixel On/Off"
 theme_override_styles/normal = ExtResource("2_2chn8")
 theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
@@ -438,14 +437,10 @@ toggle_mode = true
 icon = ExtResource("17_6gyyp")
 expand_icon = true
 
-[node name="SnapXEditor" type="PanelContainer" parent="VBoxContainer/HBoxContainer/PanelContainer2/HFlowContainer" unique_id=579981428]
+[node name="SnapResolutionInputContainer" type="PanelContainer" parent="VBoxContainer/HBoxContainer/PanelContainer2/HBoxContainer" unique_id=579981428]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(108, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_6gyyp")
 
-[node name="SnapYEditor" type="PanelContainer" parent="VBoxContainer/HBoxContainer/PanelContainer2/HFlowContainer" unique_id=1885787350]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(108, 0)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_6gyyp")
+[connection signal="toggled" from="VBoxContainer/HBoxContainer/PanelContainer2/HBoxContainer/SnapButton" to="." method="_on_snap_button_toggled"]
