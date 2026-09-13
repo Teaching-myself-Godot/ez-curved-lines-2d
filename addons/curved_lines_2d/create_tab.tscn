@@ -5,20 +5,7 @@
 [ext_resource type="StyleBox" uid="uid://hjtwi4stcxmu" path="res://addons/curved_lines_2d/icons/button_default_stylebox.tres" id="2_2chn8"]
 [ext_resource type="StyleBox" uid="uid://ddx1ye7r3r4lf" path="res://addons/curved_lines_2d/icons/button_pressed_stylebox.tres" id="3_hti8q"]
 [ext_resource type="StyleBox" uid="uid://bo0x8scw4k70k" path="res://addons/curved_lines_2d/icons/button_hover_stylebox.tres" id="4_powka"]
-[ext_resource type="Texture2D" uid="uid://b0edng6qet3bh" path="res://addons/curved_lines_2d/icons/edit.svg" id="5_dv24s"]
-[ext_resource type="Texture2D" uid="uid://1wn28rw8e06s" path="res://addons/curved_lines_2d/icons/pencil.svg" id="6_25oso"]
-[ext_resource type="Texture2D" uid="uid://b0ou57halsrct" path="res://addons/curved_lines_2d/icons/UniformTranslate.svg" id="6_dv24s"]
-[ext_resource type="Texture2D" uid="uid://cse1ocndh7mk0" path="res://addons/curved_lines_2d/icons/UniformScale.svg" id="7_25oso"]
-[ext_resource type="Texture2D" uid="uid://diudaka5rb6j7" path="res://addons/curved_lines_2d/icons/UniformRotate.svg" id="8_4nv23"]
-[ext_resource type="Texture2D" uid="uid://caijfmk3bwsoa" path="res://addons/curved_lines_2d/icons/brush.svg" id="9_h5wiq"]
-[ext_resource type="Texture2D" uid="uid://cvncsxcq4s508" path="res://addons/curved_lines_2d/icons/PaintBone.svg" id="9_v84w2"]
-[ext_resource type="Texture2D" uid="uid://ditk0dp8g3wy2" path="res://addons/curved_lines_2d/icons/knife.svg" id="11_4mrje"]
-[ext_resource type="Texture2D" uid="uid://ccyp1tik6avfs" path="res://addons/curved_lines_2d/icons/FlipHorizontal.svg" id="11_w8ysd"]
-[ext_resource type="Texture2D" uid="uid://b1cfmjoj1v3ed" path="res://addons/curved_lines_2d/icons/FlipVertical.svg" id="12_v84w2"]
-[ext_resource type="Texture2D" uid="uid://wdcgmyfmhwt3" path="res://addons/curved_lines_2d/icons/circle.svg" id="12_w8ysd"]
-[ext_resource type="Texture2D" uid="uid://cqfj4o5wa6ofi" path="res://addons/curved_lines_2d/icons/square.svg" id="13_v84w2"]
-[ext_resource type="Texture2D" uid="uid://d1cq1dok28bm5" path="res://addons/curved_lines_2d/icons/magnet.svg" id="17_6gyyp"]
-[ext_resource type="Texture2D" uid="uid://cl06senttwjrw" path="res://addons/curved_lines_2d/icons/link.svg" id="18_pa8xa"]
+[ext_resource type="Texture2D" uid="uid://ulvclg7al5cu" path="res://addons/curved_lines_2d/IconAtlas.svg" id="6_h5wiq"]
 [ext_resource type="PackedScene" uid="uid://cjbkvx1pj7gq2" path="res://addons/curved_lines_2d/collision_object_type_option_button.tscn" id="20_rpvk4"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dsrm6"]
@@ -29,9 +16,65 @@ content_margin_bottom = 8.0
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_dsrm6"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_4mrje"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w8ysd"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(16, 48, 16, 16)
+
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_4mrje"]
 color = Color(0.22352941, 0.22352941, 0.22352941, 1)
 vertical = true
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v84w2"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6gyyp"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 64, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vur25"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(48, 64, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pa8xa"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 64, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rpvk4"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dev60"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(16, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a0xul"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4nv23"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dv24s"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_25oso"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(48, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_powka"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hti8q"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(48, 80, 16, 16)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6gyyp"]
 bg_color = Color(0.105882354, 0.105882354, 0.105882354, 1)
@@ -91,7 +134,7 @@ theme_override_styles/hover = ExtResource("4_powka")
 toggle_mode = true
 button_pressed = true
 button_group = SubResource("ButtonGroup_dsrm6")
-icon = ExtResource("12_w8ysd")
+icon = SubResource("AtlasTexture_4mrje")
 expand_icon = true
 
 [node name="RectangleButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=326123292]
@@ -106,7 +149,7 @@ theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
-icon = ExtResource("13_v84w2")
+icon = SubResource("AtlasTexture_w8ysd")
 expand_icon = true
 
 [node name="VSeparator3" type="VSeparator" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=1808966385]
@@ -126,7 +169,7 @@ theme_override_styles/hover = ExtResource("4_powka")
 disabled = true
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
-icon = ExtResource("5_dv24s")
+icon = SubResource("AtlasTexture_v84w2")
 expand_icon = true
 
 [node name="TranslateButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=2135973308]
@@ -142,7 +185,7 @@ theme_override_styles/hover = ExtResource("4_powka")
 disabled = true
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
-icon = ExtResource("6_dv24s")
+icon = SubResource("AtlasTexture_6gyyp")
 expand_icon = true
 
 [node name="RotateButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=1983587831]
@@ -158,7 +201,7 @@ theme_override_styles/hover = ExtResource("4_powka")
 disabled = true
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
-icon = ExtResource("8_4nv23")
+icon = SubResource("AtlasTexture_vur25")
 expand_icon = true
 
 [node name="ResizeButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=1295417530]
@@ -174,7 +217,7 @@ theme_override_styles/hover = ExtResource("4_powka")
 disabled = true
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
-icon = ExtResource("7_25oso")
+icon = SubResource("AtlasTexture_pa8xa")
 expand_icon = true
 
 [node name="FlipHorizontalButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=1244107966]
@@ -188,7 +231,7 @@ theme_override_styles/normal = ExtResource("2_2chn8")
 theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
 disabled = true
-icon = ExtResource("11_w8ysd")
+icon = SubResource("AtlasTexture_rpvk4")
 expand_icon = true
 
 [node name="FlipVerticalButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=1942614303]
@@ -202,7 +245,7 @@ theme_override_styles/normal = ExtResource("2_2chn8")
 theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
 disabled = true
-icon = ExtResource("12_v84w2")
+icon = SubResource("AtlasTexture_dev60")
 expand_icon = true
 
 [node name="VSeparator2" type="VSeparator" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=425011772]
@@ -221,7 +264,7 @@ theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
-icon = ExtResource("9_h5wiq")
+icon = SubResource("AtlasTexture_a0xul")
 expand_icon = true
 
 [node name="PencilButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=648886700]
@@ -236,7 +279,7 @@ theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
-icon = ExtResource("6_25oso")
+icon = SubResource("AtlasTexture_4nv23")
 expand_icon = true
 
 [node name="KnifeButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=996550358]
@@ -252,7 +295,7 @@ theme_override_styles/hover = ExtResource("4_powka")
 disabled = true
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
-icon = ExtResource("11_4mrje")
+icon = SubResource("AtlasTexture_dv24s")
 expand_icon = true
 
 [node name="VSeparator4" type="VSeparator" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=8597082]
@@ -272,7 +315,7 @@ theme_override_styles/hover = ExtResource("4_powka")
 disabled = true
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
-icon = ExtResource("9_v84w2")
+icon = SubResource("AtlasTexture_25oso")
 expand_icon = true
 
 [node name="MergeButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=1953972853]
@@ -287,7 +330,7 @@ theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
-icon = ExtResource("18_pa8xa")
+icon = SubResource("AtlasTexture_powka")
 expand_icon = true
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer" unique_id=1219246689]
@@ -319,7 +362,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(0.6923286, 0.58203125, 1, 1)
+color = Color(0.9941406, 0, 0, 1)
 
 [node name="VSeparator4" type="VSeparator" parent="HBoxContainer/VBoxContainer2/PanelContainer2/HBoxContainer" unique_id=265864135]
 layout_mode = 2
@@ -338,7 +381,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Set Stroke Color"
 text = "Fill"
-color = Color(1, 1, 1, 1)
+color = Color(0.29223633, 0.4453125, 0.3807335, 1)
 
 [node name="VSeparator3" type="VSeparator" parent="HBoxContainer/VBoxContainer2/PanelContainer2/HBoxContainer" unique_id=2032786401]
 layout_mode = 2
@@ -355,7 +398,7 @@ theme_override_styles/normal = ExtResource("2_2chn8")
 theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
 toggle_mode = true
-icon = ExtResource("17_6gyyp")
+icon = SubResource("AtlasTexture_hti8q")
 expand_icon = true
 
 [node name="SnapResolutionInputContainer" type="PanelContainer" parent="HBoxContainer/VBoxContainer2/PanelContainer2/HBoxContainer" unique_id=579981428]
