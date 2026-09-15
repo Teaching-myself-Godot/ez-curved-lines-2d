@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 2.34.4 - Inkscape Sync
+## 2.34.5 - Inkscape Sync
 
 ### Added
 
@@ -10,6 +10,7 @@
 - A new opt-in flag to import svg `<g>`-groups as an edit group as well as `ScalableVectorShape2D` 
 - Support for inkscape based pivot points mapped from the `inkscape:transform-center-{xy}` attribute
 - When a shape's fill cannot be drawn due to a self-intersecting outline, show a configuration warning and highlight the self-intersections in the 2D Viewport.
+- A link to the new explainer video about Inkscape SVG Sync
 
 ### Changed
 

@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cybtin0ayniuw" path="res://addons/curved_lines_2d/video_thumbnails/pinball_release_notes.webp" id="3_68r4x"]
 [ext_resource type="Texture2D" uid="uid://maaagvgl7c6h" path="res://addons/curved_lines_2d/video_thumbnails/splash-new-features.webp" id="3_bmv75"]
 [ext_resource type="Texture2D" uid="uid://666dhwfxwq28" path="res://addons/curved_lines_2d/video_thumbnails/rig_svg.webp" id="3_ld6je"]
+[ext_resource type="Texture2D" uid="uid://buh7xydsbac0v" path="res://addons/curved_lines_2d/video_thumbnails/syncscape.webp" id="4_7txnu"]
 [ext_resource type="Texture2D" uid="uid://da4p2p44x1uxp" path="res://addons/curved_lines_2d/video_thumbnails/rigoberto.webp" id="6_db0v2"]
 [ext_resource type="Texture2D" uid="uid://bw5o0vuns12aa" path="res://addons/curved_lines_2d/video_thumbnails/animating_curves.webp" id="8_db0v2"]
 [ext_resource type="Texture2D" uid="uid://c1cjsc75decfe" path="res://addons/curved_lines_2d/video_thumbnails/animations_to_sprite_frames.webp" id="8_xvhpr"]
@@ -48,6 +49,14 @@ Right click to copy this link"
 img = ExtResource("3_bmv75")
 uri = "https://youtu.be/Pj-g_WFQvHA"
 text = "New Features Since A - Z"
+
+[node name="NewFeatures2" parent="HBoxContainer" unique_id=1359066903 instance=ExtResource("1_xhvii")]
+layout_mode = 2
+tooltip_text = "This link will open a webpage in your browser: https://youtu.be/0ObBsDngq4U
+Right click to copy this link"
+img = ExtResource("4_7txnu")
+uri = "https://youtu.be/0ObBsDngq4U"
+text = "A Synchronized Inkscape SVG Pipeline"
 
 [node name="RigSVG" parent="HBoxContainer" unique_id=127527835 instance=ExtResource("1_xhvii")]
 layout_mode = 2
