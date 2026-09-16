@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cmoxkoulpd7so" path="res://addons/curved_lines_2d/link_button_with_copy_hint.tscn" id="2_mgx58"]
 
 [node name="ProjectSettingsTab" type="ScrollContainer" unique_id=139653357]
+custom_minimum_size = Vector2(0, 200)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

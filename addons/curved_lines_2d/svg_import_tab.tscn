@@ -30,6 +30,7 @@ border_color = Color(0.439216, 0.729412, 0.980392, 1)
 border_blend = true
 
 [node name="SVGImportTab" type="HBoxContainer" unique_id=1623113116]
+custom_minimum_size = Vector2(0, 248)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -98,12 +99,6 @@ tooltip_text = "Checking this on will give the imported nodes a SyncedSVGRoot pa
 While in editor mode, the plugin keeps track of changes in the SVG file used for import and triggers a reimport for all the children of the corresponding SyncedSVGRoot"
 text = "Automatic Synchronization with SyncedSVGRoot"
 
-[node name="AntialiasedCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=1468204944]
-unique_name_in_owner = true
-layout_mode = 2
-tooltip_text = "It's probably better to use project settings for this, but checking this on will ensure that the antialised property is checked on for imported Line2D and Polygon2D"
-text = "Flag on antialiased for Polygon2D and Line2D"
-
 [node name="UseLine2DCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=45145165]
 unique_name_in_owner = true
 layout_mode = 2
@@ -117,6 +112,12 @@ tooltip_text = "Use a Line2D node to represent the stroke with in stead of a Pol
 - Line2D can set different Begin and End Cap Modes where Polygon2D can only pick one"
 button_pressed = true
 text = "Use Line2D for Strokes"
+
+[node name="AntialiasedCheckBox" type="CheckBox" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=1468204944]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "It's probably better to use project settings for this, but checking this on will ensure that the antialised property is checked on for imported Line2D and Polygon2D"
+text = "Flag on antialiased for Polygon2D and Line2D"
 
 [node name="CollisionObjectTypeOptionButton" parent="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer" unique_id=1316342792 instance=ExtResource("3_tqnmm")]
 layout_mode = 2

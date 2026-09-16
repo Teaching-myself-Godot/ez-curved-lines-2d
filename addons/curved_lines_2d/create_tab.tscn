@@ -8,12 +8,6 @@
 [ext_resource type="Texture2D" uid="uid://ulvclg7al5cu" path="res://addons/curved_lines_2d/IconAtlas.svg" id="6_h5wiq"]
 [ext_resource type="PackedScene" uid="uid://cjbkvx1pj7gq2" path="res://addons/curved_lines_2d/collision_object_type_option_button.tscn" id="20_rpvk4"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dsrm6"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 8.0
-
 [sub_resource type="ButtonGroup" id="ButtonGroup_dsrm6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4mrje"]
@@ -25,7 +19,11 @@ atlas = ExtResource("6_h5wiq")
 region = Rect2(16, 48, 16, 16)
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_4mrje"]
+content_margin_top = 4.0
+content_margin_bottom = 4.0
 color = Color(0.22352941, 0.22352941, 0.22352941, 1)
+grow_begin = -2.0
+grow_end = -2.0
 vertical = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v84w2"]
@@ -72,10 +70,6 @@ region = Rect2(48, 96, 16, 16)
 atlas = ExtResource("6_h5wiq")
 region = Rect2(32, 80, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_hti8q"]
-atlas = ExtResource("6_h5wiq")
-region = Rect2(48, 80, 16, 16)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6gyyp"]
 bg_color = Color(0.105882354, 0.105882354, 0.105882354, 1)
 corner_radius_top_left = 8
@@ -83,19 +77,30 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="CreateTab" type="ScrollContainer" unique_id=935001504]
+[sub_resource type="AtlasTexture" id="AtlasTexture_hti8q"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(48, 80, 16, 16)
+
+[node name="CreateTab" type="VBoxContainer" unique_id=2006994037]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 8
 script = ExtResource("1_vur25")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=278808976]
 layer = -1
-visible = false
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=844993800]
+custom_minimum_size = Vector2(600, 400)
+offset_right = 1083.0
+offset_bottom = 490.0
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
 
 [node name="Mockup" type="Sprite2D" parent="CanvasLayer" unique_id=26728106]
+visible = false
 position = Vector2(768, 200)
 texture = ExtResource("1_trri6")
 
@@ -104,24 +109,13 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=896130764]
+[node name="HFlowContainer" type="HFlowContainer" parent="HBoxContainer" unique_id=869442149]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 0
-theme_override_constants/separation = 0
-
-[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/VBoxContainer" unique_id=1318198124]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxEmpty_dsrm6")
-
-[node name="HFlowContainer" type="HFlowContainer" parent="HBoxContainer/VBoxContainer/PanelContainer" unique_id=869442149]
-layout_mode = 2
 size_flags_vertical = 2
 theme_override_constants/h_separation = 4
 
-[node name="CircleButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=1179979946]
+[node name="CircleButton" type="Button" parent="HBoxContainer/HFlowContainer" unique_id=1179979946]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -137,7 +131,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_4mrje")
 expand_icon = true
 
-[node name="RectangleButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=326123292]
+[node name="RectangleButton" type="Button" parent="HBoxContainer/HFlowContainer" unique_id=326123292]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -152,11 +146,11 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_w8ysd")
 expand_icon = true
 
-[node name="VSeparator3" type="VSeparator" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=1808966385]
+[node name="VSeparator3" type="VSeparator" parent="HBoxContainer/HFlowContainer" unique_id=1808966385]
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
 
-[node name="EditButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=1572018910]
+[node name="EditButton" type="Button" parent="HBoxContainer/HFlowContainer" unique_id=1572018910]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -172,7 +166,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_v84w2")
 expand_icon = true
 
-[node name="TranslateButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=2135973308]
+[node name="TranslateButton" type="Button" parent="HBoxContainer/HFlowContainer" unique_id=2135973308]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -188,7 +182,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_6gyyp")
 expand_icon = true
 
-[node name="RotateButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=1983587831]
+[node name="RotateButton" type="Button" parent="HBoxContainer/HFlowContainer" unique_id=1983587831]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -204,7 +198,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_vur25")
 expand_icon = true
 
-[node name="ResizeButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=1295417530]
+[node name="ResizeButton" type="Button" parent="HBoxContainer/HFlowContainer" unique_id=1295417530]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -220,7 +214,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_pa8xa")
 expand_icon = true
 
-[node name="FlipHorizontalButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=1244107966]
+[node name="FlipHorizontalButton" type="Button" parent="HBoxContainer/HFlowContainer" unique_id=1244107966]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -234,7 +228,7 @@ disabled = true
 icon = SubResource("AtlasTexture_rpvk4")
 expand_icon = true
 
-[node name="FlipVerticalButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=1942614303]
+[node name="FlipVerticalButton" type="Button" parent="HBoxContainer/HFlowContainer" unique_id=1942614303]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -248,11 +242,11 @@ disabled = true
 icon = SubResource("AtlasTexture_dev60")
 expand_icon = true
 
-[node name="VSeparator2" type="VSeparator" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=425011772]
+[node name="VSeparator2" type="VSeparator" parent="HBoxContainer/HFlowContainer" unique_id=425011772]
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
 
-[node name="BrushButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=1213772213]
+[node name="BrushButton" type="Button" parent="HBoxContainer/HFlowContainer" unique_id=1213772213]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -267,7 +261,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_a0xul")
 expand_icon = true
 
-[node name="PencilButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=648886700]
+[node name="PencilButton" type="Button" parent="HBoxContainer/HFlowContainer" unique_id=648886700]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -282,7 +276,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_4nv23")
 expand_icon = true
 
-[node name="KnifeButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=996550358]
+[node name="KnifeButton" type="Button" parent="HBoxContainer/HFlowContainer" unique_id=996550358]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -298,11 +292,11 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_dv24s")
 expand_icon = true
 
-[node name="VSeparator4" type="VSeparator" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=8597082]
+[node name="VSeparator4" type="VSeparator" parent="HBoxContainer/HFlowContainer" unique_id=8597082]
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
 
-[node name="BonePaintButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=1377374135]
+[node name="BonePaintButton" type="Button" parent="HBoxContainer/HFlowContainer" unique_id=1377374135]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -318,7 +312,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_25oso")
 expand_icon = true
 
-[node name="MergeButton" type="Button" parent="HBoxContainer/VBoxContainer/PanelContainer/HFlowContainer" unique_id=1953972853]
+[node name="MergeButton" type="Button" parent="HBoxContainer/HFlowContainer" unique_id=1953972853]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -333,61 +327,69 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_powka")
 expand_icon = true
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer" unique_id=1219246689]
+[node name="HFlowContainer2" type="HBoxContainer" parent="HBoxContainer" unique_id=1877054336]
 layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="PanelContainer2" type="PanelContainer" parent="HBoxContainer/VBoxContainer2" unique_id=1321012284]
-custom_minimum_size = Vector2(400, 0)
-layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxEmpty_dsrm6")
-
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2/PanelContainer2" unique_id=1670831685]
-layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 2
-alignment = 2
 
-[node name="EnableFillCheckBox" type="CheckBox" parent="HBoxContainer/VBoxContainer2/PanelContainer2/HBoxContainer" unique_id=3202312]
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/HFlowContainer2" unique_id=733683439]
+layout_mode = 2
+
+[node name="EnableFillCheckBox" type="CheckBox" parent="HBoxContainer/HFlowContainer2/HBoxContainer" unique_id=3202312]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 0
 tooltip_text = "Enable Fill"
 button_pressed = true
 text = "Fill"
 
-[node name="FillPickerButton" type="ColorPickerButton" parent="HBoxContainer/VBoxContainer2/PanelContainer2/HBoxContainer" unique_id=1356466570]
+[node name="FillPickerButton" type="ColorPickerButton" parent="HBoxContainer/HFlowContainer2/HBoxContainer" unique_id=1356466570]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 8
+size_flags_horizontal = 0
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(0.9941406, 0, 0, 1)
+color = Color(0.402344, 0, 0, 1)
 
-[node name="VSeparator4" type="VSeparator" parent="HBoxContainer/VBoxContainer2/PanelContainer2/HBoxContainer" unique_id=265864135]
+[node name="VSeparator4" type="VSeparator" parent="HBoxContainer/HFlowContainer2" unique_id=265864135]
 layout_mode = 2
+size_flags_horizontal = 0
 theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
 
-[node name="EnableStrokeCheckBox" type="CheckBox" parent="HBoxContainer/VBoxContainer2/PanelContainer2/HBoxContainer" unique_id=1780043997]
+[node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer/HFlowContainer2" unique_id=1454263497]
+layout_mode = 2
+
+[node name="EnableStrokeCheckBox" type="CheckBox" parent="HBoxContainer/HFlowContainer2/HBoxContainer2" unique_id=1780043997]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 0
 tooltip_text = "Enable Stroke"
 button_pressed = true
 text = "Stroke"
 
-[node name="StrokePickerButton" type="ColorPickerButton" parent="HBoxContainer/VBoxContainer2/PanelContainer2/HBoxContainer" unique_id=73211193]
+[node name="StrokePickerButton" type="ColorPickerButton" parent="HBoxContainer/HFlowContainer2/HBoxContainer2" unique_id=73211193]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 8
+size_flags_horizontal = 0
 tooltip_text = "Set Stroke Color"
 text = "Fill"
-color = Color(0.29223633, 0.4453125, 0.3807335, 1)
 
-[node name="VSeparator3" type="VSeparator" parent="HBoxContainer/VBoxContainer2/PanelContainer2/HBoxContainer" unique_id=2032786401]
+[node name="StrokeWidthContainer" type="PanelContainer" parent="HBoxContainer/HFlowContainer2/HBoxContainer2" unique_id=1573755340]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(108, 0)
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_6gyyp")
+
+[node name="VSeparator3" type="VSeparator" parent="HBoxContainer/HFlowContainer2" unique_id=2032786401]
+layout_mode = 2
+size_flags_horizontal = 0
 theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
 
-[node name="SnapButton" type="Button" parent="HBoxContainer/VBoxContainer2/PanelContainer2/HBoxContainer" unique_id=932977031]
+[node name="HBoxContainer3" type="HBoxContainer" parent="HBoxContainer/HFlowContainer2" unique_id=1804694337]
+layout_mode = 2
+
+[node name="SnapButton" type="Button" parent="HBoxContainer/HFlowContainer2/HBoxContainer3" unique_id=932977031]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -401,44 +403,56 @@ toggle_mode = true
 icon = SubResource("AtlasTexture_hti8q")
 expand_icon = true
 
-[node name="SnapResolutionInputContainer" type="PanelContainer" parent="HBoxContainer/VBoxContainer2/PanelContainer2/HBoxContainer" unique_id=579981428]
+[node name="SnapResolutionInputContainer" type="PanelContainer" parent="HBoxContainer/HFlowContainer2/HBoxContainer3" unique_id=579981428]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(108, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_6gyyp")
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2" unique_id=1251316347]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/VBoxContainer2/HBoxContainer2" unique_id=832151750]
+[node name="HBoxContainer2" type="HBoxContainer" parent="." unique_id=750669318]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxEmpty_dsrm6")
+size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/HBoxContainer2" unique_id=1853127897]
-custom_minimum_size = Vector2(400, 0)
+[node name="CreateEllipseContainer" type="CenterContainer" parent="HBoxContainer2" unique_id=1090990505]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
-size_flags_horizontal = 10
-theme_override_constants/separation = 0
+size_flags_horizontal = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2/HBoxContainer2/VBoxContainer" unique_id=27177121]
+[node name="Label" type="Label" parent="HBoxContainer2/CreateEllipseContainer" unique_id=18479790]
+layout_mode = 2
+text = "TODO: Create ellipse settings"
+
+[node name="PlaceHolderContainer" type="Control" parent="HBoxContainer2" unique_id=135183929]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GeneralSettingsContainer" type="ScrollContainer" parent="HBoxContainer2" unique_id=1331453309]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer2/GeneralSettingsContainer" unique_id=1219246689]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer2/GeneralSettingsContainer/VBoxContainer2" unique_id=27177121]
 layout_mode = 2
 size_flags_horizontal = 0
 
-[node name="PanelContainer2" type="PanelContainer" parent="HBoxContainer/VBoxContainer2/HBoxContainer2/VBoxContainer/HBoxContainer" unique_id=1379590224]
-custom_minimum_size = Vector2(244, 0)
-layout_mode = 2
-size_flags_horizontal = 0
-theme_override_styles/panel = SubResource("StyleBoxEmpty_dsrm6")
-
-[node name="CollisionObjectTypeOptionButton" parent="HBoxContainer/VBoxContainer2/HBoxContainer2/VBoxContainer/HBoxContainer/PanelContainer2" unique_id=2040470726 instance=ExtResource("20_rpvk4")]
+[node name="CollisionObjectTypeOptionButton" parent="HBoxContainer2/GeneralSettingsContainer/VBoxContainer2/HBoxContainer" unique_id=2040470726 instance=ExtResource("20_rpvk4")]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_styles/normal = ExtResource("2_2chn8")
+fit_to_longest_item = false
 
-[connection signal="toggled" from="HBoxContainer/VBoxContainer2/PanelContainer2/HBoxContainer/EnableFillCheckBox" to="." method="_on_fill_check_button_toggled"]
-[connection signal="color_changed" from="HBoxContainer/VBoxContainer2/PanelContainer2/HBoxContainer/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]
-[connection signal="toggled" from="HBoxContainer/VBoxContainer2/PanelContainer2/HBoxContainer/EnableStrokeCheckBox" to="." method="_on_stroke_check_button_toggled"]
-[connection signal="color_changed" from="HBoxContainer/VBoxContainer2/PanelContainer2/HBoxContainer/StrokePickerButton" to="." method="_on_stroke_picker_button_color_changed"]
-[connection signal="toggled" from="HBoxContainer/VBoxContainer2/PanelContainer2/HBoxContainer/SnapButton" to="." method="_on_snap_button_toggled"]
+[connection signal="toggled" from="HBoxContainer/HFlowContainer2/HBoxContainer/EnableFillCheckBox" to="." method="_on_fill_check_button_toggled"]
+[connection signal="color_changed" from="HBoxContainer/HFlowContainer2/HBoxContainer/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]
+[connection signal="toggled" from="HBoxContainer/HFlowContainer2/HBoxContainer2/EnableStrokeCheckBox" to="." method="_on_stroke_check_button_toggled"]
+[connection signal="color_changed" from="HBoxContainer/HFlowContainer2/HBoxContainer2/StrokePickerButton" to="." method="_on_stroke_picker_button_color_changed"]
+[connection signal="toggled" from="HBoxContainer/HFlowContainer2/HBoxContainer3/SnapButton" to="." method="_on_snap_button_toggled"]

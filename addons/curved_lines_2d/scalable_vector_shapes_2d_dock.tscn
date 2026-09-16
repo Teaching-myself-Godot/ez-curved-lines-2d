@@ -8,7 +8,6 @@
 [ext_resource type="PackedScene" uid="uid://hr7df18ngxmj" path="res://addons/curved_lines_2d/video_explainer_tab.tscn" id="6_mi8vn"]
 
 [node name="ScalableVectorShapes2DDock" type="TabContainer" unique_id=1015111779]
-custom_minimum_size = Vector2(0, 302)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -19,7 +18,7 @@ tab_0/title = "Project Settings"
 tab_1/title = "Create"
 tab_2/title = "Import SVG File"
 tab_3/title = "Advanced Editing"
-tab_4/title = "Video Explainers"
+tab_4/title = "Help"
 script = ExtResource("1_1mm15")
 
 [node name="ProjectSettingsTab" parent="." unique_id=1370039630 instance=ExtResource("4_psho1")]
@@ -54,4 +53,4 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 metadata/_tab_index = 4
-metadata/_tab_name = "Video Explainers"
+metadata/_tab_name = "Help"

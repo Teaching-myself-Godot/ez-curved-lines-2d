@@ -11,6 +11,11 @@ signal flip_horizontal()
 signal flip_vertical()
 
 var snap_resolution_input : EditorSpinSlider
+var stroke_width_input : EditorSpinSlider
+
+@onready var mode_containers := [
+	%CreateEllipseContainer, %PlaceHolderContainer
+]
 
 
 func _ready() -> void:
@@ -45,6 +50,11 @@ func _ready() -> void:
 		%FillPickerButton.focus_exited.connect(ProjectSettings.save)
 	%EnableStrokeCheckBox.button_pressed = CurvedLines2D._is_add_stroke_enabled()
 	%EnableFillCheckBox.button_pressed = CurvedLines2D._is_add_fill_enabled()
+	stroke_width_input = _make_number_input("Size", 10.0, 0.5, 100.0, "px", 0.5)
+	stroke_width_input.value = CurvedLines2D._get_default_stroke_width()
+	stroke_width_input.value_changed.connect(_on_stroke_width_input_value_changed)
+	%StrokeWidthContainer.add_child(stroke_width_input)
+
 
 	# Collision Object
 	(%CollisionObjectTypeOptionButton as OptionButton).select(CurvedLines2D._add_collision_object_type())
@@ -97,7 +107,14 @@ func set_edit_mode_toggle_button(mode : CurvedLines2D.SVSEditMode) -> void:
 
 
 func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
-	push_warning("TODO: show current details for: ", mode)
+	for mode_container : Control in mode_containers:
+		mode_container.hide()
+	match mode:
+		CurvedLines2D.SVSEditMode.CREATE_ELLIPSE:
+			%CreateEllipseContainer.show()
+		_:
+			%PlaceHolderContainer.show()
+			push_warning("TODO: show current details for: ", mode)
 
 
 func enable_svs_editors() -> void:
@@ -176,6 +193,10 @@ func _on_stroke_picker_button_color_changed(color: Color) -> void:
 func _on_stroke_check_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_STROKE_ENABLED, toggled_on)
 	ProjectSettings.save()
+
+
+func _on_stroke_width_input_value_changed(new_value: float) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_WIDTH, new_value)
 
 
 func _on_fill_check_button_toggled(toggled_on: bool) -> void:
