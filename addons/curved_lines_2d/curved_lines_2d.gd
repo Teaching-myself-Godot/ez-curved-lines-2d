@@ -21,9 +21,6 @@ const SETTING_NAME_DEFAULT_LINE_END_CAP := "addons/curved_lines_2d/line_end_cap"
 const SETTING_NAME_DEFAULT_LINE_JOINT_MODE := "addons/curved_lines_2d/line_joint_mode"
 const SETTING_NAME_DEFAULT_EXTRUSION := "addons/curved_lines_2d/stroke_extrusion_direction"
 
-const SETTING_NAME_SNAP_TO_PIXEL := "addons/curved_lines_2d/snap_to_pixel"
-const SETTING_NAME_SNAP_RESOLUTION := "addons/curved_lines_2d/snap_resolution"
-
 const SETTING_NAME_CURVE_UPDATE_CURVE_AT_RUNTIME := "addons/curved_lines_2d/update_curve_at_runtime"
 const SETTING_NAME_CURVE_RESOURCE_LOCAL_TO_SCENE := "addons/curved_lines_2d/make_resources_local_to_scene"
 const SETTING_NAME_CURVE_TOLERANCE_DEGREES := "addons/curved_lines_2d/default_tolerance_degrees"
@@ -42,6 +39,10 @@ const SETTING_NAME_BRUSH_ROTATION := "addons/curved_lines_2d/brush_rotation"
 const VIEWPORT_ORANGE := Color(0.737, 0.463, 0.337)
 const WIDTH_CURVE_EDIT_CLAMP_DISTANCE := 25.0
 const CLOSE_TO_MOUSE_RADIUS := 20.0
+
+const SET_PIVOT_BUTTON_IDX := 5
+const GRID_SNAP_BUTTON_IDX := 9
+const SNAPPING_OPTIONS_BUTTON_IDX := 10
 
 enum KeepDrawingBehavior {
 	KEEP_DRAWING_ON_SAME_PARENT,
@@ -609,18 +610,56 @@ func _find_scalable_vector_shape_2d_nodes_at(pos : Vector2) -> Array[Node]:
 	return []
 
 
-func _is_change_pivot_button_active() -> bool:
+func _get_canvas_item_editor_button_by_base_index(idx : int) -> BaseButton:
 	var results = (
 			_find_canvas_item_editor_control()
 					.find_children("*Button*", "", true, false)
 	)
+	if Engine.get_version_info()["minor"] >= 6 and idx >= 8:
+		idx += 1
 	if Engine.get_version_info()["minor"] >= 7:
-		if results.size() >= 7:
-			return results[6].button_pressed
+		if results.size() >= idx + 1:
+			return results[idx + 1]
 	else:
-		if results.size() >= 6:
-			return results[5].button_pressed
+		if results.size() >= idx:
+			return results[idx]
+	return null
+
+
+func _is_canvas_item_editor_button_pressed_by_base_index(idx : int) -> bool:
+	var candidate := _get_canvas_item_editor_button_by_base_index(idx)
+	if is_instance_valid(candidate) and candidate is BaseButton:
+		return (candidate as BaseButton).button_pressed
 	return false
+
+
+func _is_change_pivot_button_active() -> bool:
+	return _is_canvas_item_editor_button_pressed_by_base_index(SET_PIVOT_BUTTON_IDX)
+
+
+func _is_grid_snapping_active() -> bool:
+	return _is_canvas_item_editor_button_pressed_by_base_index(GRID_SNAP_BUTTON_IDX)
+
+
+func _is_pixel_snap_active() -> bool:
+	var candidate := _get_canvas_item_editor_button_by_base_index(SNAPPING_OPTIONS_BUTTON_IDX)
+	if candidate is MenuButton:
+		return (candidate as MenuButton).get_popup().is_item_checked(3)
+	return false
+
+
+func _is_snapped_to_pixel() -> bool:
+	return _is_grid_snapping_active() or _is_pixel_snap_active()
+
+
+func _get_snap_resolution() -> Vector2:
+	if _is_grid_snapping_active():
+		push_warning("TODO: get the actual resolution, spoofing 8x16")
+		return Vector2(8.0, 16.0)
+	# if _get_snap_resolution() is used at all here, pixel snap has
+	# already been checked to be true earlier
+	return Vector2.ONE
+
 
 
 func _get_select_mode_button() -> Button:
@@ -810,7 +849,6 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 			point_pos_txt = "Global curve handle position: (%.3f, %.3f)" % [handle["in_position"].x,handle["in_position"].y]
 		elif cp_out_is_hovered:
 			point_pos_txt = "Global curve handle position: (%.3f, %.3f)" % [handle["out_position"].x, handle["out_position"].y]
-
 		if svs.shape_type == ScalableVectorShape2D.ShapeType.RECT:
 			hint_txt += _draw_rect_control_point_handle(viewport_control, svs, handle, 'in',
 					cp_in_is_hovered)
@@ -914,6 +952,9 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 			hint_txt = "- Double click to add color stop here"
 	if not point_txt.is_empty():
 		_draw_point_number(viewport_control, point_hint_pos * mul, point_txt)
+
+	if not point_pos_txt.is_empty() and _is_pixel_snap_active() and not _is_grid_snapping_active():
+		point_pos_txt += "\n   (* pixel snap is active) "
 
 	if not _are_hints_enabled() and _am_showing_point_numbers():
 		_draw_hint(viewport_control, point_pos_txt, true)
@@ -3160,18 +3201,6 @@ static func _get_default_paint_order() -> PaintOrder:
 	if ProjectSettings.has_setting(SETTING_NAME_PAINT_ORDER):
 		return ProjectSettings.get_setting(SETTING_NAME_PAINT_ORDER)
 	return PaintOrder.FILL_STROKE_MARKERS
-
-
-static func _is_snapped_to_pixel() -> bool:
-	if ProjectSettings.has_setting(SETTING_NAME_SNAP_TO_PIXEL):
-		return ProjectSettings.get_setting(SETTING_NAME_SNAP_TO_PIXEL)
-	return false
-
-
-static func _get_snap_resolution() -> float:
-	if ProjectSettings.has_setting(SETTING_NAME_SNAP_RESOLUTION):
-		return ProjectSettings.get_setting(SETTING_NAME_SNAP_RESOLUTION)
-	return 1.0
 
 
 static func _is_setting_update_curve_at_runtime() -> bool:
