@@ -160,6 +160,7 @@ var _dragging_selection := false
 # Grid snap settings
 var _snap_dialog : AcceptDialog
 var _grid_snap_settings := Vector4i(0, 0, 1, 1)
+var _cached_grid_snap_settings : Dictionary[Node, Vector4i] = {}
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = load("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -214,6 +215,7 @@ func _enter_tree():
 	if not scalable_vector_shapes_2d_dock.brush_changed.is_connected(_update_brush):
 		scalable_vector_shapes_2d_dock.brush_changed.connect(_update_brush)
 	scene_changed.connect(_on_scene_changed)
+	scene_saved.connect(_on_scene_saved)
 	svs_edit_buttons = load("res://addons/curved_lines_2d/svs_edit_buttons.tscn").instantiate()
 	var canvas_editor_buttons_container = _find_canvas_item_editor_control().find_child("*HFlowContainer*", true, false)
 	canvas_editor_buttons_container.add_child(svs_edit_buttons)
@@ -250,16 +252,30 @@ func _on_confirm_grid_snap_settings() -> void:
 		int((spin_boxes[2] as SpinBox).value),
 		int((spin_boxes[3] as SpinBox).value)
 	)
+	var scene_root := EditorInterface.get_edited_scene_root()
+	if is_instance_valid(scene_root):
+		_cached_grid_snap_settings[scene_root] = _grid_snap_settings
 
 
 func _get_grid_snap_settings_from_scene_config() -> Vector4i:
 	var root := EditorInterface.get_edited_scene_root()
-	if not is_instance_valid(root) or root.scene_file_path.is_empty():
+	if not is_instance_valid(root):
+		# scene without a root node, just return last known settings
+		return _grid_snap_settings
+	if root.scene_file_path.is_empty():
+		# we could not find a file path but we may have remembered the settings
+		# from having this unsaved scene open earlier
+		if root in _cached_grid_snap_settings:
+			return _cached_grid_snap_settings[root]
 		return _grid_snap_settings
 	var settings_dir = EditorInterface.get_editor_paths().get_project_settings_dir()
 	var state_file = settings_dir.path_join("%s-editstate-%s.cfg" % [root.scene_file_path.get_file(), root.scene_file_path.md5_text()])
 	var config = ConfigFile.new()
 	if not config.load(state_file) == OK:
+		# we failed to open the state file for whatever reason, but we may have remembered the settings
+		# from having this unsaved scene open earlier
+		if root in _cached_grid_snap_settings:
+			return _cached_grid_snap_settings[root]
 		return _grid_snap_settings
 	var editor_states := config.get_value("editor_states", "2D", {})
 	var grid_offset : Vector2 = editor_states["grid_offset"] if "grid_offset" in editor_states else Vector2.ZERO
@@ -610,6 +626,10 @@ func _on_scene_changed(scn : Node):
 	else:
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(null)
 	_check_for_synced_svg_changes(scn)
+
+
+func _on_scene_saved(_file_path) -> void:
+	_grid_snap_settings = _get_grid_snap_settings_from_scene_config()
 
 
 func _check_for_synced_svg_changes(scn : Node) -> void:
