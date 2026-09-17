@@ -3,6 +3,7 @@ extends EditorPlugin
 
 class_name CurvedLines2D
 
+const REPO_ISSUE_PAGE := "https://github.com/Teaching-myself-Godot/ez-curved-lines-2d/issues"
 const SETTING_NAME_EDITING_ENABLED := "addons/curved_lines_2d/editing_enabled"
 const SETTING_NAME_HINTS_ENABLED := "addons/curved_lines_2d/hints_enabled"
 const SETTING_NAME_SHOW_POINT_NUMBERS := "addons/curved_lines_2d/show_point_numbers"
@@ -43,7 +44,6 @@ const CLOSE_TO_MOUSE_RADIUS := 20.0
 const SET_PIVOT_BUTTON_IDX := 5
 const GRID_SNAP_BUTTON_IDX := 9
 const SNAPPING_OPTIONS_BUTTON_IDX := 10
-
 enum KeepDrawingBehavior {
 	KEEP_DRAWING_ON_SAME_PARENT,
 	SELECT_DRAWN_SHAPE
@@ -157,6 +157,10 @@ var _last_skeleton : Skeleton2D = null
 # Generalized state handling helpers
 var _dragging_selection := false
 
+# Grid snap settings
+var _snap_dialog : AcceptDialog
+var _grid_snap_settings := Vector4i(0, 0, 1, 1)
+
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = load("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
 	plugin = load("res://addons/curved_lines_2d/line_2d_generator_inspector_plugin.gd").new()
@@ -199,7 +203,6 @@ func _enter_tree():
 		set_global_position_popup_panel.value_changed.connect(_on_global_position_for_handle_changed)
 	if not set_global_position_popup_panel.visibility_changed.is_connected(_commit_undo_redo_transaction):
 		set_global_position_popup_panel.visibility_changed.connect(_commit_undo_redo_transaction)
-
 	if not scalable_vector_shapes_2d_dock.shape_created.is_connected(_on_shape_created):
 		scalable_vector_shapes_2d_dock.shape_created.connect(_on_shape_created)
 	if not scalable_vector_shapes_2d_dock.set_shape_preview.is_connected(_on_shape_preview):
@@ -223,6 +226,45 @@ func _enter_tree():
 	svs_edit_buttons.flip_horizontal.connect(_flip_svs_horizontal)
 	svs_edit_buttons.flip_vertical.connect(_flip_svs_vertical)
 	svs_edit_buttons.convert_to_svs.connect(_extract_svs_from_selected_node)
+	_snap_dialog = _find_snap_dialog()
+	if not _snap_dialog.confirmed.is_connected(_on_confirm_grid_snap_settings):
+		_snap_dialog.confirmed.connect(_on_confirm_grid_snap_settings)
+
+
+func _find_snap_dialog() -> AcceptDialog:
+	var possible := EditorInterface.get_base_control().find_children("*", "SnapDialog", true, false)
+	if possible.is_empty():
+		push_warning("Could not find grid snap Dialog, please report as bug at ", REPO_ISSUE_PAGE)
+		return null
+	return possible[0]
+
+
+func _on_confirm_grid_snap_settings() -> void:
+	var spin_boxes := _snap_dialog.find_children("*", "SpinBox", true, false)
+	if spin_boxes.size() < 4:
+		push_warning("Could not find grid snap inputs, please report as bug at ", REPO_ISSUE_PAGE)
+		return
+	_grid_snap_settings = Vector4i(
+		int((spin_boxes[0] as SpinBox).value),
+		int((spin_boxes[1] as SpinBox).value),
+		int((spin_boxes[2] as SpinBox).value),
+		int((spin_boxes[3] as SpinBox).value)
+	)
+
+
+func _get_grid_snap_settings_from_scene_config() -> Vector4i:
+	var root := EditorInterface.get_edited_scene_root()
+	var settings_dir = EditorInterface.get_editor_paths().get_project_settings_dir()
+	var state_file = settings_dir.path_join("%s-editstate-%s.cfg" % [root.scene_file_path.get_file(), root.scene_file_path.md5_text()])
+	var config = ConfigFile.new()
+	if not config.load(state_file) == OK:
+		return Vector4i.ONE
+	var editor_states := config.get_value("editor_states", "2D", {})
+	var grid_offset : Vector2 = editor_states["grid_offset"] if "grid_offset" in editor_states else Vector2.ZERO
+	var grid_step : Vector2 = editor_states["grid_step"] if "grid_step" in editor_states else Vector2.ONE
+	return Vector4i(
+		int(grid_offset.x), int(grid_offset.y), int(grid_step.x), int(grid_step.y)
+	)
 
 
 func _find_canvas_item_editor_control() -> Node:
@@ -557,6 +599,7 @@ func _on_selection_changed():
 
 
 func _on_scene_changed(scn : Node):
+	_grid_snap_settings = _get_grid_snap_settings_from_scene_config()
 	if _scene_can_export_animations():
 		var anim_pl = scn.find_children("*", "AnimationPlayer").filter(
 				func(an): return an.owner == EditorInterface.get_edited_scene_root()
@@ -654,8 +697,7 @@ func _is_snapped_to_pixel() -> bool:
 
 func _get_snap_resolution() -> Vector2:
 	if _is_grid_snapping_active():
-		push_warning("TODO: get the actual resolution, spoofing 8x16")
-		return Vector2(8.0, 16.0)
+		return Vector2(_grid_snap_settings[2], _grid_snap_settings[3])
 	# if _get_snap_resolution() is used at all here, pixel snap has
 	# already been checked to be true earlier
 	return Vector2.ONE
@@ -3285,6 +3327,9 @@ static func _get_brush_shape() -> BrushShape:
 func _exit_tree():
 	if _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
 		_get_select_mode_button().toggled.disconnect(_on_select_mode_toggled)
+
+	if _snap_dialog.confirmed.is_connected(_on_confirm_grid_snap_settings):
+		_snap_dialog.confirmed.disconnect(_on_confirm_grid_snap_settings)
 
 	svs_edit_buttons.queue_free()
 	remove_inspector_plugin(plugin)
