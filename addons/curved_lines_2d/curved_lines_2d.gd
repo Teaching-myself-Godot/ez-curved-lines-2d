@@ -254,11 +254,13 @@ func _on_confirm_grid_snap_settings() -> void:
 
 func _get_grid_snap_settings_from_scene_config() -> Vector4i:
 	var root := EditorInterface.get_edited_scene_root()
+	if not is_instance_valid(root) or root.scene_file_path.is_empty():
+		return _grid_snap_settings
 	var settings_dir = EditorInterface.get_editor_paths().get_project_settings_dir()
 	var state_file = settings_dir.path_join("%s-editstate-%s.cfg" % [root.scene_file_path.get_file(), root.scene_file_path.md5_text()])
 	var config = ConfigFile.new()
 	if not config.load(state_file) == OK:
-		return Vector4i.ONE
+		return _grid_snap_settings
 	var editor_states := config.get_value("editor_states", "2D", {})
 	var grid_offset : Vector2 = editor_states["grid_offset"] if "grid_offset" in editor_states else Vector2.ZERO
 	var grid_step : Vector2 = editor_states["grid_step"] if "grid_step" in editor_states else Vector2.ONE
