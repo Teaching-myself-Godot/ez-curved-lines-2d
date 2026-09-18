@@ -1294,7 +1294,7 @@ func rotate_points_by(angle : float, rotation_origin := Vector2.ZERO) -> void:
 
 
 func set_global_curve_point_position(global_pos : Vector2, point_idx : int, snapped : bool,
-			snap : float) -> void:
+			snap : Vector2) -> void:
 	if curve.point_count > point_idx:
 		if snapped:
 			global_pos = snapped(global_pos, Vector2.ONE * snap)
@@ -1302,7 +1302,7 @@ func set_global_curve_point_position(global_pos : Vector2, point_idx : int, snap
 
 
 func set_global_curve_cp_in_position(global_pos : Vector2, point_idx : int, snapped : bool,
-			snap : float) -> void:
+			snap : Vector2) -> void:
 	if curve.point_count > point_idx:
 		if snapped:
 			global_pos = snapped(global_pos, Vector2.ONE * snap)
@@ -1311,7 +1311,7 @@ func set_global_curve_cp_in_position(global_pos : Vector2, point_idx : int, snap
 
 
 func set_global_curve_cp_out_position(global_pos : Vector2, point_idx : int, snapped : bool,
-			snap : float) -> void:
+			snap : Vector2) -> void:
 	if curve.point_count > point_idx:
 		if snapped:
 			global_pos = snapped(global_pos, Vector2.ONE * snap)

@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.35.0 - Snap to Grid
+
+### Added
+
+- Integrated grid snapping replaces the custom snap to pixel (out of scope this release: smart snapping, grid offset)
+
+### Changed
+
+- Bugfix: snap to grid now works correctly for the ellipse/rectangle resize handle
 
 ## 2.34.5 - Inkscape Sync
 
