@@ -1155,7 +1155,7 @@ func _draw_change_width_curve_icon(viewport_control : Control, p : Vector2, segm
 func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2D, only_cutout_hints : bool) -> void:
 	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	var p := _vp_transform(mouse_pos)
 
 	if _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
@@ -1397,7 +1397,7 @@ func _handle_knife_draw(viewport_control : Control) -> void:
 	if is_instance_valid(current_selection) and Input.is_key_pressed(KEY_SHIFT) and _drawing_pencil_line:
 		var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_snapped_to_pixel():
-			pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+			pos = pos.snapped(_get_snap_resolution())
 
 		for p in _pencil_stroke:
 			_draw_crosshair(
@@ -1454,7 +1454,7 @@ func _handle_pencil_draw(viewport_control : Control) -> void:
 	if is_instance_valid(current_selection) and Input.is_key_pressed(KEY_SHIFT) and _drawing_pencil_line:
 		var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_snapped_to_pixel():
-			pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+			pos = pos.snapped(_get_snap_resolution())
 
 		for p in _pencil_stroke:
 			_draw_crosshair(
@@ -1570,7 +1570,7 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 	else:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_snapped_to_pixel():
-			mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+			mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 		var pts := Array(Geometry2DUtil.get_polygon_at_granularity(_current_brush_shape,
 				_get_guarded_brush_granularity()
 		)).map(func(p): return _vp_transform(p * Transform2D(mul.get_rotation(), mul.get_scale(), 0.0, Vector2.ZERO) + mouse_pos))
@@ -1817,9 +1817,9 @@ func _update_rect_dimensions(svs : ScalableVectorShape2D, mouse_pos : Vector2) -
 		_start_undo_redo_transaction("Change rect size on " + str(svs))
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS] = [[svs, 'size', svs.size]]
 	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
-	var top_left := (-svs.size * 0.5).rotated(svs.spin) + svs.offset
-	svs.size = ((svs.to_local(mouse_pos)) - top_left).rotated(-svs.spin)
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
+	var d := (svs.to_local(mouse_pos) - svs.offset).rotated(-svs.spin)
+	svs.size = d * 2
 	undo_redo_transaction[UndoRedoEntry.DO_PROPS] = [[svs, 'size', svs.size]]
 
 
@@ -1830,7 +1830,7 @@ func _update_rect_corner_radius(svs : ScalableVectorShape2D, mouse_pos : Vector2
 			[svs, 'rx', svs.rx], [svs, 'ry', svs.ry]
 		]
 	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	var top_left := (-svs.size * 0.5).rotated(svs.spin) + svs.offset
 	if prop_name == 'rx':
 		svs.rx = svs.to_local(mouse_pos).rotated(-svs.spin).x - top_left.rotated(-svs.spin).x
@@ -1878,7 +1878,7 @@ func _update_curve_cp_in_position(current_selection : ScalableVectorShape2D, mou
 
 func _update_gradient_from_position(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
 	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Move gradient from position for %s" % str(svs))
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS].append([svs.polygon.texture, 'fill_from',
@@ -1892,7 +1892,7 @@ func _update_gradient_from_position(svs : ScalableVectorShape2D, mouse_pos : Vec
 
 func _update_gradient_to_position(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
 	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Move gradient to position for %s" % str(svs))
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS].append([svs.polygon.texture, 'fill_to',
@@ -1914,7 +1914,7 @@ func _get_gradient_offset(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> f
 
 func _update_gradient_stop_color_pos(svs : ScalableVectorShape2D, mouse_pos : Vector2, idx : int) -> void:
 	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	var new_offset := _get_gradient_offset(svs, mouse_pos)
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Move gradient offset  %d on %s" % [idx, svs])
@@ -2251,7 +2251,7 @@ func _start_cutout_shape(svs : ScalableVectorShape2D, pos : Vector2) -> void:
 			svs
 	)
 	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	new_shape.curve = Curve2D.new()
 	new_shape.position = svs.to_local(mouse_pos)
 	new_shape.shape_type = current_cutout_shape
@@ -2306,7 +2306,7 @@ func _drag_curve_segment(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> vo
 		return
 
 	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	# Compute control points based on mouse position to align middle of segment curve to it
 	# using the quadratic Bézier control point
 	var idx : int = md_closest_point.before_segment
@@ -2373,7 +2373,7 @@ func _handle_input_for_uniform_translate(event : InputEvent, svs : ScalableVecto
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			var drag_delta := mouse_pos - _drag_start
 			if _is_snapped_to_pixel():
-				drag_delta = drag_delta.snapped(Vector2.ONE * _get_snap_resolution())
+				drag_delta = drag_delta.snapped(_get_snap_resolution())
 			if drag_delta.abs() > Vector2.ZERO:
 				_drag_start = mouse_pos
 				undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'translate_points_by', drag_delta])
@@ -2418,7 +2418,7 @@ func _handle_input_for_uniform_scale(event : InputEvent, svs : ScalableVectorSha
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			var drag_delta := mouse_pos - _drag_start
 			if _is_snapped_to_pixel():
-				drag_delta = drag_delta.snapped(Vector2.ONE * _get_snap_resolution())
+				drag_delta = drag_delta.snapped(_get_snap_resolution())
 			if drag_delta.abs() > Vector2.ZERO:
 				undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'scale_points_by', _drag_start, mouse_pos, Input.is_key_pressed(KEY_SHIFT)])
 				undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'scale_points_by', mouse_pos, _drag_start, Input.is_key_pressed(KEY_SHIFT)])
@@ -2488,7 +2488,7 @@ func _handle_draw_merge_box_input(event) -> bool:
 func _create_freehand_shape(name : String) -> ScalableVectorShape2D:
 	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if _is_snapped_to_pixel():
-		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+		pos = pos.snapped(_get_snap_resolution())
 
 	var new_shape := ScalableVectorShape2D.new()
 	new_shape.curve = Curve2D.new()
@@ -2504,7 +2504,7 @@ func _start_pencil_draw():
 			current_selection if current_selection else EditorInterface.get_edited_scene_root()
 	)
 	if _is_snapped_to_pixel():
-		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+		pos = pos.snapped(_get_snap_resolution())
 	_pencil_start_pos = pos
 	_pencil_stroke = [pos]
 	_drawing_pencil_line = true
@@ -2571,7 +2571,7 @@ func _add_point_to_pencil_line() -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	var pos := _svp_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), current_selection)
 	if _is_snapped_to_pixel():
-		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+		pos = pos.snapped(_get_snap_resolution())
 	if not _pencil_stroke.is_empty() and _pencil_stroke[-1].distance_to(pos) > _get_freehand_draw_granularity():
 		if _svs_edit_mode == SVSEditMode.KNIFE and _is_svs_valid(current_selection):
 			var self_intersection = Geometry2DUtil.will_self_intersect_at(_pencil_stroke, pos)
@@ -2703,7 +2703,7 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 			current_selection if current_selection else EditorInterface.get_edited_scene_root()
 	)
 	if _is_snapped_to_pixel():
-		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+		pos = pos.snapped(_get_snap_resolution())
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		update_overlays()
@@ -2958,7 +2958,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				return true
 			elif _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
 				if _is_snapped_to_pixel():
-					mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+					mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 				if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and
 							current_selection.has_fine_point(
 									_svp_mouse_pos(mouse_pos, current_selection))):
@@ -2966,7 +2966,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				return true
 			elif _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed():
 				if _is_snapped_to_pixel():
-					mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+					mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 				if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 					_add_point_on_position(current_selection, mouse_pos)
 				return true
