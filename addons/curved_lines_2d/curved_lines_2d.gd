@@ -687,6 +687,8 @@ func _get_canvas_item_editor_button_by_base_index(idx : int) -> BaseButton:
 	)
 	if Engine.get_version_info()["minor"] >= 6 and idx >= 8:
 		idx += 1
+	if Engine.get_version_info()["minor"] >= 8 and idx >= 8:
+		idx += 4
 	if Engine.get_version_info()["minor"] >= 7:
 		if results.size() >= idx + 1:
 			return results[idx + 1]
