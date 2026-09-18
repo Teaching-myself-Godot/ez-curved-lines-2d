@@ -160,7 +160,6 @@ var _dragging_selection := false
 # Grid snap settings
 var _snap_dialog : AcceptDialog
 var _grid_snap_settings := Vector4i(0, 0, 1, 1)
-var _cached_grid_snap_settings : Dictionary[Node, Vector4i] = {}
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = load("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
@@ -229,7 +228,7 @@ func _enter_tree():
 	svs_edit_buttons.flip_vertical.connect(_flip_svs_vertical)
 	svs_edit_buttons.convert_to_svs.connect(_extract_svs_from_selected_node)
 	_snap_dialog = _find_snap_dialog()
-	if not _snap_dialog.confirmed.is_connected(_on_confirm_grid_snap_settings):
+	if is_instance_valid(_snap_dialog) and not _snap_dialog.confirmed.is_connected(_on_confirm_grid_snap_settings):
 		_snap_dialog.confirmed.connect(_on_confirm_grid_snap_settings)
 
 
@@ -242,9 +241,10 @@ func _find_snap_dialog() -> AcceptDialog:
 
 
 func _on_confirm_grid_snap_settings() -> void:
+	if not is_instance_valid(_snap_dialog):
+		return
 	var spin_boxes := _snap_dialog.find_children("*", "SpinBox", true, false)
 	if spin_boxes.size() < 4:
-		push_warning("Could not find grid snap inputs, please report as bug at ", REPO_ISSUE_PAGE)
 		return
 	_grid_snap_settings = Vector4i(
 		int((spin_boxes[0] as SpinBox).value),
@@ -252,30 +252,35 @@ func _on_confirm_grid_snap_settings() -> void:
 		int((spin_boxes[2] as SpinBox).value),
 		int((spin_boxes[3] as SpinBox).value)
 	)
-	var scene_root := EditorInterface.get_edited_scene_root()
-	if is_instance_valid(scene_root):
-		_cached_grid_snap_settings[scene_root] = _grid_snap_settings
+
+
+func _override_and_confirm_grid_settings_dialog() -> void:
+	if not is_instance_valid(_snap_dialog):
+		return
+	var spin_boxes := _snap_dialog.find_children("*", "SpinBox", true, false)
+	if spin_boxes.size() < 4:
+		return
+	for i in 4:
+		(spin_boxes[i] as SpinBox).value = _grid_snap_settings[i]
+	_snap_dialog.confirmed.emit()
 
 
 func _get_grid_snap_settings_from_scene_config() -> Vector4i:
 	var root := EditorInterface.get_edited_scene_root()
 	if not is_instance_valid(root):
-		# scene without a root node, just return last known settings
+		# scene without a root node, just return last known setting
+		_override_and_confirm_grid_settings_dialog()
 		return _grid_snap_settings
 	if root.scene_file_path.is_empty():
-		# we could not find a file path but we may have remembered the settings
-		# from having this unsaved scene open earlier
-		if root in _cached_grid_snap_settings:
-			return _cached_grid_snap_settings[root]
+		# we could not find a file path, so fall back
+		_override_and_confirm_grid_settings_dialog()
 		return _grid_snap_settings
 	var settings_dir = EditorInterface.get_editor_paths().get_project_settings_dir()
 	var state_file = settings_dir.path_join("%s-editstate-%s.cfg" % [root.scene_file_path.get_file(), root.scene_file_path.md5_text()])
 	var config = ConfigFile.new()
 	if not config.load(state_file) == OK:
-		# we failed to open the state file for whatever reason, but we may have remembered the settings
-		# from having this unsaved scene open earlier
-		if root in _cached_grid_snap_settings:
-			return _cached_grid_snap_settings[root]
+		# we failed to open the state file for whatever reason, so fall back
+		_override_and_confirm_grid_settings_dialog()
 		return _grid_snap_settings
 	var editor_states := config.get_value("editor_states", "2D", {})
 	var grid_offset : Vector2 = editor_states["grid_offset"] if "grid_offset" in editor_states else Vector2.ZERO
@@ -3350,7 +3355,7 @@ func _exit_tree():
 	if _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
 		_get_select_mode_button().toggled.disconnect(_on_select_mode_toggled)
 
-	if _snap_dialog.confirmed.is_connected(_on_confirm_grid_snap_settings):
+	if is_instance_valid(_snap_dialog) and _snap_dialog.confirmed.is_connected(_on_confirm_grid_snap_settings):
 		_snap_dialog.confirmed.disconnect(_on_confirm_grid_snap_settings)
 
 	svs_edit_buttons.queue_free()
