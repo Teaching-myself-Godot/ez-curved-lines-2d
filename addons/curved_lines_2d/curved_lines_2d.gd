@@ -3,6 +3,7 @@ extends EditorPlugin
 
 class_name CurvedLines2D
 
+const REPO_ISSUE_PAGE := "https://github.com/Teaching-myself-Godot/ez-curved-lines-2d/issues"
 const SETTING_NAME_EDITING_ENABLED := "addons/curved_lines_2d/editing_enabled"
 const SETTING_NAME_HINTS_ENABLED := "addons/curved_lines_2d/hints_enabled"
 const SETTING_NAME_SHOW_POINT_NUMBERS := "addons/curved_lines_2d/show_point_numbers"
@@ -20,9 +21,6 @@ const SETTING_NAME_DEFAULT_LINE_BEGIN_CAP := "addons/curved_lines_2d/line_begin_
 const SETTING_NAME_DEFAULT_LINE_END_CAP := "addons/curved_lines_2d/line_end_cap"
 const SETTING_NAME_DEFAULT_LINE_JOINT_MODE := "addons/curved_lines_2d/line_joint_mode"
 const SETTING_NAME_DEFAULT_EXTRUSION := "addons/curved_lines_2d/stroke_extrusion_direction"
-
-const SETTING_NAME_SNAP_TO_PIXEL := "addons/curved_lines_2d/snap_to_pixel"
-const SETTING_NAME_SNAP_RESOLUTION := "addons/curved_lines_2d/snap_resolution"
 
 const SETTING_NAME_CURVE_UPDATE_CURVE_AT_RUNTIME := "addons/curved_lines_2d/update_curve_at_runtime"
 const SETTING_NAME_CURVE_RESOURCE_LOCAL_TO_SCENE := "addons/curved_lines_2d/make_resources_local_to_scene"
@@ -43,6 +41,9 @@ const VIEWPORT_ORANGE := Color(0.737, 0.463, 0.337)
 const WIDTH_CURVE_EDIT_CLAMP_DISTANCE := 25.0
 const CLOSE_TO_MOUSE_RADIUS := 20.0
 
+const SET_PIVOT_BUTTON_IDX := 5
+const GRID_SNAP_BUTTON_IDX := 9
+const SNAPPING_OPTIONS_BUTTON_IDX := 10
 enum KeepDrawingBehavior {
 	KEEP_DRAWING_ON_SAME_PARENT,
 	SELECT_DRAWN_SHAPE
@@ -156,6 +157,10 @@ var _last_skeleton : Skeleton2D = null
 # Generalized state handling helpers
 var _dragging_selection := false
 
+# Grid snap settings
+var _snap_dialog : AcceptDialog
+var _grid_snap_settings := Vector4i(0, 0, 1, 1)
+
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = load("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
 	plugin = load("res://addons/curved_lines_2d/line_2d_generator_inspector_plugin.gd").new()
@@ -198,7 +203,6 @@ func _enter_tree():
 		set_global_position_popup_panel.value_changed.connect(_on_global_position_for_handle_changed)
 	if not set_global_position_popup_panel.visibility_changed.is_connected(_commit_undo_redo_transaction):
 		set_global_position_popup_panel.visibility_changed.connect(_commit_undo_redo_transaction)
-
 	if not scalable_vector_shapes_2d_dock.shape_created.is_connected(_on_shape_created):
 		scalable_vector_shapes_2d_dock.shape_created.connect(_on_shape_created)
 	if not scalable_vector_shapes_2d_dock.set_shape_preview.is_connected(_on_shape_preview):
@@ -211,6 +215,7 @@ func _enter_tree():
 	scalable_vector_shapes_2d_dock.create_tab.flip_horizontal.connect(_flip_svs_horizontal)
 	scalable_vector_shapes_2d_dock.create_tab.flip_vertical.connect(_flip_svs_vertical)
 	scene_changed.connect(_on_scene_changed)
+	scene_saved.connect(_on_scene_saved)
 	svs_edit_buttons = load("res://addons/curved_lines_2d/svs_edit_buttons.tscn").instantiate()
 	var canvas_editor_buttons_container = _find_canvas_item_editor_control().find_child("*HFlowContainer*", true, false)
 	canvas_editor_buttons_container.add_child(svs_edit_buttons)
@@ -223,6 +228,67 @@ func _enter_tree():
 	svs_edit_buttons.flip_horizontal.connect(_flip_svs_horizontal)
 	svs_edit_buttons.flip_vertical.connect(_flip_svs_vertical)
 	svs_edit_buttons.convert_to_svs.connect(_extract_svs_from_selected_node)
+	_snap_dialog = _find_snap_dialog()
+	if is_instance_valid(_snap_dialog) and not _snap_dialog.confirmed.is_connected(_on_confirm_grid_snap_settings):
+		_snap_dialog.confirmed.connect(_on_confirm_grid_snap_settings)
+
+
+func _find_snap_dialog() -> AcceptDialog:
+	var possible := EditorInterface.get_base_control().find_children("*", "SnapDialog", true, false)
+	if possible.is_empty():
+		push_warning("Could not find grid snap Dialog, please report as bug at ", REPO_ISSUE_PAGE)
+		return null
+	return possible[0]
+
+
+func _on_confirm_grid_snap_settings() -> void:
+	if not is_instance_valid(_snap_dialog):
+		return
+	var spin_boxes := _snap_dialog.find_children("*", "SpinBox", true, false)
+	if spin_boxes.size() < 4:
+		return
+	_grid_snap_settings = Vector4i(
+		int((spin_boxes[0] as SpinBox).value),
+		int((spin_boxes[1] as SpinBox).value),
+		int((spin_boxes[2] as SpinBox).value),
+		int((spin_boxes[3] as SpinBox).value)
+	)
+
+
+func _override_and_confirm_grid_settings_dialog() -> void:
+	if not is_instance_valid(_snap_dialog):
+		return
+	var spin_boxes := _snap_dialog.find_children("*", "SpinBox", true, false)
+	if spin_boxes.size() < 4:
+		return
+	for i in 4:
+		(spin_boxes[i] as SpinBox).value = _grid_snap_settings[i]
+	_snap_dialog.confirmed.emit()
+
+
+func _get_grid_snap_settings_from_scene_config() -> Vector4i:
+	var root := EditorInterface.get_edited_scene_root()
+	if not is_instance_valid(root):
+		# scene without a root node, just return last known setting
+		_override_and_confirm_grid_settings_dialog()
+		return _grid_snap_settings
+	if root.scene_file_path.is_empty():
+		# we could not find a file path, so fall back
+		_override_and_confirm_grid_settings_dialog()
+		return _grid_snap_settings
+	var settings_dir = EditorInterface.get_editor_paths().get_project_settings_dir()
+	var state_file = settings_dir.path_join("%s-editstate-%s.cfg" % [root.scene_file_path.get_file(), root.scene_file_path.md5_text()])
+	var config = ConfigFile.new()
+	if not config.load(state_file) == OK:
+		# we failed to open the state file for whatever reason, so fall back
+		_override_and_confirm_grid_settings_dialog()
+		return _grid_snap_settings
+	var editor_states := config.get_value("editor_states", "2D", {})
+	var grid_offset : Vector2 = editor_states["grid_offset"] if "grid_offset" in editor_states else Vector2.ZERO
+	var grid_step : Vector2 = editor_states["grid_step"] if "grid_step" in editor_states else Vector2.ONE
+	return Vector4i(
+		int(grid_offset.x), int(grid_offset.y), int(grid_step.x), int(grid_step.y)
+	)
 
 
 func _find_canvas_item_editor_control() -> Node:
@@ -563,6 +629,7 @@ func _on_selection_changed():
 
 
 func _on_scene_changed(scn : Node):
+	_grid_snap_settings = _get_grid_snap_settings_from_scene_config()
 	if _scene_can_export_animations():
 		var anim_pl = scn.find_children("*", "AnimationPlayer").filter(
 				func(an): return an.owner == EditorInterface.get_edited_scene_root()
@@ -571,6 +638,10 @@ func _on_scene_changed(scn : Node):
 	else:
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(null)
 	_check_for_synced_svg_changes(scn)
+
+
+func _on_scene_saved(_file_path) -> void:
+	_grid_snap_settings = _get_grid_snap_settings_from_scene_config()
 
 
 func _check_for_synced_svg_changes(scn : Node) -> void:
@@ -616,18 +687,57 @@ func _find_scalable_vector_shape_2d_nodes_at(pos : Vector2) -> Array[Node]:
 	return []
 
 
-func _is_change_pivot_button_active() -> bool:
+func _get_canvas_item_editor_button_by_base_index(idx : int) -> BaseButton:
 	var results = (
 			_find_canvas_item_editor_control()
 					.find_children("*Button*", "", true, false)
 	)
+	if Engine.get_version_info()["minor"] >= 6 and idx >= 8:
+		idx += 1
+	if Engine.get_version_info()["minor"] >= 8 and idx >= 8:
+		idx += 4
 	if Engine.get_version_info()["minor"] >= 7:
-		if results.size() >= 7:
-			return results[6].button_pressed
+		if results.size() >= idx + 1:
+			return results[idx + 1]
 	else:
-		if results.size() >= 6:
-			return results[5].button_pressed
+		if results.size() >= idx:
+			return results[idx]
+	return null
+
+
+func _is_canvas_item_editor_button_pressed_by_base_index(idx : int) -> bool:
+	var candidate := _get_canvas_item_editor_button_by_base_index(idx)
+	if is_instance_valid(candidate) and candidate is BaseButton:
+		return (candidate as BaseButton).button_pressed
 	return false
+
+
+func _is_change_pivot_button_active() -> bool:
+	return _is_canvas_item_editor_button_pressed_by_base_index(SET_PIVOT_BUTTON_IDX)
+
+
+func _is_grid_snapping_active() -> bool:
+	return _is_canvas_item_editor_button_pressed_by_base_index(GRID_SNAP_BUTTON_IDX)
+
+
+func _is_pixel_snap_active() -> bool:
+	var candidate := _get_canvas_item_editor_button_by_base_index(SNAPPING_OPTIONS_BUTTON_IDX)
+	if candidate is MenuButton:
+		return (candidate as MenuButton).get_popup().is_item_checked(3)
+	return false
+
+
+func _is_snapped_to_pixel() -> bool:
+	return _is_grid_snapping_active() or _is_pixel_snap_active()
+
+
+func _get_snap_resolution() -> Vector2:
+	if _is_grid_snapping_active():
+		return Vector2(_grid_snap_settings[2], _grid_snap_settings[3])
+	# if _get_snap_resolution() is used at all here, pixel snap has
+	# already been checked to be true earlier
+	return Vector2.ONE
+
 
 
 func _get_select_mode_button() -> Button:
@@ -817,7 +927,6 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 			point_pos_txt = "Global curve handle position: (%.3f, %.3f)" % [handle["in_position"].x,handle["in_position"].y]
 		elif cp_out_is_hovered:
 			point_pos_txt = "Global curve handle position: (%.3f, %.3f)" % [handle["out_position"].x, handle["out_position"].y]
-
 		if svs.shape_type == ScalableVectorShape2D.ShapeType.RECT:
 			hint_txt += _draw_rect_control_point_handle(viewport_control, svs, handle, 'in',
 					cp_in_is_hovered)
@@ -921,6 +1030,9 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 			hint_txt = "- Double click to add color stop here"
 	if not point_txt.is_empty():
 		_draw_point_number(viewport_control, point_hint_pos * mul, point_txt)
+
+	if not point_pos_txt.is_empty() and _is_pixel_snap_active() and not _is_grid_snapping_active():
+		point_pos_txt += "\n   (* pixel snap is active) "
 
 	if not _are_hints_enabled() and _am_showing_point_numbers():
 		_draw_hint(viewport_control, point_pos_txt, true)
@@ -1052,7 +1164,7 @@ func _draw_change_width_curve_icon(viewport_control : Control, p : Vector2, segm
 func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2D, only_cutout_hints : bool) -> void:
 	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	var p := _vp_transform(mouse_pos)
 
 	if _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
@@ -1294,7 +1406,7 @@ func _handle_knife_draw(viewport_control : Control) -> void:
 	if is_instance_valid(current_selection) and Input.is_key_pressed(KEY_SHIFT) and _drawing_pencil_line:
 		var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_snapped_to_pixel():
-			pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+			pos = pos.snapped(_get_snap_resolution())
 
 		for p in _pencil_stroke:
 			_draw_crosshair(
@@ -1351,7 +1463,7 @@ func _handle_pencil_draw(viewport_control : Control) -> void:
 	if is_instance_valid(current_selection) and Input.is_key_pressed(KEY_SHIFT) and _drawing_pencil_line:
 		var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_snapped_to_pixel():
-			pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+			pos = pos.snapped(_get_snap_resolution())
 
 		for p in _pencil_stroke:
 			_draw_crosshair(
@@ -1467,7 +1579,7 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 	else:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_snapped_to_pixel():
-			mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+			mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 		var pts := Array(Geometry2DUtil.get_polygon_at_granularity(_current_brush_shape,
 				_get_guarded_brush_granularity()
 		)).map(func(p): return _vp_transform(p * Transform2D(mul.get_rotation(), mul.get_scale(), 0.0, Vector2.ZERO) + mouse_pos))
@@ -1714,9 +1826,9 @@ func _update_rect_dimensions(svs : ScalableVectorShape2D, mouse_pos : Vector2) -
 		_start_undo_redo_transaction("Change rect size on " + str(svs))
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS] = [[svs, 'size', svs.size]]
 	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
-	var top_left := (-svs.size * 0.5).rotated(svs.spin) + svs.offset
-	svs.size = ((svs.to_local(mouse_pos)) - top_left).rotated(-svs.spin)
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
+	var d := (svs.to_local(mouse_pos) - svs.offset).rotated(-svs.spin)
+	svs.size = d * 2
 	undo_redo_transaction[UndoRedoEntry.DO_PROPS] = [[svs, 'size', svs.size]]
 
 
@@ -1727,7 +1839,7 @@ func _update_rect_corner_radius(svs : ScalableVectorShape2D, mouse_pos : Vector2
 			[svs, 'rx', svs.rx], [svs, 'ry', svs.ry]
 		]
 	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	var top_left := (-svs.size * 0.5).rotated(svs.spin) + svs.offset
 	if prop_name == 'rx':
 		svs.rx = svs.to_local(mouse_pos).rotated(-svs.spin).x - top_left.rotated(-svs.spin).x
@@ -1775,7 +1887,7 @@ func _update_curve_cp_in_position(current_selection : ScalableVectorShape2D, mou
 
 func _update_gradient_from_position(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
 	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Move gradient from position for %s" % str(svs))
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS].append([svs.polygon.texture, 'fill_from',
@@ -1789,7 +1901,7 @@ func _update_gradient_from_position(svs : ScalableVectorShape2D, mouse_pos : Vec
 
 func _update_gradient_to_position(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
 	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Move gradient to position for %s" % str(svs))
 		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS].append([svs.polygon.texture, 'fill_to',
@@ -1811,7 +1923,7 @@ func _get_gradient_offset(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> f
 
 func _update_gradient_stop_color_pos(svs : ScalableVectorShape2D, mouse_pos : Vector2, idx : int) -> void:
 	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	var new_offset := _get_gradient_offset(svs, mouse_pos)
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Move gradient offset  %d on %s" % [idx, svs])
@@ -2148,7 +2260,7 @@ func _start_cutout_shape(svs : ScalableVectorShape2D, pos : Vector2) -> void:
 			svs
 	)
 	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	new_shape.curve = Curve2D.new()
 	new_shape.position = svs.to_local(mouse_pos)
 	new_shape.shape_type = current_cutout_shape
@@ -2203,7 +2315,7 @@ func _drag_curve_segment(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> vo
 		return
 
 	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	# Compute control points based on mouse position to align middle of segment curve to it
 	# using the quadratic Bézier control point
 	var idx : int = md_closest_point.before_segment
@@ -2270,7 +2382,7 @@ func _handle_input_for_uniform_translate(event : InputEvent, svs : ScalableVecto
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			var drag_delta := mouse_pos - _drag_start
 			if _is_snapped_to_pixel():
-				drag_delta = drag_delta.snapped(Vector2.ONE * _get_snap_resolution())
+				drag_delta = drag_delta.snapped(_get_snap_resolution())
 			if drag_delta.abs() > Vector2.ZERO:
 				_drag_start = mouse_pos
 				undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'translate_points_by', drag_delta])
@@ -2315,7 +2427,7 @@ func _handle_input_for_uniform_scale(event : InputEvent, svs : ScalableVectorSha
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			var drag_delta := mouse_pos - _drag_start
 			if _is_snapped_to_pixel():
-				drag_delta = drag_delta.snapped(Vector2.ONE * _get_snap_resolution())
+				drag_delta = drag_delta.snapped(_get_snap_resolution())
 			if drag_delta.abs() > Vector2.ZERO:
 				undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'scale_points_by', _drag_start, mouse_pos, Input.is_key_pressed(KEY_SHIFT)])
 				undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'scale_points_by', mouse_pos, _drag_start, Input.is_key_pressed(KEY_SHIFT)])
@@ -2385,7 +2497,7 @@ func _handle_draw_merge_box_input(event) -> bool:
 func _create_freehand_shape(name : String) -> ScalableVectorShape2D:
 	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if _is_snapped_to_pixel():
-		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+		pos = pos.snapped(_get_snap_resolution())
 
 	var new_shape := ScalableVectorShape2D.new()
 	new_shape.curve = Curve2D.new()
@@ -2401,7 +2513,7 @@ func _start_pencil_draw():
 			current_selection if current_selection else EditorInterface.get_edited_scene_root()
 	)
 	if _is_snapped_to_pixel():
-		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+		pos = pos.snapped(_get_snap_resolution())
 	_pencil_start_pos = pos
 	_pencil_stroke = [pos]
 	_drawing_pencil_line = true
@@ -2468,7 +2580,7 @@ func _add_point_to_pencil_line() -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	var pos := _svp_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), current_selection)
 	if _is_snapped_to_pixel():
-		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+		pos = pos.snapped(_get_snap_resolution())
 	if not _pencil_stroke.is_empty() and _pencil_stroke[-1].distance_to(pos) > _get_freehand_draw_granularity():
 		if _svs_edit_mode == SVSEditMode.KNIFE and _is_svs_valid(current_selection):
 			var self_intersection = Geometry2DUtil.will_self_intersect_at(_pencil_stroke, pos)
@@ -2600,7 +2712,7 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 			current_selection if current_selection else EditorInterface.get_edited_scene_root()
 	)
 	if _is_snapped_to_pixel():
-		pos = pos.snapped(Vector2.ONE * _get_snap_resolution())
+		pos = pos.snapped(_get_snap_resolution())
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		update_overlays()
@@ -2855,7 +2967,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				return true
 			elif _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
 				if _is_snapped_to_pixel():
-					mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+					mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 				if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and
 							current_selection.has_fine_point(
 									_svp_mouse_pos(mouse_pos, current_selection))):
@@ -2863,7 +2975,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				return true
 			elif _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed():
 				if _is_snapped_to_pixel():
-					mouse_pos = mouse_pos.snapped(Vector2.ONE * _get_snap_resolution())
+					mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 				if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 					_add_point_on_position(current_selection, mouse_pos)
 				return true
@@ -3169,18 +3281,6 @@ static func _get_default_paint_order() -> PaintOrder:
 	return PaintOrder.FILL_STROKE_MARKERS
 
 
-static func _is_snapped_to_pixel() -> bool:
-	if ProjectSettings.has_setting(SETTING_NAME_SNAP_TO_PIXEL):
-		return ProjectSettings.get_setting(SETTING_NAME_SNAP_TO_PIXEL)
-	return false
-
-
-static func _get_snap_resolution() -> float:
-	if ProjectSettings.has_setting(SETTING_NAME_SNAP_RESOLUTION):
-		return ProjectSettings.get_setting(SETTING_NAME_SNAP_RESOLUTION)
-	return 1.0
-
-
 static func _is_setting_update_curve_at_runtime() -> bool:
 	if ProjectSettings.has_setting(SETTING_NAME_CURVE_UPDATE_CURVE_AT_RUNTIME):
 		return ProjectSettings.get_setting(SETTING_NAME_CURVE_UPDATE_CURVE_AT_RUNTIME)
@@ -3263,6 +3363,9 @@ static func _get_brush_shape() -> BrushShape:
 func _exit_tree():
 	if _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
 		_get_select_mode_button().toggled.disconnect(_on_select_mode_toggled)
+
+	if is_instance_valid(_snap_dialog) and _snap_dialog.confirmed.is_connected(_on_confirm_grid_snap_settings):
+		_snap_dialog.confirmed.disconnect(_on_confirm_grid_snap_settings)
 
 	svs_edit_buttons.queue_free()
 	remove_inspector_plugin(plugin)

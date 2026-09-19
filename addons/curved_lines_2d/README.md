@@ -279,8 +279,7 @@ A copy of all the settings chosen in the original import is also kept track of i
 - Enable/Disable ScalableVectorShape2D Editing (when checked off, you can edit nodes the normal, built-in, godot-way. You _are_ going to need this)
 - Show/Hide Edit hints
 - Show Point Details (which are the exact _indices_ of each point on the `Curve2D` of this shape, what is it's global position)
-- Snap to Pixel (snaps points and curve handles to whole pixels on the global transform)
-- Snap distance (the snap step / resolution)
+- The custom Snap to Pixel setting has been replaced by native godot grid snap since release 2.35, support for grid offset and guide snapping will follow in later releases 
 
 ## Curve Settings
 
@@ -347,7 +346,7 @@ When a `ScalableVectorShape2D` is selected in `Select Mode (Q)`, the following c
 
 When moving all the points of a shape, the `Node2D.position` property does not change.
 
-This operation responds to the snap-to-pixel mode of the `Project Settings` tab.
+This operation responds can also snap to grid.
 
 ### Translating Ellipses and Rectangles
 
@@ -383,7 +382,7 @@ When the `Shape Type Settings > Shape Type` is `Path`, all the points can be rot
 
 When resizing all the points of a shape, the `Node2D.scale` property does not change, this is especially useful when using strokes, because their width will remain the same this way.
 
-This operation responds to the snap-to-pixel mode of the `Project Settings` tab.
+This operation can also snap to grid.
 
 ### Resizing Ellipses and Rectangles
 
@@ -591,7 +590,7 @@ Configuration options for this tool are described under [The Draw Settings tab](
 
 Strokes, Fills and Collisions drawn by this tool are configured in the: [Create Shapes Tab](#the-create-shapes-dock)
 
-This pencil tool also respects the `Snap to Pixel` setting with the `Snap Resolution`, which are described under the [Project Settings Tab](#the-project-settings-dock).
+This pencil tool can also snap to grid.
 
 ## Cutting shapes in half with the knife tool
 

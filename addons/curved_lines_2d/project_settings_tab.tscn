@@ -53,6 +53,13 @@ tooltip_text = "When active, when hovering over a point / handle in the curve
 button_pressed = true
 text = "Show Point Details*"
 
+[node name="Label2" type="Label" parent="VBoxContainer/EditorSettingsContainer" unique_id=575438417]
+layout_mode = 2
+size_flags_horizontal = 10
+tooltip_text = "Since release 2.35 you can use Snap to Grid and Grid settings via the built-in buttons of the Godot 2D Editor."
+mouse_filter = 0
+text = "* Snap Settings Moved"
+
 [node name="HSeparator2" type="HSeparator" parent="VBoxContainer" unique_id=1663946612]
 layout_mode = 2
 
