@@ -13,7 +13,7 @@ signal flip_vertical()
 var stroke_width_input : EditorSpinSlider
 
 @onready var mode_containers := [
-	%CreateEllipseContainer
+	%CreateEllipseContainer, %WelcomeContainer
 ]
 
 
@@ -187,3 +187,19 @@ func _on_fill_check_button_toggled(toggled_on: bool) -> void:
 func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVectorShape2D.CollisionObjectType) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_COLLISION_TYPE, obj_type)
 
+
+func _on_info_button_pressed() -> void:
+	for mode_container : Control in mode_containers:
+		mode_container.hide()
+	var pressed_mode_toggle_button : BaseButton = %CircleButton.button_group.get_pressed_button()
+	if pressed_mode_toggle_button:
+		pressed_mode_toggle_button.button_pressed = false
+	%WelcomeContainer.show()
+
+
+func _on_close_info_button_pressed() -> void:
+	var pressed_mode_toggle_button : BaseButton = %CircleButton.button_group.get_pressed_button()
+	if pressed_mode_toggle_button:
+		pressed_mode_toggle_button.button_pressed = false
+	%CircleButton.button_pressed = true
+	%GeneralSettingsContainer.show()
