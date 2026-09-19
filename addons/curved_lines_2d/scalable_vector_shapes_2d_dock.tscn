@@ -54,3 +54,5 @@ visible = false
 layout_mode = 2
 metadata/_tab_index = 4
 metadata/_tab_name = "Help"
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]

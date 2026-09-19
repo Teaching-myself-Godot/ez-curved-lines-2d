@@ -26,7 +26,7 @@ func _enter_tree() -> void:
 	warning_dialog = AcceptDialog.new()
 	EditorInterface.get_base_control().add_child(warning_dialog)
 	import_tab.warning_dialog = warning_dialog
-
+	create_tab.warning_dialog = warning_dialog
 	if not create_tab.shape_created.is_connected(shape_created.emit):
 		create_tab.shape_created.connect(shape_created.emit)
 	if not create_tab.set_shape_preview.is_connected(set_shape_preview.emit):
@@ -53,3 +53,7 @@ func _on_draw_settings_tab_brush_changed() -> void:
 
 func sync_draw_settings() -> void:
 	create_tab.sync_settings()
+
+
+func _on_mouse_entered() -> void:
+	set_shape_preview.emit(null)

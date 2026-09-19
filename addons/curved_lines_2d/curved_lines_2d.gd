@@ -13,7 +13,10 @@ const SETTING_NAME_USE_LINE_2D_FOR_STROKE = "addons/curved_lines_2d/use_line_2d_
 const SETTING_NAME_FILL_COLOR := "addons/curved_lines_2d/fill_color"
 const SETTING_NAME_ADD_STROKE_ENABLED := "addons/curved_lines_2d/add_stroke_enabled"
 const SETTING_NAME_ADD_FILL_ENABLED := "addons/curved_lines_2d/add_fill_enabled"
-const SETTING_NAME_ADD_COLLISION_TYPE = "addons/curved_lines_2d/add_collision_type"
+const SETTING_NAME_ADD_COLLISION_TYPE := "addons/curved_lines_2d/add_collision_type"
+
+const SETTING_NAME_ELLIPSE_RX := "addons/curved_lines_2d/ellipse_rx"
+const SETTING_NAME_ELLIPSE_RY := "addons/curved_lines_2d/ellipse_ry"
 
 const SETTING_NAME_PAINT_ORDER := "addons/curved_lines_2d/paint_order"
 
@@ -211,7 +214,8 @@ func _enter_tree():
 		scalable_vector_shapes_2d_dock.brush_changed.connect(_update_brush)
 	if not scalable_vector_shapes_2d_dock.create_tab.mode_changed.is_connected(_on_svs_edit_mode_changed):
 		scalable_vector_shapes_2d_dock.create_tab.mode_changed.connect(_on_svs_edit_mode_changed)
-
+	if not scalable_vector_shapes_2d_dock.create_tab.ellipse_created.is_connected(_on_ellipse_created):
+		scalable_vector_shapes_2d_dock.create_tab.ellipse_created.connect(_on_ellipse_created)
 	scalable_vector_shapes_2d_dock.create_tab.flip_horizontal.connect(_flip_svs_horizontal)
 	scalable_vector_shapes_2d_dock.create_tab.flip_vertical.connect(_flip_svs_vertical)
 	scene_changed.connect(_on_scene_changed)
@@ -1639,6 +1643,29 @@ func _handle_paint_bone_draw(viewport_control : Control) -> void:
 	viewport_control.draw_circle(_vp_transform(current_bone.global_position * mul), 5, Color.RED)
 
 
+func _editor_has_cursor() -> bool:
+	return (EditorInterface.get_editor_viewport_2d()
+			.get_visible_rect()
+			.has_point(_vp_transform(
+				EditorInterface.get_editor_viewport_2d().get_mouse_position())))
+
+
+func _handle_create_ellipse_preview(viewport_control : Control) -> void:
+	if shape_preview:
+		_draw_preview(viewport_control)
+	if _editor_has_cursor():
+		_draw_hint(viewport_control, "Click to create an ellipse here" +
+			"\n - You can change its shape in the Create tab")
+
+
+func _handle_create_rect_preview(viewport_control : Control) -> void:
+	if shape_preview:
+		_draw_preview(viewport_control)
+	if _editor_has_cursor():
+		_draw_hint(viewport_control, "Click to create an rectangle here" +
+			"\n - You can change its shape in the Create tab")
+
+
 func _is_editing_width_curve(svs : ScalableVectorShape2D) -> bool:
 	return (
 			_is_ctrl_or_cmd_pressed() and
@@ -1662,6 +1689,10 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		return _handle_knife_draw(viewport_control)
 	elif _svs_edit_mode == SVSEditMode.PAINT_BONE:
 		return _handle_paint_bone_draw(viewport_control)
+	elif _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE:
+		return _handle_create_ellipse_preview(viewport_control)
+	elif _svs_edit_mode == SVSEditMode.CREATE_RECT:
+		return _handle_create_rect_preview(viewport_control)
 
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
@@ -1700,18 +1731,29 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		if not(result.line or result.collision_polygon or result.polygon):
 			_draw_curve(viewport_control, result, false)
 
-	if shape_preview:
-		var mul := _get_svp_transform(current_selection)
 
+func _draw_preview(viewport_control : Control) -> void:
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if shape_preview:
+		var mul :=  _get_svp_transform(current_selection)
 		var points := Array(shape_preview.tessellate())
 		var stroke_width = (_get_default_stroke_width() * EditorInterface.get_editor_viewport_2d()
 				.get_final_transform().get_scale().x)
+		var glob_pos := Vector2.ZERO
 		if current_selection is Node2D:
 			points = points.map(current_selection.to_global)
 			stroke_width *= current_selection.global_scale.x
+			glob_pos = current_selection.global_position
 		elif current_selection is Control:
 			points = points.map(func(p): return current_selection.get_global_transform() * p)
 			stroke_width *= current_selection.get_global_transform().get_scale().x
+			glob_pos = current_selection.get_global_transform().get_origin()
+
+		if _editor_has_cursor():
+			var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+			if _is_snapped_to_pixel():
+				mouse_pos = mouse_pos.snapped(_get_snap_resolution())
+			mul = Transform2D(mul.get_rotation(), mul.get_scale(), 0.0, -(mouse_pos - glob_pos))
 		points = points.map(func(p): return _vp_transform(p * mul))
 		var stroke_points := points
 		if _get_default_stroke_extrusion_direction() != ScalableVectorShape2D.StrokeExtrusionDirection.MIDDLE:
@@ -2888,6 +2930,32 @@ func _handle_bone_paint_input(event : InputEvent) -> bool:
 	return false
 
 
+func _handle_create_primitive_input(event) -> bool:
+	if not shape_preview:
+		shape_preview = Curve2D.new()
+	if _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE:
+		ScalableVectorShape2D.set_ellipse_points(shape_preview, Vector2(_get_default_ellipse_rx() * 2, _get_default_ellipse_ry() * 2))
+	else:
+		push_warning("TODO: in editor preview for rect")
+		# ScalableVectorShape2D.set_rect_points(curve, rect_width_input.value, rect_height_input.value, rect_rx_input.value, rect_ry_input.value)
+	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+		if _is_snapped_to_pixel():
+			mouse_pos = mouse_pos.snapped(_get_snap_resolution())
+		var svs := ScalableVectorShape2D.new()
+		if _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE:
+			svs.shape_type = ScalableVectorShape2D.ShapeType.ELLIPSE
+			svs.size = Vector2(_get_default_ellipse_rx() * 2, _get_default_ellipse_ry() * 2)
+			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Ellipse",
+				null, true)
+		else:
+			push_warning("TODO: in editor rect creation")
+		svs.global_position = mouse_pos
+		push_warning("TODO: implement keep drawing behavior")
+		return true
+	update_overlays()
+	return false
+
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if _svs_edit_mode == SVSEditMode.MERGE:
 		return _handle_draw_merge_box_input(event)
@@ -2897,7 +2965,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return _handle_brush_draw_input(event)
 	elif _svs_edit_mode == SVSEditMode.PAINT_BONE:
 		return _handle_bone_paint_input(event)
-
+	elif _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE or _svs_edit_mode == SVSEditMode.CREATE_RECT:
+		return _handle_create_primitive_input(event)
 
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
@@ -3207,6 +3276,18 @@ static func _am_showing_point_numbers() -> bool:
 	if ProjectSettings.has_setting(SETTING_NAME_SHOW_POINT_NUMBERS):
 		return ProjectSettings.get_setting(SETTING_NAME_SHOW_POINT_NUMBERS)
 	return true
+
+
+static func _get_default_ellipse_rx() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_ELLIPSE_RX):
+		return ProjectSettings.get_setting(SETTING_NAME_ELLIPSE_RX)
+	return 50.0
+
+
+static func _get_default_ellipse_ry() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_ELLIPSE_RY):
+		return ProjectSettings.get_setting(SETTING_NAME_ELLIPSE_RY)
+	return 50.0
 
 
 static func _get_default_stroke_width() -> float:

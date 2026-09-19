@@ -10,7 +10,15 @@ signal mode_changed(new_mode : CurvedLines2D.SVSEditMode)
 signal flip_horizontal()
 signal flip_vertical()
 
+const OPEN_SCENE_ERROR_MESSAGE := "Can only create a shape in an open scene"
+
+
 var stroke_width_input : EditorSpinSlider
+
+var ellipse_rx_input : EditorSpinSlider
+var ellipse_ry_input : EditorSpinSlider
+
+var warning_dialog : AcceptDialog = null
 
 @onready var mode_containers := [
 	%CreateEllipseContainer, %WelcomeContainer
@@ -18,6 +26,8 @@ var stroke_width_input : EditorSpinSlider
 
 
 func _ready() -> void:
+	_hide_mode_containers()
+	%WelcomeContainer.show()
 	%CircleButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.CREATE_ELLIPSE))
 	%RectangleButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.CREATE_RECT))
 	%EditButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.NONE))
@@ -48,6 +58,16 @@ func _ready() -> void:
 
 	# Collision Object
 	(%CollisionObjectTypeOptionButton as OptionButton).select(CurvedLines2D._add_collision_object_type())
+
+	# Create Ellipse Settings
+	ellipse_rx_input = _make_number_input("Horizontal Radius (RX)", 50, 1, 500, "")
+	ellipse_rx_input.value = CurvedLines2D._get_default_ellipse_rx()
+	ellipse_rx_input.value_changed.connect(_on_ellipse_rx_value_changed)
+	ellipse_ry_input = _make_number_input("Vertical Radius (RY)", 50, 1, 500, "")
+	ellipse_ry_input.value = CurvedLines2D._get_default_ellipse_ry()
+	ellipse_ry_input.value_changed.connect(_on_ellipse_ry_value_changed)
+	%EllipseXRadiusSliderContainer.add_child(ellipse_rx_input)
+	%EllipseYRadiusSliderContainer.add_child(ellipse_ry_input)
 
 
 func _on_mode_toggled(toggled_on : bool, mode : CurvedLines2D.SVSEditMode) -> void:
@@ -96,9 +116,13 @@ func set_edit_mode_toggle_button(mode : CurvedLines2D.SVSEditMode) -> void:
 				%EditButton.button_pressed = true
 
 
-func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
+func _hide_mode_containers() -> void:
 	for mode_container : Control in mode_containers:
 		mode_container.hide()
+
+
+func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
+	_hide_mode_containers()
 	match mode:
 		CurvedLines2D.SVSEditMode.CREATE_ELLIPSE:
 			%CreateEllipseContainer.show()
@@ -159,6 +183,7 @@ func _make_number_input(lbl : String, value : float, min_value : float, max_valu
 	x_slider.suffix = suffix
 	x_slider.label = lbl
 	x_slider.step = step
+	x_slider.focus_exited.connect(ProjectSettings.save)
 	return x_slider
 
 
@@ -179,6 +204,14 @@ func _on_stroke_width_input_value_changed(new_value: float) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_WIDTH, new_value)
 
 
+func _on_ellipse_rx_value_changed(new_value : float) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ELLIPSE_RX, new_value)
+
+
+func _on_ellipse_ry_value_changed(new_value : float) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ELLIPSE_RY, new_value)
+
+
 func _on_fill_check_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_FILL_ENABLED, toggled_on)
 	ProjectSettings.save()
@@ -189,8 +222,7 @@ func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVec
 
 
 func _on_info_button_pressed() -> void:
-	for mode_container : Control in mode_containers:
-		mode_container.hide()
+	_hide_mode_containers()
 	var pressed_mode_toggle_button : BaseButton = %CircleButton.button_group.get_pressed_button()
 	if pressed_mode_toggle_button:
 		pressed_mode_toggle_button.button_pressed = false
@@ -203,3 +235,40 @@ func _on_close_info_button_pressed() -> void:
 		pressed_mode_toggle_button.button_pressed = false
 	%CircleButton.button_pressed = true
 	%GeneralSettingsContainer.show()
+
+
+# --- Create Ellipse / Circle ---
+func _on_create_circle_button_pressed() -> void:
+	var scene_root := EditorInterface.get_edited_scene_root()
+
+	if not scene_root is Node:
+		warning_dialog.dialog_text = OPEN_SCENE_ERROR_MESSAGE
+		warning_dialog.popup_centered()
+		return
+
+	var node_name := "Circle" if ellipse_rx_input.value == ellipse_ry_input.value else "Ellipse"
+	shape_created.emit(_get_ellipse_curve(), scene_root, node_name)
+
+
+func _on_create_circle_button_mouse_entered() -> void:
+	set_shape_preview.emit(_get_ellipse_curve())
+
+
+func _on_create_circle_button_mouse_exited() -> void:
+	set_shape_preview.emit(null)
+
+
+func _on_create_ellipse_button_pressed() -> void:
+	var scene_root := EditorInterface.get_edited_scene_root()
+	if not scene_root is Node:
+		warning_dialog.dialog_text = OPEN_SCENE_ERROR_MESSAGE
+		warning_dialog.popup_centered()
+		return
+	ellipse_created.emit(ellipse_rx_input.value, ellipse_ry_input.value, scene_root)
+
+
+func _get_ellipse_curve() -> Curve2D:
+	var curve := Curve2D.new()
+	ScalableVectorShape2D.set_ellipse_points(curve, Vector2(ellipse_rx_input.value * 2, ellipse_ry_input.value * 2))
+	return curve
+

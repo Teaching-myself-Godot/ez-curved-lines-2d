@@ -6,6 +6,7 @@
 [ext_resource type="StyleBox" uid="uid://ddx1ye7r3r4lf" path="res://addons/curved_lines_2d/icons/button_pressed_stylebox.tres" id="3_hti8q"]
 [ext_resource type="StyleBox" uid="uid://bo0x8scw4k70k" path="res://addons/curved_lines_2d/icons/button_hover_stylebox.tres" id="4_powka"]
 [ext_resource type="Texture2D" uid="uid://ulvclg7al5cu" path="res://addons/curved_lines_2d/IconAtlas.svg" id="6_h5wiq"]
+[ext_resource type="StyleBox" uid="uid://c034pktje23oe" path="res://addons/curved_lines_2d/icons/editor_spin_box_container_stylebox.tres" id="7_powka"]
 [ext_resource type="PackedScene" uid="uid://cjbkvx1pj7gq2" path="res://addons/curved_lines_2d/collision_object_type_option_button.tscn" id="20_rpvk4"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_dsrm6"]
@@ -69,13 +70,6 @@ region = Rect2(48, 96, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_powka"]
 atlas = ExtResource("6_h5wiq")
 region = Rect2(32, 80, 16, 16)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6gyyp"]
-bg_color = Color(0.105882354, 0.105882354, 0.105882354, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hti8q"]
 atlas = ExtResource("6_h5wiq")
@@ -339,6 +333,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Enable Fill"
+button_pressed = true
 text = "Fill"
 
 [node name="FillPickerButton" type="ColorPickerButton" parent="HBoxContainer/HBoxContainer/HBoxContainer" unique_id=1356466570]
@@ -347,7 +342,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(0.402344, 0, 0, 1)
+color = Color(0, 0.1104473, 0.40392157, 1)
 
 [node name="VSeparator4" type="VSeparator" parent="HBoxContainer/HBoxContainer" unique_id=265864135]
 layout_mode = 2
@@ -377,7 +372,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(108, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_6gyyp")
+theme_override_styles/panel = ExtResource("7_powka")
 
 [node name="VSeparator3" type="VSeparator" parent="HBoxContainer/HBoxContainer" unique_id=2032786401]
 layout_mode = 2
@@ -408,11 +403,62 @@ theme_override_styles/hover = ExtResource("4_powka")
 icon = SubResource("AtlasTexture_hti8q")
 expand_icon = true
 
-[node name="SettingsContainer" type="HBoxContainer" parent="." unique_id=750669318]
+[node name="SettingsContainer" type="HSplitContainer" parent="." unique_id=1926730424]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="CreateEllipseContainer" type="ScrollContainer" parent="SettingsContainer" unique_id=525159852]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsContainer/CreateEllipseContainer" unique_id=1635659156]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="SettingsContainer/CreateEllipseContainer/VBoxContainer" unique_id=371428415]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+tooltip_text = "Create an Ellipse as:
+- ScalableEllipse2D: a primitive ellipse, which extends from ScalableVectorShape2D (easier to edit)
+ - ScalableVectorShape2D (editable as a path)"
+mouse_filter = 0
+text = "Create Ellipse / Circle"
+
+[node name="EllipseXRadiusSliderContainer" type="PanelContainer" parent="SettingsContainer/CreateEllipseContainer/VBoxContainer" unique_id=565749534]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+custom_maximum_size = Vector2(300, -1)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="EllipseYRadiusSliderContainer" type="PanelContainer" parent="SettingsContainer/CreateEllipseContainer/VBoxContainer" unique_id=1827395804]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+custom_maximum_size = Vector2(300, -1)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SettingsContainer/CreateEllipseContainer/VBoxContainer" unique_id=1186328812]
+layout_mode = 2
+
+[node name="CreateEllipseButton" type="Button" parent="SettingsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer" unique_id=1070699013]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Create Ellipse"
+
+[node name="CreateCircleButton" type="Button" parent="SettingsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer" unique_id=1239533478]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Create Path"
 
 [node name="WelcomeContainer" type="CenterContainer" parent="SettingsContainer" unique_id=1097900555]
 unique_name_in_owner = true
@@ -430,16 +476,6 @@ text = "Todo: Welcome information"
 [node name="CloseInfoButton" type="Button" parent="SettingsContainer/WelcomeContainer/VBoxContainer" unique_id=1746117791]
 layout_mode = 2
 text = "Hide welcome information"
-
-[node name="CreateEllipseContainer" type="ScrollContainer" parent="SettingsContainer" unique_id=525159852]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="SettingsContainer/CreateEllipseContainer" unique_id=18479790]
-layout_mode = 2
-text = "TODO: Create ellipse settings"
 
 [node name="GeneralSettingsContainer" type="ScrollContainer" parent="SettingsContainer" unique_id=1331453309]
 unique_name_in_owner = true
@@ -462,4 +498,10 @@ text = "TODO: general settings"
 [connection signal="color_changed" from="HBoxContainer/HBoxContainer/HBoxContainer2/StrokePickerButton" to="." method="_on_stroke_picker_button_color_changed"]
 [connection signal="type_selected" from="HBoxContainer/HBoxContainer/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
 [connection signal="pressed" from="HBoxContainer/HBoxContainer/InfoButton" to="." method="_on_info_button_pressed"]
+[connection signal="mouse_entered" from="SettingsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer/CreateEllipseButton" to="." method="_on_create_circle_button_mouse_entered"]
+[connection signal="mouse_exited" from="SettingsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer/CreateEllipseButton" to="." method="_on_create_circle_button_mouse_exited"]
+[connection signal="pressed" from="SettingsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer/CreateEllipseButton" to="." method="_on_create_ellipse_button_pressed"]
+[connection signal="mouse_entered" from="SettingsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer/CreateCircleButton" to="." method="_on_create_circle_button_mouse_entered"]
+[connection signal="mouse_exited" from="SettingsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer/CreateCircleButton" to="." method="_on_create_circle_button_mouse_exited"]
+[connection signal="pressed" from="SettingsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer/CreateCircleButton" to="." method="_on_create_circle_button_pressed"]
 [connection signal="pressed" from="SettingsContainer/WelcomeContainer/VBoxContainer/CloseInfoButton" to="." method="_on_close_info_button_pressed"]
