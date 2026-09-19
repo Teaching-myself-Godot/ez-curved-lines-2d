@@ -10,11 +10,10 @@ signal mode_changed(new_mode : CurvedLines2D.SVSEditMode)
 signal flip_horizontal()
 signal flip_vertical()
 
-var snap_resolution_input : EditorSpinSlider
 var stroke_width_input : EditorSpinSlider
 
 @onready var mode_containers := [
-	%CreateEllipseContainer, %PlaceHolderContainer
+	%CreateEllipseContainer
 ]
 
 
@@ -33,14 +32,6 @@ func _ready() -> void:
 	%FlipHorizontalButton.pressed.connect(flip_horizontal.emit)
 	%FlipVerticalButton.pressed.connect(flip_vertical.emit)
 
-	# Pixel Snap Settings
-	%SnapButton.button_pressed = CurvedLines2D._is_snapped_to_pixel()
-	snap_resolution_input = _make_number_input("Snap", CurvedLines2D._get_snap_resolution(), 1.0, 1024.0, "px", 1.0)
-	%SnapResolutionInputContainer.add_child(snap_resolution_input)
-	snap_resolution_input.value_changed.connect(_on_snap_resolution_value_changed)
-	if not snap_resolution_input.focus_exited.is_connected(ProjectSettings.save):
-		snap_resolution_input.focus_exited.connect(ProjectSettings.save)
-
 	# Fill and Stroke Settings
 	%StrokePickerButton.color = CurvedLines2D._get_default_stroke_color()
 	if not %StrokePickerButton.focus_exited.is_connected(ProjectSettings.save):
@@ -54,7 +45,6 @@ func _ready() -> void:
 	stroke_width_input.value = CurvedLines2D._get_default_stroke_width()
 	stroke_width_input.value_changed.connect(_on_stroke_width_input_value_changed)
 	%StrokeWidthContainer.add_child(stroke_width_input)
-
 
 	# Collision Object
 	(%CollisionObjectTypeOptionButton as OptionButton).select(CurvedLines2D._add_collision_object_type())
@@ -113,7 +103,6 @@ func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
 		CurvedLines2D.SVSEditMode.CREATE_ELLIPSE:
 			%CreateEllipseContainer.show()
 		_:
-			%PlaceHolderContainer.show()
 			push_warning("TODO: show current details for: ", mode)
 
 
@@ -173,15 +162,6 @@ func _make_number_input(lbl : String, value : float, min_value : float, max_valu
 	return x_slider
 
 
-func _on_snap_resolution_value_changed(val : float) -> void:
-	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_SNAP_RESOLUTION, val)
-
-
-func _on_snap_button_toggled(toggled_on: bool) -> void:
-	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_SNAP_TO_PIXEL, toggled_on)
-	ProjectSettings.save()
-
-
 func _on_fill_picker_button_color_changed(color: Color) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_FILL_COLOR, color)
 
@@ -206,3 +186,4 @@ func _on_fill_check_button_toggled(toggled_on: bool) -> void:
 
 func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVectorShape2D.CollisionObjectType) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_COLLISION_TYPE, obj_type)
+

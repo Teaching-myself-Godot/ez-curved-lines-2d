@@ -77,10 +77,6 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_hti8q"]
-atlas = ExtResource("6_h5wiq")
-region = Rect2(48, 80, 16, 16)
-
 [node name="CreateTab" type="VBoxContainer" unique_id=2006994037]
 anchors_preset = 15
 anchor_right = 1.0
@@ -329,8 +325,9 @@ expand_icon = true
 
 [node name="HFlowContainer2" type="HBoxContainer" parent="HBoxContainer" unique_id=1877054336]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 10
 size_flags_vertical = 2
+size_flags_stretch_ratio = 0.8
 
 [node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/HFlowContainer2" unique_id=733683439]
 layout_mode = 2
@@ -340,7 +337,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Enable Fill"
-button_pressed = true
 text = "Fill"
 
 [node name="FillPickerButton" type="ColorPickerButton" parent="HBoxContainer/HFlowContainer2/HBoxContainer" unique_id=1356466570]
@@ -386,73 +382,49 @@ layout_mode = 2
 size_flags_horizontal = 0
 theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="HBoxContainer/HFlowContainer2" unique_id=1804694337]
-layout_mode = 2
-
-[node name="SnapButton" type="Button" parent="HBoxContainer/HFlowContainer2/HBoxContainer3" unique_id=932977031]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 4
-tooltip_text = "Toggle Snap to Pixel On/Off"
-theme_override_styles/normal = ExtResource("2_2chn8")
-theme_override_styles/pressed = ExtResource("3_hti8q")
-theme_override_styles/hover = ExtResource("4_powka")
-toggle_mode = true
-icon = SubResource("AtlasTexture_hti8q")
-expand_icon = true
-
-[node name="SnapResolutionInputContainer" type="PanelContainer" parent="HBoxContainer/HFlowContainer2/HBoxContainer3" unique_id=579981428]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(108, 0)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_6gyyp")
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="." unique_id=750669318]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="CreateEllipseContainer" type="CenterContainer" parent="HBoxContainer2" unique_id=1090990505]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 200)
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="HBoxContainer2/CreateEllipseContainer" unique_id=18479790]
-layout_mode = 2
-text = "TODO: Create ellipse settings"
-
-[node name="PlaceHolderContainer" type="Control" parent="HBoxContainer2" unique_id=135183929]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="GeneralSettingsContainer" type="ScrollContainer" parent="HBoxContainer2" unique_id=1331453309]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer2/GeneralSettingsContainer" unique_id=1219246689]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 4
-
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer2/GeneralSettingsContainer/VBoxContainer2" unique_id=27177121]
-layout_mode = 2
-size_flags_horizontal = 0
-
-[node name="CollisionObjectTypeOptionButton" parent="HBoxContainer2/GeneralSettingsContainer/VBoxContainer2/HBoxContainer" unique_id=2040470726 instance=ExtResource("20_rpvk4")]
+[node name="CollisionObjectTypeOptionButton" parent="HBoxContainer/HFlowContainer2" unique_id=2040470726 instance=ExtResource("20_rpvk4")]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_styles/normal = ExtResource("2_2chn8")
 fit_to_longest_item = false
 
+[node name="VSeparator5" type="VSeparator" parent="HBoxContainer/HFlowContainer2" unique_id=29067548]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
+
+[node name="SettingsContainer" type="HBoxContainer" parent="." unique_id=750669318]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CreateEllipseContainer" type="ScrollContainer" parent="SettingsContainer" unique_id=525159852]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="SettingsContainer/CreateEllipseContainer" unique_id=18479790]
+layout_mode = 2
+text = "TODO: Create ellipse settings"
+
+[node name="GeneralSettingsContainer" type="ScrollContainer" parent="SettingsContainer" unique_id=1331453309]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="SettingsContainer/GeneralSettingsContainer" unique_id=1219246689]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2" unique_id=27177121]
+layout_mode = 2
+size_flags_horizontal = 0
+
 [connection signal="toggled" from="HBoxContainer/HFlowContainer2/HBoxContainer/EnableFillCheckBox" to="." method="_on_fill_check_button_toggled"]
 [connection signal="color_changed" from="HBoxContainer/HFlowContainer2/HBoxContainer/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]
 [connection signal="toggled" from="HBoxContainer/HFlowContainer2/HBoxContainer2/EnableStrokeCheckBox" to="." method="_on_stroke_check_button_toggled"]
 [connection signal="color_changed" from="HBoxContainer/HFlowContainer2/HBoxContainer2/StrokePickerButton" to="." method="_on_stroke_picker_button_color_changed"]
-[connection signal="toggled" from="HBoxContainer/HFlowContainer2/HBoxContainer3/SnapButton" to="." method="_on_snap_button_toggled"]
+[connection signal="type_selected" from="HBoxContainer/HFlowContainer2/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
