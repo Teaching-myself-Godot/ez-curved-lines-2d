@@ -160,6 +160,8 @@ func disable_svs_editors(disable_all := false) -> void:
 	%BrushButton.disabled = disable_all
 	%MergeButton.disabled = disable_all
 	%PencilButton.disabled = disable_all
+	%CircleButton.disabled = disable_all
+	%RectangleButton.disabled = disable_all
 
 
 func disable_all_editors() -> void:

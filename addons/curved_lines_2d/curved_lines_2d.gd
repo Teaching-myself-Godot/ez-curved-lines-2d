@@ -88,6 +88,13 @@ enum SVSEditMode {
 	KNIFE, CREATE_ELLIPSE, CREATE_RECT
 }
 
+const CANCELABLE_MODES : Array[SVSEditMode] = [
+	SVSEditMode.TRANSLATE, SVSEditMode.ROTATE, SVSEditMode.SCALE,
+	SVSEditMode.MERGE, SVSEditMode.BRUSH, SVSEditMode.PENCIL,
+	SVSEditMode.PAINT_BONE, SVSEditMode.KNIFE,
+	SVSEditMode.CREATE_ELLIPSE, SVSEditMode.CREATE_RECT
+]
+
 var plugin : Line2DGeneratorInspectorPlugin
 var scalable_vector_shapes_2d_dock
 var select_mode_button : Button
@@ -2957,6 +2964,13 @@ func _handle_create_primitive_input(event) -> bool:
 	return false
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
+	if (
+			event is InputEventMouseButton and
+			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT and
+			_svs_edit_mode in CANCELABLE_MODES
+	):
+		_on_svs_edit_mode_changed(SVSEditMode.NONE)
+		return true
 	if _svs_edit_mode == SVSEditMode.MERGE:
 		return _handle_draw_merge_box_input(event)
 	elif _svs_edit_mode == SVSEditMode.PENCIL or _svs_edit_mode == SVSEditMode.KNIFE:

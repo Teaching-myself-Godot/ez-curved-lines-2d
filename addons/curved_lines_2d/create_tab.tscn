@@ -342,7 +342,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(0, 0.1104473, 0.40392157, 1)
+color = Color(0.8039216, 0.10980392, 0.40392157, 1)
 
 [node name="VSeparator4" type="VSeparator" parent="HBoxContainer/HBoxContainer" unique_id=265864135]
 layout_mode = 2
@@ -366,6 +366,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Set Stroke Color"
 text = "Fill"
+color = Color(0.49411765, 0.3372549, 0.40392157, 1)
 
 [node name="StrokeWidthContainer" type="PanelContainer" parent="HBoxContainer/HBoxContainer/HBoxContainer2" unique_id=1573755340]
 unique_name_in_owner = true
