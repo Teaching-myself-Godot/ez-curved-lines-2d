@@ -183,12 +183,36 @@ func disable_all_editors() -> void:
 	disable_svs_editors(true)
 
 
-func sync_settings() -> void:
+func sync_draw_settings() -> void:
 	push_warning("TODO: synchronize brush settings")
 	#brush_size_x_input.set_value_no_signal(CurvedLines2D._get_brush_size_x())
 	#brush_size_y_input.set_value_no_signal(CurvedLines2D._get_brush_size_y())
 	#brush_rotation_input.set_value_no_signal(CurvedLines2D._get_brush_rotation())
 	#%BrushShapeOptionButton.select(CurvedLines2D._get_brush_shape())
+	ProjectSettings.save()
+
+
+func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
+	push_warning("TODO: set _all_ the fields for selected ScalableVectorShape2D in create tab")
+	if is_instance_valid(svs.polygon):
+		%EnableFillCheckBox.button_pressed = true
+		%FillPickerButton.color = svs.fill_color
+		# ColorPickerButton does not emit change signal when value is set directly
+		_on_fill_picker_button_color_changed()
+	else:
+		%EnableFillCheckBox.button_pressed = false
+	if is_instance_valid(svs.line) or is_instance_valid(svs.poly_stroke):
+		%EnableStrokeCheckBox.button_pressed = true
+		%StrokePickerButton.color = svs.stroke_color
+		# ColorPickerButton does not emit change signal when value is set directly
+		_on_stroke_picker_button_color_changed()
+		stroke_width_input.value = svs.stroke_width
+	else:
+		%EnableStrokeCheckBox.set_pressed_no_signal(false)
+
+	%CollisionObjectTypeOptionButton.select(svs.get_collision_object_type())
+	# OptionButton does not emit change signal when value is set directly
+	_on_collision_object_type_option_button_type_selected(svs.get_collision_object_type())
 	ProjectSettings.save()
 
 
@@ -204,12 +228,12 @@ func _make_number_input(lbl : String, value : float, min_value : float, max_valu
 	return x_slider
 
 
-func _on_fill_picker_button_color_changed(color: Color) -> void:
-	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_FILL_COLOR, color)
+func _on_fill_picker_button_color_changed() -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_FILL_COLOR, %FillPickerButton.color)
 
 
-func _on_stroke_picker_button_color_changed(color: Color) -> void:
-	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_COLOR, color)
+func _on_stroke_picker_button_color_changed() -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_COLOR, %StrokePickerButton.color)
 
 
 func _on_stroke_check_button_toggled(toggled_on: bool) -> void:
@@ -219,14 +243,6 @@ func _on_stroke_check_button_toggled(toggled_on: bool) -> void:
 
 func _on_stroke_width_input_value_changed(new_value: float) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_WIDTH, new_value)
-
-
-func _on_ellipse_rx_value_changed(new_value : float) -> void:
-	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ELLIPSE_RX, new_value)
-
-
-func _on_ellipse_ry_value_changed(new_value : float) -> void:
-	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ELLIPSE_RY, new_value)
 
 
 func _on_fill_check_button_toggled(toggled_on: bool) -> void:
@@ -273,3 +289,10 @@ func _get_ellipse_curve() -> Curve2D:
 	ScalableVectorShape2D.set_ellipse_points(curve, Vector2(ellipse_rx_input.value * 2, ellipse_ry_input.value * 2))
 	return curve
 
+
+func _on_ellipse_rx_value_changed(new_value : float) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ELLIPSE_RX, new_value)
+
+
+func _on_ellipse_ry_value_changed(new_value : float) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ELLIPSE_RY, new_value)

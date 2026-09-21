@@ -52,7 +52,7 @@ func _on_draw_settings_tab_brush_changed() -> void:
 
 
 func sync_draw_settings() -> void:
-	create_tab.sync_settings()
+	create_tab.sync_draw_settings()
 
 
 func _on_mouse_entered() -> void:

@@ -402,6 +402,7 @@ size_flags_vertical = 3
 
 [node name="PlaceholderContainer" type="Control" parent="SettingsContainer" unique_id=535563690]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -472,9 +473,9 @@ layout_mode = 2
 text = "TODO: general settings"
 
 [connection signal="toggled" from="HBoxContainer/HBoxContainer/HBoxContainer/EnableFillCheckBox" to="." method="_on_fill_check_button_toggled"]
-[connection signal="color_changed" from="HBoxContainer/HBoxContainer/HBoxContainer/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]
+[connection signal="popup_closed" from="HBoxContainer/HBoxContainer/HBoxContainer/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]
 [connection signal="toggled" from="HBoxContainer/HBoxContainer/HBoxContainer2/EnableStrokeCheckBox" to="." method="_on_stroke_check_button_toggled"]
-[connection signal="color_changed" from="HBoxContainer/HBoxContainer/HBoxContainer2/StrokePickerButton" to="." method="_on_stroke_picker_button_color_changed"]
+[connection signal="popup_closed" from="HBoxContainer/HBoxContainer/HBoxContainer2/StrokePickerButton" to="." method="_on_stroke_picker_button_color_changed"]
 [connection signal="type_selected" from="HBoxContainer/HBoxContainer/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
 [connection signal="mouse_entered" from="SettingsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer/CreateEllipseButton" to="." method="_on_create_circle_button_mouse_entered"]
 [connection signal="mouse_exited" from="SettingsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer/CreateEllipseButton" to="." method="_on_create_circle_button_mouse_exited"]

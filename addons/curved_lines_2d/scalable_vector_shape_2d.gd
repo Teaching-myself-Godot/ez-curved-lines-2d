@@ -1219,6 +1219,25 @@ func get_gradient_handles() -> Dictionary:
 	return result
 
 
+func get_collision_object_type() -> CollisionObjectType:
+	if is_instance_valid(collision_object):
+		if collision_object is AnimatableBody2D:
+			return CollisionObjectType.ANIMATABLE_BODY_2D
+		elif collision_object is StaticBody2D:
+			return CollisionObjectType.STATIC_BODY_2D
+		elif collision_object is Area2D:
+			return CollisionObjectType.AREA_2D
+		elif collision_object is PhysicalBone2D:
+			return CollisionObjectType.PHYSICAL_BONE_2D
+		elif collision_object is RigidBody2D:
+			return CollisionObjectType.RIGID_BODY_2D
+		else: # collision_object is CharacterBody2D
+			return CollisionObjectType.CHARACTER_BODY_2D
+	else:
+		return CollisionObjectType.NONE
+
+
+
 func flip_points(flip_dir := Vector2(-1, 1)) -> void:
 	if shape_type == ShapeType.PATH:
 		curve.set_block_signals(true)

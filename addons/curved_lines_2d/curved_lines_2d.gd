@@ -242,6 +242,66 @@ func _enter_tree():
 	_snap_dialog = _find_snap_dialog()
 	if is_instance_valid(_snap_dialog) and not _snap_dialog.confirmed.is_connected(_on_confirm_grid_snap_settings):
 		_snap_dialog.confirmed.connect(_on_confirm_grid_snap_settings)
+	if not ProjectSettings.settings_changed.is_connected(_on_project_settings_changed):
+		ProjectSettings.settings_changed.connect(_on_project_settings_changed)
+
+
+func _on_project_settings_changed() -> void:
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if not _is_svs_valid(current_selection):
+		return
+	push_warning("TODO: sync _all_ properties of the selected shape to the updated project settings")
+	var svs := current_selection as ScalableVectorShape2D
+	if svs.fill_color != _get_default_fill_color():
+		undo_redo.create_action("Set fill_color for " + str(svs))
+		undo_redo.add_do_property(svs, "fill_color", _get_default_fill_color())
+		undo_redo.add_undo_property(svs, "fill_color", svs.fill_color)
+		undo_redo.commit_action()
+	if svs.stroke_color != _get_default_stroke_color():
+		undo_redo.create_action("Set stroke_color for " + str(svs))
+		undo_redo.add_do_property(svs, "stroke_color", _get_default_stroke_color())
+		undo_redo.add_undo_property(svs, "stroke_color", svs.stroke_color)
+		undo_redo.commit_action()
+	if svs.stroke_width != _get_default_stroke_width():
+		undo_redo.create_action("Set stroke_width for " + str(svs))
+		undo_redo.add_do_property(svs, "stroke_width", _get_default_stroke_width())
+		undo_redo.add_undo_property(svs, "stroke_width", svs.stroke_width)
+		undo_redo.commit_action()
+	if svs.get_collision_object_type() != _add_collision_object_type():
+		push_warning("TODO: change collision object type on selection via bottom dock")
+	if is_instance_valid(svs.polygon) and not _is_add_fill_enabled():
+		var polygon_2d := svs.polygon
+		undo_redo.create_action("Remove Polygon2D from %s " % str(svs))
+		undo_redo.add_do_method(svs, 'remove_child', polygon_2d)
+		undo_redo.add_do_property(svs, 'polygon', null)
+		undo_redo.add_undo_method(svs, 'add_child', polygon_2d, true)
+		undo_redo.add_undo_method(polygon_2d, 'set_owner', EditorInterface.get_edited_scene_root())
+		undo_redo.add_undo_reference(polygon_2d)
+		undo_redo.add_undo_property(svs, 'polygon', polygon_2d)
+		undo_redo.commit_action()
+
+	if not is_instance_valid(svs.polygon) and _is_add_fill_enabled():
+		var polygon_2d := Polygon2D.new()
+		polygon_2d.color = _get_default_fill_color()
+		undo_redo.create_action("Add Polygon2D to %s " % str(svs))
+		undo_redo.add_do_method(svs, 'add_child', polygon_2d, true)
+		undo_redo.add_do_method(polygon_2d, 'set_owner', EditorInterface.get_edited_scene_root())
+		undo_redo.add_do_reference(polygon_2d)
+		undo_redo.add_do_property(svs, 'polygon', polygon_2d)
+		undo_redo.add_undo_method(svs, 'remove_child', polygon_2d)
+		undo_redo.add_undo_property(svs, 'polygon', null)
+		undo_redo.commit_action()
+
+	if is_instance_valid(svs.line) and not _is_add_stroke_enabled():
+		push_warning("TODO: remove line via bottom dock")
+	if is_instance_valid(svs.poly_stroke) and not _is_add_stroke_enabled():
+		push_warning("TODO: remove poly_stroke via bottom dock")
+	if _is_add_stroke_enabled() and _using_line_2d_for_stroke() and not is_instance_valid(svs.line):
+		print(_using_line_2d_for_stroke())
+		push_warning("TODO: Add line via bottom dock")
+	if (_is_add_stroke_enabled() and not _using_line_2d_for_stroke()) and not is_instance_valid(svs.poly_stroke):
+		push_warning("Add poly_stroke via bottom dock")
+
 
 
 func _find_snap_dialog() -> AcceptDialog:
@@ -626,8 +686,13 @@ func _on_selection_changed():
 		svs_edit_buttons.show_convert_to_svs()
 	else:
 		svs_edit_buttons.hide_convert_to_svs()
+
 	if _is_svs_valid(current_selection):
+		var svs := current_selection as ScalableVectorShape2D
 		svs_edit_buttons.show_knife()
+		scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings(svs)
+		if not svs.assigned_node_changed.is_connected(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings.bind(svs)):
+			svs.assigned_node_changed.connect(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings.bind(svs))
 	else:
 		svs_edit_buttons.hide_knife()
 		if _svs_edit_mode == SVSEditMode.KNIFE:
@@ -3469,3 +3534,5 @@ func _exit_tree():
 	remove_control_from_bottom_panel(scalable_vector_shapes_2d_dock)
 	scalable_vector_shapes_2d_dock.free()
 	set_global_position_popup_panel.free()
+	if ProjectSettings.settings_changed.is_connected(_on_project_settings_changed):
+		ProjectSettings.settings_changed.disconnect(_on_project_settings_changed)
