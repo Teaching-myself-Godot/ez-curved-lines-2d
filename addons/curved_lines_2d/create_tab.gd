@@ -21,13 +21,12 @@ var ellipse_ry_input : EditorSpinSlider
 var warning_dialog : AcceptDialog = null
 
 @onready var mode_containers := [
-	%CreateEllipseContainer, %WelcomeContainer
+	%PlaceholderContainer, %CreateEllipseContainer
 ]
 
 
 func _ready() -> void:
 	_hide_mode_containers()
-	%WelcomeContainer.show()
 	%CircleButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.CREATE_ELLIPSE))
 	%RectangleButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.CREATE_RECT))
 	%EditButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.NONE))
@@ -142,26 +141,42 @@ func enable_svs_editors() -> void:
 	%BrushButton.disabled = false
 	%MergeButton.disabled = false
 	%PencilButton.disabled = false
+	%CircleButton.disabled = false
+	%RectangleButton.disabled = false
 
 
 func set_default_mode() -> void:
 	%EditButton.button_pressed = true
 
 
+func _disable_and_toggle_off(btn : BaseButton) -> void:
+	btn.disabled = true
+	btn.button_pressed = false
+
+
 func disable_svs_editors(disable_all := false) -> void:
-	%RotateButton.disabled = true
-	%TranslateButton.disabled = true
-	%ResizeButton.disabled = true
-	%FlipHorizontalButton.disabled = true
-	%FlipVerticalButton.disabled = true
-	%BonePaintButton.disabled = true
-	%EditButton.disabled = true
-	%KnifeButton.disabled = true
-	%BrushButton.disabled = disable_all
-	%MergeButton.disabled = disable_all
-	%PencilButton.disabled = disable_all
-	%CircleButton.disabled = disable_all
-	%RectangleButton.disabled = disable_all
+	_disable_and_toggle_off(%RotateButton)
+	_disable_and_toggle_off(%TranslateButton)
+	_disable_and_toggle_off(%ResizeButton)
+	_disable_and_toggle_off(%FlipHorizontalButton)
+	_disable_and_toggle_off(%FlipVerticalButton)
+	_disable_and_toggle_off(%BonePaintButton)
+	_disable_and_toggle_off(%EditButton)
+	_disable_and_toggle_off(%KnifeButton)
+	if disable_all:
+		_disable_and_toggle_off(%BrushButton)
+		_disable_and_toggle_off(%MergeButton)
+		_disable_and_toggle_off(%PencilButton)
+		_disable_and_toggle_off(%CircleButton)
+		_disable_and_toggle_off(%RectangleButton)
+	else:
+		%BrushButton.disabled = false
+		%MergeButton.disabled = false
+		%PencilButton.disabled = false
+		%CircleButton.disabled = false
+		%RectangleButton.disabled = false
+	if not %CircleButton.button_group.get_pressed_button():
+		%PlaceholderContainer.show()
 
 
 func disable_all_editors() -> void:
@@ -221,22 +236,6 @@ func _on_fill_check_button_toggled(toggled_on: bool) -> void:
 
 func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVectorShape2D.CollisionObjectType) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_COLLISION_TYPE, obj_type)
-
-
-func _on_info_button_pressed() -> void:
-	_hide_mode_containers()
-	var pressed_mode_toggle_button : BaseButton = %CircleButton.button_group.get_pressed_button()
-	if pressed_mode_toggle_button:
-		pressed_mode_toggle_button.button_pressed = false
-	%WelcomeContainer.show()
-
-
-func _on_close_info_button_pressed() -> void:
-	var pressed_mode_toggle_button : BaseButton = %CircleButton.button_group.get_pressed_button()
-	if pressed_mode_toggle_button:
-		pressed_mode_toggle_button.button_pressed = false
-	%CircleButton.button_pressed = true
-	%GeneralSettingsContainer.show()
 
 
 # --- Create Ellipse / Circle ---

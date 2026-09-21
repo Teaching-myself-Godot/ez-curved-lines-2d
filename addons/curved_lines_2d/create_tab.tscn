@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://cjbkvx1pj7gq2" path="res://addons/curved_lines_2d/collision_object_type_option_button.tscn" id="20_rpvk4"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_dsrm6"]
+allow_unpress = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4mrje"]
 atlas = ExtResource("6_h5wiq")
@@ -71,10 +72,6 @@ region = Rect2(48, 96, 16, 16)
 atlas = ExtResource("6_h5wiq")
 region = Rect2(32, 80, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_hti8q"]
-atlas = ExtResource("6_h5wiq")
-region = Rect2(48, 160, 16, 16)
-
 [node name="CreateTab" type="VBoxContainer" unique_id=2006994037]
 anchors_preset = 15
 anchor_right = 1.0
@@ -119,6 +116,7 @@ tooltip_text = "Create ellipse / cicle shapes"
 theme_override_styles/normal = ExtResource("2_2chn8")
 theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_4mrje")
@@ -134,6 +132,7 @@ tooltip_text = "Create rectangle shapes"
 theme_override_styles/normal = ExtResource("2_2chn8")
 theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_w8ysd")
@@ -249,6 +248,7 @@ tooltip_text = "Brush tool (Shift+B)"
 theme_override_styles/normal = ExtResource("2_2chn8")
 theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_a0xul")
@@ -264,6 +264,7 @@ tooltip_text = "Pencil tool (Shift+N)"
 theme_override_styles/normal = ExtResource("2_2chn8")
 theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_4nv23")
@@ -315,6 +316,7 @@ tooltip_text = "Merge points (M)"
 theme_override_styles/normal = ExtResource("2_2chn8")
 theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_powka")
@@ -392,23 +394,16 @@ layout_mode = 2
 size_flags_horizontal = 0
 theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
 
-[node name="InfoButton" type="Button" parent="HBoxContainer/HBoxContainer" unique_id=1984970687]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 4
-tooltip_text = "Show welcome information."
-theme_override_styles/normal = ExtResource("2_2chn8")
-theme_override_styles/pressed = ExtResource("3_hti8q")
-theme_override_styles/hover = ExtResource("4_powka")
-icon = SubResource("AtlasTexture_hti8q")
-expand_icon = true
-
 [node name="SettingsContainer" type="HSplitContainer" parent="." unique_id=1926730424]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="PlaceholderContainer" type="Control" parent="SettingsContainer" unique_id=535563690]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="CreateEllipseContainer" type="ScrollContainer" parent="SettingsContainer" unique_id=525159852]
 unique_name_in_owner = true
@@ -461,23 +456,6 @@ layout_mode = 2
 size_flags_horizontal = 0
 text = "Create Path"
 
-[node name="WelcomeContainer" type="CenterContainer" parent="SettingsContainer" unique_id=1097900555]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 200)
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="VBoxContainer" type="VBoxContainer" parent="SettingsContainer/WelcomeContainer" unique_id=611801709]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="SettingsContainer/WelcomeContainer/VBoxContainer" unique_id=783236461]
-layout_mode = 2
-text = "Todo: Welcome information"
-
-[node name="CloseInfoButton" type="Button" parent="SettingsContainer/WelcomeContainer/VBoxContainer" unique_id=1746117791]
-layout_mode = 2
-text = "Hide welcome information"
-
 [node name="GeneralSettingsContainer" type="ScrollContainer" parent="SettingsContainer" unique_id=1331453309]
 unique_name_in_owner = true
 layout_mode = 2
@@ -498,11 +476,9 @@ text = "TODO: general settings"
 [connection signal="toggled" from="HBoxContainer/HBoxContainer/HBoxContainer2/EnableStrokeCheckBox" to="." method="_on_stroke_check_button_toggled"]
 [connection signal="color_changed" from="HBoxContainer/HBoxContainer/HBoxContainer2/StrokePickerButton" to="." method="_on_stroke_picker_button_color_changed"]
 [connection signal="type_selected" from="HBoxContainer/HBoxContainer/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
-[connection signal="pressed" from="HBoxContainer/HBoxContainer/InfoButton" to="." method="_on_info_button_pressed"]
 [connection signal="mouse_entered" from="SettingsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer/CreateEllipseButton" to="." method="_on_create_circle_button_mouse_entered"]
 [connection signal="mouse_exited" from="SettingsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer/CreateEllipseButton" to="." method="_on_create_circle_button_mouse_exited"]
 [connection signal="pressed" from="SettingsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer/CreateEllipseButton" to="." method="_on_create_ellipse_button_pressed"]
 [connection signal="mouse_entered" from="SettingsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer/CreateCircleButton" to="." method="_on_create_circle_button_mouse_entered"]
 [connection signal="mouse_exited" from="SettingsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer/CreateCircleButton" to="." method="_on_create_circle_button_mouse_exited"]
 [connection signal="pressed" from="SettingsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer/CreateCircleButton" to="." method="_on_create_circle_button_pressed"]
-[connection signal="pressed" from="SettingsContainer/WelcomeContainer/VBoxContainer/CloseInfoButton" to="." method="_on_close_info_button_pressed"]
