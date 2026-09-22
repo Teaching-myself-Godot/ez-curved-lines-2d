@@ -200,19 +200,22 @@ func sync_draw_settings() -> void:
 
 func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 	push_warning("TODO: set _all_ the fields for selected ScalableVectorShape2D in create tab")
+	%FillPickerButton.color = svs.fill_color
+	# ColorPickerButton does not emit change signal when value is set directly
+	_on_fill_picker_button_color_changed()
+
+	%StrokePickerButton.color = svs.stroke_color
+	# ColorPickerButton does not emit change signal when value is set directly
+	_on_stroke_picker_button_color_changed()
+	stroke_width_input.value = svs.stroke_width
+
 	if is_instance_valid(svs.polygon):
 		%EnableFillCheckBox.button_pressed = true
-		%FillPickerButton.color = svs.fill_color
-		# ColorPickerButton does not emit change signal when value is set directly
-		_on_fill_picker_button_color_changed()
 	else:
 		%EnableFillCheckBox.button_pressed = false
+
 	if is_instance_valid(svs.line) or is_instance_valid(svs.poly_stroke):
 		%EnableStrokeCheckBox.button_pressed = true
-		%StrokePickerButton.color = svs.stroke_color
-		# ColorPickerButton does not emit change signal when value is set directly
-		_on_stroke_picker_button_color_changed()
-		stroke_width_input.value = svs.stroke_width
 		%UseLine2DCheckButton.button_pressed = is_instance_valid(svs.line)
 	else:
 		%EnableStrokeCheckBox.button_pressed = false

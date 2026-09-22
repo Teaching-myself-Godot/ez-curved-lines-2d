@@ -91,7 +91,6 @@ static func _sync_polygon(svs : ScalableVectorShape2D) -> void:
 
 static func _sync_line_2d(svs : ScalableVectorShape2D) -> void:
 	if CurvedLines2D._is_add_stroke_enabled() and CurvedLines2D._using_line_2d_for_stroke() and not is_instance_valid(svs.line):
-		print(CurvedLines2D._using_line_2d_for_stroke())
 		var line_2d := Line2D.new()
 		var root := EditorInterface.get_edited_scene_root()
 		var undo_redo = EditorInterface.get_editor_undo_redo()
@@ -119,18 +118,54 @@ static func _sync_line_2d(svs : ScalableVectorShape2D) -> void:
 			or
 		(is_instance_valid(svs.line) and not CurvedLines2D._using_line_2d_for_stroke())
 	):
-		push_warning("TODO: remove line via bottom dock")
+		var line_2d := svs.line
+		var undo_redo := EditorInterface.get_editor_undo_redo()
+		undo_redo.create_action("Remove Line2D from %s " % str(svs))
+		undo_redo.add_do_method(svs, 'remove_child', line_2d)
+		undo_redo.add_do_property(svs, 'line', null)
+		undo_redo.add_undo_method(svs, 'add_child', line_2d, true)
+		undo_redo.add_undo_method(line_2d, 'set_owner', EditorInterface.get_edited_scene_root())
+		undo_redo.add_undo_reference(line_2d)
+		undo_redo.add_undo_property(svs, 'line', line_2d)
+		if CurvedLines2D._is_add_stroke_enabled():
+			_add_polystroke(svs, undo_redo)
+		undo_redo.commit_action()
+
+
+static func _add_polystroke(svs : ScalableVectorShape2D, undo_redo : EditorUndoRedoManager) -> void:
+	var root := EditorInterface.get_edited_scene_root()
+	var poly_stroke := Polygon2D.new()
+	poly_stroke.name = "PolyStroke"
+	poly_stroke.color = svs.stroke_color
+	undo_redo.add_do_method(svs, 'add_child', poly_stroke, true)
+	undo_redo.add_do_method(poly_stroke, 'set_owner', root)
+	undo_redo.add_do_reference(poly_stroke)
+	undo_redo.add_do_property(svs, 'poly_stroke', poly_stroke)
+	undo_redo.add_undo_method(svs, 'remove_child', poly_stroke)
+	undo_redo.add_undo_property(svs, 'poly_stroke', null)
 
 
 static func _sync_poly_stroke(svs : ScalableVectorShape2D) -> void:
 	if (CurvedLines2D._is_add_stroke_enabled() and not CurvedLines2D._using_line_2d_for_stroke()) and not is_instance_valid(svs.poly_stroke):
-		push_warning("TODO: Add poly_stroke via bottom dock")
+		var undo_redo = EditorInterface.get_editor_undo_redo()
+		undo_redo.create_action("Add Polygon2D for Stroke to %s " % str(svs))
+		_add_polystroke(svs, undo_redo)
+		undo_redo.commit_action()
 	elif (
 		(is_instance_valid(svs.poly_stroke) and not CurvedLines2D._is_add_stroke_enabled())
 			or
 		(is_instance_valid(svs.poly_stroke) and CurvedLines2D._using_line_2d_for_stroke())
 	):
-		push_warning("TODO: remove poly_stroke via bottom dock")
+		var poly_stroke := svs.poly_stroke
+		var undo_redo := EditorInterface.get_editor_undo_redo()
+		undo_redo.create_action("Remove Line2D from %s " % str(svs))
+		undo_redo.add_do_method(svs, 'remove_child', poly_stroke)
+		undo_redo.add_do_property(svs, 'poly_stroke', null)
+		undo_redo.add_undo_method(svs, 'add_child', poly_stroke, true)
+		undo_redo.add_undo_method(poly_stroke, 'set_owner', EditorInterface.get_edited_scene_root())
+		undo_redo.add_undo_reference(poly_stroke)
+		undo_redo.add_undo_property(svs, 'poly_stroke', poly_stroke)
+		undo_redo.commit_action()
 
 
 static func _get_collision_object(obj_type : ScalableVectorShape2D.CollisionObjectType) -> CollisionObject2D:
