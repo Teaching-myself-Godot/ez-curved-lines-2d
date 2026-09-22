@@ -213,8 +213,10 @@ func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 		# ColorPickerButton does not emit change signal when value is set directly
 		_on_stroke_picker_button_color_changed()
 		stroke_width_input.value = svs.stroke_width
+		%UseLine2DCheckButton.button_pressed = is_instance_valid(svs.line)
 	else:
-		%EnableStrokeCheckBox.set_pressed_no_signal(false)
+		%EnableStrokeCheckBox.button_pressed = false
+
 
 	%CollisionObjectTypeOptionButton.select(svs.get_collision_object_type())
 	# OptionButton does not emit change signal when value is set directly

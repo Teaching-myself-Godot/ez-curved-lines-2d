@@ -253,58 +253,7 @@ func _on_project_settings_changed() -> void:
 	match _svs_edit_mode:
 		SVSEditMode.BRUSH, SVSEditMode.PENCIL:
 			return
-	push_warning("TODO: sync _all_ properties of the selected shape to the updated project settings")
-	var svs := current_selection as ScalableVectorShape2D
-	if svs.fill_color != _get_default_fill_color():
-		undo_redo.create_action("Set fill_color for " + str(svs))
-		undo_redo.add_do_property(svs, "fill_color", _get_default_fill_color())
-		undo_redo.add_undo_property(svs, "fill_color", svs.fill_color)
-		undo_redo.commit_action()
-	if svs.stroke_color != _get_default_stroke_color():
-		undo_redo.create_action("Set stroke_color for " + str(svs))
-		undo_redo.add_do_property(svs, "stroke_color", _get_default_stroke_color())
-		undo_redo.add_undo_property(svs, "stroke_color", svs.stroke_color)
-		undo_redo.commit_action()
-	if svs.stroke_width != _get_default_stroke_width():
-		undo_redo.create_action("Set stroke_width for " + str(svs))
-		undo_redo.add_do_property(svs, "stroke_width", _get_default_stroke_width())
-		undo_redo.add_undo_property(svs, "stroke_width", svs.stroke_width)
-		undo_redo.commit_action()
-	if svs.get_collision_object_type() != _add_collision_object_type():
-		push_warning("TODO: change collision object type on selection via bottom dock")
-	if is_instance_valid(svs.polygon) and not _is_add_fill_enabled():
-		var polygon_2d := svs.polygon
-		undo_redo.create_action("Remove Polygon2D from %s " % str(svs))
-		undo_redo.add_do_method(svs, 'remove_child', polygon_2d)
-		undo_redo.add_do_property(svs, 'polygon', null)
-		undo_redo.add_undo_method(svs, 'add_child', polygon_2d, true)
-		undo_redo.add_undo_method(polygon_2d, 'set_owner', EditorInterface.get_edited_scene_root())
-		undo_redo.add_undo_reference(polygon_2d)
-		undo_redo.add_undo_property(svs, 'polygon', polygon_2d)
-		undo_redo.commit_action()
-
-	if not is_instance_valid(svs.polygon) and _is_add_fill_enabled():
-		var polygon_2d := Polygon2D.new()
-		polygon_2d.color = _get_default_fill_color()
-		undo_redo.create_action("Add Polygon2D to %s " % str(svs))
-		undo_redo.add_do_method(svs, 'add_child', polygon_2d, true)
-		undo_redo.add_do_method(polygon_2d, 'set_owner', EditorInterface.get_edited_scene_root())
-		undo_redo.add_do_reference(polygon_2d)
-		undo_redo.add_do_property(svs, 'polygon', polygon_2d)
-		undo_redo.add_undo_method(svs, 'remove_child', polygon_2d)
-		undo_redo.add_undo_property(svs, 'polygon', null)
-		undo_redo.commit_action()
-
-	if is_instance_valid(svs.line) and not _is_add_stroke_enabled():
-		push_warning("TODO: remove line via bottom dock")
-	if is_instance_valid(svs.poly_stroke) and not _is_add_stroke_enabled():
-		push_warning("TODO: remove poly_stroke via bottom dock")
-	if _is_add_stroke_enabled() and _using_line_2d_for_stroke() and not is_instance_valid(svs.line):
-		print(_using_line_2d_for_stroke())
-		push_warning("TODO: Add line via bottom dock")
-	if (_is_add_stroke_enabled() and not _using_line_2d_for_stroke()) and not is_instance_valid(svs.poly_stroke):
-		push_warning("Add poly_stroke via bottom dock")
-
+	SVSPropertySync.synchronize_svs_with_changed_properties(current_selection)
 
 
 func _find_snap_dialog() -> AcceptDialog:
