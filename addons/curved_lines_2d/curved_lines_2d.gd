@@ -250,6 +250,9 @@ func _on_project_settings_changed() -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if not _is_svs_valid(current_selection):
 		return
+	match _svs_edit_mode:
+		SVSEditMode.BRUSH, SVSEditMode.PENCIL:
+			return
 	push_warning("TODO: sync _all_ properties of the selected shape to the updated project settings")
 	var svs := current_selection as ScalableVectorShape2D
 	if svs.fill_color != _get_default_fill_color():

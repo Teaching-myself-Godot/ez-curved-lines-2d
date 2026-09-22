@@ -1,11 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://cjbkvx1pj7gq2"]
+[gd_scene format=3 uid="uid://cjbkvx1pj7gq2"]
 
 [ext_resource type="Script" uid="uid://ppu1camg8q83" path="res://addons/curved_lines_2d/collision_object_type_option_button.gd" id="1_cky2p"]
 
-[node name="CollisionObjectTypeOptionButton" type="OptionButton"]
+[node name="CollisionObjectTypeOptionButton" type="OptionButton" unique_id=1367500312]
 selected = 0
 item_count = 7
-popup/item_0/text = "- No Collision -"
+popup/item_0/text = "- Collision -"
 popup/item_0/id = 0
 popup/item_1/text = "StaticBody2D"
 popup/item_1/id = 1

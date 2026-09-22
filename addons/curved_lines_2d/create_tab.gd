@@ -23,9 +23,10 @@ var warning_dialog : AcceptDialog = null
 var tab_default_min_height : int
 
 @onready var mode_containers := [
-	%PlaceholderContainer, %CreateEllipseContainer
+	%CreateEllipseContainer
 ]
 
+@onready var tool_mode_button_group : ButtonGroup =	%CircleButton.button_group
 
 func _ready() -> void:
 	_hide_mode_containers()
@@ -72,10 +73,13 @@ func _ready() -> void:
 
 	tab_default_min_height = custom_minimum_size.y
 
+
 func _on_mode_toggled(toggled_on : bool, mode : CurvedLines2D.SVSEditMode) -> void:
 	if toggled_on:
 		mode_changed.emit(mode)
 		show_details_for_current_mode(mode)
+	if not tool_mode_button_group.get_pressed_button():
+		mode_changed.emit(CurvedLines2D.SVSEditMode.NONE)
 
 
 func set_edit_mode_toggle_button(mode : CurvedLines2D.SVSEditMode) -> void:
@@ -178,8 +182,7 @@ func disable_svs_editors(disable_all := false) -> void:
 		%PencilButton.disabled = false
 		%CircleButton.disabled = false
 		%RectangleButton.disabled = false
-	if not %CircleButton.button_group.get_pressed_button():
-		%PlaceholderContainer.show()
+
 
 
 func disable_all_editors() -> void:
@@ -255,6 +258,7 @@ func _on_fill_check_button_toggled(toggled_on: bool) -> void:
 
 func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVectorShape2D.CollisionObjectType) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_COLLISION_TYPE, obj_type)
+	ProjectSettings.save()
 
 
 # --- Create Ellipse / Circle ---
@@ -299,7 +303,7 @@ func _on_ellipse_rx_value_changed(new_value : float) -> void:
 
 func _on_ellipse_ry_value_changed(new_value : float) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ELLIPSE_RY, new_value)
-	
+
 
 func _on_expand_tab_button_toggled(toggled_on: bool) -> void:
 	if (toggled_on):
