@@ -92,7 +92,28 @@ static func _sync_polygon(svs : ScalableVectorShape2D) -> void:
 static func _sync_line_2d(svs : ScalableVectorShape2D) -> void:
 	if CurvedLines2D._is_add_stroke_enabled() and CurvedLines2D._using_line_2d_for_stroke() and not is_instance_valid(svs.line):
 		print(CurvedLines2D._using_line_2d_for_stroke())
-		push_warning("TODO: Add line via bottom dock")
+		var line_2d := Line2D.new()
+		var root := EditorInterface.get_edited_scene_root()
+		var undo_redo = EditorInterface.get_editor_undo_redo()
+		line_2d.name = "Stroke"
+		line_2d.default_color = svs.stroke_color
+		line_2d.width = svs.stroke_width
+		line_2d.begin_cap_mode = svs.begin_cap_mode
+		line_2d.end_cap_mode = svs.end_cap_mode
+		line_2d.joint_mode = svs.line_joint_mode
+		line_2d.sharp_limit = 90.0
+		if CurvedLines2D._use_antialiased_line_2d():
+			line_2d.texture = load("res://addons/curved_lines_2d/LumAlpha8.tex")
+			line_2d.texture_mode = Line2D.LINE_TEXTURE_TILE
+			line_2d.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+		undo_redo.create_action("Add Line2D to %s " % str(svs))
+		undo_redo.add_do_method(svs, 'add_child', line_2d, true)
+		undo_redo.add_do_method(line_2d, 'set_owner', root)
+		undo_redo.add_do_reference(line_2d)
+		undo_redo.add_do_property(svs, 'line', line_2d)
+		undo_redo.add_undo_method(svs, 'remove_child', line_2d)
+		undo_redo.add_undo_property(svs, 'line', null)
+		undo_redo.commit_action()
 	elif (
 		(is_instance_valid(svs.line) and not CurvedLines2D._is_add_stroke_enabled())
 			or
