@@ -229,8 +229,8 @@ tooltip_text = "Edit the points of the selected shape normally (Q)"
 theme_override_styles/normal = ExtResource("2_2chn8")
 theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
-disabled = true
 toggle_mode = true
+button_pressed = true
 button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_v84w2")
 expand_icon = true
@@ -485,7 +485,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(1, 1, 1, 1)
+color = Color(0, 0.87451, 0.698039, 1)
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/HBoxContainer" unique_id=265864135]
 layout_mode = 2
@@ -509,10 +509,11 @@ layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Set Stroke Color"
 text = "Fill"
+color = Color(0.984314, 0.968627, 1, 1)
 
 [node name="StrokeWidthContainer" type="PanelContainer" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=1573755340]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(108, 0)
+custom_minimum_size = Vector2(148, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = ExtResource("7_powka")
@@ -647,7 +648,7 @@ mouse_filter = 0
 text = "Order"
 horizontal_alignment = 2
 
-[node name="PaintOrderButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3" unique_id=1937699835]
+[node name="PaintOrderButton0" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3" unique_id=1937699835]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -851,7 +852,7 @@ button_group = SubResource("ButtonGroup_xjyyj")
 icon = SubResource("AtlasTexture_pu4iw")
 expand_icon = true
 
-[node name="EndBeginRoundCapToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer2" unique_id=1916241251]
+[node name="EndRoundCapToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer2" unique_id=1916241251]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -867,7 +868,7 @@ button_group = SubResource("ButtonGroup_xjyyj")
 icon = SubResource("AtlasTexture_lcmbt")
 expand_icon = true
 
-[node name="EndBeginNoCapToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer2" unique_id=246852935]
+[node name="EndNoCapToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer2" unique_id=246852935]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -965,3 +966,22 @@ expand_icon = true
 [connection signal="popup_closed" from="SettingsContainer/HBoxContainer/HBoxContainer3/StrokePickerButton" to="." method="_on_stroke_picker_button_color_changed"]
 [connection signal="toggled" from="SettingsContainer/HBoxContainer/ExpandTabButton" to="." method="_on_expand_tab_button_toggled"]
 [connection signal="type_selected" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4/UseLine2DCheckButton" to="." method="_on_use_line_2d_check_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4/BeginBoxCapToggleButton" to="." method="_on_begin_box_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4/BeginRoundCapToggleButton" to="." method="_on_begin_round_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4/BeginNoCapToggleButton" to="." method="_on_begin_no_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/PaintOrderButton0" to="." method="_on_paint_order_button_0_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/PaintOrderButton1" to="." method="_on_paint_order_button_1_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/PaintOrderButton2" to="." method="_on_paint_order_button_2_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/PaintOrderButton3" to="." method="_on_paint_order_button_3_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/PaintOrderButton4" to="." method="_on_paint_order_button_4_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/PaintOrderButton5" to="." method="_on_paint_order_button_5_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/LineJoinSharpToggleButton" to="." method="_on_line_joint_sharp_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/LineJointRoundToggleButton" to="." method="_on_line_joint_round_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/LineJointBevelToggleButton" to="." method="_on_line_joint_bevel_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer2/EndBoxCapToggleButton" to="." method="_on_end_box_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer2/EndRoundCapToggleButton" to="." method="_on_end_round_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer2/EndNoCapToggleButton" to="." method="_on_end_no_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer5/MiddleToggleButton" to="." method="_on_middle_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer5/InsideToggleButton" to="." method="_on_inside_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer5/OutsideToggleButton" to="." method="_on_outside_toggle_button_toggled"]

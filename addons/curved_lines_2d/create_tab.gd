@@ -53,7 +53,7 @@ func _ready() -> void:
 		%FillPickerButton.focus_exited.connect(ProjectSettings.save)
 	%EnableStrokeCheckBox.button_pressed = CurvedLines2D._is_add_stroke_enabled()
 	%EnableFillCheckBox.button_pressed = CurvedLines2D._is_add_fill_enabled()
-	stroke_width_input = _make_number_input("Size", 10.0, 0.5, 100.0, "px", 0.5)
+	stroke_width_input = _make_number_input("Thickness", 10.0, 0.5, 100.0, "px", 0.5)
 	stroke_width_input.value = CurvedLines2D._get_default_stroke_width()
 	stroke_width_input.value_changed.connect(_on_stroke_width_input_value_changed)
 	%StrokeWidthContainer.add_child(stroke_width_input)
@@ -168,7 +168,7 @@ func disable_svs_editors(disable_all := false) -> void:
 	_disable_and_toggle_off(%FlipHorizontalButton)
 	_disable_and_toggle_off(%FlipVerticalButton)
 	_disable_and_toggle_off(%BonePaintButton)
-	_disable_and_toggle_off(%EditButton)
+	#_disable_and_toggle_off(%EditButton)
 	_disable_and_toggle_off(%KnifeButton)
 	if disable_all:
 		_disable_and_toggle_off(%BrushButton)
@@ -261,6 +261,133 @@ func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVec
 	ProjectSettings.save()
 
 
+func _on_use_line_2d_check_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_USE_LINE_2D_FOR_STROKE, toggled_on)
+	if toggled_on:
+		%EndBoxCapToggleButton.disabled = false
+		%EndNoCapToggleButton.disabled = false
+		%EndRoundCapToggleButton.disabled = false
+	else:
+		%EndBoxCapToggleButton.disabled = true
+		%EndNoCapToggleButton.disabled = true
+		%EndRoundCapToggleButton.disabled = true
+
+
+func _on_paint_order_button_0_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_PAINT_ORDER,
+			CurvedLines2D.PaintOrder.FILL_STROKE_MARKERS)
+	ProjectSettings.save()
+
+
+func _on_paint_order_button_1_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_PAINT_ORDER,
+			CurvedLines2D.PaintOrder.STROKE_FILL_MARKERS)
+	ProjectSettings.save()
+
+
+func _on_paint_order_button_2_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_PAINT_ORDER,
+			CurvedLines2D.PaintOrder.FILL_MARKERS_STROKE)
+	ProjectSettings.save()
+
+
+func _on_paint_order_button_3_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_PAINT_ORDER,
+			CurvedLines2D.PaintOrder.MARKERS_FILL_STROKE)
+	ProjectSettings.save()
+
+
+func _on_paint_order_button_4_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_PAINT_ORDER,
+			CurvedLines2D.PaintOrder.STROKE_MARKERS_FILL)
+	ProjectSettings.save()
+
+
+func _on_paint_order_button_5_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_PAINT_ORDER,
+			CurvedLines2D.PaintOrder.MARKERS_STROKE_FILL)
+	ProjectSettings.save()
+
+
+func _on_begin_no_cap_toggle_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_BEGIN_CAP,
+			Line2D.LineCapMode.LINE_CAP_NONE)
+	ProjectSettings.save()
+
+
+func _on_begin_box_cap_toggle_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_BEGIN_CAP,
+			Line2D.LineCapMode.LINE_CAP_BOX)
+	ProjectSettings.save()
+
+
+func _on_begin_round_cap_toggle_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_BEGIN_CAP,
+			Line2D.LineCapMode.LINE_CAP_ROUND)
+	ProjectSettings.save()
+
+
+func _on_end_no_cap_toggle_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_END_CAP,
+			Line2D.LineCapMode.LINE_CAP_NONE)
+	ProjectSettings.save()
+
+
+func _on_end_box_cap_toggle_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_END_CAP,
+			Line2D.LineCapMode.LINE_CAP_BOX)
+	ProjectSettings.save()
+
+
+func _on_end_round_cap_toggle_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_END_CAP,
+			Line2D.LineCapMode.LINE_CAP_ROUND)
+	ProjectSettings.save()
+
+
+func _on_line_joint_sharp_toggle_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_JOINT_MODE,
+			Line2D.LineJointMode.LINE_JOINT_SHARP)
+	ProjectSettings.save()
+
+
+func _on_line_joint_bevel_toggle_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_JOINT_MODE,
+			Line2D.LineJointMode.LINE_JOINT_BEVEL)
+	ProjectSettings.save()
+
+
+func _on_line_joint_round_toggle_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_JOINT_MODE,
+			Line2D.LineJointMode.LINE_JOINT_ROUND)
+	ProjectSettings.save()
+
+
+func _on_middle_toggle_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_EXTRUSION,
+			ScalableVectorShape2D.StrokeExtrusionDirection.MIDDLE)
+	ProjectSettings.save()
+
+
+func _on_outside_toggle_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_EXTRUSION,
+			ScalableVectorShape2D.StrokeExtrusionDirection.OUTWARD)
+	ProjectSettings.save()
+
+
+func _on_inside_toggle_button_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_EXTRUSION,
+			ScalableVectorShape2D.StrokeExtrusionDirection.INWARD)
+	ProjectSettings.save()
+
+
+func _on_expand_tab_button_toggled(toggled_on: bool) -> void:
+	if (toggled_on):
+		custom_minimum_size.y = tab_default_min_height
+	elif (!toggled_on):
+		custom_minimum_size.y = 0
+
+
 # --- Create Ellipse / Circle ---
 func _on_create_circle_button_pressed() -> void:
 	var scene_root := EditorInterface.get_edited_scene_root()
@@ -303,10 +430,3 @@ func _on_ellipse_rx_value_changed(new_value : float) -> void:
 
 func _on_ellipse_ry_value_changed(new_value : float) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ELLIPSE_RY, new_value)
-
-
-func _on_expand_tab_button_toggled(toggled_on: bool) -> void:
-	if (toggled_on):
-		custom_minimum_size.y = tab_default_min_height
-	elif (!toggled_on):
-		custom_minimum_size.y = 0
