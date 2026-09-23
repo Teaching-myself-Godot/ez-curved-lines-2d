@@ -242,18 +242,6 @@ func _enter_tree():
 	_snap_dialog = _find_snap_dialog()
 	if is_instance_valid(_snap_dialog) and not _snap_dialog.confirmed.is_connected(_on_confirm_grid_snap_settings):
 		_snap_dialog.confirmed.connect(_on_confirm_grid_snap_settings)
-	if not ProjectSettings.settings_changed.is_connected(_on_project_settings_changed):
-		ProjectSettings.settings_changed.connect(_on_project_settings_changed)
-
-
-func _on_project_settings_changed() -> void:
-	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-	if not _is_svs_valid(current_selection):
-		return
-	match _svs_edit_mode:
-		SVSEditMode.BRUSH, SVSEditMode.PENCIL:
-			return
-	SVSPropertySync.synchronize_svs_with_changed_properties(current_selection)
 
 
 func _find_snap_dialog() -> AcceptDialog:
@@ -3486,5 +3474,3 @@ func _exit_tree():
 	remove_control_from_bottom_panel(scalable_vector_shapes_2d_dock)
 	scalable_vector_shapes_2d_dock.free()
 	set_global_position_popup_panel.free()
-	if ProjectSettings.settings_changed.is_connected(_on_project_settings_changed):
-		ProjectSettings.settings_changed.disconnect(_on_project_settings_changed)

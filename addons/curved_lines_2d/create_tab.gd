@@ -12,7 +12,6 @@ signal flip_vertical()
 
 const OPEN_SCENE_ERROR_MESSAGE := "Can only create a shape in an open scene"
 
-
 var stroke_width_input : EditorSpinSlider
 
 var ellipse_rx_input : EditorSpinSlider
@@ -201,29 +200,21 @@ func sync_draw_settings() -> void:
 func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 	push_warning("TODO: set _all_ the fields for selected ScalableVectorShape2D in create tab")
 	%FillPickerButton.color = svs.fill_color
-	# ColorPickerButton does not emit change signal when value is set directly
-	_on_fill_picker_button_color_changed()
-
 	%StrokePickerButton.color = svs.stroke_color
-	# ColorPickerButton does not emit change signal when value is set directly
-	_on_stroke_picker_button_color_changed()
 	stroke_width_input.value = svs.stroke_width
 
 	if is_instance_valid(svs.polygon):
-		%EnableFillCheckBox.button_pressed = true
+		%EnableFillCheckBox.set_pressed_no_signal(true)
 	else:
-		%EnableFillCheckBox.button_pressed = false
+		%EnableFillCheckBox.set_pressed_no_signal(false)
 
 	if is_instance_valid(svs.line) or is_instance_valid(svs.poly_stroke):
-		%EnableStrokeCheckBox.button_pressed = true
-		%UseLine2DCheckButton.button_pressed = is_instance_valid(svs.line)
+		%EnableStrokeCheckBox.set_pressed_no_signal(true)
+		%UseLine2DCheckButton.set_pressed_no_signal(is_instance_valid(svs.line))
 	else:
-		%EnableStrokeCheckBox.button_pressed = false
-
+		%EnableStrokeCheckBox.set_pressed_no_signal(false)
 
 	%CollisionObjectTypeOptionButton.select(svs.get_collision_object_type())
-	# OptionButton does not emit change signal when value is set directly
-	_on_collision_object_type_option_button_type_selected(svs.get_collision_object_type())
 	ProjectSettings.save()
 
 
@@ -239,31 +230,37 @@ func _make_number_input(lbl : String, value : float, min_value : float, max_valu
 	return x_slider
 
 
-func _on_fill_picker_button_color_changed() -> void:
-	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_FILL_COLOR, %FillPickerButton.color)
+func _on_fill_picker_button_color_changed(color : Color) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_FILL_COLOR, color)
+	SVSPropertySync.sync_fill_color()
 
 
-func _on_stroke_picker_button_color_changed() -> void:
-	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_COLOR, %StrokePickerButton.color)
+func _on_stroke_picker_button_color_changed(color : Color) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_COLOR, color)
+	SVSPropertySync.sync_stroke_color()
 
 
 func _on_stroke_check_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_STROKE_ENABLED, toggled_on)
 	ProjectSettings.save()
+	SVSPropertySync.sync_stroke()
 
 
 func _on_stroke_width_input_value_changed(new_value: float) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_WIDTH, new_value)
+	SVSPropertySync.sync_stroke_width()
 
 
 func _on_fill_check_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_FILL_ENABLED, toggled_on)
 	ProjectSettings.save()
+	SVSPropertySync.sync_polygon()
 
 
 func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVectorShape2D.CollisionObjectType) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_COLLISION_TYPE, obj_type)
 	ProjectSettings.save()
+	SVSPropertySync.sync_collision_object()
 
 
 func _on_use_line_2d_check_button_toggled(toggled_on: bool) -> void:
@@ -276,6 +273,7 @@ func _on_use_line_2d_check_button_toggled(toggled_on: bool) -> void:
 		%EndBoxCapToggleButton.disabled = true
 		%EndNoCapToggleButton.disabled = true
 		%EndRoundCapToggleButton.disabled = true
+	SVSPropertySync.sync_stroke()
 
 
 func _on_paint_order_button_0_toggled(toggled_on: bool) -> void:

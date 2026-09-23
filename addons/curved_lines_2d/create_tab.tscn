@@ -485,7 +485,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(0, 0.87451, 0.698039, 1)
+color = Color(0.558594, 0.606873, 1, 1)
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/HBoxContainer" unique_id=265864135]
 layout_mode = 2
@@ -509,7 +509,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Set Stroke Color"
 text = "Fill"
-color = Color(0.984314, 0.968627, 1, 1)
+color = Color(0.427548, 0.209066, 0.760482, 1)
 
 [node name="StrokeWidthContainer" type="PanelContainer" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=1573755340]
 unique_name_in_owner = true
@@ -961,9 +961,9 @@ expand_icon = true
 [connection signal="mouse_exited" from="ToolsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer/CreateCircleButton" to="." method="_on_create_circle_button_mouse_exited"]
 [connection signal="pressed" from="ToolsContainer/CreateEllipseContainer/VBoxContainer/HBoxContainer/CreateCircleButton" to="." method="_on_create_circle_button_pressed"]
 [connection signal="toggled" from="SettingsContainer/HBoxContainer/HBoxContainer2/EnableFillCheckBox" to="." method="_on_fill_check_button_toggled"]
-[connection signal="popup_closed" from="SettingsContainer/HBoxContainer/HBoxContainer2/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]
+[connection signal="color_changed" from="SettingsContainer/HBoxContainer/HBoxContainer2/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]
 [connection signal="toggled" from="SettingsContainer/HBoxContainer/HBoxContainer3/EnableStrokeCheckBox" to="." method="_on_stroke_check_button_toggled"]
-[connection signal="popup_closed" from="SettingsContainer/HBoxContainer/HBoxContainer3/StrokePickerButton" to="." method="_on_stroke_picker_button_color_changed"]
+[connection signal="color_changed" from="SettingsContainer/HBoxContainer/HBoxContainer3/StrokePickerButton" to="." method="_on_stroke_picker_button_color_changed"]
 [connection signal="toggled" from="SettingsContainer/HBoxContainer/ExpandTabButton" to="." method="_on_expand_tab_button_toggled"]
 [connection signal="type_selected" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
 [connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4/UseLine2DCheckButton" to="." method="_on_use_line_2d_check_button_toggled"]
