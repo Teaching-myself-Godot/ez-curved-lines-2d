@@ -27,6 +27,9 @@ var tab_default_min_height : int
 
 @onready var tool_mode_button_group : ButtonGroup =	%CircleButton.button_group
 
+var _changing_color := false
+var _previous_color := Color.WHITE
+
 func _ready() -> void:
 	_hide_mode_containers()
 	%CircleButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.CREATE_ELLIPSE))
@@ -45,11 +48,11 @@ func _ready() -> void:
 
 	# Fill and Stroke Settings
 	%StrokePickerButton.color = CurvedLines2D._get_default_stroke_color()
-	if not %StrokePickerButton.focus_exited.is_connected(ProjectSettings.save):
-		%StrokePickerButton.focus_exited.connect(ProjectSettings.save)
+	if not %StrokePickerButton.popup_closed.is_connected(_on_stroke_picker_button_popup_closed):
+		%StrokePickerButton.popup_closed.connect(_on_stroke_picker_button_popup_closed)
 	%FillPickerButton.color = CurvedLines2D._get_default_fill_color()
-	if not %FillPickerButton.focus_exited.is_connected(ProjectSettings.save):
-		%FillPickerButton.focus_exited.connect(ProjectSettings.save)
+	if not %FillPickerButton.popup_closed.is_connected(_on_fill_picker_button_popup_closed):
+		%FillPickerButton.popup_closed.connect(_on_fill_picker_button_popup_closed)
 	%EnableStrokeCheckBox.button_pressed = CurvedLines2D._is_add_stroke_enabled()
 	%EnableFillCheckBox.button_pressed = CurvedLines2D._is_add_fill_enabled()
 	stroke_width_input = _make_number_input("Thickness", 10.0, 0.5, 100.0, "px", 0.5)
@@ -231,13 +234,32 @@ func _make_number_input(lbl : String, value : float, min_value : float, max_valu
 
 
 func _on_fill_picker_button_color_changed(color : Color) -> void:
+	if not _changing_color:
+		_previous_color = CurvedLines2D._get_default_fill_color()
+	_changing_color = true
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_FILL_COLOR, color)
-	SVSPropertySync.sync_fill_color()
+	SVSPropertySync.sync_fill_color(false)
+
+
+func _on_fill_picker_button_popup_closed() -> void:
+	ProjectSettings.save()
+	SVSPropertySync.sync_fill_color(true, _previous_color)
+	_changing_color = false
 
 
 func _on_stroke_picker_button_color_changed(color : Color) -> void:
+	if not _changing_color:
+		_previous_color = CurvedLines2D._get_default_stroke_color()
+	_changing_color = true
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_COLOR, color)
-	SVSPropertySync.sync_stroke_color()
+	SVSPropertySync.sync_stroke_color(false)
+
+
+func _on_stroke_picker_button_popup_closed() -> void:
+	ProjectSettings.save()
+	SVSPropertySync.sync_stroke_color(true, _previous_color)
+	_changing_color = false
+
 
 
 func _on_stroke_check_button_toggled(toggled_on: bool) -> void:

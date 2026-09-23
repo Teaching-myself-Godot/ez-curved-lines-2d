@@ -21,24 +21,28 @@ static func _get_svs_selection() -> Array[ScalableVectorShape2D]:
 	)
 
 
-static func sync_fill_color() -> void:
+static func sync_fill_color(commit : bool, previous := Color.WHITE) -> void:
 	for svs in _get_svs_selection():
-		if svs.fill_color != CurvedLines2D._get_default_fill_color():
+		if commit:
 			var undo_redo := EditorInterface.get_editor_undo_redo()
 			undo_redo.create_action("Set fill_color for " + str(svs))
 			undo_redo.add_do_property(svs, "fill_color", CurvedLines2D._get_default_fill_color())
-			undo_redo.add_undo_property(svs, "fill_color", svs.fill_color)
+			undo_redo.add_undo_property(svs, "fill_color", previous)
 			undo_redo.commit_action()
+		else:
+			svs.fill_color = CurvedLines2D._get_default_fill_color()
 
 
-static func sync_stroke_color() -> void:
+static func sync_stroke_color(commit : bool, previous := Color.WHITE) -> void:
 	for svs in _get_svs_selection():
-		if svs.stroke_color != CurvedLines2D._get_default_stroke_color():
+		if commit:
 			var undo_redo := EditorInterface.get_editor_undo_redo()
 			undo_redo.create_action("Set stroke_color for " + str(svs))
 			undo_redo.add_do_property(svs, "stroke_color", CurvedLines2D._get_default_stroke_color())
-			undo_redo.add_undo_property(svs, "stroke_color", svs.stroke_color)
+			undo_redo.add_undo_property(svs, "stroke_color", previous)
 			undo_redo.commit_action()
+		else:
+			svs.stroke_color = CurvedLines2D._get_default_stroke_color()
 
 
 static func sync_stroke_width() -> void:
