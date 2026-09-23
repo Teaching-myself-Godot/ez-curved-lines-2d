@@ -463,9 +463,11 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 	# of the preceding number if it already contained a period, for instance:
 	# ".5 19.69.44" will eventually result in [0.5, 19.69, 0.44]
 	for num_chunk in str_path_array_raw:
-		if num_chunk.split().count(".") == 2:
+		if num_chunk.split().count(".") >= 2:
 			var parts := num_chunk.split(".")
-			str_path_array.append_array([parts[0] + "." + parts[1], "." + parts[2]])
+			str_path_array.append(parts[0] + "." + parts[1])
+			for i in range(2, parts.size()):
+				str_path_array.append("." + parts[i])
 		else:
 			str_path_array.append(num_chunk)
 	var string_arrays = []
