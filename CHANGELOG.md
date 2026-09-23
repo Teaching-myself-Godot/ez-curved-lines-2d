@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.35.0 - Snap to Grid
+## 2.35.1 - Snap to Grid
 
 ### Added
 
@@ -9,6 +9,7 @@
 ### Changed
 
 - Bugfix: snap to grid now works correctly for the ellipse/rectangle resize handle
+- Bugfix: in SVG importer floating points with leading periods stuck to preceding number are separated off in paths d attribute
 
 ## 2.34.5 - Inkscape Sync
 

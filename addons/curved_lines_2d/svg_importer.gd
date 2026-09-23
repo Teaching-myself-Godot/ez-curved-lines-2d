@@ -429,6 +429,8 @@ func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_roo
 			.replacen(",", " ")
 			.split(" ", false)
 	)
+	# FIXME: the cases of exponents and the quirky 5.5.5 -> [5.5, 0.5] are not covered
+	# here yet
 	var curve = Curve2D.new()
 	for p_idx in range(0, points_split.size(), 2):
 		curve.add_point(Vector2(float(points_split[p_idx]), float(points_split[p_idx + 1])))
