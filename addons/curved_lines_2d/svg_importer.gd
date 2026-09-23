@@ -429,6 +429,8 @@ func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_roo
 			.replacen(",", " ")
 			.split(" ", false)
 	)
+	# FIXME: the cases of exponents and the quirky 5.5.5 -> [5.5, 0.5] are not covered
+	# here yet
 	var curve = Curve2D.new()
 	for p_idx in range(0, points_split.size(), 2):
 		curve.add_point(Vector2(float(points_split[p_idx]), float(points_split[p_idx + 1])))
@@ -440,20 +442,32 @@ func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_roo
 
 func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root : Node,
 		gradients : Array[Dictionary]) -> void:
-
-	# FIXME: implement better parsing here
-	var str_path = parse_attribute_string(
-				element.get_named_attribute_value("d")).replacen(",", " ")
 	var shape_name := get_element_label(element, "Path")
+
+	# NOTICE: replaces comma separators with whitespace for entire d-attribute
+	var str_path := parse_attribute_string(
+				element.get_named_attribute_value("d")).replacen(",", " ")
 
 	for symbol in ["m", "M", "v", "V", "h", "H", "l", "L", "c", "C", "s", "S", "a", "A", "q", "Q", "t", "T", "z", "Z"]:
 		str_path = str_path.replace(symbol, " " + symbol + " ")
 
-	# FIXME: this bit is especially problematic
+	# NOTICE: inject a separating whitespace to make sure negative numbers are
+	# separated from preceding number, unless they're part of exponent notation
 	str_path = str_path.replace("e-", PLC_EXP)
 	str_path = str_path.replace("-", " -")
 	str_path = str_path.replace(PLC_EXP, "e-")
-	var str_path_array = str_path.split(" ", false)
+
+	var str_path_array_raw := str_path.split(" ", false)
+	var str_path_array : Array[String] = []
+	# NOTICE: Make sure numbers that start out with a period are separated off
+	# of the preceding number if it already contained a period, for instance:
+	# ".5 19.69.44" will eventually result in [0.5, 19.69, 0.44]
+	for num_chunk in str_path_array_raw:
+		if num_chunk.split().count(".") == 2:
+			var parts := num_chunk.split(".")
+			str_path_array.append_array([parts[0] + "." + parts[1], "." + parts[2]])
+		else:
+			str_path_array.append(num_chunk)
 	var string_arrays = []
 	var string_array_top : PackedStringArray
 	for a in str_path_array:
