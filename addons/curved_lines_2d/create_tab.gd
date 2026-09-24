@@ -28,7 +28,6 @@ var tab_default_min_height : int
 @onready var tool_mode_button_group : ButtonGroup =	%CircleButton.button_group
 
 var _changing_color := false
-var _previous_color := Color.WHITE
 
 func _ready() -> void:
 	_hide_mode_containers()
@@ -243,35 +242,32 @@ func _is_property_sync_allowed() -> bool:
 
 
 func _on_fill_picker_button_color_changed(color : Color) -> void:
-	if not _changing_color:
-		_previous_color = CurvedLines2D._get_default_fill_color()
-	_changing_color = true
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_FILL_COLOR, color)
 	if _is_property_sync_allowed():
-		SVSPropertySync.sync_fill_color(false)
+		SVSPropertySync.sync_fill_color(false, not _changing_color)
+		_changing_color = true
 
 
 func _on_fill_picker_button_popup_closed() -> void:
 	ProjectSettings.save()
 	_changing_color = false
 	if _is_property_sync_allowed():
-		SVSPropertySync.sync_fill_color(true, _previous_color)
+		SVSPropertySync.sync_fill_color(true)
+		_changing_color = false
 
 
 func _on_stroke_picker_button_color_changed(color : Color) -> void:
-	if not _changing_color:
-		_previous_color = CurvedLines2D._get_default_stroke_color()
-	_changing_color = true
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_COLOR, color)
 	if _is_property_sync_allowed():
-		SVSPropertySync.sync_stroke_color(false)
+		SVSPropertySync.sync_stroke_color(false, not _changing_color)
+		_changing_color = true
 
 
 func _on_stroke_picker_button_popup_closed() -> void:
 	ProjectSettings.save()
-	_changing_color = false
 	if _is_property_sync_allowed():
-		SVSPropertySync.sync_stroke_color(true, _previous_color)
+		SVSPropertySync.sync_stroke_color(true)
+		_changing_color = false
 
 
 func _on_stroke_check_button_toggled(toggled_on: bool) -> void:
