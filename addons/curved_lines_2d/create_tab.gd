@@ -226,6 +226,9 @@ func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 	%LineJoinSharpToggleButton.set_pressed_no_signal(svs.line_joint_mode == Line2D.LINE_JOINT_SHARP)
 	%LineJointRoundToggleButton.set_pressed_no_signal(svs.line_joint_mode == Line2D.LINE_JOINT_ROUND)
 	%LineJointBevelToggleButton.set_pressed_no_signal(svs.line_joint_mode == Line2D.LINE_JOINT_BEVEL)
+	%MiddleToggleButton.set_pressed_no_signal(svs.extrusion_direction == ScalableVectorShape2D.StrokeExtrusionDirection.MIDDLE)
+	%InsideToggleButton.set_pressed_no_signal(svs.extrusion_direction == ScalableVectorShape2D.StrokeExtrusionDirection.INWARD)
+	%OutsideToggleButton.set_pressed_no_signal(svs.extrusion_direction == ScalableVectorShape2D.StrokeExtrusionDirection.OUTWARD)
 	ProjectSettings.save()
 
 
@@ -357,7 +360,7 @@ func _on_begin_no_cap_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_BEGIN_CAP,
 			Line2D.LineCapMode.LINE_CAP_NONE)
 	ProjectSettings.save()
-	if _is_property_sync_allowed():
+	if toggled_on and _is_property_sync_allowed():
 		SVSPropertySync.sync_begin_cap()
 
 
@@ -365,7 +368,7 @@ func _on_begin_box_cap_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_BEGIN_CAP,
 			Line2D.LineCapMode.LINE_CAP_BOX)
 	ProjectSettings.save()
-	if _is_property_sync_allowed():
+	if toggled_on and _is_property_sync_allowed():
 		SVSPropertySync.sync_begin_cap()
 
 
@@ -373,7 +376,7 @@ func _on_begin_round_cap_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_BEGIN_CAP,
 			Line2D.LineCapMode.LINE_CAP_ROUND)
 	ProjectSettings.save()
-	if _is_property_sync_allowed():
+	if toggled_on and _is_property_sync_allowed():
 		SVSPropertySync.sync_begin_cap()
 
 
@@ -381,7 +384,7 @@ func _on_end_no_cap_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_END_CAP,
 			Line2D.LineCapMode.LINE_CAP_NONE)
 	ProjectSettings.save()
-	if _is_property_sync_allowed():
+	if toggled_on and _is_property_sync_allowed():
 		SVSPropertySync.sync_end_cap()
 
 
@@ -389,7 +392,7 @@ func _on_end_box_cap_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_END_CAP,
 			Line2D.LineCapMode.LINE_CAP_BOX)
 	ProjectSettings.save()
-	if _is_property_sync_allowed():
+	if toggled_on and _is_property_sync_allowed():
 		SVSPropertySync.sync_end_cap()
 
 
@@ -397,7 +400,7 @@ func _on_end_round_cap_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_END_CAP,
 			Line2D.LineCapMode.LINE_CAP_ROUND)
 	ProjectSettings.save()
-	if _is_property_sync_allowed():
+	if toggled_on and _is_property_sync_allowed():
 		SVSPropertySync.sync_end_cap()
 
 
@@ -405,7 +408,7 @@ func _on_line_joint_sharp_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_JOINT_MODE,
 			Line2D.LineJointMode.LINE_JOINT_SHARP)
 	ProjectSettings.save()
-	if _is_property_sync_allowed():
+	if toggled_on and _is_property_sync_allowed():
 		SVSPropertySync.sync_line_joint_mode()
 
 
@@ -413,7 +416,7 @@ func _on_line_joint_bevel_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_JOINT_MODE,
 			Line2D.LineJointMode.LINE_JOINT_BEVEL)
 	ProjectSettings.save()
-	if _is_property_sync_allowed():
+	if toggled_on and _is_property_sync_allowed():
 		SVSPropertySync.sync_line_joint_mode()
 
 
@@ -421,7 +424,7 @@ func _on_line_joint_round_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_JOINT_MODE,
 			Line2D.LineJointMode.LINE_JOINT_ROUND)
 	ProjectSettings.save()
-	if _is_property_sync_allowed():
+	if toggled_on and _is_property_sync_allowed():
 		SVSPropertySync.sync_line_joint_mode()
 
 
@@ -429,18 +432,24 @@ func _on_middle_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_EXTRUSION,
 			ScalableVectorShape2D.StrokeExtrusionDirection.MIDDLE)
 	ProjectSettings.save()
+	if toggled_on and _is_property_sync_allowed():
+		SVSPropertySync.sync_extrusion_direction()
 
 
 func _on_outside_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_EXTRUSION,
 			ScalableVectorShape2D.StrokeExtrusionDirection.OUTWARD)
 	ProjectSettings.save()
+	if toggled_on and _is_property_sync_allowed():
+		SVSPropertySync.sync_extrusion_direction()
 
 
 func _on_inside_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_EXTRUSION,
 			ScalableVectorShape2D.StrokeExtrusionDirection.INWARD)
 	ProjectSettings.save()
+	if  toggled_on and _is_property_sync_allowed():
+		SVSPropertySync.sync_extrusion_direction()
 
 
 func _on_expand_tab_button_toggled(toggled_on: bool) -> void:

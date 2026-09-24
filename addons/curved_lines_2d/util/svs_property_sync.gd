@@ -83,6 +83,14 @@ static func sync_line_joint_mode() -> void:
 	undo_redo.commit_action()
 
 
+static func sync_extrusion_direction() -> void:
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	undo_redo.create_action("Set extrusion_direction")
+	for svs : ScalableVectorShape2D in _get_svs_selection():
+		undo_redo.add_do_property(svs, "extrusion_direction", CurvedLines2D._get_default_stroke_extrusion_direction())
+		undo_redo.add_undo_property(svs, "extrusion_direction", svs.extrusion_direction)
+	undo_redo.commit_action()
+
 
 static func sync_collision_object() -> void:
 	var undo_redo := EditorInterface.get_editor_undo_redo()
