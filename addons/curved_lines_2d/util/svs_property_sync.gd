@@ -13,7 +13,7 @@ class_name SVSPropertySync extends Object
 	#_sync_poly_stroke(svs)
 
 
-static func _get_svs_selection() -> Array[ScalableVectorShape2D]:
+static func _get_svs_selection() -> Array[Node]:
 	return (
 		EditorInterface.get_selection().get_selected_nodes()
 			.filter(func(n): return is_instance_valid(n))
@@ -22,7 +22,7 @@ static func _get_svs_selection() -> Array[ScalableVectorShape2D]:
 
 
 static func sync_fill_color(commit : bool, previous := Color.WHITE) -> void:
-	for svs in _get_svs_selection():
+	for svs : ScalableVectorShape2D in _get_svs_selection():
 		if commit:
 			var undo_redo := EditorInterface.get_editor_undo_redo()
 			undo_redo.create_action("Set fill_color for " + str(svs))
@@ -34,7 +34,7 @@ static func sync_fill_color(commit : bool, previous := Color.WHITE) -> void:
 
 
 static func sync_stroke_color(commit : bool, previous := Color.WHITE) -> void:
-	for svs in _get_svs_selection():
+	for svs : ScalableVectorShape2D in _get_svs_selection():
 		if commit:
 			var undo_redo := EditorInterface.get_editor_undo_redo()
 			undo_redo.create_action("Set stroke_color for " + str(svs))
@@ -46,7 +46,7 @@ static func sync_stroke_color(commit : bool, previous := Color.WHITE) -> void:
 
 
 static func sync_stroke_width() -> void:
-	for svs in _get_svs_selection():
+	for svs : ScalableVectorShape2D in _get_svs_selection():
 		if svs.stroke_width != CurvedLines2D._get_default_stroke_width():
 			var undo_redo := EditorInterface.get_editor_undo_redo()
 			undo_redo.create_action("Set stroke_width for " + str(svs))
@@ -56,7 +56,7 @@ static func sync_stroke_width() -> void:
 
 
 static func sync_collision_object() -> void:
-	for svs in _get_svs_selection():
+	for svs : ScalableVectorShape2D in _get_svs_selection():
 		if svs.get_collision_object_type() != CurvedLines2D._add_collision_object_type():
 			var new_obj := _get_collision_object(CurvedLines2D._add_collision_object_type())
 			var undo_redo := EditorInterface.get_editor_undo_redo()
@@ -80,7 +80,7 @@ static func sync_collision_object() -> void:
 
 
 static func sync_polygon() -> void:
-	for svs in _get_svs_selection():
+	for svs : ScalableVectorShape2D in _get_svs_selection():
 		if is_instance_valid(svs.polygon) and not CurvedLines2D._is_add_fill_enabled():
 			var polygon_2d := svs.polygon
 			var undo_redo := EditorInterface.get_editor_undo_redo()
@@ -107,7 +107,7 @@ static func sync_polygon() -> void:
 
 
 static func sync_stroke() -> void:
-	for svs in _get_svs_selection():
+	for svs : ScalableVectorShape2D in _get_svs_selection():
 		if CurvedLines2D._is_add_stroke_enabled() and CurvedLines2D._using_line_2d_for_stroke() and not is_instance_valid(svs.line):
 			var line_2d := Line2D.new()
 			var root := EditorInterface.get_edited_scene_root()
