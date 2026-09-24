@@ -234,11 +234,118 @@ static func sync_paint_order() -> void:
 				observed_order[PaintType.FILL] = ch.get_index()
 			elif ch == svs.collision_object:
 				observed_order[PaintType.COLLISION] = ch.get_index()
-		var valid_paint_orders := _get_valid_orders(observed_order)
+		var valid_paint_orders := get_valid_orders(observed_order)
 		if CurvedLines2D._get_default_paint_order() in valid_paint_orders:
 			print("Current Paint Order is valid: ", valid_paint_orders.map(_paint_order_to_string))
 			continue
-		push_warning("TODO: reorder children for ", _paint_order_to_string(CurvedLines2D._get_default_paint_order()))
+		print("reorder children for ", _paint_order_to_string(CurvedLines2D._get_default_paint_order()))
+		_reorder_children(svs, observed_order)
+
+
+static func _reorder_children(svs : ScalableVectorShape2D, observed_order : Dictionary[PaintType, int]) -> void:
+	match CurvedLines2D._get_default_paint_order():
+		CurvedLines2D.PaintOrder.FILL_STROKE_MARKERS:
+			_place_stroke_behind_fill(svs)
+			_place_collision_behind_stroke(svs)
+			_place_collision_behind_fill(svs)
+		CurvedLines2D.PaintOrder.STROKE_FILL_MARKERS:
+			_place_fill_behind_stroke(svs)
+			_place_collision_behind_fill(svs)
+			#_place_collision_behind_stroke(svs)
+		CurvedLines2D.PaintOrder.FILL_MARKERS_STROKE:
+			_place_collision_behind_fill(svs)
+			_place_stroke_behind_collision(svs)
+			_place_stroke_behind_fill(svs)
+		CurvedLines2D.PaintOrder.MARKERS_FILL_STROKE:
+			_place_fill_behind_collision(svs)
+			_place_stroke_behind_fill(svs)
+			_place_stroke_behind_collision(svs)
+		CurvedLines2D.PaintOrder.STROKE_MARKERS_FILL:
+			_place_collision_behind_stroke(svs)
+			_place_fill_behind_collision(svs)
+			_place_fill_behind_stroke(svs)
+		CurvedLines2D.PaintOrder.MARKERS_STROKE_FILL, _:
+			_place_stroke_behind_collision(svs)
+			_place_fill_behind_stroke(svs)
+			_place_fill_behind_collision(svs)
+
+
+static func	_place_stroke_behind_fill(svs: ScalableVectorShape2D) -> void:
+	if (
+			is_instance_valid(svs.poly_stroke) and is_instance_valid(svs.polygon) and
+			svs.polygon.get_parent() == svs and svs.poly_stroke.get_parent() == svs
+			and svs.poly_stroke.get_index() < svs.polygon.get_index()
+	):
+		svs.move_child(svs.poly_stroke, svs.polygon.get_index() + 1)
+	if (
+			is_instance_valid(svs.line) and is_instance_valid(svs.polygon) and
+			svs.polygon.get_parent() == svs and svs.line.get_parent() == svs
+			and svs.line.get_index() < svs.polygon.get_index()
+	):
+		svs.move_child(svs.line, svs.polygon.get_index() + 1)
+
+
+static func	_place_stroke_behind_collision(svs: ScalableVectorShape2D) -> void:
+	if (
+			is_instance_valid(svs.poly_stroke) and is_instance_valid(svs.collision_object) and
+			svs.collision_object.get_parent() == svs and svs.poly_stroke.get_parent() == svs
+			and svs.poly_stroke.get_index() < svs.collision_object.get_index()
+	):
+		svs.move_child(svs.poly_stroke, svs.collision_object.get_index() + 1)
+	if (
+			is_instance_valid(svs.line) and is_instance_valid(svs.collision_object) and
+			svs.collision_object.get_parent() == svs and svs.line.get_parent() == svs
+			and svs.line.get_index() < svs.collision_object.get_index()
+	):
+		svs.move_child(svs.line, svs.collision_object.get_index() + 1)
+
+
+static func	_place_fill_behind_collision(svs: ScalableVectorShape2D) -> void:
+	if (
+			is_instance_valid(svs.polygon) and is_instance_valid(svs.collision_object) and
+			svs.collision_object.get_parent() == svs and svs.polygon.get_parent() == svs
+			and svs.polygon.get_index() < svs.collision_object.get_index()
+	):
+		svs.move_child(svs.polygon, svs.collision_object.get_index() + 1)
+
+
+static func	_place_fill_behind_stroke(svs: ScalableVectorShape2D) -> void:
+	if (
+			is_instance_valid(svs.polygon) and is_instance_valid(svs.line) and
+			svs.line.get_parent() == svs and svs.polygon.get_parent() == svs
+			and svs.polygon.get_index() < svs.line.get_index()
+	):
+		svs.move_child(svs.polygon, svs.line.get_index() + 1)
+	if (
+			is_instance_valid(svs.polygon) and is_instance_valid(svs.poly_stroke) and
+			svs.poly_stroke.get_parent() == svs and svs.polygon.get_parent() == svs
+			and svs.polygon.get_index() < svs.poly_stroke.get_index()
+	):
+		svs.move_child(svs.polygon, svs.poly_stroke.get_index() + 1)
+
+
+static func	_place_collision_behind_fill(svs: ScalableVectorShape2D) -> void:
+	if (
+			is_instance_valid(svs.collision_object) and is_instance_valid(svs.polygon) and
+			svs.polygon.get_parent() == svs and svs.collision_object.get_parent() == svs
+			and svs.collision_object.get_index() < svs.polygon.get_index()
+	):
+		svs.move_child(svs.collision_object, svs.polygon.get_index() + 1)
+
+
+static func	_place_collision_behind_stroke(svs: ScalableVectorShape2D) -> void:
+	if (
+			is_instance_valid(svs.collision_object) and is_instance_valid(svs.line) and
+			svs.line.get_parent() == svs and svs.collision_object.get_parent() == svs
+			and svs.collision_object.get_index() < svs.line.get_index()
+	):
+		svs.move_child(svs.collision_object, svs.line.get_index() + 1)
+	if (
+			is_instance_valid(svs.collision_object) and is_instance_valid(svs.poly_stroke) and
+			svs.poly_stroke.get_parent() == svs and svs.collision_object.get_parent() == svs
+			and svs.collision_object.get_index() < svs.poly_stroke.get_index()
+	):
+		svs.move_child(svs.collision_object, svs.poly_stroke.get_index() + 1)
 
 
 static func _paint_order_to_string(order : CurvedLines2D.PaintOrder) -> String:
@@ -257,7 +364,7 @@ static func _paint_order_to_string(order : CurvedLines2D.PaintOrder) -> String:
 			return "MARKERS_STROKE_FILL"
 
 
-static func _get_valid_orders(observed_order : Dictionary[PaintType, int]) -> Array[CurvedLines2D.PaintOrder]:
+static func get_valid_orders(observed_order : Dictionary[PaintType, int]) -> Array[CurvedLines2D.PaintOrder]:
 	if observed_order.size() < 2:
 		return [
 			CurvedLines2D.PaintOrder.FILL_STROKE_MARKERS,
