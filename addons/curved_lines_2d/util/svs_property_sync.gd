@@ -3,6 +3,17 @@ class_name SVSPropertySync extends Object
 
 const PREVIOUS_COLOR_META_NAME := "_previous_color_"
 
+enum PaintType { STROKE, FILL, COLLISION }
+
+class PaintOrderEntry:
+	var node : Node2D
+	var idx : int
+
+	func _init(n : Node2D, i : int) -> void:
+		node = n
+		idx = i
+
+
 static func _get_svs_selection() -> Array[Node]:
 	return (
 		EditorInterface.get_selection().get_selected_nodes()
@@ -211,6 +222,104 @@ static func sync_stroke() -> void:
 			undo_redo.add_undo_reference(poly_stroke)
 			undo_redo.add_undo_property(svs, 'poly_stroke', poly_stroke)
 			undo_redo.commit_action()
+
+
+static func sync_paint_order() -> void:
+	for svs : ScalableVectorShape2D in _get_svs_selection():
+		var observed_order : Dictionary[PaintType, int] = {}
+		for ch in svs.get_children():
+			if ch == svs.line or ch == svs.poly_stroke:
+				observed_order[PaintType.STROKE] = ch.get_index()
+			elif ch == svs.polygon:
+				observed_order[PaintType.FILL] = ch.get_index()
+			elif ch == svs.collision_object:
+				observed_order[PaintType.COLLISION] = ch.get_index()
+		var valid_paint_orders := _get_valid_orders(observed_order)
+		if CurvedLines2D._get_default_paint_order() in valid_paint_orders:
+			print("Current Paint Order is valid: ", valid_paint_orders.map(_paint_order_to_string))
+			continue
+		push_warning("TODO: reorder children for ", _paint_order_to_string(CurvedLines2D._get_default_paint_order()))
+
+
+static func _paint_order_to_string(order : CurvedLines2D.PaintOrder) -> String:
+	match order:
+		CurvedLines2D.PaintOrder.FILL_STROKE_MARKERS:
+			return "FILL_STROKE_MARKERS"
+		CurvedLines2D.PaintOrder.STROKE_FILL_MARKERS:
+			return "STROKE_FILL_MARKERS"
+		CurvedLines2D.PaintOrder.FILL_MARKERS_STROKE:
+			return "FILL_MARKERS_STROKE"
+		CurvedLines2D.PaintOrder.MARKERS_FILL_STROKE:
+			return "MARKERS_FILL_STROKE"
+		CurvedLines2D.PaintOrder.STROKE_MARKERS_FILL:
+			return "STROKE_MARKERS_FILL"
+		CurvedLines2D.PaintOrder.MARKERS_STROKE_FILL, _:
+			return "MARKERS_STROKE_FILL"
+
+
+static func _get_valid_orders(observed_order : Dictionary[PaintType, int]) -> Array[CurvedLines2D.PaintOrder]:
+	if observed_order.size() < 2:
+		return [
+			CurvedLines2D.PaintOrder.FILL_STROKE_MARKERS,
+			CurvedLines2D.PaintOrder.STROKE_FILL_MARKERS,
+			CurvedLines2D.PaintOrder.FILL_MARKERS_STROKE,
+			CurvedLines2D.PaintOrder.MARKERS_FILL_STROKE,
+			CurvedLines2D.PaintOrder.STROKE_MARKERS_FILL,
+			CurvedLines2D.PaintOrder.MARKERS_STROKE_FILL
+		]
+	elif observed_order.size() > 2:
+		if observed_order.get(PaintType.FILL) < observed_order.get(PaintType.STROKE) and observed_order.get(PaintType.STROKE) < observed_order.get(PaintType.COLLISION):
+			return [CurvedLines2D.PaintOrder.FILL_STROKE_MARKERS]
+		elif observed_order.get(PaintType.STROKE) < observed_order.get(PaintType.FILL) and  observed_order.get(PaintType.FILL)  < observed_order.get(PaintType.COLLISION):
+			return [CurvedLines2D.PaintOrder.STROKE_FILL_MARKERS]
+		elif observed_order.get(PaintType.FILL) < observed_order.get(PaintType.COLLISION) and observed_order.get(PaintType.COLLISION) < observed_order.get(PaintType.STROKE):
+			return [CurvedLines2D.PaintOrder.FILL_MARKERS_STROKE]
+		elif observed_order.get(PaintType.COLLISION) < observed_order.get(PaintType.FILL) and observed_order.get(PaintType.FILL)  < observed_order.get(PaintType.STROKE):
+			return [CurvedLines2D.PaintOrder.MARKERS_FILL_STROKE]
+		elif observed_order.get(PaintType.STROKE) < observed_order.get(PaintType.COLLISION) and observed_order.get(PaintType.COLLISION) < observed_order.get(PaintType.FILL):
+			return [CurvedLines2D.PaintOrder.STROKE_MARKERS_FILL]
+		else:
+			return [CurvedLines2D.PaintOrder.MARKERS_STROKE_FILL]
+	else:
+		if PaintType.STROKE not in observed_order.keys():
+			if observed_order.get(PaintType.COLLISION) < observed_order.get(PaintType.FILL):
+				return [
+					CurvedLines2D.PaintOrder.MARKERS_FILL_STROKE,
+					CurvedLines2D.PaintOrder.MARKERS_STROKE_FILL,
+					CurvedLines2D.PaintOrder.STROKE_MARKERS_FILL,
+				]
+			else:
+				return [
+					CurvedLines2D.PaintOrder.FILL_STROKE_MARKERS,
+					CurvedLines2D.PaintOrder.FILL_MARKERS_STROKE,
+					CurvedLines2D.PaintOrder.STROKE_FILL_MARKERS
+				]
+		elif PaintType.FILL not in observed_order.keys():
+			if observed_order.get(PaintType.COLLISION) < observed_order.get(PaintType.STROKE):
+				return [
+					CurvedLines2D.PaintOrder.MARKERS_FILL_STROKE,
+					CurvedLines2D.PaintOrder.MARKERS_STROKE_FILL,
+					CurvedLines2D.PaintOrder.FILL_MARKERS_STROKE,
+				]
+			else:
+				return [
+					CurvedLines2D.PaintOrder.STROKE_FILL_MARKERS,
+					CurvedLines2D.PaintOrder.STROKE_MARKERS_FILL,
+					CurvedLines2D.PaintOrder.FILL_STROKE_MARKERS
+				]
+		else:
+			if observed_order.get(PaintType.FILL) < observed_order.get(PaintType.STROKE):
+				return [
+					CurvedLines2D.PaintOrder.FILL_STROKE_MARKERS,
+					CurvedLines2D.PaintOrder.FILL_MARKERS_STROKE,
+					CurvedLines2D.PaintOrder.MARKERS_FILL_STROKE,
+				]
+			else:
+				return [
+					CurvedLines2D.PaintOrder.STROKE_FILL_MARKERS,
+					CurvedLines2D.PaintOrder.STROKE_MARKERS_FILL,
+					CurvedLines2D.PaintOrder.MARKERS_STROKE_FILL
+				]
 
 
 static func _add_polystroke(svs : ScalableVectorShape2D, undo_redo : EditorUndoRedoManager) -> void:

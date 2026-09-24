@@ -324,36 +324,48 @@ func _on_paint_order_button_0_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_PAINT_ORDER,
 			CurvedLines2D.PaintOrder.FILL_STROKE_MARKERS)
 	ProjectSettings.save()
+	if toggled_on and  _is_property_sync_allowed():
+		SVSPropertySync.sync_paint_order()
 
 
 func _on_paint_order_button_1_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_PAINT_ORDER,
 			CurvedLines2D.PaintOrder.STROKE_FILL_MARKERS)
 	ProjectSettings.save()
+	if toggled_on and _is_property_sync_allowed():
+		SVSPropertySync.sync_paint_order()
 
 
 func _on_paint_order_button_2_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_PAINT_ORDER,
 			CurvedLines2D.PaintOrder.FILL_MARKERS_STROKE)
 	ProjectSettings.save()
+	if toggled_on and _is_property_sync_allowed():
+		SVSPropertySync.sync_paint_order()
 
 
 func _on_paint_order_button_3_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_PAINT_ORDER,
 			CurvedLines2D.PaintOrder.MARKERS_FILL_STROKE)
 	ProjectSettings.save()
+	if toggled_on and _is_property_sync_allowed():
+		SVSPropertySync.sync_paint_order()
 
 
 func _on_paint_order_button_4_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_PAINT_ORDER,
 			CurvedLines2D.PaintOrder.STROKE_MARKERS_FILL)
 	ProjectSettings.save()
+	if toggled_on and _is_property_sync_allowed():
+		SVSPropertySync.sync_paint_order()
 
 
 func _on_paint_order_button_5_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_PAINT_ORDER,
 			CurvedLines2D.PaintOrder.MARKERS_STROKE_FILL)
 	ProjectSettings.save()
+	if toggled_on and _is_property_sync_allowed():
+		SVSPropertySync.sync_paint_order()
 
 
 func _on_begin_no_cap_toggle_button_toggled(toggled_on: bool) -> void:
