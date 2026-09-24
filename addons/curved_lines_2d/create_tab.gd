@@ -220,6 +220,9 @@ func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 	%BeginBoxCapToggleButton.set_pressed_no_signal(svs.begin_cap_mode == Line2D.LINE_CAP_BOX)
 	%BeginNoCapToggleButton.set_pressed_no_signal(svs.begin_cap_mode == Line2D.LINE_CAP_NONE)
 	%BeginRoundCapToggleButton.set_pressed_no_signal(svs.begin_cap_mode == Line2D.LINE_CAP_ROUND)
+	%EndBoxCapToggleButton.set_pressed_no_signal(svs.end_cap_mode == Line2D.LINE_CAP_BOX)
+	%EndNoCapToggleButton.set_pressed_no_signal(svs.end_cap_mode == Line2D.LINE_CAP_NONE)
+	%EndRoundCapToggleButton.set_pressed_no_signal(svs.end_cap_mode == Line2D.LINE_CAP_ROUND)
 	ProjectSettings.save()
 
 
@@ -375,18 +378,24 @@ func _on_end_no_cap_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_END_CAP,
 			Line2D.LineCapMode.LINE_CAP_NONE)
 	ProjectSettings.save()
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_end_cap()
 
 
 func _on_end_box_cap_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_END_CAP,
 			Line2D.LineCapMode.LINE_CAP_BOX)
 	ProjectSettings.save()
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_end_cap()
 
 
 func _on_end_round_cap_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_END_CAP,
 			Line2D.LineCapMode.LINE_CAP_ROUND)
 	ProjectSettings.save()
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_end_cap()
 
 
 func _on_line_joint_sharp_toggle_button_toggled(toggled_on: bool) -> void:

@@ -65,6 +65,15 @@ static func sync_begin_cap() -> void:
 	undo_redo.commit_action()
 
 
+static func sync_end_cap() -> void:
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	undo_redo.create_action("Set end_cap_mode")
+	for svs : ScalableVectorShape2D in _get_svs_selection():
+		undo_redo.add_do_property(svs, "end_cap_mode", CurvedLines2D._get_default_end_cap())
+		undo_redo.add_undo_property(svs, "end_cap_mode", svs.end_cap_mode)
+	undo_redo.commit_action()
+
+
 static func sync_collision_object() -> void:
 	var undo_redo := EditorInterface.get_editor_undo_redo()
 	undo_redo.create_action("Set collision_object")
