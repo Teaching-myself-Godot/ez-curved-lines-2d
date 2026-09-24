@@ -485,7 +485,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(0.558594, 0.606873, 1, 1)
+color = Color(0, 1, 0.78787875, 1)
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/HBoxContainer" unique_id=265864135]
 layout_mode = 2
@@ -509,7 +509,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Set Stroke Color"
 text = "Fill"
-color = Color(0.427548, 0.209066, 0.760482, 1)
+color = Color(0.605469, 0.484848, 0.484848, 1)
 
 [node name="StrokeWidthContainer" type="PanelContainer" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=1573755340]
 unique_name_in_owner = true
@@ -553,6 +553,7 @@ custom_maximum_size = Vector2(120, -1)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/normal = ExtResource("2_2chn8")
+selected = 1
 fit_to_longest_item = false
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4" unique_id=743666587]
@@ -575,8 +576,9 @@ tooltip_text = "Use a Line2D node to represent the stroke with in stead of a Pol
 button_pressed = true
 text = "Use Line2D"
 
-[node name="Label" type="Label" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4" unique_id=289376237]
-custom_minimum_size = Vector2(78, 0)
+[node name="BeginCapLabel" type="Label" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4" unique_id=289376237]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(85, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "This will set the begin_cap_mode of the assigned Line2D node to:

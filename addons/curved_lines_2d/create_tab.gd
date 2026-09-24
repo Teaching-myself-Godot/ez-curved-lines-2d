@@ -205,7 +205,6 @@ func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 	%FillPickerButton.color = svs.fill_color
 	%StrokePickerButton.color = svs.stroke_color
 	stroke_width_input.value = svs.stroke_width
-
 	if is_instance_valid(svs.polygon):
 		%EnableFillCheckBox.set_pressed_no_signal(true)
 	else:
@@ -216,8 +215,12 @@ func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 		%UseLine2DCheckButton.set_pressed_no_signal(is_instance_valid(svs.line))
 	else:
 		%EnableStrokeCheckBox.set_pressed_no_signal(false)
+	_toggle_end_cap_disabled(not %UseLine2DCheckButton.button_pressed)
 
 	%CollisionObjectTypeOptionButton.select(svs.get_collision_object_type())
+	%BeginBoxCapToggleButton.set_pressed_no_signal(svs.begin_cap_mode == Line2D.LINE_CAP_BOX)
+	%BeginNoCapToggleButton.set_pressed_no_signal(svs.begin_cap_mode == Line2D.LINE_CAP_NONE)
+	%BeginRoundCapToggleButton.set_pressed_no_signal(svs.begin_cap_mode == Line2D.LINE_CAP_ROUND)
 	ProjectSettings.save()
 
 
@@ -233,22 +236,26 @@ func _make_number_input(lbl : String, value : float, min_value : float, max_valu
 	return x_slider
 
 
+func _is_property_sync_allowed() -> bool:
+	if %BrushButton.button_pressed or %PencilButton.button_pressed:
+		return false
+	return true
+
+
 func _on_fill_picker_button_color_changed(color : Color) -> void:
 	if not _changing_color:
 		_previous_color = CurvedLines2D._get_default_fill_color()
 	_changing_color = true
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_FILL_COLOR, color)
-	if %BrushButton.button_pressed or %PencilButton.button_pressed:
-		return
-	SVSPropertySync.sync_fill_color(false)
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_fill_color(false)
 
 
 func _on_fill_picker_button_popup_closed() -> void:
 	ProjectSettings.save()
 	_changing_color = false
-	if %BrushButton.button_pressed or %PencilButton.button_pressed:
-		return
-	SVSPropertySync.sync_fill_color(true, _previous_color)
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_fill_color(true, _previous_color)
 
 
 func _on_stroke_picker_button_color_changed(color : Color) -> void:
@@ -256,65 +263,56 @@ func _on_stroke_picker_button_color_changed(color : Color) -> void:
 		_previous_color = CurvedLines2D._get_default_stroke_color()
 	_changing_color = true
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_COLOR, color)
-	if %BrushButton.button_pressed or %PencilButton.button_pressed:
-		return
-	SVSPropertySync.sync_stroke_color(false)
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_stroke_color(false)
 
 
 func _on_stroke_picker_button_popup_closed() -> void:
 	ProjectSettings.save()
 	_changing_color = false
-	if %BrushButton.button_pressed or %PencilButton.button_pressed:
-		return
-	SVSPropertySync.sync_stroke_color(true, _previous_color)
-
-
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_stroke_color(true, _previous_color)
 
 
 func _on_stroke_check_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_STROKE_ENABLED, toggled_on)
 	ProjectSettings.save()
-	if %BrushButton.button_pressed or %PencilButton.button_pressed:
-		return
-	SVSPropertySync.sync_stroke()
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_stroke()
 
 
 func _on_stroke_width_input_value_changed(new_value: float) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_WIDTH, new_value)
-	if %BrushButton.button_pressed or %PencilButton.button_pressed:
-		return
-	SVSPropertySync.sync_stroke_width()
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_stroke_width()
 
 
 func _on_fill_check_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_FILL_ENABLED, toggled_on)
 	ProjectSettings.save()
-	if %BrushButton.button_pressed or %PencilButton.button_pressed:
-		return
-	SVSPropertySync.sync_polygon()
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_polygon()
 
 
 func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVectorShape2D.CollisionObjectType) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_COLLISION_TYPE, obj_type)
 	ProjectSettings.save()
-	if %BrushButton.button_pressed or %PencilButton.button_pressed:
-		return
-	SVSPropertySync.sync_collision_object()
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_collision_object()
+
+
+func _toggle_end_cap_disabled(is_disabled : bool) -> void:
+	%EndBoxCapToggleButton.disabled = is_disabled
+	%EndNoCapToggleButton.disabled = is_disabled
+	%EndRoundCapToggleButton.disabled = is_disabled
+	%BeginCapLabel.text = "Cap" if is_disabled else "Cap Begin"
 
 
 func _on_use_line_2d_check_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_USE_LINE_2D_FOR_STROKE, toggled_on)
-	if toggled_on:
-		%EndBoxCapToggleButton.disabled = false
-		%EndNoCapToggleButton.disabled = false
-		%EndRoundCapToggleButton.disabled = false
-	else:
-		%EndBoxCapToggleButton.disabled = true
-		%EndNoCapToggleButton.disabled = true
-		%EndRoundCapToggleButton.disabled = true
-	if %BrushButton.button_pressed or %PencilButton.button_pressed:
-		return
-	SVSPropertySync.sync_stroke()
+	_toggle_end_cap_disabled(not toggled_on)
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_stroke()
 
 
 func _on_paint_order_button_0_toggled(toggled_on: bool) -> void:
@@ -357,18 +355,24 @@ func _on_begin_no_cap_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_BEGIN_CAP,
 			Line2D.LineCapMode.LINE_CAP_NONE)
 	ProjectSettings.save()
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_begin_cap()
 
 
 func _on_begin_box_cap_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_BEGIN_CAP,
 			Line2D.LineCapMode.LINE_CAP_BOX)
 	ProjectSettings.save()
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_begin_cap()
 
 
 func _on_begin_round_cap_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_BEGIN_CAP,
 			Line2D.LineCapMode.LINE_CAP_ROUND)
 	ProjectSettings.save()
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_begin_cap()
 
 
 func _on_end_no_cap_toggle_button_toggled(toggled_on: bool) -> void:

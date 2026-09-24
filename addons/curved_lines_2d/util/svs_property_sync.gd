@@ -55,6 +55,15 @@ static func sync_stroke_width() -> void:
 			undo_redo.commit_action()
 
 
+static func sync_begin_cap() -> void:
+	for svs : ScalableVectorShape2D in _get_svs_selection():
+		var undo_redo := EditorInterface.get_editor_undo_redo()
+		undo_redo.create_action("Set stroke_width for " + str(svs))
+		undo_redo.add_do_property(svs, "begin_cap_mode", CurvedLines2D._get_default_begin_cap())
+		undo_redo.add_undo_property(svs, "begin_cap_mode", svs.begin_cap_mode)
+		undo_redo.commit_action()
+
+
 static func sync_collision_object() -> void:
 	for svs : ScalableVectorShape2D in _get_svs_selection():
 		if svs.get_collision_object_type() != CurvedLines2D._add_collision_object_type():
