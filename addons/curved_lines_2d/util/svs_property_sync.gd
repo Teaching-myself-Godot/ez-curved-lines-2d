@@ -74,6 +74,16 @@ static func sync_end_cap() -> void:
 	undo_redo.commit_action()
 
 
+static func sync_line_joint_mode() -> void:
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	undo_redo.create_action("Set line_joint_mode")
+	for svs : ScalableVectorShape2D in _get_svs_selection():
+		undo_redo.add_do_property(svs, "line_joint_mode", CurvedLines2D._get_default_joint_mode())
+		undo_redo.add_undo_property(svs, "line_joint_mode", svs.line_joint_mode)
+	undo_redo.commit_action()
+
+
+
 static func sync_collision_object() -> void:
 	var undo_redo := EditorInterface.get_editor_undo_redo()
 	undo_redo.create_action("Set collision_object")

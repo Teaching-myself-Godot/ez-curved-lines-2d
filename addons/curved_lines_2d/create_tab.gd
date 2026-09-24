@@ -223,6 +223,9 @@ func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 	%EndBoxCapToggleButton.set_pressed_no_signal(svs.end_cap_mode == Line2D.LINE_CAP_BOX)
 	%EndNoCapToggleButton.set_pressed_no_signal(svs.end_cap_mode == Line2D.LINE_CAP_NONE)
 	%EndRoundCapToggleButton.set_pressed_no_signal(svs.end_cap_mode == Line2D.LINE_CAP_ROUND)
+	%LineJoinSharpToggleButton.set_pressed_no_signal(svs.line_joint_mode == Line2D.LINE_JOINT_SHARP)
+	%LineJointRoundToggleButton.set_pressed_no_signal(svs.line_joint_mode == Line2D.LINE_JOINT_ROUND)
+	%LineJointBevelToggleButton.set_pressed_no_signal(svs.line_joint_mode == Line2D.LINE_JOINT_BEVEL)
 	ProjectSettings.save()
 
 
@@ -402,18 +405,24 @@ func _on_line_joint_sharp_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_JOINT_MODE,
 			Line2D.LineJointMode.LINE_JOINT_SHARP)
 	ProjectSettings.save()
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_line_joint_mode()
 
 
 func _on_line_joint_bevel_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_JOINT_MODE,
 			Line2D.LineJointMode.LINE_JOINT_BEVEL)
 	ProjectSettings.save()
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_line_joint_mode()
 
 
 func _on_line_joint_round_toggle_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_DEFAULT_LINE_JOINT_MODE,
 			Line2D.LineJointMode.LINE_JOINT_ROUND)
 	ProjectSettings.save()
+	if _is_property_sync_allowed():
+		SVSPropertySync.sync_line_joint_mode()
 
 
 func _on_middle_toggle_button_toggled(toggled_on: bool) -> void:
