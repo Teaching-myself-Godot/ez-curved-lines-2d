@@ -228,15 +228,7 @@ static func sync_paint_order() -> void:
 	var undo_redo := EditorInterface.get_editor_undo_redo()
 	undo_redo.create_action("Set paint order to: " + _paint_order_to_string(CurvedLines2D._get_default_paint_order()))
 	for svs : ScalableVectorShape2D in _get_svs_selection():
-		var observed_order : Dictionary[PaintType, int] = {}
-		for ch in svs.get_children():
-			if ch == svs.line or ch == svs.poly_stroke:
-				observed_order[PaintType.STROKE] = ch.get_index()
-			elif ch == svs.polygon:
-				observed_order[PaintType.FILL] = ch.get_index()
-			elif ch == svs.collision_object:
-				observed_order[PaintType.COLLISION] = ch.get_index()
-		var valid_paint_orders := get_valid_orders(observed_order)
+		var valid_paint_orders := get_valid_orders(svs)
 		if CurvedLines2D._get_default_paint_order() in valid_paint_orders:
 			continue
 		_reorder_children(svs, undo_redo)
@@ -247,6 +239,7 @@ static func _reorder_children(svs : ScalableVectorShape2D, undo_redo : EditorUnd
 	for n in [svs.polygon, svs.poly_stroke, svs.line, svs.collision_object]:
 		if is_instance_valid(n) and n.get_parent() == svs:
 			undo_redo.add_undo_method(svs, "move_child", n, n.get_index())
+	undo_redo.add_undo_method(svs, "notify_assigned_node_change")
 	match CurvedLines2D._get_default_paint_order():
 		CurvedLines2D.PaintOrder.FILL_STROKE_MARKERS:
 			_place_stroke_behind_fill(svs)
@@ -272,10 +265,11 @@ static func _reorder_children(svs : ScalableVectorShape2D, undo_redo : EditorUnd
 			_place_stroke_behind_collision(svs)
 			_place_fill_behind_stroke(svs)
 			_place_fill_behind_collision(svs)
+	svs.notify_assigned_node_change()
 	for n in [svs.polygon, svs.poly_stroke, svs.line, svs.collision_object]:
 		if is_instance_valid(n) and n.get_parent() == svs:
 			undo_redo.add_do_method(svs, "move_child", n, n.get_index())
-
+	undo_redo.add_do_method(svs, "notify_assigned_node_change")
 
 static func	_place_stroke_behind_fill(svs: ScalableVectorShape2D) -> void:
 	if (
@@ -371,7 +365,15 @@ static func _paint_order_to_string(order : CurvedLines2D.PaintOrder) -> String:
 			return "MARKERS_STROKE_FILL"
 
 
-static func get_valid_orders(observed_order : Dictionary[PaintType, int]) -> Array[CurvedLines2D.PaintOrder]:
+static func get_valid_orders(svs : ScalableVectorShape2D) -> Array[CurvedLines2D.PaintOrder]:
+	var observed_order : Dictionary[PaintType, int] = {}
+	for ch in svs.get_children():
+		if ch == svs.line or ch == svs.poly_stroke:
+			observed_order[PaintType.STROKE] = ch.get_index()
+		elif ch == svs.polygon:
+			observed_order[PaintType.FILL] = ch.get_index()
+		elif ch == svs.collision_object:
+			observed_order[PaintType.COLLISION] = ch.get_index()
 	if observed_order.size() < 2:
 		return [
 			CurvedLines2D.PaintOrder.FILL_STROKE_MARKERS,

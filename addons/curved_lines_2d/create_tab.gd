@@ -200,7 +200,8 @@ func sync_draw_settings() -> void:
 
 
 func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
-	push_warning("TODO: make paint order toggle buttons match when shape is selected ")
+	if svs not in EditorInterface.get_selection().get_selected_nodes():
+		return
 	%FillPickerButton.color = svs.fill_color
 	%StrokePickerButton.color = svs.stroke_color
 	stroke_width_input.value = svs.stroke_width
@@ -229,7 +230,28 @@ func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 	%MiddleToggleButton.set_pressed_no_signal(svs.extrusion_direction == ScalableVectorShape2D.StrokeExtrusionDirection.MIDDLE)
 	%InsideToggleButton.set_pressed_no_signal(svs.extrusion_direction == ScalableVectorShape2D.StrokeExtrusionDirection.INWARD)
 	%OutsideToggleButton.set_pressed_no_signal(svs.extrusion_direction == ScalableVectorShape2D.StrokeExtrusionDirection.OUTWARD)
-
+	for btn : BaseButton in [%PaintOrderButton0, %PaintOrderButton2, %PaintOrderButton3,
+			%PaintOrderButton4, %PaintOrderButton5, %PaintOrderButton1]:
+				btn.set_pressed_no_signal(false)
+	var valid_paint_orders := SVSPropertySync.get_valid_orders(svs)
+	var paint_order := (
+		CurvedLines2D._get_default_paint_order()
+			if CurvedLines2D._get_default_paint_order() in valid_paint_orders else
+		valid_paint_orders.pop_front()
+	)
+	match paint_order:
+		CurvedLines2D.PaintOrder.FILL_STROKE_MARKERS:
+			%PaintOrderButton0.set_pressed_no_signal(true)
+		CurvedLines2D.PaintOrder.STROKE_FILL_MARKERS:
+			%PaintOrderButton1.set_pressed_no_signal(true)
+		CurvedLines2D.PaintOrder.FILL_MARKERS_STROKE:
+			%PaintOrderButton2.set_pressed_no_signal(true)
+		CurvedLines2D.PaintOrder.MARKERS_FILL_STROKE:
+			%PaintOrderButton3.set_pressed_no_signal(true)
+		CurvedLines2D.PaintOrder.STROKE_MARKERS_FILL:
+			%PaintOrderButton4.set_pressed_no_signal(true)
+		CurvedLines2D.PaintOrder.MARKERS_STROKE_FILL:
+			%PaintOrderButton5.set_pressed_no_signal(true)
 	ProjectSettings.save()
 
 
