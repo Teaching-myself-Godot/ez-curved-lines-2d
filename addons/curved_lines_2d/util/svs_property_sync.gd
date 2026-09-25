@@ -225,6 +225,8 @@ static func sync_stroke() -> void:
 
 
 static func sync_paint_order() -> void:
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	undo_redo.create_action("Set paint order to: " + _paint_order_to_string(CurvedLines2D._get_default_paint_order()))
 	for svs : ScalableVectorShape2D in _get_svs_selection():
 		var observed_order : Dictionary[PaintType, int] = {}
 		for ch in svs.get_children():
@@ -236,13 +238,15 @@ static func sync_paint_order() -> void:
 				observed_order[PaintType.COLLISION] = ch.get_index()
 		var valid_paint_orders := get_valid_orders(observed_order)
 		if CurvedLines2D._get_default_paint_order() in valid_paint_orders:
-			print("Current Paint Order is valid: ", valid_paint_orders.map(_paint_order_to_string))
 			continue
-		print("reorder children for ", _paint_order_to_string(CurvedLines2D._get_default_paint_order()))
-		_reorder_children(svs, observed_order)
+		_reorder_children(svs, undo_redo)
 
+	undo_redo.commit_action(false)
 
-static func _reorder_children(svs : ScalableVectorShape2D, observed_order : Dictionary[PaintType, int]) -> void:
+static func _reorder_children(svs : ScalableVectorShape2D, undo_redo : EditorUndoRedoManager) -> void:
+	for n in [svs.polygon, svs.poly_stroke, svs.line, svs.collision_object]:
+		if is_instance_valid(n) and n.get_parent() == svs:
+			undo_redo.add_undo_method(svs, "move_child", n, n.get_index())
 	match CurvedLines2D._get_default_paint_order():
 		CurvedLines2D.PaintOrder.FILL_STROKE_MARKERS:
 			_place_stroke_behind_fill(svs)
@@ -251,7 +255,7 @@ static func _reorder_children(svs : ScalableVectorShape2D, observed_order : Dict
 		CurvedLines2D.PaintOrder.STROKE_FILL_MARKERS:
 			_place_fill_behind_stroke(svs)
 			_place_collision_behind_fill(svs)
-			#_place_collision_behind_stroke(svs)
+			_place_collision_behind_stroke(svs)
 		CurvedLines2D.PaintOrder.FILL_MARKERS_STROKE:
 			_place_collision_behind_fill(svs)
 			_place_stroke_behind_collision(svs)
@@ -268,6 +272,9 @@ static func _reorder_children(svs : ScalableVectorShape2D, observed_order : Dict
 			_place_stroke_behind_collision(svs)
 			_place_fill_behind_stroke(svs)
 			_place_fill_behind_collision(svs)
+	for n in [svs.polygon, svs.poly_stroke, svs.line, svs.collision_object]:
+		if is_instance_valid(n) and n.get_parent() == svs:
+			undo_redo.add_do_method(svs, "move_child", n, n.get_index())
 
 
 static func	_place_stroke_behind_fill(svs: ScalableVectorShape2D) -> void:
