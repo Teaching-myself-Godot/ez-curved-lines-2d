@@ -223,6 +223,8 @@ func _enter_tree():
 		scalable_vector_shapes_2d_dock.create_tab.mode_changed.connect(_on_svs_edit_mode_changed)
 	if not scalable_vector_shapes_2d_dock.create_tab.ellipse_created.is_connected(_on_ellipse_created):
 		scalable_vector_shapes_2d_dock.create_tab.ellipse_created.connect(_on_ellipse_created)
+	if not scalable_vector_shapes_2d_dock.create_tab.rect_created.is_connected(_on_rect_created):
+		scalable_vector_shapes_2d_dock.create_tab.rect_created.connect(_on_rect_created)
 	scalable_vector_shapes_2d_dock.create_tab.flip_horizontal.connect(_flip_svs_horizontal)
 	scalable_vector_shapes_2d_dock.create_tab.flip_vertical.connect(_flip_svs_vertical)
 	scene_changed.connect(_on_scene_changed)
@@ -1746,7 +1748,7 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 
 func _draw_preview(viewport_control : Control) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-	if shape_preview:
+	if shape_preview and shape_preview.point_count > 2:
 		var mul :=  _get_svp_transform(current_selection)
 		var points := Array(shape_preview.tessellate())
 		var stroke_width = (_get_default_stroke_width() * EditorInterface.get_editor_viewport_2d()
@@ -2943,13 +2945,15 @@ func _handle_bone_paint_input(event : InputEvent) -> bool:
 
 
 func _handle_create_primitive_input(event) -> bool:
+	update_overlays()
 	if not shape_preview:
 		shape_preview = Curve2D.new()
 	if _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE:
 		ScalableVectorShape2D.set_ellipse_points(shape_preview, Vector2(_get_default_ellipse_rx() * 2, _get_default_ellipse_ry() * 2))
 	else:
 		push_warning("TODO: in editor preview for rect")
-		# ScalableVectorShape2D.set_rect_points(curve, rect_width_input.value, rect_height_input.value, rect_rx_input.value, rect_ry_input.value)
+		#ScalableVectorShape2D.set_rect_points(shape_preview, rect_width_input.value, rect_height_input.value, rect_rx_input.value, rect_ry_input.value)
+		return false
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_snapped_to_pixel():
@@ -2965,7 +2969,6 @@ func _handle_create_primitive_input(event) -> bool:
 		svs.global_position = mouse_pos
 		push_warning("TODO: implement keep drawing behavior")
 		return true
-	update_overlays()
 	return false
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:

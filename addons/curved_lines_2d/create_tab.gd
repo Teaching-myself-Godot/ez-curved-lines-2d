@@ -14,6 +14,11 @@ const OPEN_SCENE_ERROR_MESSAGE := "Can only create a shape in an open scene"
 
 var stroke_width_input : EditorSpinSlider
 
+var rect_width_input : EditorSpinSlider
+var rect_height_input : EditorSpinSlider
+var rect_rx_input : EditorSpinSlider
+var rect_ry_input : EditorSpinSlider
+
 var ellipse_rx_input : EditorSpinSlider
 var ellipse_ry_input : EditorSpinSlider
 
@@ -26,6 +31,11 @@ var tab_default_min_height : int
 ]
 
 @onready var tool_mode_button_group : ButtonGroup =	%CircleButton.button_group
+
+@onready var keep_drawing_checkboxes := [
+	%MakeAnotherEllipseCheckBox,
+	%MakeAnotherEllipseCheckBox
+]
 
 var _changing_color := false
 
@@ -71,6 +81,17 @@ func _ready() -> void:
 	ellipse_ry_input.value_changed.connect(_on_ellipse_ry_value_changed)
 	%EllipseXRadiusSliderContainer.add_child(ellipse_rx_input)
 	%EllipseYRadiusSliderContainer.add_child(ellipse_ry_input)
+
+	# Create Rectangle Settings
+	rect_width_input = _make_number_input("Width", 100, 2, 1000, "")
+	rect_height_input = _make_number_input("Height", 100, 2, 1000, "")
+	rect_rx_input = _make_number_input("Corner Radius X", 0, 0, 500, "")
+	rect_ry_input = _make_number_input("Corner Radius Y", 0, 0, 500, "")
+
+	%WidthSliderContainer.add_child(rect_width_input)
+	%HeightSliderContainer.add_child(rect_height_input)
+	%XRadiusSliderContainer.add_child(rect_rx_input)
+	%YRadiusSliderContainer.add_child(rect_ry_input)
 
 	tab_default_min_height = custom_minimum_size.y
 
@@ -496,6 +517,18 @@ func _on_expand_tab_button_toggled(toggled_on: bool) -> void:
 		custom_minimum_size.y = 0
 
 
+func _on_keep_drawing_check_box_toggled(toggled_on: bool) -> void:
+	if toggled_on:
+		ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_KEEP_DRAWING,
+				CurvedLines2D.KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT)
+	else:
+		ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_KEEP_DRAWING,
+				CurvedLines2D.KeepDrawingBehavior.SELECT_DRAWN_SHAPE)
+	ProjectSettings.save()
+	for b : CheckBox in keep_drawing_checkboxes:
+		b.set_pressed_no_signal(toggled_on)
+
+
 # --- Create Ellipse / Circle ---
 func _on_create_circle_button_pressed() -> void:
 	var scene_root := EditorInterface.get_edited_scene_root()
@@ -538,3 +571,38 @@ func _on_ellipse_rx_value_changed(new_value : float) -> void:
 
 func _on_ellipse_ry_value_changed(new_value : float) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ELLIPSE_RY, new_value)
+
+
+# --- Create Rectangle ---
+func _get_rect_curve() -> Curve2D:
+	var curve := Curve2D.new()
+	ScalableVectorShape2D.set_rect_points(curve, rect_width_input.value, rect_height_input.value, rect_rx_input.value, rect_ry_input.value)
+	return curve
+
+
+func _on_create_rect_as_path_button_pressed() -> void:
+	var scene_root := EditorInterface.get_edited_scene_root()
+	if not scene_root is Node:
+		warning_dialog.dialog_text = OPEN_SCENE_ERROR_MESSAGE
+		warning_dialog.popup_centered()
+		return
+	shape_created.emit(_get_rect_curve(), scene_root, "Rectangle")
+
+
+func _on_create_rect_button_pressed() -> void:
+	var scene_root := EditorInterface.get_edited_scene_root()
+	if not scene_root is Node:
+		warning_dialog.dialog_text = OPEN_SCENE_ERROR_MESSAGE
+		warning_dialog.popup_centered()
+		return
+	rect_created.emit(rect_width_input.value, rect_height_input.value,
+		rect_rx_input.value, rect_ry_input.value, scene_root)
+
+
+func _on_create_rect_button_mouse_entered() -> void:
+	set_shape_preview.emit(_get_rect_curve())
+
+
+func _on_create_rect_button_mouse_exited() -> void:
+	set_shape_preview.emit(null)
+
