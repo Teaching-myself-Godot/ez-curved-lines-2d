@@ -27,7 +27,8 @@ var warning_dialog : AcceptDialog = null
 var tab_default_min_height : int
 
 @onready var mode_containers := [
-	%CreateEllipseContainer, %CreateRectContainer
+	%CreateEllipseContainer, %CreateRectContainer,
+	%SelectModeContainer
 ]
 
 @onready var tool_mode_button_group : ButtonGroup =	%CircleButton.button_group
@@ -41,6 +42,7 @@ var _changing_color := false
 
 func _ready() -> void:
 	_hide_mode_containers()
+	%SelectModeContainer.show()
 	%CircleButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.CREATE_ELLIPSE))
 	%RectangleButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.CREATE_RECT))
 	%EditButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.NONE))
@@ -174,6 +176,8 @@ func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
 			%CreateEllipseContainer.show()
 		CurvedLines2D.SVSEditMode.CREATE_RECT:
 			%CreateRectContainer.show()
+		CurvedLines2D.SVSEditMode.NONE:
+			%SelectModeContainer.show()
 		_:
 			push_warning("TODO: show current details for: ", mode)
 
@@ -545,6 +549,17 @@ func _on_keep_drawing_check_box_toggled(toggled_on: bool) -> void:
 	ProjectSettings.save()
 	for b : CheckBox in keep_drawing_checkboxes:
 		b.set_pressed_no_signal(toggled_on)
+
+
+func _on_create_empty_shape_button_pressed() -> void:
+	var scene_root := EditorInterface.get_edited_scene_root()
+	if not scene_root is Node:
+		warning_dialog.dialog_text = OPEN_SCENE_ERROR_MESSAGE
+		warning_dialog.popup_centered()
+		return
+	var curve := Curve2D.new()
+	var node_name := "Path"
+	shape_created.emit(curve, scene_root, node_name)
 
 
 # --- Create Ellipse / Circle ---

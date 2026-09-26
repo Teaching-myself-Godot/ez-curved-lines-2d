@@ -540,6 +540,15 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 text = "Create another"
 
+[node name="SelectModeContainer" type="CenterContainer" parent="ToolsContainer" unique_id=1695149930]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CreateEmptyShapeButton" type="Button" parent="ToolsContainer/SelectModeContainer" unique_id=2084441798]
+layout_mode = 2
+text = "Create Empty Shape"
+
 [node name="SettingsContainer" type="VBoxContainer" parent="." unique_id=1335331203]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(450, 0)
@@ -1052,6 +1061,7 @@ expand_icon = true
 [connection signal="mouse_exited" from="ToolsContainer/CreateRectContainer/VBoxContainer/HFlowContainer/CreateRectAsPathButton" to="." method="_on_create_rect_button_mouse_exited"]
 [connection signal="pressed" from="ToolsContainer/CreateRectContainer/VBoxContainer/HFlowContainer/CreateRectAsPathButton" to="." method="_on_create_rect_as_path_button_pressed"]
 [connection signal="toggled" from="ToolsContainer/CreateRectContainer/VBoxContainer/HFlowContainer/MakeAnotherRectCheckBox" to="." method="_on_keep_drawing_check_box_toggled"]
+[connection signal="pressed" from="ToolsContainer/SelectModeContainer/CreateEmptyShapeButton" to="." method="_on_create_empty_shape_button_pressed"]
 [connection signal="toggled" from="SettingsContainer/HBoxContainer/HBoxContainer2/EnableFillCheckBox" to="." method="_on_fill_check_button_toggled"]
 [connection signal="color_changed" from="SettingsContainer/HBoxContainer/HBoxContainer2/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]
 [connection signal="toggled" from="SettingsContainer/HBoxContainer/HBoxContainer3/EnableStrokeCheckBox" to="." method="_on_stroke_check_button_toggled"]
