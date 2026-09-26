@@ -204,7 +204,7 @@ func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 		return
 	%FillPickerButton.color = svs.fill_color
 	%StrokePickerButton.color = svs.stroke_color
-	stroke_width_input.value = svs.stroke_width
+	stroke_width_input.set_value_no_signal(svs.stroke_width)
 	if is_instance_valid(svs.polygon):
 		%EnableFillCheckBox.set_pressed_no_signal(true)
 	else:
