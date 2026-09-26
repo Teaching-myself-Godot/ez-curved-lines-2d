@@ -17,6 +17,11 @@ const SETTING_NAME_ADD_COLLISION_TYPE := "addons/curved_lines_2d/add_collision_t
 
 const SETTING_NAME_ELLIPSE_RX := "addons/curved_lines_2d/ellipse_rx"
 const SETTING_NAME_ELLIPSE_RY := "addons/curved_lines_2d/ellipse_ry"
+const SETTING_NAME_RECT_WIDTH := "addons/curved_lines_2d/rect_width"
+const SETTING_NAME_RECT_HEIGHT := "addons/curved_lines_2d/rect_height"
+const SETTING_NAME_RECT_RX := "addons/curved_lines_2d/rect_rx"
+const SETTING_NAME_RECT_RY := "addons/curved_lines_2d/rect_ry"
+
 
 const SETTING_NAME_PAINT_ORDER := "addons/curved_lines_2d/paint_order"
 
@@ -2951,9 +2956,7 @@ func _handle_create_primitive_input(event) -> bool:
 	if _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE:
 		ScalableVectorShape2D.set_ellipse_points(shape_preview, Vector2(_get_default_ellipse_rx() * 2, _get_default_ellipse_ry() * 2))
 	else:
-		push_warning("TODO: in editor preview for rect")
-		#ScalableVectorShape2D.set_rect_points(shape_preview, rect_width_input.value, rect_height_input.value, rect_rx_input.value, rect_ry_input.value)
-		return false
+		ScalableVectorShape2D.set_rect_points(shape_preview, _get_default_rect_width(), _get_default_rect_height(), _get_default_rect_rx(), _get_default_rect_ry())
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_snapped_to_pixel():
@@ -2965,7 +2968,13 @@ func _handle_create_primitive_input(event) -> bool:
 			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Ellipse",
 				null, true)
 		else:
-			push_warning("TODO: in editor rect creation")
+			svs.shape_type = ScalableVectorShape2D.ShapeType.RECT
+			svs.size = Vector2(_get_default_rect_width(), _get_default_rect_height())
+			svs.rx = _get_default_rect_rx()
+			svs.ry = _get_default_rect_ry()
+			print(svs.size, " ", svs.rx, " ", svs.ry)
+			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Rectangle",
+				null, true)
 		svs.global_position = mouse_pos
 		push_warning("TODO: implement keep drawing behavior")
 		return true
@@ -3310,6 +3319,30 @@ static func _get_default_ellipse_ry() -> float:
 	if ProjectSettings.has_setting(SETTING_NAME_ELLIPSE_RY):
 		return ProjectSettings.get_setting(SETTING_NAME_ELLIPSE_RY)
 	return 50.0
+
+
+static func _get_default_rect_width() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_RECT_WIDTH):
+		return ProjectSettings.get_setting(SETTING_NAME_RECT_WIDTH)
+	return 100.0
+
+
+static func _get_default_rect_height() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_RECT_HEIGHT):
+		return ProjectSettings.get_setting(SETTING_NAME_RECT_HEIGHT)
+	return 100.0
+
+
+static func _get_default_rect_rx() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_RECT_RX):
+		return ProjectSettings.get_setting(SETTING_NAME_RECT_RX)
+	return 0.0
+
+
+static func _get_default_rect_ry() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_RECT_RY):
+		return ProjectSettings.get_setting(SETTING_NAME_RECT_RY)
+	return 0.0
 
 
 static func _get_default_stroke_width() -> float:

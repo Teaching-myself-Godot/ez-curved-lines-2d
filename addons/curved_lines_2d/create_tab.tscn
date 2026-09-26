@@ -161,7 +161,7 @@ atlas = ExtResource("6_h5wiq")
 region = Rect2(32, 112, 16, 16)
 
 [node name="CreateTab" type="HBoxContainer" unique_id=181244790]
-custom_minimum_size = Vector2(0, 204)
+custom_minimum_size = Vector2(0, 208)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -570,7 +570,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(0.402344, 0, 0, 1)
+color = Color(0.7890625, 0.38220215, 0.38220215, 1)
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/HBoxContainer" unique_id=265864135]
 layout_mode = 2

@@ -84,9 +84,17 @@ func _ready() -> void:
 
 	# Create Rectangle Settings
 	rect_width_input = _make_number_input("Width", 100, 2, 1000, "")
+	rect_width_input.value = CurvedLines2D._get_default_rect_width()
+	rect_width_input.value_changed.connect(_on_rect_width_value_changed)
 	rect_height_input = _make_number_input("Height", 100, 2, 1000, "")
+	rect_height_input.value = CurvedLines2D._get_default_rect_height()
+	rect_height_input.value_changed.connect(_on_rect_height_value_changed)
 	rect_rx_input = _make_number_input("Corner Radius X", 0, 0, 500, "")
+	rect_rx_input.value = CurvedLines2D._get_default_rect_rx()
+	rect_rx_input.value_changed.connect(_on_rect_rx_value_changed)
 	rect_ry_input = _make_number_input("Corner Radius Y", 0, 0, 500, "")
+	rect_ry_input.value = CurvedLines2D._get_default_rect_ry()
+	rect_ry_input.value_changed.connect(_on_rect_ry_value_changed)
 
 	%WidthSliderContainer.add_child(rect_width_input)
 	%HeightSliderContainer.add_child(rect_height_input)
@@ -606,3 +614,18 @@ func _on_create_rect_button_mouse_entered() -> void:
 func _on_create_rect_button_mouse_exited() -> void:
 	set_shape_preview.emit(null)
 
+
+func _on_rect_width_value_changed(new_value : float) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_RECT_WIDTH, new_value)
+
+
+func _on_rect_height_value_changed(new_value : float) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_RECT_HEIGHT, new_value)
+
+
+func _on_rect_rx_value_changed(new_value : float) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_RECT_RX, new_value)
+
+
+func _on_rect_ry_value_changed(new_value : float) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_RECT_RY, new_value)
