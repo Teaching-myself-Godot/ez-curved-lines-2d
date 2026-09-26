@@ -22,7 +22,7 @@ var warning_dialog : AcceptDialog = null
 var tab_default_min_height : int
 
 @onready var mode_containers := [
-	%CreateEllipseContainer
+	%CreateEllipseContainer, %CreateRectContainer
 ]
 
 @onready var tool_mode_button_group : ButtonGroup =	%CircleButton.button_group
@@ -133,6 +133,8 @@ func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
 	match mode:
 		CurvedLines2D.SVSEditMode.CREATE_ELLIPSE:
 			%CreateEllipseContainer.show()
+		CurvedLines2D.SVSEditMode.CREATE_RECT:
+			%CreateRectContainer.show()
 		_:
 			push_warning("TODO: show current details for: ", mode)
 

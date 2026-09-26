@@ -455,6 +455,66 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Create Path"
 
+[node name="CreateRectContainer" type="ScrollContainer" parent="ToolsContainer" unique_id=1292094314]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ToolsContainer/CreateRectContainer" unique_id=5205210]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="ToolsContainer/CreateRectContainer/VBoxContainer" unique_id=1828841050]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+tooltip_text = "Create an Ellipse as:
+- ScalableEllipse2D: a primitive ellipse, which extends from ScalableVectorShape2D (easier to edit)
+ - ScalableVectorShape2D (editable as a path)"
+mouse_filter = 0
+text = "Create Rectangle"
+
+[node name="WidthSliderContainer" type="PanelContainer" parent="ToolsContainer/CreateRectContainer/VBoxContainer" unique_id=1505063405]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HeightSliderContainer" type="PanelContainer" parent="ToolsContainer/CreateRectContainer/VBoxContainer" unique_id=1784656771]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="XRadiusSliderContainer" type="PanelContainer" parent="ToolsContainer/CreateRectContainer/VBoxContainer" unique_id=462377832]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="YRadiusSliderContainer" type="PanelContainer" parent="ToolsContainer/CreateRectContainer/VBoxContainer" unique_id=1880526749]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HFlowContainer" parent="ToolsContainer/CreateRectContainer/VBoxContainer" unique_id=5908554]
+layout_mode = 2
+
+[node name="CreateRectButton" type="Button" parent="ToolsContainer/CreateRectContainer/VBoxContainer/HBoxContainer" unique_id=1330044621]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Create a new ScalableRect2D"
+text = "Create Rectangle"
+
+[node name="CreateRectAsPathButton" type="Button" parent="ToolsContainer/CreateRectContainer/VBoxContainer/HBoxContainer" unique_id=1905575497]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Create a new Rectangle as a ScalableVectorShape2D"
+text = "Create Path"
+
 [node name="SettingsContainer" type="VBoxContainer" parent="." unique_id=1335331203]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(450, 0)
@@ -485,7 +545,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(0, 1, 0.78787875, 1)
+color = Color(0.402344, 0, 0, 1)
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/HBoxContainer" unique_id=265864135]
 layout_mode = 2
@@ -500,7 +560,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Enable Stroke"
-button_pressed = true
 text = "Stroke"
 
 [node name="StrokePickerButton" type="ColorPickerButton" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=73211193]
@@ -509,7 +568,6 @@ layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Set Stroke Color"
 text = "Fill"
-color = Color(0.605469, 0.484848, 0.484848, 1)
 
 [node name="StrokeWidthContainer" type="PanelContainer" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=1573755340]
 unique_name_in_owner = true
@@ -553,7 +611,6 @@ custom_maximum_size = Vector2(120, -1)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/normal = ExtResource("2_2chn8")
-selected = 1
 fit_to_longest_item = false
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4" unique_id=743666587]
