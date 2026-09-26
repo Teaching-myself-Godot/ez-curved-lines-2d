@@ -34,7 +34,7 @@ var tab_default_min_height : int
 
 @onready var keep_drawing_checkboxes := [
 	%MakeAnotherEllipseCheckBox,
-	%MakeAnotherEllipseCheckBox
+	%MakeAnotherRectCheckBox
 ]
 
 var _changing_color := false
@@ -68,6 +68,16 @@ func _ready() -> void:
 	stroke_width_input.value = CurvedLines2D._get_default_stroke_width()
 	stroke_width_input.value_changed.connect(_on_stroke_width_input_value_changed)
 	%StrokeWidthContainer.add_child(stroke_width_input)
+
+	if (CurvedLines2D._get_keep_drawing_behavior() ==
+				CurvedLines2D.KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT):
+		for b : CheckBox in keep_drawing_checkboxes:
+			b.set_pressed_no_signal(true)
+	else:
+		for b : CheckBox in keep_drawing_checkboxes:
+			b.set_pressed_no_signal(false)
+
+
 
 	# Collision Object
 	(%CollisionObjectTypeOptionButton as OptionButton).select(CurvedLines2D._add_collision_object_type())

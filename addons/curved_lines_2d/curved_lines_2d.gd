@@ -100,6 +100,11 @@ const CANCELABLE_MODES : Array[SVSEditMode] = [
 	SVSEditMode.CREATE_ELLIPSE, SVSEditMode.CREATE_RECT
 ]
 
+const DRAW_MODES : Array[SVSEditMode] = [
+	SVSEditMode.BRUSH, SVSEditMode.PENCIL, SVSEditMode.KNIFE,
+	SVSEditMode.CREATE_ELLIPSE, SVSEditMode.CREATE_RECT
+]
+
 var plugin : Line2DGeneratorInspectorPlugin
 var scalable_vector_shapes_2d_dock
 var select_mode_button : Button
@@ -354,9 +359,7 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 		svs_edit_buttons.show_svs_editors()
 		scalable_vector_shapes_2d_dock.create_tab.enable_svs_editors()
 		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
-				_svs_edit_mode == SVSEditMode.BRUSH or _svs_edit_mode == SVSEditMode.PENCIL or
-				_svs_edit_mode == SVSEditMode.KNIFE) and
-				not Input.is_key_pressed(KEY_Q)):
+				_svs_edit_mode in DRAW_MODES) and not Input.is_key_pressed(KEY_Q)):
 					return
 		svs_edit_buttons.set_default_mode()
 		scalable_vector_shapes_2d_dock.create_tab.set_default_mode()
@@ -365,8 +368,7 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 		svs_edit_buttons.hide_svs_editors()
 		scalable_vector_shapes_2d_dock.create_tab.disable_svs_editors()
 		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
-				_svs_edit_mode == SVSEditMode.BRUSH or _svs_edit_mode == SVSEditMode.PENCIL or
-				_svs_edit_mode == SVSEditMode.KNIFE) and
+				_svs_edit_mode in DRAW_MODES) and
 				not Input.is_key_pressed(KEY_Q)):
 					return
 		svs_edit_buttons.set_default_mode()
@@ -2957,7 +2959,7 @@ func _handle_create_primitive_input(event) -> bool:
 		ScalableVectorShape2D.set_ellipse_points(shape_preview, Vector2(_get_default_ellipse_rx() * 2, _get_default_ellipse_ry() * 2))
 	else:
 		ScalableVectorShape2D.set_rect_points(shape_preview, _get_default_rect_width(), _get_default_rect_height(), _get_default_rect_rx(), _get_default_rect_ry())
-	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT and (event as InputEventMouseButton).pressed:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_snapped_to_pixel():
 			mouse_pos = mouse_pos.snapped(_get_snap_resolution())
@@ -2976,9 +2978,13 @@ func _handle_create_primitive_input(event) -> bool:
 			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Rectangle",
 				null, true)
 		svs.global_position = mouse_pos
-		push_warning("TODO: implement keep drawing behavior")
+		if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
+			select_node_reversibly(svs.get_parent())
+		else:
+			svs_edit_buttons.set_default_mode(true)
 		return true
 	return false
+
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if (
