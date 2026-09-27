@@ -39,6 +39,7 @@ const SETTING_NAME_ANTIALIASED_LINE_2D := "addons/curved_lines_2d/antialiased_li
 
 const SETTING_NAME_KEEP_DRAWING := "addons/curved_lines_2d/keep_drawing"
 const SETTING_NAME_FREEHAND_DRAW_GRANULARITY := "addons/curved_lines_2d/granularity"
+const SETTING_NAME_APPLY_CURVE_FITTING := "addons/curved_lines_2d/apply_curve_fitting"
 const SETTING_NAME_CLOSE_PENCIL_PATH := "addons/curved_lines_2d/close_pencil_path"
 const SETTING_NAME_BRUSH_SHAPE := "addons/curved_lines_2d/brush_shape"
 const SETTING_NAME_BRUSH_SIZE_X := "addons/curved_lines_2d/brush_size_x"
@@ -2557,6 +2558,17 @@ func _handle_draw_merge_box_input(event) -> bool:
 	return true
 
 
+func _polyline_to_curve(pts : PackedVector2Array) -> Curve2D:
+	if _apply_curve_fitting():
+		var fitness_prep := BasicFit.prepare_polyline_segments(pts, _get_basic_fit_snap(pts))
+		return BasicFit.fit_curve_to_polyline(pts, fitness_prep)
+	else:
+		var curve := Curve2D.new()
+		for p in pts:
+			curve.add_point(p)
+		return curve
+
+
 func _create_freehand_shape(name : String) -> ScalableVectorShape2D:
 	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if _is_snapped_to_pixel():
@@ -2614,11 +2626,8 @@ func _apply_valid_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) 
 		var cut_start_pos := _knife_intersections.pop_front()
 		var cut_end_pos := _knife_intersections.pop_front()
 		var cutting_line := Geometry2DUtil.get_polyline_segment(_pencil_stroke, cut_start_pos, cut_end_pos)
-		var fitness_prep := BasicFit.prepare_polyline_segments(cutting_line, _get_basic_fit_snap(cutting_line))
-		var curve := BasicFit.fit_curve_to_polyline(cutting_line, fitness_prep)
+		var curve := _polyline_to_curve(cutting_line)
 		var halves = Geometry2DUtil.cut_bezier_with_bezier(svs.curve, svs.curve_to_local(curve), svs.max_stages, svs.tolerance_degrees)
-
-
 		undo_redo.create_action("Replace curve for %s " % str(svs))
 		undo_redo.add_do_property(svs, "curve", halves[0])
 		undo_redo.add_undo_property(svs, "curve", svs.curve)
@@ -2693,8 +2702,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 					var svs := _create_freehand_shape("PencilDrawing")
 					svs.global_position = _pencil_start_pos
 					var poly := _pencil_stroke.map(svs.to_local)
-					var fitness_prep := BasicFit.prepare_polyline_segments(poly, _get_basic_fit_snap(poly))
-					svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
+					svs.curve = _polyline_to_curve(poly)
 					if _get_close_pencil_path() and _pencil_stroke.size() > 1:
 						svs.curve.add_point(svs.to_local(_pencil_stroke[0]))
 					_pencil_stroke.clear()
@@ -2715,12 +2723,16 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 	return false
 
 
-func _set_curve_from_polygon(svs : ScalableVectorShape2D, pts : PackedVector2Array) -> void:
+func _set_curve_from_brush_stroke(svs : ScalableVectorShape2D, pts : PackedVector2Array) -> void:
 	svs.global_position = _brush_start_pos
 	var poly := PackedVector2Array(Array(pts).map(func(p): return svs.to_local(p)))
-	var fitness_prep := BasicFit.prepare_polyline_segments(poly, 0.5 * (_get_brush_size_x() + _get_brush_size_y()))
-	poly.append(poly[0])
-	svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
+	if _apply_curve_fitting():
+		var fitness_prep := BasicFit.prepare_polyline_segments(poly, 0.5 * (_get_brush_size_x() + _get_brush_size_y()))
+		poly.append(poly[0])
+		svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
+	else:
+		poly.append(poly[0])
+		svs.curve = _polyline_to_curve(poly)
 
 
 func _get_points_from_node(node : Node) -> Array[PackedVector2Array]:
@@ -2789,7 +2801,7 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 		else:
 			if is_instance_valid(current_selection):
 				var svs := _create_freehand_shape("BrushStroke")
-				_set_curve_from_polygon(svs, _current_brush_stroke)
+				_set_curve_from_brush_stroke(svs, _current_brush_stroke)
 				_current_brush_stroke.clear()
 				if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 					select_node_reversibly(svs.get_parent())
@@ -3476,6 +3488,12 @@ static func _get_close_pencil_path() -> bool:
 	if ProjectSettings.has_setting(SETTING_NAME_CLOSE_PENCIL_PATH):
 		return ProjectSettings.get_setting(SETTING_NAME_CLOSE_PENCIL_PATH)
 	return false
+
+
+static func _apply_curve_fitting() -> bool:
+	if ProjectSettings.has_setting(SETTING_NAME_APPLY_CURVE_FITTING):
+		return ProjectSettings.get_setting(SETTING_NAME_APPLY_CURVE_FITTING)
+	return true
 
 
 static func _get_brush_size_x() -> float:

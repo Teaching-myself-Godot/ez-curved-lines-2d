@@ -44,6 +44,10 @@ var granularity_inputs : Array[EditorSpinSlider] = []
 	%KeepPencilDrawingCheckBox
 ]
 
+@onready var fit_curve_check_boxes : Array[CheckBox] = [
+	%FitCurveToPencilCheckBox
+]
+
 var _changing_color := false
 
 func _ready() -> void:
@@ -685,3 +689,8 @@ func _on_granularity_value_changed(new_val) -> void:
 		gi.set_value_no_signal(new_val)
 
 
+func _on_fit_curve_check_box_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_APPLY_CURVE_FITTING, toggled_on)
+	ProjectSettings.save()
+	for fc : CheckBox in fit_curve_check_boxes:
+		fc.set_pressed_no_signal(toggled_on)
