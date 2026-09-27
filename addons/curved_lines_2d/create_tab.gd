@@ -22,20 +22,30 @@ var rect_ry_input : EditorSpinSlider
 var ellipse_rx_input : EditorSpinSlider
 var ellipse_ry_input : EditorSpinSlider
 
+var pencil_granularity_input : EditorSpinSlider
+
 var warning_dialog : AcceptDialog = null
 
 var tab_default_min_height : int
 
-@onready var mode_containers := [
+
+var granularity_inputs : Array[EditorSpinSlider] = []
+
+@onready var mode_containers : Array[Container] = [
 	%CreateEllipseContainer, %CreateRectContainer,
-	%SelectModeContainer
+	%SelectModeContainer, %PencilToolContainer,
 ]
 
 @onready var tool_mode_button_group : ButtonGroup =	%CircleButton.button_group
 
-@onready var keep_drawing_checkboxes := [
+@onready var keep_drawing_checkboxes : Array[CheckBox] = [
 	%MakeAnotherEllipseCheckBox,
-	%MakeAnotherRectCheckBox
+	%MakeAnotherRectCheckBox,
+	%KeepPencilDrawingCheckBox
+]
+
+@onready var fit_curve_check_boxes : Array[CheckBox] = [
+	%FitCurveToPencilCheckBox
 ]
 
 var _changing_color := false
@@ -79,8 +89,6 @@ func _ready() -> void:
 		for b : CheckBox in keep_drawing_checkboxes:
 			b.set_pressed_no_signal(false)
 
-
-
 	# Collision Object
 	(%CollisionObjectTypeOptionButton as OptionButton).select(CurvedLines2D._add_collision_object_type())
 
@@ -107,12 +115,19 @@ func _ready() -> void:
 	rect_ry_input = _make_number_input("Corner Radius Y", 0, 0, 500, "")
 	rect_ry_input.value = CurvedLines2D._get_default_rect_ry()
 	rect_ry_input.value_changed.connect(_on_rect_ry_value_changed)
-
 	%WidthSliderContainer.add_child(rect_width_input)
 	%HeightSliderContainer.add_child(rect_height_input)
 	%XRadiusSliderContainer.add_child(rect_rx_input)
 	%YRadiusSliderContainer.add_child(rect_ry_input)
 	
+	# Pencil Tool
+	%ClosePathCheckBox.button_pressed = CurvedLines2D._get_close_pencil_path()
+	pencil_granularity_input = _make_number_input("Granularity", CurvedLines2D._get_freehand_draw_granularity(),
+			1, 50, "px", 1.0, "The minimum distance between points")
+	%PencilGranularity.add_child(pencil_granularity_input)
+	pencil_granularity_input.value_changed.connect(_on_granularity_value_changed)
+	granularity_inputs.append(pencil_granularity_input)
+
 	# Interface Sizing
 	tab_default_min_height = custom_minimum_size.y
 	_calibrate_ui_scale()
@@ -181,6 +196,8 @@ func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
 			%CreateRectContainer.show()
 		CurvedLines2D.SVSEditMode.NONE:
 			%SelectModeContainer.show()
+		CurvedLines2D.SVSEditMode.PENCIL:
+			%PencilToolContainer.show()
 		_:
 			push_warning("TODO: show current details for: ", mode)
 
@@ -303,7 +320,8 @@ func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 	ProjectSettings.save()
 
 
-func _make_number_input(lbl : String, value : float, min_value : float, max_value : float, suffix : String, step := 1.0) -> EditorSpinSlider:
+func _make_number_input(lbl : String, value : float, min_value : float, max_value : float,
+			suffix : String, step := 1.0, tooltip_text := "") -> EditorSpinSlider:
 	var x_slider := EditorSpinSlider.new()
 	x_slider.value = value
 	x_slider.min_value = min_value
@@ -312,6 +330,7 @@ func _make_number_input(lbl : String, value : float, min_value : float, max_valu
 	x_slider.label = lbl
 	x_slider.step = step
 	x_slider.focus_exited.connect(ProjectSettings.save)
+	x_slider.tooltip_text = tooltip_text
 	return x_slider
 
 
@@ -669,3 +688,24 @@ func _calibrate_ui_scale() -> void:
 		for child in %ToolsContainer.find_children("", "PanelContainer", true):
 			child.custom_minimum_size.x = default_slider_size * scale_factor		
 		stroke_width_input.custom_minimum_size.x = 150 * scale_factor
+
+
+# --- Pencil Tool ---
+func _on_close_path_check_box_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_CLOSE_PENCIL_PATH, toggled_on)
+	ProjectSettings.save()
+
+
+# --- Pencil and Brush Tool ---
+func _on_granularity_value_changed(new_val) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_FREEHAND_DRAW_GRANULARITY, new_val)
+	ProjectSettings.save()
+	for gi in granularity_inputs:
+		gi.set_value_no_signal(new_val)
+
+
+func _on_fit_curve_check_box_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_APPLY_CURVE_FITTING, toggled_on)
+	ProjectSettings.save()
+	for fc : CheckBox in fit_curve_check_boxes:
+		fc.set_pressed_no_signal(toggled_on)
