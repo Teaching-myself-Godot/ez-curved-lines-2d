@@ -92,32 +92,6 @@ region = Rect2(16, 96, 16, 16)
 atlas = ExtResource("6_h5wiq")
 region = Rect2(32, 96, 16, 16)
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_powka"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_v81ne"]
-atlas = ExtResource("6_h5wiq")
-region = Rect2(0, 144, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_etbwd"]
-atlas = ExtResource("6_h5wiq")
-region = Rect2(16, 144, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_h3ems"]
-atlas = ExtResource("6_h5wiq")
-region = Rect2(32, 144, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_iui6f"]
-atlas = ExtResource("6_h5wiq")
-region = Rect2(0, 160, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8xpyx"]
-atlas = ExtResource("6_h5wiq")
-region = Rect2(16, 160, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_65sk2"]
-atlas = ExtResource("6_h5wiq")
-region = Rect2(32, 160, 16, 16)
-
 [sub_resource type="ButtonGroup" id="ButtonGroup_alf1c"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_86ooi"]
@@ -159,6 +133,32 @@ region = Rect2(16, 112, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_1o8bw"]
 atlas = ExtResource("6_h5wiq")
 region = Rect2(32, 112, 16, 16)
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_powka"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v81ne"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 144, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_etbwd"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(16, 144, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h3ems"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 144, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iui6f"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 160, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8xpyx"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(16, 160, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_65sk2"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 160, 16, 16)
 
 [node name="CreateTab" type="HBoxContainer" unique_id=181244790]
 custom_minimum_size = Vector2(0, 208)
@@ -361,6 +361,7 @@ disabled = true
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_dv24s")
+icon_alignment = 1
 expand_icon = true
 
 [node name="VSeparator4" type="VSeparator" parent="ToolsContainer/HFlowContainer" unique_id=8597082]
@@ -430,32 +431,26 @@ layout_mode = 2
 [node name="EllipseXRadiusSliderContainer" type="PanelContainer" parent="ToolsContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2" unique_id=565749534]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
-custom_maximum_size = Vector2(300, -1)
 layout_mode = 2
-size_flags_horizontal = 3
 theme_override_styles/panel = ExtResource("7_powka")
 
 [node name="EllipseYRadiusSliderContainer" type="PanelContainer" parent="ToolsContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2" unique_id=1827395804]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
-custom_maximum_size = Vector2(300, -1)
 layout_mode = 2
-size_flags_horizontal = 3
 theme_override_styles/panel = ExtResource("7_powka")
 
 [node name="HFlowContainer" type="HFlowContainer" parent="ToolsContainer/CreateEllipseContainer/VBoxContainer" unique_id=775640134]
 layout_mode = 2
 
 [node name="CreateEllipseButton" type="Button" parent="ToolsContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer" unique_id=1070699013]
-custom_minimum_size = Vector2(140, 0)
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-size_flags_horizontal = 3
 text = "Create Ellipse"
 
 [node name="CreateCircleButton" type="Button" parent="ToolsContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer" unique_id=1239533478]
-custom_minimum_size = Vector2(140, 0)
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-size_flags_horizontal = 3
 text = "Create Path"
 
 [node name="MakeAnotherEllipseCheckBox" type="CheckBox" parent="ToolsContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer" unique_id=2134461001]
@@ -493,13 +488,11 @@ layout_mode = 2
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-size_flags_horizontal = 3
 
 [node name="HeightSliderContainer" type="PanelContainer" parent="ToolsContainer/CreateRectContainer/VBoxContainer/HFlowContainer2" unique_id=1784656771]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-size_flags_horizontal = 3
 
 [node name="HFlowContainer3" type="HFlowContainer" parent="ToolsContainer/CreateRectContainer/VBoxContainer" unique_id=653446675]
 layout_mode = 2
@@ -508,28 +501,24 @@ layout_mode = 2
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-size_flags_horizontal = 3
 
 [node name="YRadiusSliderContainer" type="PanelContainer" parent="ToolsContainer/CreateRectContainer/VBoxContainer/HFlowContainer3" unique_id=1880526749]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-size_flags_horizontal = 3
 
 [node name="HFlowContainer" type="HFlowContainer" parent="ToolsContainer/CreateRectContainer/VBoxContainer" unique_id=5908554]
 layout_mode = 2
 
 [node name="CreateRectButton" type="Button" parent="ToolsContainer/CreateRectContainer/VBoxContainer/HFlowContainer" unique_id=1330044621]
-custom_minimum_size = Vector2(140, 0)
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-size_flags_horizontal = 3
 tooltip_text = "Create a new ScalableRect2D"
 text = "Create Rectangle"
 
 [node name="CreateRectAsPathButton" type="Button" parent="ToolsContainer/CreateRectContainer/VBoxContainer/HFlowContainer" unique_id=1905575497]
-custom_minimum_size = Vector2(140, 0)
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-size_flags_horizontal = 3
 tooltip_text = "Create a new Rectangle as a ScalableVectorShape2D"
 text = "Create Path"
 
@@ -579,7 +568,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(0.7890625, 0.38220215, 0.38220215, 1)
+color = Color(1, 1, 1, 1)
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/HBoxContainer" unique_id=265864135]
 layout_mode = 2
@@ -594,6 +583,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Enable Stroke"
+button_pressed = true
 text = "Stroke"
 
 [node name="StrokePickerButton" type="ColorPickerButton" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=73211193]
@@ -605,7 +595,7 @@ text = "Fill"
 
 [node name="StrokeWidthContainer" type="PanelContainer" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=1573755340]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(148, 0)
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = ExtResource("7_powka")
@@ -630,29 +620,28 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="SettingsContainer/GeneralSettingsContainer" unique_id=1219246689]
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsContainer/GeneralSettingsContainer" unique_id=1219246689]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
-[node name="HBoxContainer4" type="HBoxContainer" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2" unique_id=877392243]
+[node name="HBoxContainer" type="HBoxContainer" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer" unique_id=877392243]
 layout_mode = 2
+size_flags_horizontal = 8
 size_flags_vertical = 0
 
-[node name="CollisionObjectTypeOptionButton" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4" unique_id=277946592 instance=ExtResource("20_rpvk4")]
+[node name="CollisionObjectTypeOptionButton" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer" unique_id=277946592 instance=ExtResource("20_rpvk4")]
 unique_name_in_owner = true
-custom_maximum_size = Vector2(120, -1)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/normal = ExtResource("2_2chn8")
-fit_to_longest_item = false
 
-[node name="VSeparator4" type="VSeparator" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4" unique_id=743666587]
+[node name="VSeparator4" type="VSeparator" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer" unique_id=743666587]
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
 
-[node name="UseLine2DCheckButton" type="CheckBox" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4" unique_id=871135944]
+[node name="UseLine2DCheckButton" type="CheckBox" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer" unique_id=871135944]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(116, 0)
 layout_mode = 2
@@ -667,9 +656,24 @@ tooltip_text = "Use a Line2D node to represent the stroke with in stead of a Pol
 button_pressed = true
 text = "Use Line2D"
 
-[node name="BeginCapLabel" type="Label" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4" unique_id=289376237]
+[node name="Spacer" type="HBoxContainer" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer" unique_id=921209906]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer" unique_id=1909387932]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2" unique_id=428001573]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer" unique_id=1030138560]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="BeginCapLabel" type="Label" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer" unique_id=289376237]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(85, 0)
+custom_minimum_size = Vector2(54, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "This will set the begin_cap_mode of the assigned Line2D node to:
@@ -677,10 +681,10 @@ tooltip_text = "This will set the begin_cap_mode of the assigned Line2D node to:
 - Line Cap Box
 - Line Cap Round"
 mouse_filter = 0
-text = "Cap Begin"
+text = "Begin"
 horizontal_alignment = 2
 
-[node name="BeginBoxCapToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4" unique_id=1332892442]
+[node name="BeginBoxCapToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer" unique_id=1332892442]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -697,7 +701,7 @@ button_group = SubResource("ButtonGroup_pu4iw")
 icon = SubResource("AtlasTexture_vur25")
 expand_icon = true
 
-[node name="BeginRoundCapToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4" unique_id=1212114440]
+[node name="BeginRoundCapToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer" unique_id=1212114440]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -713,7 +717,7 @@ button_group = SubResource("ButtonGroup_pu4iw")
 icon = SubResource("AtlasTexture_pa8xa")
 expand_icon = true
 
-[node name="BeginNoCapToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4" unique_id=1580908221]
+[node name="BeginNoCapToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer" unique_id=1580908221]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -729,121 +733,11 @@ button_group = SubResource("ButtonGroup_pu4iw")
 icon = SubResource("AtlasTexture_rpvk4")
 expand_icon = true
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2" unique_id=995512142]
+[node name="HBoxContainer2" type="HBoxContainer" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer" unique_id=723715155]
 layout_mode = 2
+size_flags_horizontal = 8
 
-[node name="Label2" type="Label" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3" unique_id=182546506]
-layout_mode = 2
-tooltip_text = "- This toggle determines in what order 'Fills', 'Strokes' and 'Markers' are drawn when creating a new shape using this panel
-- This plugin treats CollisionPolygon2D as a marker, Line2D as stroke and Polygon2D as fill.
-- Button hints will show the order from back to front and use the term 'Collision' in stead of 'Marker'"
-mouse_filter = 0
-text = "Order"
-horizontal_alignment = 2
-
-[node name="PaintOrderButton0" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3" unique_id=1937699835]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 4
-tooltip_text = "Use Paint Order:
-Fills, Strokes, Collision"
-theme_override_styles/normal = ExtResource("2_2chn8")
-theme_override_styles/pressed = ExtResource("3_hti8q")
-theme_override_styles/hover = ExtResource("4_powka")
-toggle_mode = true
-button_pressed = true
-button_group = SubResource("ButtonGroup_powka")
-icon = SubResource("AtlasTexture_v81ne")
-expand_icon = true
-
-[node name="PaintOrderButton1" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3" unique_id=2083573371]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 4
-tooltip_text = "Use Paint Order:
-Strokes, Fills, Collision"
-theme_override_styles/normal = ExtResource("2_2chn8")
-theme_override_styles/pressed = ExtResource("3_hti8q")
-theme_override_styles/hover = ExtResource("4_powka")
-toggle_mode = true
-button_group = SubResource("ButtonGroup_powka")
-icon = SubResource("AtlasTexture_etbwd")
-expand_icon = true
-
-[node name="PaintOrderButton2" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3" unique_id=950729717]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 4
-tooltip_text = "Use Paint Order:
-Fills, Collision, Strokes"
-theme_override_styles/normal = ExtResource("2_2chn8")
-theme_override_styles/pressed = ExtResource("3_hti8q")
-theme_override_styles/hover = ExtResource("4_powka")
-toggle_mode = true
-button_group = SubResource("ButtonGroup_powka")
-icon = SubResource("AtlasTexture_h3ems")
-expand_icon = true
-
-[node name="PaintOrderButton3" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3" unique_id=1973808029]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 4
-tooltip_text = "Use Paint Order:
-Collision, Fills, Strokes"
-theme_override_styles/normal = ExtResource("2_2chn8")
-theme_override_styles/pressed = ExtResource("3_hti8q")
-theme_override_styles/hover = ExtResource("4_powka")
-toggle_mode = true
-button_group = SubResource("ButtonGroup_powka")
-icon = SubResource("AtlasTexture_iui6f")
-expand_icon = true
-
-[node name="PaintOrderButton4" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3" unique_id=3160583]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 4
-tooltip_text = "Use Paint Order:
-Strokes, Collision, Fills"
-theme_override_styles/normal = ExtResource("2_2chn8")
-theme_override_styles/pressed = ExtResource("3_hti8q")
-theme_override_styles/hover = ExtResource("4_powka")
-toggle_mode = true
-button_group = SubResource("ButtonGroup_powka")
-icon = SubResource("AtlasTexture_8xpyx")
-expand_icon = true
-
-[node name="PaintOrderButton5" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3" unique_id=264577663]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 4
-tooltip_text = "Use Paint Order:
-Collision, Strokes, Fills"
-theme_override_styles/normal = ExtResource("2_2chn8")
-theme_override_styles/pressed = ExtResource("3_hti8q")
-theme_override_styles/hover = ExtResource("4_powka")
-toggle_mode = true
-button_group = SubResource("ButtonGroup_powka")
-icon = SubResource("AtlasTexture_65sk2")
-expand_icon = true
-
-[node name="VSeparator5" type="VSeparator" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3" unique_id=1417347801]
-layout_mode = 2
-size_flags_horizontal = 0
-theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
-
-[node name="Label" type="Label" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3" unique_id=69307550]
+[node name="Label" type="Label" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2" unique_id=69307550]
 custom_minimum_size = Vector2(54, 0)
 layout_mode = 2
 size_flags_horizontal = 8
@@ -855,7 +749,7 @@ mouse_filter = 0
 text = "Join"
 horizontal_alignment = 2
 
-[node name="LineJoinSharpToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3" unique_id=1915526320]
+[node name="LineJoinSharpToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2" unique_id=1915526320]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -872,7 +766,7 @@ button_group = SubResource("ButtonGroup_alf1c")
 icon = SubResource("AtlasTexture_86ooi")
 expand_icon = true
 
-[node name="LineJointRoundToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3" unique_id=575972843]
+[node name="LineJointRoundToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2" unique_id=575972843]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -888,7 +782,7 @@ button_group = SubResource("ButtonGroup_alf1c")
 icon = SubResource("AtlasTexture_1885i")
 expand_icon = true
 
-[node name="LineJointBevelToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3" unique_id=1181364363]
+[node name="LineJointBevelToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2" unique_id=1181364363]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -904,19 +798,11 @@ button_group = SubResource("ButtonGroup_alf1c")
 icon = SubResource("AtlasTexture_oyctc")
 expand_icon = true
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2" unique_id=1431824775]
+[node name="HBoxContainer3" type="HBoxContainer" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer" unique_id=420972129]
 layout_mode = 2
+size_flags_horizontal = 8
 
-[node name="Control" type="Control" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer2" unique_id=2092104503]
-custom_minimum_size = Vector2(270, 0)
-layout_mode = 2
-
-[node name="VSeparator4" type="VSeparator" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer2" unique_id=1865080620]
-layout_mode = 2
-size_flags_horizontal = 0
-theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
-
-[node name="Label" type="Label" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer2" unique_id=1818177992]
+[node name="Label" type="Label" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer3" unique_id=1818177992]
 custom_minimum_size = Vector2(54, 0)
 layout_mode = 2
 size_flags_horizontal = 8
@@ -928,7 +814,7 @@ mouse_filter = 0
 text = "End"
 horizontal_alignment = 2
 
-[node name="EndBoxCapToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer2" unique_id=2023708421]
+[node name="EndBoxCapToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer3" unique_id=2023708421]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -945,7 +831,7 @@ button_group = SubResource("ButtonGroup_xjyyj")
 icon = SubResource("AtlasTexture_pu4iw")
 expand_icon = true
 
-[node name="EndRoundCapToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer2" unique_id=1916241251]
+[node name="EndRoundCapToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer3" unique_id=1916241251]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -961,7 +847,7 @@ button_group = SubResource("ButtonGroup_xjyyj")
 icon = SubResource("AtlasTexture_lcmbt")
 expand_icon = true
 
-[node name="EndNoCapToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer2" unique_id=246852935]
+[node name="EndNoCapToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer3" unique_id=246852935]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -977,19 +863,14 @@ button_group = SubResource("ButtonGroup_xjyyj")
 icon = SubResource("AtlasTexture_pnph2")
 expand_icon = true
 
-[node name="HBoxContainer5" type="HBoxContainer" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2" unique_id=1164091032]
+[node name="VBoxContainer2" type="VBoxContainer" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2" unique_id=447857716]
 layout_mode = 2
 
-[node name="Control" type="Control" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer5" unique_id=571155654]
-custom_minimum_size = Vector2(270, 0)
+[node name="HBoxContainer" type="HBoxContainer" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2" unique_id=1816085564]
 layout_mode = 2
+size_flags_horizontal = 8
 
-[node name="VSeparator4" type="VSeparator" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer5" unique_id=1644175952]
-layout_mode = 2
-size_flags_horizontal = 0
-theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
-
-[node name="Label" type="Label" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer5" unique_id=454665873]
+[node name="Label" type="Label" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer" unique_id=454665873]
 custom_minimum_size = Vector2(54, 0)
 layout_mode = 2
 size_flags_horizontal = 8
@@ -1001,7 +882,7 @@ mouse_filter = 0
 text = "Align"
 horizontal_alignment = 2
 
-[node name="MiddleToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer5" unique_id=335899562]
+[node name="MiddleToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer" unique_id=335899562]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -1017,7 +898,7 @@ button_group = SubResource("ButtonGroup_dv24s")
 icon = SubResource("AtlasTexture_7t7wr")
 expand_icon = true
 
-[node name="InsideToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer5" unique_id=1884883422]
+[node name="InsideToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer" unique_id=1884883422]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -1032,7 +913,7 @@ button_group = SubResource("ButtonGroup_dv24s")
 icon = SubResource("AtlasTexture_4t731")
 expand_icon = true
 
-[node name="OutsideToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer5" unique_id=1921117242]
+[node name="OutsideToggleButton" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer" unique_id=1921117242]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -1045,6 +926,122 @@ theme_override_styles/hover = ExtResource("4_powka")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dv24s")
 icon = SubResource("AtlasTexture_1o8bw")
+expand_icon = true
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2" unique_id=995512142]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="Label2" type="Label" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer2" unique_id=182546506]
+custom_minimum_size = Vector2(54, 0)
+layout_mode = 2
+size_flags_vertical = 1
+tooltip_text = "- This toggle determines in what order 'Fills', 'Strokes' and 'Markers' are drawn when creating a new shape using this panel
+- This plugin treats CollisionPolygon2D as a marker, Line2D as stroke and Polygon2D as fill.
+- Button hints will show the order from back to front and use the term 'Collision' in stead of 'Marker'"
+mouse_filter = 0
+text = "Order"
+horizontal_alignment = 2
+
+[node name="PaintOrderButton0" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer2" unique_id=1937699835]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Use Paint Order:
+Fills, Strokes, Collision"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_powka")
+icon = SubResource("AtlasTexture_v81ne")
+expand_icon = true
+
+[node name="PaintOrderButton1" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer2" unique_id=2083573371]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Use Paint Order:
+Strokes, Fills, Collision"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_powka")
+icon = SubResource("AtlasTexture_etbwd")
+expand_icon = true
+
+[node name="PaintOrderButton2" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer2" unique_id=950729717]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Use Paint Order:
+Fills, Collision, Strokes"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_powka")
+icon = SubResource("AtlasTexture_h3ems")
+expand_icon = true
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2" unique_id=1730486183]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="PaintOrderButton3" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer3" unique_id=1973808029]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Use Paint Order:
+Collision, Fills, Strokes"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_powka")
+icon = SubResource("AtlasTexture_iui6f")
+expand_icon = true
+
+[node name="PaintOrderButton4" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer3" unique_id=3160583]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Use Paint Order:
+Strokes, Collision, Fills"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_powka")
+icon = SubResource("AtlasTexture_8xpyx")
+expand_icon = true
+
+[node name="PaintOrderButton5" type="Button" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer3" unique_id=264577663]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Use Paint Order:
+Collision, Strokes, Fills"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_powka")
+icon = SubResource("AtlasTexture_65sk2")
 expand_icon = true
 
 [connection signal="mouse_entered" from="ToolsContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer/CreateEllipseButton" to="." method="_on_create_circle_button_mouse_entered"]
@@ -1067,23 +1064,23 @@ expand_icon = true
 [connection signal="toggled" from="SettingsContainer/HBoxContainer/HBoxContainer3/EnableStrokeCheckBox" to="." method="_on_stroke_check_button_toggled"]
 [connection signal="color_changed" from="SettingsContainer/HBoxContainer/HBoxContainer3/StrokePickerButton" to="." method="_on_stroke_picker_button_color_changed"]
 [connection signal="toggled" from="SettingsContainer/HBoxContainer/ExpandTabButton" to="." method="_on_expand_tab_button_toggled"]
-[connection signal="type_selected" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4/UseLine2DCheckButton" to="." method="_on_use_line_2d_check_button_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4/BeginBoxCapToggleButton" to="." method="_on_begin_box_cap_toggle_button_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4/BeginRoundCapToggleButton" to="." method="_on_begin_round_cap_toggle_button_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer4/BeginNoCapToggleButton" to="." method="_on_begin_no_cap_toggle_button_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/PaintOrderButton0" to="." method="_on_paint_order_button_0_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/PaintOrderButton1" to="." method="_on_paint_order_button_1_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/PaintOrderButton2" to="." method="_on_paint_order_button_2_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/PaintOrderButton3" to="." method="_on_paint_order_button_3_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/PaintOrderButton4" to="." method="_on_paint_order_button_4_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/PaintOrderButton5" to="." method="_on_paint_order_button_5_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/LineJoinSharpToggleButton" to="." method="_on_line_joint_sharp_toggle_button_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/LineJointRoundToggleButton" to="." method="_on_line_joint_round_toggle_button_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer3/LineJointBevelToggleButton" to="." method="_on_line_joint_bevel_toggle_button_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer2/EndBoxCapToggleButton" to="." method="_on_end_box_cap_toggle_button_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer2/EndRoundCapToggleButton" to="." method="_on_end_round_cap_toggle_button_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer2/EndNoCapToggleButton" to="." method="_on_end_no_cap_toggle_button_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer5/MiddleToggleButton" to="." method="_on_middle_toggle_button_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer5/InsideToggleButton" to="." method="_on_inside_toggle_button_toggled"]
-[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer2/HBoxContainer5/OutsideToggleButton" to="." method="_on_outside_toggle_button_toggled"]
+[connection signal="type_selected" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer/UseLine2DCheckButton" to="." method="_on_use_line_2d_check_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/BeginBoxCapToggleButton" to="." method="_on_begin_box_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/BeginRoundCapToggleButton" to="." method="_on_begin_round_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/BeginNoCapToggleButton" to="." method="_on_begin_no_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2/LineJoinSharpToggleButton" to="." method="_on_line_joint_sharp_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2/LineJointRoundToggleButton" to="." method="_on_line_joint_round_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2/LineJointBevelToggleButton" to="." method="_on_line_joint_bevel_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer3/EndBoxCapToggleButton" to="." method="_on_end_box_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer3/EndRoundCapToggleButton" to="." method="_on_end_round_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer3/EndNoCapToggleButton" to="." method="_on_end_no_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer/MiddleToggleButton" to="." method="_on_middle_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer/InsideToggleButton" to="." method="_on_inside_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer/OutsideToggleButton" to="." method="_on_outside_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer2/PaintOrderButton0" to="." method="_on_paint_order_button_0_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer2/PaintOrderButton1" to="." method="_on_paint_order_button_1_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer2/PaintOrderButton2" to="." method="_on_paint_order_button_2_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer3/PaintOrderButton3" to="." method="_on_paint_order_button_3_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer3/PaintOrderButton4" to="." method="_on_paint_order_button_4_toggled"]
+[connection signal="toggled" from="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer3/PaintOrderButton5" to="." method="_on_paint_order_button_5_toggled"]

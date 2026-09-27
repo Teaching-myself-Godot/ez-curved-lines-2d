@@ -112,8 +112,11 @@ func _ready() -> void:
 	%HeightSliderContainer.add_child(rect_height_input)
 	%XRadiusSliderContainer.add_child(rect_rx_input)
 	%YRadiusSliderContainer.add_child(rect_ry_input)
-
+	
+	# Interface Sizing
 	tab_default_min_height = custom_minimum_size.y
+	_calibrate_ui_scale()
+
 
 
 func _on_mode_toggled(toggled_on : bool, mode : CurvedLines2D.SVSEditMode) -> void:
@@ -378,8 +381,7 @@ func _toggle_end_cap_disabled(is_disabled : bool) -> void:
 	%EndBoxCapToggleButton.disabled = is_disabled
 	%EndNoCapToggleButton.disabled = is_disabled
 	%EndRoundCapToggleButton.disabled = is_disabled
-	%BeginCapLabel.text = "Cap" if is_disabled else "Cap Begin"
-
+	%BeginCapLabel.text = "Cap" if is_disabled else "Begin"
 
 func _on_use_line_2d_check_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_USE_LINE_2D_FOR_STROKE, toggled_on)
@@ -654,3 +656,16 @@ func _on_rect_rx_value_changed(new_value : float) -> void:
 
 func _on_rect_ry_value_changed(new_value : float) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_RECT_RY, new_value)
+
+
+func _calibrate_ui_scale() -> void:
+	var default_button_size = 32
+	var default_slider_size = 200	
+	var editor_scale = EditorInterface.get_editor_settings().get_setting("interface/editor/display_scale")
+	var scale_factor = (editor_scale - 2) * 0.25 + 1
+	if (editor_scale > 2):		
+		for child in %CreateTab.find_children("", "Button", true):
+			child.custom_minimum_size = Vector2(default_button_size * scale_factor, default_button_size * scale_factor)
+		for child in %ToolsContainer.find_children("", "PanelContainer", true):
+			child.custom_minimum_size.x = default_slider_size * scale_factor		
+		stroke_width_input.custom_minimum_size.x = 150 * scale_factor
