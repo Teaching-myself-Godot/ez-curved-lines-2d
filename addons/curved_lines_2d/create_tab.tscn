@@ -403,9 +403,51 @@ expand_icon = true
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_dv24s")
 
+[node name="PencilToolContainer" type="ScrollContainer" parent="ToolsContainer" unique_id=333204050]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ToolsContainer/PencilToolContainer" unique_id=947825645]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="ToolsContainer/PencilToolContainer/VBoxContainer" unique_id=1401557894]
+layout_mode = 2
+text = "Pencil Tool"
+
+[node name="HFlowContainer" type="HFlowContainer" parent="ToolsContainer/PencilToolContainer/VBoxContainer" unique_id=1667565246]
+layout_mode = 2
+
+[node name="PencilGranularity" type="PanelContainer" parent="ToolsContainer/PencilToolContainer/VBoxContainer/HFlowContainer" unique_id=876692663]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ClosePathCheckBox" type="CheckBox" parent="ToolsContainer/PencilToolContainer/VBoxContainer/HFlowContainer" unique_id=292199333]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "When checked, the path you draw is an closed to an outline."
+button_pressed = true
+text = "Close path"
+
+[node name="HFlowContainer2" type="HFlowContainer" parent="ToolsContainer/PencilToolContainer/VBoxContainer" unique_id=616325953]
+layout_mode = 2
+
+[node name="KeepPencilDrawingCheckBox" type="CheckBox" parent="ToolsContainer/PencilToolContainer/VBoxContainer/HFlowContainer2" unique_id=445290022]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+tooltip_text = "When checked, after drawing a pencil stroke, you can keep drawing on the same parent node.
+When unchecked, after drawing the pencil stroke, it is selected for editing."
+button_pressed = true
+text = "Keep Drawing"
+
 [node name="CreateEllipseContainer" type="ScrollContainer" parent="ToolsContainer" unique_id=525159852]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -463,6 +505,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
+button_pressed = true
 text = "Create another"
 
 [node name="CreateRectContainer" type="ScrollContainer" parent="ToolsContainer" unique_id=1292094314]
@@ -538,6 +581,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
+button_pressed = true
 text = "Create another"
 
 [node name="SelectModeContainer" type="CenterContainer" parent="ToolsContainer" unique_id=1695149930]
@@ -594,6 +638,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Enable Stroke"
+button_pressed = true
 text = "Stroke"
 
 [node name="StrokePickerButton" type="ColorPickerButton" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=73211193]
@@ -1047,6 +1092,8 @@ button_group = SubResource("ButtonGroup_dv24s")
 icon = SubResource("AtlasTexture_1o8bw")
 expand_icon = true
 
+[connection signal="toggled" from="ToolsContainer/PencilToolContainer/VBoxContainer/HFlowContainer/ClosePathCheckBox" to="." method="_on_close_path_check_box_toggled"]
+[connection signal="toggled" from="ToolsContainer/PencilToolContainer/VBoxContainer/HFlowContainer2/KeepPencilDrawingCheckBox" to="." method="_on_keep_drawing_check_box_toggled"]
 [connection signal="mouse_entered" from="ToolsContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer/CreateEllipseButton" to="." method="_on_create_circle_button_mouse_entered"]
 [connection signal="mouse_exited" from="ToolsContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer/CreateEllipseButton" to="." method="_on_create_circle_button_mouse_exited"]
 [connection signal="pressed" from="ToolsContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer/CreateEllipseButton" to="." method="_on_create_ellipse_button_pressed"]
