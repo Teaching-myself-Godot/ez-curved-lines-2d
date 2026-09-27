@@ -678,16 +678,13 @@ func _on_rect_ry_value_changed(new_value : float) -> void:
 
 
 func _calibrate_ui_scale() -> void:
-	var default_button_size = 32
-	var default_slider_size = 200	
 	var editor_scale = EditorInterface.get_editor_settings().get_setting("interface/editor/display_scale")
 	var scale_factor = (editor_scale - 2) * 0.25 + 1
 	if (editor_scale > 2):		
-		for child in %CreateTab.find_children("", "Button", true):
-			child.custom_minimum_size = Vector2(default_button_size * scale_factor, default_button_size * scale_factor)
-		for child in %ToolsContainer.find_children("", "PanelContainer", true):
-			child.custom_minimum_size.x = default_slider_size * scale_factor		
-		stroke_width_input.custom_minimum_size.x = 150 * scale_factor
+		for child in %CreateTab.find_children("*", "", true):
+			if (child.custom_minimum_size != Vector2(0,0)):
+				child.custom_minimum_size.x = child.custom_minimum_size.x * scale_factor
+				child.custom_minimum_size.y = child.custom_minimum_size.y * scale_factor
 
 
 # --- Pencil Tool ---
