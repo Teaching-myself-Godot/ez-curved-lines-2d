@@ -128,7 +128,10 @@ func _ready() -> void:
 	pencil_granularity_input.value_changed.connect(_on_granularity_value_changed)
 	granularity_inputs.append(pencil_granularity_input)
 
+	# Interface Sizing
 	tab_default_min_height = custom_minimum_size.y
+	_calibrate_ui_scale()
+
 
 
 func _on_mode_toggled(toggled_on : bool, mode : CurvedLines2D.SVSEditMode) -> void:
@@ -397,8 +400,7 @@ func _toggle_end_cap_disabled(is_disabled : bool) -> void:
 	%EndBoxCapToggleButton.disabled = is_disabled
 	%EndNoCapToggleButton.disabled = is_disabled
 	%EndRoundCapToggleButton.disabled = is_disabled
-	%BeginCapLabel.text = "Cap" if is_disabled else "Cap Begin"
-
+	%BeginCapLabel.text = "Cap" if is_disabled else "Begin"
 
 func _on_use_line_2d_check_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_USE_LINE_2D_FOR_STROKE, toggled_on)
@@ -673,6 +675,16 @@ func _on_rect_rx_value_changed(new_value : float) -> void:
 
 func _on_rect_ry_value_changed(new_value : float) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_RECT_RY, new_value)
+
+
+func _calibrate_ui_scale() -> void:
+	var editor_scale = EditorInterface.get_editor_settings().get_setting("interface/editor/display_scale")
+	var scale_factor = (editor_scale - 2) * 0.25 + 1
+	if (editor_scale > 2):
+		for child in %CreateTab.find_children("*", "", true):
+			if (child.custom_minimum_size != Vector2(0,0)):
+				child.custom_minimum_size.x = child.custom_minimum_size.x * scale_factor
+				child.custom_minimum_size.y = child.custom_minimum_size.y * scale_factor
 
 
 # --- Pencil Tool ---
