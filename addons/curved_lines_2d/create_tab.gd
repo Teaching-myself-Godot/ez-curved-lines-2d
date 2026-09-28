@@ -119,7 +119,7 @@ func _ready() -> void:
 	%HeightSliderContainer.add_child(rect_height_input)
 	%XRadiusSliderContainer.add_child(rect_rx_input)
 	%YRadiusSliderContainer.add_child(rect_ry_input)
-	
+
 	# Pencil Tool
 	%ClosePathCheckBox.button_pressed = CurvedLines2D._get_close_pencil_path()
 	pencil_granularity_input = _make_number_input("Granularity", CurvedLines2D._get_freehand_draw_granularity(),
@@ -680,7 +680,7 @@ func _on_rect_ry_value_changed(new_value : float) -> void:
 func _calibrate_ui_scale() -> void:
 	var editor_scale = EditorInterface.get_editor_settings().get_setting("interface/editor/display_scale")
 	var scale_factor = (editor_scale - 2) * 0.25 + 1
-	if (editor_scale > 2):		
+	if (editor_scale > 2):
 		for child in %CreateTab.find_children("*", "", true):
 			if (child.custom_minimum_size != Vector2(0,0)):
 				child.custom_minimum_size.x = child.custom_minimum_size.x * scale_factor

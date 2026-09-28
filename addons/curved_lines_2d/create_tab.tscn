@@ -421,8 +421,9 @@ text = "Pencil Tool"
 [node name="PencilGranularity" type="PanelContainer" parent="ToolsContainer/PencilToolContainer/VBoxContainer" unique_id=876692663]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(242, 0)
+custom_maximum_size = Vector2(368, -1)
 layout_mode = 2
-size_flags_horizontal = 0
+theme_override_styles/panel = ExtResource("7_powka")
 
 [node name="HFlowContainer2" type="HFlowContainer" parent="ToolsContainer/PencilToolContainer/VBoxContainer" unique_id=616325953]
 layout_mode = 2
@@ -441,7 +442,7 @@ layout_mode = 2
 tooltip_text = "When checked, the path you draw is an closed to an outline."
 text = "Close path"
 
-[node name="KeepPencilDrawingCheckBox" type="CheckBox" parent="ToolsContainer/PencilToolContainer/VBoxContainer" unique_id=445290022]
+[node name="KeepPencilDrawingCheckBox" type="CheckBox" parent="ToolsContainer/PencilToolContainer/VBoxContainer/HFlowContainer2" unique_id=445290022]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -534,11 +535,13 @@ layout_mode = 2
 unique_name_in_owner = true
 custom_minimum_size = Vector2(242, 0)
 layout_mode = 2
+theme_override_styles/panel = ExtResource("7_powka")
 
 [node name="HeightSliderContainer" type="PanelContainer" parent="ToolsContainer/CreateRectContainer/VBoxContainer/HFlowContainer" unique_id=1784656771]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(242, 0)
 layout_mode = 2
+theme_override_styles/panel = ExtResource("7_powka")
 
 [node name="HFlowContainer2" type="HFlowContainer" parent="ToolsContainer/CreateRectContainer/VBoxContainer" unique_id=653446675]
 layout_mode = 2
@@ -547,11 +550,13 @@ layout_mode = 2
 unique_name_in_owner = true
 custom_minimum_size = Vector2(242, 0)
 layout_mode = 2
+theme_override_styles/panel = ExtResource("7_powka")
 
 [node name="YRadiusSliderContainer" type="PanelContainer" parent="ToolsContainer/CreateRectContainer/VBoxContainer/HFlowContainer2" unique_id=1880526749]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(242, 0)
 layout_mode = 2
+theme_override_styles/panel = ExtResource("7_powka")
 
 [node name="HFlowContainer3" type="HFlowContainer" parent="ToolsContainer/CreateRectContainer/VBoxContainer" unique_id=5908554]
 layout_mode = 2
@@ -615,7 +620,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(1, 1, 1, 1)
+color = Color(0.7890625, 0.38220215, 0.38220215, 1)
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/HBoxContainer" unique_id=265864135]
 layout_mode = 2
@@ -639,7 +644,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Set Stroke Color"
 text = "Fill"
-color = Color(1, 1, 1, 1)
+color = Color(1, 0.65234375, 0.65234375, 1)
 
 [node name="StrokeWidthContainer" type="PanelContainer" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=1573755340]
 unique_name_in_owner = true
@@ -683,6 +688,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/normal = ExtResource("2_2chn8")
+selected = 1
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer" unique_id=743666587]
 layout_mode = 2
@@ -1094,7 +1100,7 @@ expand_icon = true
 
 [connection signal="toggled" from="ToolsContainer/PencilToolContainer/VBoxContainer/HFlowContainer2/FitCurveToPencilCheckBox" to="." method="_on_fit_curve_check_box_toggled"]
 [connection signal="toggled" from="ToolsContainer/PencilToolContainer/VBoxContainer/HFlowContainer2/ClosePathCheckBox" to="." method="_on_close_path_check_box_toggled"]
-[connection signal="toggled" from="ToolsContainer/PencilToolContainer/VBoxContainer/KeepPencilDrawingCheckBox" to="." method="_on_keep_drawing_check_box_toggled"]
+[connection signal="toggled" from="ToolsContainer/PencilToolContainer/VBoxContainer/HFlowContainer2/KeepPencilDrawingCheckBox" to="." method="_on_keep_drawing_check_box_toggled"]
 [connection signal="mouse_entered" from="ToolsContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2/CreateEllipseButton" to="." method="_on_create_circle_button_mouse_entered"]
 [connection signal="mouse_exited" from="ToolsContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2/CreateEllipseButton" to="." method="_on_create_circle_button_mouse_exited"]
 [connection signal="pressed" from="ToolsContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2/CreateEllipseButton" to="." method="_on_create_ellipse_button_pressed"]
