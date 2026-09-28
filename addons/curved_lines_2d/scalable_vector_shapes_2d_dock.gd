@@ -31,6 +31,8 @@ func _enter_tree() -> void:
 		create_tab.shape_created.connect(shape_created.emit)
 	if not create_tab.set_shape_preview.is_connected(set_shape_preview.emit):
 		create_tab.set_shape_preview.connect(set_shape_preview.emit)
+	if not create_tab.brush_changed.is_connected(brush_changed.emit):
+		create_tab.brush_changed.connect(brush_changed.emit)
 
 
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:

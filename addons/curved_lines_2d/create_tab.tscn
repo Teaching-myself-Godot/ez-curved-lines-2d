@@ -411,6 +411,8 @@ size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ToolsContainer/BrushToolContainer" unique_id=1743362581]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="Label" type="Label" parent="ToolsContainer/BrushToolContainer/VBoxContainer" unique_id=431768934]
 layout_mode = 2
@@ -418,15 +420,66 @@ tooltip_text = "Draw polygons with a ellipse / rectangle brush. "
 mouse_filter = 0
 text = "Brush tool"
 
-[node name="HFlowContainer" type="HFlowContainer" parent="ToolsContainer/BrushToolContainer/VBoxContainer" unique_id=1909636225]
+[node name="HFlowContainer2" type="HFlowContainer" parent="ToolsContainer/BrushToolContainer/VBoxContainer" unique_id=281114164]
 layout_mode = 2
 
-[node name="BrushGranularity" type="PanelContainer" parent="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer" unique_id=1369536231]
+[node name="BrushShapeOptionButton" type="OptionButton" parent="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer2" unique_id=727187502]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+selected = 0
+item_count = 2
+popup/item_0/text = "Ellipse Brush"
+popup/item_0/id = 0
+popup/item_1/text = "Rectangle Brush"
+popup/item_1/id = 1
+
+[node name="BrushSizeXContainer" type="PanelContainer" parent="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer2" unique_id=655671573]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BrushSizeYContainer" type="PanelContainer" parent="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer2" unique_id=1034017290]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BrushRotationContainer" type="PanelContainer" parent="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer2" unique_id=999364121]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BrushGranularity" type="PanelContainer" parent="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer2" unique_id=1369536231]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(242, 0)
 custom_maximum_size = Vector2(368, -1)
 layout_mode = 2
 theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="HFlowContainer" type="HFlowContainer" parent="ToolsContainer/BrushToolContainer/VBoxContainer" unique_id=1909636225]
+layout_mode = 2
+
+[node name="FitCurveToBrushStrokeCheckBox" type="CheckBox" parent="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer" unique_id=1551135714]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "When checked a smooth curve is extracted from the exact points you drew: an approximation using Bézier curve control points.
+
+When unchecked, all points you drew are kept exactly as is, but no Bézier curve handles are added."
+button_pressed = true
+text = "Extract curve"
+
+[node name="KeepBrushingCheckBox" type="CheckBox" parent="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer" unique_id=870821874]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+tooltip_text = "When checked, after drawing a pencil stroke, you can keep drawing on the same parent node.
+When unchecked, after drawing the pencil stroke, it is selected for editing."
+button_pressed = true
+text = "Keep drawing"
 
 [node name="PencilToolContainer" type="ScrollContainer" parent="ToolsContainer" unique_id=333204050]
 unique_name_in_owner = true
@@ -458,6 +511,7 @@ layout_mode = 2
 tooltip_text = "When checked a smooth curve is extracted from the exact points you drew: an approximation using Bézier curve control points.
 
 When unchecked, all points you drew are kept exactly as is, but no Bézier curve handles are added."
+button_pressed = true
 text = "Extract curve"
 
 [node name="ClosePathCheckBox" type="CheckBox" parent="ToolsContainer/PencilToolContainer/VBoxContainer/HFlowContainer2" unique_id=292199333]
@@ -473,6 +527,7 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 tooltip_text = "When checked, after drawing a pencil stroke, you can keep drawing on the same parent node.
 When unchecked, after drawing the pencil stroke, it is selected for editing."
+button_pressed = true
 text = "Keep drawing"
 
 [node name="CreateEllipseContainer" type="ScrollContainer" parent="ToolsContainer" unique_id=525159852]
@@ -529,6 +584,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 size_flags_stretch_ratio = 2.0
+button_pressed = true
 text = "Keep creating"
 
 [node name="CreateRectContainer" type="ScrollContainer" parent="ToolsContainer" unique_id=1292094314]
@@ -602,6 +658,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 size_flags_stretch_ratio = 2.0
+button_pressed = true
 text = "Keep creating
 "
 
@@ -635,7 +692,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 tooltip_text = "Enable Fill"
-button_pressed = true
 text = "Fill"
 
 [node name="FillPickerButton" type="ColorPickerButton" parent="SettingsContainer/HBoxContainer/HBoxContainer2" unique_id=1356466570]
@@ -712,7 +768,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/normal = ExtResource("2_2chn8")
-selected = 1
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer" unique_id=743666587]
 layout_mode = 2
@@ -1122,6 +1177,9 @@ button_group = SubResource("ButtonGroup_powka")
 icon = SubResource("AtlasTexture_65sk2")
 expand_icon = true
 
+[connection signal="item_selected" from="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer2/BrushShapeOptionButton" to="." method="_on_brush_shape_option_button_item_selected"]
+[connection signal="toggled" from="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer/FitCurveToBrushStrokeCheckBox" to="." method="_on_fit_curve_check_box_toggled"]
+[connection signal="toggled" from="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer/KeepBrushingCheckBox" to="." method="_on_keep_drawing_check_box_toggled"]
 [connection signal="toggled" from="ToolsContainer/PencilToolContainer/VBoxContainer/HFlowContainer2/FitCurveToPencilCheckBox" to="." method="_on_fit_curve_check_box_toggled"]
 [connection signal="toggled" from="ToolsContainer/PencilToolContainer/VBoxContainer/HFlowContainer2/ClosePathCheckBox" to="." method="_on_close_path_check_box_toggled"]
 [connection signal="toggled" from="ToolsContainer/PencilToolContainer/VBoxContainer/HFlowContainer2/KeepPencilDrawingCheckBox" to="." method="_on_keep_drawing_check_box_toggled"]

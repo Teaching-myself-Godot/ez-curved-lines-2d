@@ -9,6 +9,7 @@ signal set_shape_preview(curve : Curve2D)
 signal mode_changed(new_mode : CurvedLines2D.SVSEditMode)
 signal flip_horizontal()
 signal flip_vertical()
+signal brush_changed()
 
 const OPEN_SCENE_ERROR_MESSAGE := "Can only create a shape in an open scene"
 
@@ -24,6 +25,9 @@ var ellipse_ry_input : EditorSpinSlider
 
 var pencil_granularity_input : EditorSpinSlider
 var brush_granularity_input : EditorSpinSlider
+var brush_size_x_input : EditorSpinSlider
+var brush_size_y_input : EditorSpinSlider
+var brush_rotation_input : EditorSpinSlider
 
 var warning_dialog : AcceptDialog = null
 
@@ -43,11 +47,12 @@ var granularity_inputs : Array[EditorSpinSlider] = []
 @onready var keep_drawing_checkboxes : Array[CheckBox] = [
 	%MakeAnotherEllipseCheckBox,
 	%MakeAnotherRectCheckBox,
-	%KeepPencilDrawingCheckBox
+	%KeepPencilDrawingCheckBox,
+	%KeepBrushingCheckBox
 ]
 
 @onready var fit_curve_check_boxes : Array[CheckBox] = [
-	%FitCurveToPencilCheckBox
+	%FitCurveToPencilCheckBox, %FitCurveToBrushStrokeCheckBox
 ]
 
 var _changing_color := false
@@ -82,6 +87,21 @@ func _ready() -> void:
 	stroke_width_input.value = CurvedLines2D._get_default_stroke_width()
 	stroke_width_input.value_changed.connect(_on_stroke_width_input_value_changed)
 	%StrokeWidthContainer.add_child(stroke_width_input)
+
+	%CollisionObjectTypeOptionButton.select(CurvedLines2D._add_collision_object_type())
+	%BeginBoxCapToggleButton.set_pressed_no_signal(CurvedLines2D._get_default_begin_cap() == Line2D.LINE_CAP_BOX)
+	%BeginNoCapToggleButton.set_pressed_no_signal(CurvedLines2D._get_default_begin_cap() ==  Line2D.LINE_CAP_NONE)
+	%BeginRoundCapToggleButton.set_pressed_no_signal(CurvedLines2D._get_default_begin_cap() ==  Line2D.LINE_CAP_ROUND)
+	%EndBoxCapToggleButton.set_pressed_no_signal(CurvedLines2D._get_default_end_cap() ==  Line2D.LINE_CAP_BOX)
+	%EndNoCapToggleButton.set_pressed_no_signal(CurvedLines2D._get_default_end_cap() == Line2D.LINE_CAP_NONE)
+	%EndRoundCapToggleButton.set_pressed_no_signal(CurvedLines2D._get_default_end_cap() == Line2D.LINE_CAP_ROUND)
+	%LineJoinSharpToggleButton.set_pressed_no_signal(CurvedLines2D._get_default_joint_mode() == Line2D.LINE_JOINT_SHARP)
+	%LineJointRoundToggleButton.set_pressed_no_signal(CurvedLines2D._get_default_joint_mode() == Line2D.LINE_JOINT_ROUND)
+	%LineJointBevelToggleButton.set_pressed_no_signal(CurvedLines2D._get_default_joint_mode() == Line2D.LINE_JOINT_BEVEL)
+	%MiddleToggleButton.set_pressed_no_signal(CurvedLines2D._get_default_stroke_extrusion_direction() == ScalableVectorShape2D.StrokeExtrusionDirection.MIDDLE)
+	%InsideToggleButton.set_pressed_no_signal(CurvedLines2D._get_default_stroke_extrusion_direction() == ScalableVectorShape2D.StrokeExtrusionDirection.INWARD)
+	%OutsideToggleButton.set_pressed_no_signal(CurvedLines2D._get_default_stroke_extrusion_direction() == ScalableVectorShape2D.StrokeExtrusionDirection.OUTWARD)
+
 
 	if (CurvedLines2D._get_keep_drawing_behavior() ==
 				CurvedLines2D.KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT):
@@ -131,10 +151,24 @@ func _ready() -> void:
 	brush_granularity_input = _make_number_input("Granularity", CurvedLines2D._get_freehand_draw_granularity(),
 			1, 50, "px", 1.0, "The minimum distance between points")
 	%FitCurveToPencilCheckBox.button_pressed = CurvedLines2D._apply_curve_fitting()
+
 	# Brush Tool
 	%BrushGranularity.add_child(brush_granularity_input)
 	brush_granularity_input.value_changed.connect(_on_granularity_value_changed)
 	granularity_inputs.append_array([pencil_granularity_input, brush_granularity_input])
+	%FitCurveToBrushStrokeCheckBox.button_pressed = CurvedLines2D._apply_curve_fitting()
+	brush_size_x_input = _make_number_input("Size X", CurvedLines2D._get_brush_size_x(), 1, 500, "px")
+	%BrushSizeXContainer.add_child(brush_size_x_input)
+	brush_size_x_input.value_changed.connect(_on_brush_size_x_value_changed)
+
+	brush_size_y_input = _make_number_input("Size Y", CurvedLines2D._get_brush_size_y(), 1, 500, "px")
+	%BrushSizeYContainer.add_child(brush_size_y_input)
+	brush_size_y_input.value_changed.connect(_on_brush_size_y_value_changed)
+
+	brush_rotation_input = _make_number_input("Rotation", CurvedLines2D._get_brush_rotation(), 0, 360, "°")
+	%BrushRotationContainer.add_child(brush_rotation_input)
+	brush_rotation_input.value_changed.connect(_on_brush_rotation_value_changed)
+	%BrushShapeOptionButton.select(CurvedLines2D._get_brush_shape())
 
 	# Interface Sizing
 	tab_default_min_height = custom_minimum_size.y
@@ -266,11 +300,10 @@ func disable_all_editors() -> void:
 
 
 func sync_draw_settings() -> void:
-	push_warning("TODO: synchronize brush settings")
-	#brush_size_x_input.set_value_no_signal(CurvedLines2D._get_brush_size_x())
-	#brush_size_y_input.set_value_no_signal(CurvedLines2D._get_brush_size_y())
-	#brush_rotation_input.set_value_no_signal(CurvedLines2D._get_brush_rotation())
-	#%BrushShapeOptionButton.select(CurvedLines2D._get_brush_shape())
+	brush_size_x_input.set_value_no_signal(CurvedLines2D._get_brush_size_x())
+	brush_size_y_input.set_value_no_signal(CurvedLines2D._get_brush_size_y())
+	brush_rotation_input.set_value_no_signal(CurvedLines2D._get_brush_rotation())
+	%BrushShapeOptionButton.select(CurvedLines2D._get_brush_shape())
 	ProjectSettings.save()
 
 
@@ -701,6 +734,31 @@ func _calibrate_ui_scale() -> void:
 func _on_close_path_check_box_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_CLOSE_PENCIL_PATH, toggled_on)
 	ProjectSettings.save()
+
+
+# --- Brush Tool ---
+func _on_brush_size_x_value_changed(new_val) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_BRUSH_SIZE_X, new_val)
+	ProjectSettings.save()
+	brush_changed.emit()
+
+
+func _on_brush_size_y_value_changed(new_val) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_BRUSH_SIZE_Y, new_val)
+	ProjectSettings.save()
+	brush_changed.emit()
+
+
+func _on_brush_rotation_value_changed(new_val) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_BRUSH_ROTATION, new_val)
+	ProjectSettings.save()
+	brush_changed.emit()
+
+
+func _on_brush_shape_option_button_item_selected(opt: int) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_BRUSH_SHAPE, opt)
+	ProjectSettings.save()
+	brush_changed.emit()
 
 
 # --- Pencil and Brush Tool ---
