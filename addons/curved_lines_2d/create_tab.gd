@@ -23,6 +23,7 @@ var ellipse_rx_input : EditorSpinSlider
 var ellipse_ry_input : EditorSpinSlider
 
 var pencil_granularity_input : EditorSpinSlider
+var brush_granularity_input : EditorSpinSlider
 
 var warning_dialog : AcceptDialog = null
 
@@ -34,6 +35,7 @@ var granularity_inputs : Array[EditorSpinSlider] = []
 @onready var mode_containers : Array[Container] = [
 	%CreateEllipseContainer, %CreateRectContainer,
 	%SelectModeContainer, %PencilToolContainer,
+	%BrushToolContainer
 ]
 
 @onready var tool_mode_button_group : ButtonGroup =	%CircleButton.button_group
@@ -126,7 +128,13 @@ func _ready() -> void:
 			1, 50, "px", 1.0, "The minimum distance between points")
 	%PencilGranularity.add_child(pencil_granularity_input)
 	pencil_granularity_input.value_changed.connect(_on_granularity_value_changed)
-	granularity_inputs.append(pencil_granularity_input)
+	brush_granularity_input = _make_number_input("Granularity", CurvedLines2D._get_freehand_draw_granularity(),
+			1, 50, "px", 1.0, "The minimum distance between points")
+	%FitCurveToPencilCheckBox.button_pressed = CurvedLines2D._apply_curve_fitting()
+	# Brush Tool
+	%BrushGranularity.add_child(brush_granularity_input)
+	brush_granularity_input.value_changed.connect(_on_granularity_value_changed)
+	granularity_inputs.append_array([pencil_granularity_input, brush_granularity_input])
 
 	# Interface Sizing
 	tab_default_min_height = custom_minimum_size.y
@@ -198,6 +206,8 @@ func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
 			%SelectModeContainer.show()
 		CurvedLines2D.SVSEditMode.PENCIL:
 			%PencilToolContainer.show()
+		CurvedLines2D.SVSEditMode.BRUSH:
+			%BrushToolContainer.show()
 		_:
 			push_warning("TODO: show current details for: ", mode)
 

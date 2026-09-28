@@ -404,6 +404,30 @@ expand_icon = true
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_dv24s")
 
+[node name="BrushToolContainer" type="ScrollContainer" parent="ToolsContainer" unique_id=894405898]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ToolsContainer/BrushToolContainer" unique_id=1743362581]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ToolsContainer/BrushToolContainer/VBoxContainer" unique_id=431768934]
+layout_mode = 2
+tooltip_text = "Draw polygons with a ellipse / rectangle brush. "
+mouse_filter = 0
+text = "Brush tool"
+
+[node name="HFlowContainer" type="HFlowContainer" parent="ToolsContainer/BrushToolContainer/VBoxContainer" unique_id=1909636225]
+layout_mode = 2
+
+[node name="BrushGranularity" type="PanelContainer" parent="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer" unique_id=1369536231]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(242, 0)
+custom_maximum_size = Vector2(368, -1)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("7_powka")
+
 [node name="PencilToolContainer" type="ScrollContainer" parent="ToolsContainer" unique_id=333204050]
 unique_name_in_owner = true
 layout_mode = 2
@@ -620,7 +644,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(0.7890625, 0.38220215, 0.38220215, 1)
+color = Color(0.789063, 0.382202, 0.382202, 1)
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/HBoxContainer" unique_id=265864135]
 layout_mode = 2
@@ -644,7 +668,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Set Stroke Color"
 text = "Fill"
-color = Color(1, 0.65234375, 0.65234375, 1)
+color = Color(1, 0.652344, 0.652344, 1)
 
 [node name="StrokeWidthContainer" type="PanelContainer" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=1573755340]
 unique_name_in_owner = true
