@@ -45,6 +45,7 @@ const SETTING_NAME_BRUSH_SHAPE := "addons/curved_lines_2d/brush_shape"
 const SETTING_NAME_BRUSH_SIZE_X := "addons/curved_lines_2d/brush_size_x"
 const SETTING_NAME_BRUSH_SIZE_Y := "addons/curved_lines_2d/brush_size_y"
 const SETTING_NAME_BRUSH_ROTATION := "addons/curved_lines_2d/brush_rotation"
+const SETTING_NAME_BRUSH_FILL_IN_PARENT_SHAPE := "addons/curved_lines_2d/fill_in_parent_shape_with_brush"
 
 const VIEWPORT_ORANGE := Color(0.737, 0.463, 0.337)
 const WIDTH_CURVE_EDIT_CLAMP_DISTANCE := 25.0
@@ -2883,9 +2884,10 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 				if _is_svs_valid(current_selection):
 					var svs := current_selection as ScalableVectorShape2D
 					var intersect_target := Array(svs.tessellate()).map(func(p): return svs.to_global(p))
-					var res1 := Geometry2D.intersect_polygons(res[0], intersect_target)
-					if res1.size() == 1:
-						new_stroke = res1[0]
+					if _get_brush_fill_in_parent_shape():
+						var res1 := Geometry2D.intersect_polygons(res[0], intersect_target)
+						if res1.size() == 1:
+							new_stroke = res1[0]
 				_current_brush_stroke = Geometry2DUtil.get_polygon_at_granularity(new_stroke,
 						_get_guarded_brush_granularity())
 			return true
@@ -3519,6 +3521,11 @@ static func _get_brush_shape() -> BrushShape:
 		return ProjectSettings.get_setting(SETTING_NAME_BRUSH_SHAPE)
 	return BrushShape.ELLIPSE
 
+
+static func _get_brush_fill_in_parent_shape() -> bool:
+	if ProjectSettings.has_setting(SETTING_NAME_BRUSH_FILL_IN_PARENT_SHAPE):
+		return ProjectSettings.get_setting(SETTING_NAME_BRUSH_FILL_IN_PARENT_SHAPE)
+	return false
 
 func _exit_tree():
 	if _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):

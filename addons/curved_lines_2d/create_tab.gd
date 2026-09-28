@@ -169,6 +169,7 @@ func _ready() -> void:
 	%BrushRotationContainer.add_child(brush_rotation_input)
 	brush_rotation_input.value_changed.connect(_on_brush_rotation_value_changed)
 	%BrushShapeOptionButton.select(CurvedLines2D._get_brush_shape())
+	%FillInParentCheckBox.button_pressed = CurvedLines2D._get_brush_fill_in_parent_shape()
 
 	# Interface Sizing
 	tab_default_min_height = custom_minimum_size.y
@@ -760,6 +761,10 @@ func _on_brush_shape_option_button_item_selected(opt: int) -> void:
 	ProjectSettings.save()
 	brush_changed.emit()
 
+
+func _on_fill_in_parent_check_box_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_BRUSH_FILL_IN_PARENT_SHAPE, toggled_on)
+	ProjectSettings.save()
 
 # --- Pencil and Brush Tool ---
 func _on_granularity_value_changed(new_val) -> void:

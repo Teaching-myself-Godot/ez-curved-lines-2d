@@ -474,12 +474,19 @@ text = "Extract curve"
 [node name="KeepBrushingCheckBox" type="CheckBox" parent="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer" unique_id=870821874]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 tooltip_text = "When checked, after drawing a pencil stroke, you can keep drawing on the same parent node.
 When unchecked, after drawing the pencil stroke, it is selected for editing."
 button_pressed = true
 text = "Keep drawing"
+
+[node name="FillInParentCheckBox" type="CheckBox" parent="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer" unique_id=1369464324]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "When checked, if you use the brush on a selected shape, it will try to color between the lines. This works best with a low granularity and perfectly when \"extract curve\" is turned off (but you get a lot of points).
+When checked off, you're ignoring the parent shape and simply drawing anywhere."
+text = "Fill in parent shape"
 
 [node name="PencilToolContainer" type="ScrollContainer" parent="ToolsContainer" unique_id=333204050]
 unique_name_in_owner = true
@@ -1180,6 +1187,7 @@ expand_icon = true
 [connection signal="item_selected" from="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer2/BrushShapeOptionButton" to="." method="_on_brush_shape_option_button_item_selected"]
 [connection signal="toggled" from="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer/FitCurveToBrushStrokeCheckBox" to="." method="_on_fit_curve_check_box_toggled"]
 [connection signal="toggled" from="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer/KeepBrushingCheckBox" to="." method="_on_keep_drawing_check_box_toggled"]
+[connection signal="toggled" from="ToolsContainer/BrushToolContainer/VBoxContainer/HFlowContainer/FillInParentCheckBox" to="." method="_on_fill_in_parent_check_box_toggled"]
 [connection signal="toggled" from="ToolsContainer/PencilToolContainer/VBoxContainer/HFlowContainer2/FitCurveToPencilCheckBox" to="." method="_on_fit_curve_check_box_toggled"]
 [connection signal="toggled" from="ToolsContainer/PencilToolContainer/VBoxContainer/HFlowContainer2/ClosePathCheckBox" to="." method="_on_close_path_check_box_toggled"]
 [connection signal="toggled" from="ToolsContainer/PencilToolContainer/VBoxContainer/HFlowContainer2/KeepPencilDrawingCheckBox" to="." method="_on_keep_drawing_check_box_toggled"]
