@@ -59,7 +59,7 @@ func _init(is_svs := true, is_lock := true, mark_groups := false,
 		is_resource_local_to_scene := true,
 		tol_deg := 4.0, max_stg := 5,
 		using_antialiased_line_2d := false,
-		undo_redo_handler : Variant = null,
+		undo_redo_handler : Variant = DummyUndoRedo.new(),
 		on_log := func(msg: String, log_level : LogLevel): pass) -> void:
 	import_as_svs = is_svs
 	lock_shapes = is_lock
@@ -75,6 +75,24 @@ func _init(is_svs := true, is_lock := true, mark_groups := false,
 	undo_redo = undo_redo_handler
 	log_consumer = on_log
 
+class DummyUndoRedo:
+	func create_action(_a):
+		pass
+	
+	func add_do_method(_a,_b,_c,_d):
+		pass
+	
+	func add_do_property(_a,_b,_c):
+		pass
+	
+	func add_undo_method(_a,_b,_c):
+		pass
+	
+	func add_undo_reference(_a):
+		pass
+	
+	func commit_action(_a):
+		pass
 
 func log_message(msg : String, log_level : LogLevel = LogLevel.INFO) -> void:
 	log_consumer.call(msg, log_level)
