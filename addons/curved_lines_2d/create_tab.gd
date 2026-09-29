@@ -24,6 +24,7 @@ var ellipse_rx_input : EditorSpinSlider
 var ellipse_ry_input : EditorSpinSlider
 
 var pencil_granularity_input : EditorSpinSlider
+var knife_granularity_input : EditorSpinSlider
 var brush_granularity_input : EditorSpinSlider
 var brush_size_x_input : EditorSpinSlider
 var brush_size_y_input : EditorSpinSlider
@@ -39,7 +40,7 @@ var granularity_inputs : Array[EditorSpinSlider] = []
 @onready var mode_containers : Array[Container] = [
 	%CreateEllipseContainer, %CreateRectContainer,
 	%SelectModeContainer, %PencilToolContainer,
-	%BrushToolContainer
+	%BrushToolContainer, %KnifeToolContainer
 ]
 
 @onready var tool_mode_button_group : ButtonGroup =	%CircleButton.button_group
@@ -52,7 +53,8 @@ var granularity_inputs : Array[EditorSpinSlider] = []
 ]
 
 @onready var fit_curve_check_boxes : Array[CheckBox] = [
-	%FitCurveToPencilCheckBox, %FitCurveToBrushStrokeCheckBox
+	%FitCurveToPencilCheckBox, %FitCurveToBrushStrokeCheckBox,
+	%FitCurveToKnifeCutCheckBox
 ]
 
 var _changing_color := false
@@ -148,28 +150,33 @@ func _ready() -> void:
 			1, 50, "px", 1.0, "The minimum distance between points")
 	%PencilGranularity.add_child(pencil_granularity_input)
 	pencil_granularity_input.value_changed.connect(_on_granularity_value_changed)
-	brush_granularity_input = _make_number_input("Granularity", CurvedLines2D._get_freehand_draw_granularity(),
-			1, 50, "px", 1.0, "The minimum distance between points")
 	%FitCurveToPencilCheckBox.button_pressed = CurvedLines2D._apply_curve_fitting()
 
 	# Brush Tool
+	brush_granularity_input = _make_number_input("Granularity", CurvedLines2D._get_freehand_draw_granularity(),
+			1, 50, "px", 1.0, "The minimum distance between points")
 	%BrushGranularity.add_child(brush_granularity_input)
 	brush_granularity_input.value_changed.connect(_on_granularity_value_changed)
-	granularity_inputs.append_array([pencil_granularity_input, brush_granularity_input])
 	%FitCurveToBrushStrokeCheckBox.button_pressed = CurvedLines2D._apply_curve_fitting()
 	brush_size_x_input = _make_number_input("Size X", CurvedLines2D._get_brush_size_x(), 1, 500, "px")
 	%BrushSizeXContainer.add_child(brush_size_x_input)
 	brush_size_x_input.value_changed.connect(_on_brush_size_x_value_changed)
-
 	brush_size_y_input = _make_number_input("Size Y", CurvedLines2D._get_brush_size_y(), 1, 500, "px")
 	%BrushSizeYContainer.add_child(brush_size_y_input)
 	brush_size_y_input.value_changed.connect(_on_brush_size_y_value_changed)
-
 	brush_rotation_input = _make_number_input("Rotation", CurvedLines2D._get_brush_rotation(), 0, 360, "°")
 	%BrushRotationContainer.add_child(brush_rotation_input)
 	brush_rotation_input.value_changed.connect(_on_brush_rotation_value_changed)
 	%BrushShapeOptionButton.select(CurvedLines2D._get_brush_shape())
 	%FillInParentCheckBox.button_pressed = CurvedLines2D._get_brush_fill_in_parent_shape()
+
+	# Knife Tool
+	knife_granularity_input = _make_number_input("Granularity", CurvedLines2D._get_freehand_draw_granularity(),
+			1, 50, "px", 1.0, "The minimum distance between points")
+	%KnifeGranularity.add_child(knife_granularity_input)
+	knife_granularity_input.value_changed.connect(_on_granularity_value_changed)
+	%FitCurveToKnifeCutCheckBox.button_pressed = CurvedLines2D._apply_curve_fitting()
+	granularity_inputs.append_array([pencil_granularity_input, brush_granularity_input, knife_granularity_input])
 
 	# Interface Sizing
 	tab_default_min_height = custom_minimum_size.y
@@ -243,9 +250,8 @@ func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
 			%PencilToolContainer.show()
 		CurvedLines2D.SVSEditMode.BRUSH:
 			%BrushToolContainer.show()
-		_:
-			push_warning("TODO: show current details for: ", mode)
-
+		CurvedLines2D.SVSEditMode.KNIFE:
+			%KnifeToolContainer.show()
 
 func enable_svs_editors() -> void:
 	%RotateButton.disabled = false
