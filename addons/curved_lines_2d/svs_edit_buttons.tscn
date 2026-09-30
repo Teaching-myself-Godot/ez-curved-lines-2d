@@ -138,7 +138,7 @@ layout_mode = 2
 [node name="Merge" type="Button" parent="." unique_id=228096526]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Merge Points (M)"
+tooltip_text = "Merge Points (Shift+M)"
 theme_override_styles/normal = SubResource("StyleBoxFlat_1j8wt")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_rxvdi")

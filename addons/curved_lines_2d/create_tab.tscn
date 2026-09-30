@@ -178,13 +178,22 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 5
 
-[node name="HFlowContainer" type="HFlowContainer" parent="ToolsContainer" unique_id=869442149]
+[node name="ScrollContainer" type="ScrollContainer" parent="ToolsContainer" unique_id=765379020]
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme_override_constants/h_separation = 4
+follow_focus = true
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 0
+scroll_horizontal_by_default = true
 
-[node name="CircleButton" type="Button" parent="ToolsContainer/HFlowContainer" unique_id=1179979946]
+[node name="HBoxContainer" type="HBoxContainer" parent="ToolsContainer/ScrollContainer" unique_id=945149153]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="CircleButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1179979946]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -200,7 +209,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_4mrje")
 expand_icon = true
 
-[node name="RectangleButton" type="Button" parent="ToolsContainer/HFlowContainer" unique_id=326123292]
+[node name="RectangleButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=326123292]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -216,11 +225,11 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_w8ysd")
 expand_icon = true
 
-[node name="VSeparator3" type="VSeparator" parent="ToolsContainer/HFlowContainer" unique_id=1808966385]
+[node name="VSeparator3" type="VSeparator" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1808966385]
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
 
-[node name="EditButton" type="Button" parent="ToolsContainer/HFlowContainer" unique_id=1572018910]
+[node name="EditButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1572018910]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -236,7 +245,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_v84w2")
 expand_icon = true
 
-[node name="TranslateButton" type="Button" parent="ToolsContainer/HFlowContainer" unique_id=2135973308]
+[node name="TranslateButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=2135973308]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -252,7 +261,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_6gyyp")
 expand_icon = true
 
-[node name="RotateButton" type="Button" parent="ToolsContainer/HFlowContainer" unique_id=1983587831]
+[node name="RotateButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1983587831]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -268,7 +277,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_h5wiq")
 expand_icon = true
 
-[node name="ResizeButton" type="Button" parent="ToolsContainer/HFlowContainer" unique_id=1295417530]
+[node name="ResizeButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1295417530]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -284,7 +293,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_ta6ok")
 expand_icon = true
 
-[node name="FlipHorizontalButton" type="Button" parent="ToolsContainer/HFlowContainer" unique_id=1244107966]
+[node name="FlipHorizontalButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1244107966]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -298,7 +307,7 @@ disabled = true
 icon = SubResource("AtlasTexture_keblj")
 expand_icon = true
 
-[node name="FlipVerticalButton" type="Button" parent="ToolsContainer/HFlowContainer" unique_id=1942614303]
+[node name="FlipVerticalButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1942614303]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -312,11 +321,11 @@ disabled = true
 icon = SubResource("AtlasTexture_dev60")
 expand_icon = true
 
-[node name="VSeparator2" type="VSeparator" parent="ToolsContainer/HFlowContainer" unique_id=425011772]
+[node name="VSeparator2" type="VSeparator" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=425011772]
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
 
-[node name="BrushButton" type="Button" parent="ToolsContainer/HFlowContainer" unique_id=1213772213]
+[node name="BrushButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1213772213]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -332,7 +341,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_a0xul")
 expand_icon = true
 
-[node name="PencilButton" type="Button" parent="ToolsContainer/HFlowContainer" unique_id=648886700]
+[node name="PencilButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=648886700]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -348,7 +357,7 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_4nv23")
 expand_icon = true
 
-[node name="KnifeButton" type="Button" parent="ToolsContainer/HFlowContainer" unique_id=996550358]
+[node name="KnifeButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=996550358]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -365,11 +374,11 @@ icon = SubResource("AtlasTexture_dv24s")
 icon_alignment = 1
 expand_icon = true
 
-[node name="VSeparator4" type="VSeparator" parent="ToolsContainer/HFlowContainer" unique_id=8597082]
+[node name="VSeparator4" type="VSeparator" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=8597082]
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
 
-[node name="BonePaintButton" type="Button" parent="ToolsContainer/HFlowContainer" unique_id=1377374135]
+[node name="BonePaintButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1377374135]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -385,13 +394,13 @@ button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_25oso")
 expand_icon = true
 
-[node name="MergeButton" type="Button" parent="ToolsContainer/HFlowContainer" unique_id=1953972853]
+[node name="MergeButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1953972853]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
-tooltip_text = "Merge points (M)"
+tooltip_text = "Merge Points (Shift+M)"
 theme_override_styles/normal = ExtResource("2_2chn8")
 theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
@@ -487,7 +496,6 @@ layout_mode = 2
 size_flags_stretch_ratio = 2.0
 tooltip_text = "When checked, after drawing a pencil stroke, you can keep drawing on the same parent node.
 When unchecked, after drawing the pencil stroke, it is selected for editing."
-button_pressed = true
 text = "Keep drawing"
 
 [node name="FillInParentCheckBox" type="CheckBox" parent="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer/HFlowContainer" unique_id=1369464324]
@@ -546,7 +554,6 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 tooltip_text = "When checked, after drawing a pencil stroke, you can keep drawing on the same parent node.
 When unchecked, after drawing the pencil stroke, it is selected for editing."
-button_pressed = true
 text = "Keep drawing"
 
 [node name="CreateEllipseContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=525159852]
@@ -603,7 +610,6 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 size_flags_stretch_ratio = 2.0
-button_pressed = true
 text = "Keep creating"
 
 [node name="CreateRectContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=1292094314]
@@ -677,13 +683,11 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 size_flags_stretch_ratio = 2.0
-button_pressed = true
 text = "Keep creating
 "
 
 [node name="SelectModeContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=1430453718]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 size_flags_vertical = 3
 
@@ -759,7 +763,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(0.88671875, 0.63150597, 0.45721436, 1)
+color = Color(0.886719, 0.631506, 0.457214, 1)
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/HBoxContainer" unique_id=265864135]
 layout_mode = 2
@@ -774,6 +778,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Enable Stroke"
+button_pressed = true
 text = "Stroke"
 
 [node name="StrokePickerButton" type="ColorPickerButton" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=73211193]
@@ -782,7 +787,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Set Stroke Color"
 text = "Fill"
-color = Color(1, 0.652344, 0.652344, 1)
+color = Color(0.953125, 0.919617, 0.919617, 1)
 
 [node name="StrokeWidthContainer" type="PanelContainer" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=1573755340]
 unique_name_in_owner = true
@@ -831,7 +836,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/normal = ExtResource("2_2chn8")
-selected = 1
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer" unique_id=743666587]
 layout_mode = 2
@@ -1090,6 +1094,7 @@ theme_override_styles/normal = ExtResource("2_2chn8")
 theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
 toggle_mode = true
+button_pressed = true
 button_group = SubResource("ButtonGroup_dv24s")
 icon = SubResource("AtlasTexture_7t7wr")
 expand_icon = true
@@ -1120,7 +1125,6 @@ theme_override_styles/normal = ExtResource("2_2chn8")
 theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
 toggle_mode = true
-button_pressed = true
 button_group = SubResource("ButtonGroup_dv24s")
 icon = SubResource("AtlasTexture_1o8bw")
 expand_icon = true

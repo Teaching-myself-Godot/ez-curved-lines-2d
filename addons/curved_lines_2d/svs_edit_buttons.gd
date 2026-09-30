@@ -118,7 +118,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			%UniformRotate.button_pressed = true
 		if (event as InputEventKey).keycode == KEY_C:
 			%UniformScale.button_pressed = true
-		if (event as InputEventKey).keycode == KEY_M:
+		if (event as InputEventKey).keycode == KEY_M and Input.is_key_pressed(KEY_SHIFT):
 			%Merge.button_pressed = true
 		if (event as InputEventKey).keycode == KEY_N and Input.is_key_pressed(KEY_SHIFT):
 			%Pencil.button_pressed = true
