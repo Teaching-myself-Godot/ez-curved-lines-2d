@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://borfju00ut7l1"]
 
 [ext_resource type="Script" uid="uid://ddbvd6ouxg7op" path="res://addons/curved_lines_2d/create_tab.gd" id="1_vur25"]
-[ext_resource type="StyleBox" uid="uid://hjtwi4stcxmu" path="res://addons/curved_lines_2d/icons/button_default_stylebox.tres" id="2_2chn8"]
-[ext_resource type="StyleBox" uid="uid://ddx1ye7r3r4lf" path="res://addons/curved_lines_2d/icons/button_pressed_stylebox.tres" id="3_hti8q"]
-[ext_resource type="StyleBox" uid="uid://bo0x8scw4k70k" path="res://addons/curved_lines_2d/icons/button_hover_stylebox.tres" id="4_powka"]
+[ext_resource type="StyleBox" uid="uid://hjtwi4stcxmu" path="res://addons/curved_lines_2d/styleboxes/button_default_stylebox.tres" id="2_2chn8"]
+[ext_resource type="StyleBox" uid="uid://ddx1ye7r3r4lf" path="res://addons/curved_lines_2d/styleboxes/button_pressed_stylebox.tres" id="3_hti8q"]
+[ext_resource type="StyleBox" uid="uid://bo0x8scw4k70k" path="res://addons/curved_lines_2d/styleboxes/button_hover_stylebox.tres" id="4_powka"]
 [ext_resource type="Texture2D" uid="uid://ulvclg7al5cu" path="res://addons/curved_lines_2d/IconAtlas.svg" id="6_h5wiq"]
-[ext_resource type="StyleBox" uid="uid://c034pktje23oe" path="res://addons/curved_lines_2d/icons/editor_spin_box_container_stylebox.tres" id="7_powka"]
+[ext_resource type="StyleBox" uid="uid://c034pktje23oe" path="res://addons/curved_lines_2d/styleboxes/editor_spin_box_container_stylebox.tres" id="7_powka"]
 [ext_resource type="PackedScene" uid="uid://cjbkvx1pj7gq2" path="res://addons/curved_lines_2d/collision_object_type_option_button.tscn" id="20_rpvk4"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_dsrm6"]
