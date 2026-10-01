@@ -85,7 +85,8 @@ enum SVSEditMode {
 	KNIFE
 }
 
-var plugin : Line2DGeneratorInspectorPlugin
+var inspector_plugin : Line2DGeneratorInspectorPlugin
+var importer_plugin : ScalableSVGImportPlugin
 var scalable_vector_shapes_2d_dock
 var select_mode_button : Button
 var undo_redo : EditorUndoRedoManager
@@ -163,8 +164,10 @@ var _grid_snap_settings := Vector4i(0, 0, 1, 1)
 
 func _enter_tree():
 	scalable_vector_shapes_2d_dock = load("res://addons/curved_lines_2d/scalable_vector_shapes_2d_dock.tscn").instantiate()
-	plugin = load("res://addons/curved_lines_2d/line_2d_generator_inspector_plugin.gd").new()
-	add_inspector_plugin(plugin)
+	inspector_plugin = load("res://addons/curved_lines_2d/line_2d_generator_inspector_plugin.gd").new()
+	importer_plugin = load("res://addons/curved_lines_2d/svg_importer_plugin.gd").new()
+	add_inspector_plugin(inspector_plugin)
+	add_import_plugin(importer_plugin)
 	add_custom_type(
 		"DrawablePath2D",
 		"Path2D",
@@ -3361,7 +3364,8 @@ func _exit_tree():
 		_snap_dialog.confirmed.disconnect(_on_confirm_grid_snap_settings)
 
 	svs_edit_buttons.queue_free()
-	remove_inspector_plugin(plugin)
+	remove_inspector_plugin(inspector_plugin)
+	remove_import_plugin(importer_plugin)
 	remove_custom_type("DrawablePath2D")
 	remove_custom_type("ScalableVectorShape2D")
 	remove_control_from_bottom_panel(scalable_vector_shapes_2d_dock)
