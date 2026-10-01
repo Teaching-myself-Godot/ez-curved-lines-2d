@@ -5,6 +5,7 @@ class_name  Line2DGeneratorInspectorPlugin
 
 const GROUP_NAME_CURVE_SETTINGS := "Curve settings"
 const GROUP_NAME_EXPORT_OPTIONS := "Export Options"
+const MSAA_2D_SETTING_NAME := "rendering/anti_aliasing/quality/msaa_2d"
 
 var LineCapEditor = preload("res://addons/curved_lines_2d/line_cap_editor_property.gd")
 var LineJointModeEditor = preload("res://addons/curved_lines_2d/line_joint_editor_property.gd")
@@ -319,8 +320,10 @@ static func _show_exported_scene_dialog(export_root_node : Node, callable : Call
 
 static func _export_png(export_root_node : Node, filename : String, dialog : Node) -> void:
 	dialog.queue_free()
-	var img = await SVSSceneExporter.export_image(export_root_node, {}, EditorInterface.get_base_control())
+	var img = await SVSSceneExporter.export_image(export_root_node, {}, EditorInterface.get_base_control(),
+			ProjectSettings.has_setting(MSAA_2D_SETTING_NAME) and ProjectSettings.get_setting(MSAA_2D_SETTING_NAME) != Viewport.MSAA_DISABLED)
 	img.save_png(filename)
+
 	EditorInterface.get_resource_filesystem().scan()
 
 
