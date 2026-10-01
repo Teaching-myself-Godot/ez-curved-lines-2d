@@ -39,11 +39,8 @@ You can find the rest of the explainer videos on this playlist:
 - [Drawing Shapes in the Godot 2D Viewport](#drawing-shapes-in-the-godot-2d-viewport)
 	- [Basic Drawing Explainer on youtube](#basic-drawing-explainer-on-youtube)
 	- [Quick Start](#quick-start)
-- [The Create Shapes Dock](#the-create-shapes-dock)
-	- [Creating Paths based on Bézier curves](#creating-paths-based-on-bézier-curves)
-	- [Creating 'primitive' shapes: Rectangle and Ellipse](#creating-primitive-shapes-rectangle-and-ellipse)
-	- [Draw Settings](#draw-settings)
-	- [Futher reading](#futher-reading)
+- [The Create Tab](#the-create-tab)
+	- [Creation tools](#creation-tools)
 - [The Import SVG File Dock](#the-import-svg-file-dock)
 	- [Watch an explainer on Youtube](#watch-an-explainer-on-youtube)
 	- [Using the Import SVG File Dock](#using-the-import-svg-file-dock)
@@ -55,10 +52,10 @@ You can find the rest of the explainer videos on this playlist:
 	- [Editor Settings (how the 2D Viewport should behave):](#editor-settings-how-the-2d-viewport-should-behave)
 	- [Curve Settings](#curve-settings)
 	- [Extra's: Line2D antialiasing for Compatibility Mode](#extras-line2d-antialiasing-for-compatibility-mode)
-- [The Draw Settings Tab](#the-draw-settings-tab)
 - [The Advanced Tab](#the-advanced-tab)
 	- [Basic export options](#basic-export-options)
 	- [Bake Animations](#bake-animations)
+	- [Creating Basic Shape](#creating-basic-shape)
 - [Moving, Rotating and Resizing the Points of a Shape](#moving-rotating-and-resizing-the-points-of-a-shape)
 	- [Moving (Translating) all the points](#moving-translating-all-the-points)
 		- [Translating Ellipses and Rectangles](#translating-ellipses-and-rectangles)
@@ -167,28 +164,50 @@ You can find the rest of the explainer videos on this playlist:
 After activating this plugin a new bottom panel item appears, called "Scalable Vector Shapes 2D".
 
 There are 2 recommended ways to start drawing:
-1. [Creating a Circle/Ellipse, Rectangle or empty Path using the bottom panel item](#the-create-shapes-dock)
+
+1. [With the tools in the Create tab](#the-create-tab)
 2. [Using the `.svg` importer](#using-the-import-svg-file-dock)
 
 
-# The Create Shapes Dock
+# The Create Tab
 
-The  `Create Shapes` tab gives you some basic choices:
+The `Create` sports a number of tools to draw and edit shapes with. When first activating the plugin it looks like this:
 
 ![the bottom panel](./addons/curved_lines_2d/screenshots/06-scalable-vector-shapes-panel.png)
 
+
+## Creation tools
+
+On the left side of the panel are a set of tool buttons, which are enabled the moment a node in an open scene is selected.
+
+In the next section all these tools are described in more detail:
+
+- Create Ellipse
+- Create Rectangle
+- Selection Tool (Q), also used for [manipulating shapes](#manipulating-shapes)
+- [Unform Translate](#moving-translating-all-the-points) (Z), which moves the points of the shape without moving the entire godot node
+- [Uniform Rotate](#rotating-all-the-points) (X), which rotates only the points and not the node
+- [Uniform Scale](#resizing-all-the-points) (C), which resizes the points without scaling the node
+- [Flip Horizontal and Vertical](#flipping-paths)
+- [Brush tool](#drawing-polygons-using-the-brush-tool) (Shift+B), with which you can paint with an Ellipse/Rectangle shaped brush
+- [Pencil tool](#drawing-strokes-and-outlines-with-the-pencil-tool) (Shift+N) to draw strokes, or outlines
+- [Knife tool](#cutting-shapes-in-half-with-the-knife-tool) (K), to cut slices off of shapes
+- [Bone Paint](#animating-using-skeleton2d) tool, to assign points of a shape to bones in a Skeleton2D
+- Merge points tool (Shift+M)
+
+
+<!-- 
 ## Creating Paths based on Bézier curves
 
 Pressing the `Create Empty Path` or one of the `Create Path` buttons will add a new shape to an open `2D Scene` in 'Path' mode, meaning all points in the 'Bézier' curve are editable.
 
-![create ellipse as path](./addons/curved_lines_2d/screenshots/create-ellipse-as-path.png)
+
 
 
 ## Creating 'primitive' shapes: Rectangle and Ellipse
 
 It's probably easier to start out with a basic primitive shape (like you would in Inkscape <3) using the `Create Rectangle` or `Create Ellipse` button. This will expose less features, but will make it a lot easier to manipulate shapes:
 
-![create rect as rect](./addons/curved_lines_2d/screenshots/create-rect-as-rect.png)
 
 Ellipses will only have one handle to change the `size` property with (representing the x and y diameter). This will set the `rx` and `ry` property indirectly.
 
@@ -206,12 +225,14 @@ Rectangles will have a handle for `size` and 2 handles for rounded corners `rx` 
 - Stroke Width (when creating new shapes via this bottom panel)
 - Use `Line2D`: when flagged off, a `Polygon2D` will be used to draw strokes with in stead (see also: [`Line2D Stroke` versus `Polygon2D Stroke`](#line2d-stroke-versus-polygon2d-stroke) )
 - Begin- and End Cap modes
-- Line Joint Mode
+- Line Joint Mode 
+
 
 
 ## Futher reading
 Read more about [manipulating shapes](#manipulating-shapes)
 
+-->
 # The Import SVG File Dock
 
 ## Watch an explainer on Youtube
@@ -298,7 +319,7 @@ To be more specific, I reused these bits:
 - And the [LumAlpha8.tex](./addons/curved_lines_2d/LumAlpha8.tex) texture resource it uses was generated by this script: [addons/antialiased_line2d/texture.gd](https://github.com/godot-extended-libraries/godot-antialiased-line2d/blob/v1.2.0/addons/antialiased_line2d/texture.gd)
 
 Of course, once you assign this to the `Line2D.texture`, you cannot use another texture on that `Line2D` anymore.
-
+<!-- 
 # The Draw Settings Tab
 
 Since release 2.21, free hand drawing tools are being added. Settings for these tool can be found in this tab.
@@ -311,7 +332,7 @@ Since release 2.21, free hand drawing tools are being added. Settings for these 
 - Pencil / Outline draw granularity: the distance between points expressed as pixels at the active zoom level of the 2D Editor Viewport
 - Close curve of newly drawn paths
 - Brush shape settings (ellipse or rect, size and rotation)
-
+ -->
 # The Advanced Tab
 
 Since release `2.13.0` a tab named 'Advanced' is added to the bottom dock.
@@ -327,6 +348,18 @@ Since release `2.13.0` a tab named 'Advanced' is added to the bottom dock.
 
 ## Bake Animations
 Since `2.14.0` you can export your animated scene as sprite frames in one PNG spritesheet or separate PNG files.
+
+## Creating Basic Shape
+
+Using the 2 leftmost tools in the create tab you can create basic ellipses and rectangles, both as a path based on Bézier curves:
+
+![create ellipse as path](./addons/curved_lines_2d/screenshots/create-ellipse-as-path.png)
+
+And as a so called 'primitive shape', which is easier to resize and, in the case of rectangles, give rounded corners.
+
+![create rect as rect](./addons/curved_lines_2d/screenshots/create-rect-as-rect.png)
+
+
 
 # Moving, Rotating and Resizing the Points of a Shape
 
