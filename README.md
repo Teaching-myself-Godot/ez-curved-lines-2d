@@ -56,7 +56,9 @@ You can find the rest of the explainer videos on this playlist:
 - [The Advanced Tab](#the-advanced-tab)
 	- [Basic export options](#basic-export-options)
 	- [Bake Animations](#bake-animations)
-	- [Creating Basic Shape](#creating-basic-shape)
+- [Creating Basic Shapes](#creating-basic-shapes)
+	- [The Create Ellipse Tool](#the-create-ellipse-tool)
+	- [The Create Rectangle Tool](#the-create-rectangle-tool)
 - [Moving, Rotating and Resizing the Points of a Shape](#moving-rotating-and-resizing-the-points-of-a-shape)
 	- [Moving (Translating) all the points](#moving-translating-all-the-points)
 		- [Translating Ellipses and Rectangles](#translating-ellipses-and-rectangles)
@@ -185,8 +187,8 @@ On the left side of the panel are a set of tool buttons, which are enabled the m
 
 In the next section all these tools are described in more detail:
 
-- Create Ellipse
-- Create Rectangle
+- [Create Ellipse](#the-create-ellipse-tool)
+- [Create Rectangle](#the-create-rectangle-tool)
 - Selection Tool (Q), also used for [manipulating shapes](#manipulating-shapes)
 - [Unform Translate](#moving-translating-all-the-points) (Z), which moves the points of the shape without moving the entire godot node
 - [Uniform Rotate](#rotating-all-the-points) (X), which rotates only the points and not the node
@@ -322,7 +324,7 @@ Since release `2.13.0` a tab named 'Advanced' is added to the bottom dock.
 ## Bake Animations
 Since `2.14.0` you can export your animated scene as sprite frames in one PNG spritesheet or separate PNG files.
 
-## Creating Basic Shape
+# Creating Basic Shapes
 
 Using the 2 leftmost tools in the create tab you can create basic ellipses and rectangles, both as a path based on Bézier curves:
 
@@ -332,7 +334,37 @@ And as a so called 'primitive shape', which is easier to resize and, in the case
 
 ![create rect as rect](./addons/curved_lines_2d/screenshots/create-rect-as-rect.png)
 
+## The Create Ellipse Tool
 
+While this tool is active, you can create ellipse primitives anywhere on top of a selected Node2D or Control node by clicking.
+
+You can also create the ellipse by clicking one of the two buttons in the dock.
+
+![create ellipse tool](./addons/curved_lines_2d/screenshots/create-ellipse.png)
+
+For the ellipse you can set the horizontal and vertical radius.
+
+When you press `Create Ellipse`, an ellipse primitive is created with just 1 handle for resizing.
+
+When you press `Create Path`, the ellipse as is created as a bézier path.
+
+When "Keep creating" is checked, you can continue adding more ellipses after adding one. If it is unchecked, your new ellipse will be autmatically selected in "select mode" after creation.
+
+## The Create Rectangle Tool
+
+While this tool is active, you can create rectangle primitives anywhere on top of a selected Node2D or Control node by clicking.
+
+You can also create the rectangle by clicking one of the two buttons in the dock.
+
+![create rectangle tool](./addons/curved_lines_2d/screenshots/create-rectangle-tool.png)
+
+For the rectangle you can pick the width, height and corder radius in the settings panel.
+
+When you press `Create Rectangle`, a rectangle primitive is created with just 2 handles (for resizing and corner radius).
+
+When you press `Create Path`, a rectangle as is created as a bézier path.
+
+When "Keep creating" is checked, you can continue adding more rectangles after adding one. If it is unchecked, your new rectangle will be autmatically selected in "select mode" after creation.
 
 # Moving, Rotating and Resizing the Points of a Shape
 
