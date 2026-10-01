@@ -89,6 +89,7 @@ You can find the rest of the explainer videos on this playlist:
 	- [Sticking two or more shapes together by vertex merge](#sticking-two-or-more-shapes-together-by-vertex-merge)
 - [Free-hand Drawing](#free-hand-drawing)
 	- [Drawing strokes and outlines with the Pencil Tool](#drawing-strokes-and-outlines-with-the-pencil-tool)
+		- [Pencil tool settings](#pencil-tool-settings)
 	- [Drawing polygons using the Brush Tool](#drawing-polygons-using-the-brush-tool)
 	- [Cutting shapes in half with the knife tool](#cutting-shapes-in-half-with-the-knife-tool)
 - [Extracting a `ScalableVectorShape2D` from a `Polygon2D`, `Line2D`, or `CollisionPolygon2D`](#extracting-a-scalablevectorshape2d-from-a-polygon2d-line2d-or-collisionpolygon2d)
@@ -375,7 +376,9 @@ When a `ScalableVectorShape2D` is selected in `Select Mode (Q)`, the following c
 - `Move all the Points without moving the Node (Z)`
 - `Rotate all the Points without rotating the Node (X)`
 - `Resize all the Points without scaling the Node (C)`
-- `Edit the points normally (Q)`
+- `Go back to editing the points normally (Q)`
+
+There are also 2 buttons for horizontal and vertical flipping, which work instantly on click.
 
 ![uniform transform buttons](./addons/curved_lines_2d/screenshots/uniform_transforms.png)
 
@@ -595,13 +598,18 @@ This action create a new instance of the `SVSVertexMerge2D` node. Delete this no
 
 # Free-hand Drawing
 
-From release 2.21 upward, you can now use the pencil button to draw shapes by hand. 
+You can draw and cut shape using the following tools, which are activated by these listed shortcuts
+
+- `Brush tool (Shift+B)`
+- `Pencil tool (Shift+N)`
+- `Knife tool (K)`
+
+![freehand tools](./addons/curved_lines_2d/screenshots/freehand-tools.png)
+
 
 ## Drawing strokes and outlines with the Pencil Tool
 
-Using this pencil tool toggle button, or by pressing `Shift+N` you start drawing strokes and outlines:
-
-![pencil tool](./addons/curved_lines_2d/screenshots/pencil-toggle.png)
+Using this pencil tool toggle button, or by pressing `Shift+N` you start drawing strokes and outlines.
 
 Clicking and dragging the mouse draws a line with points of configurable granularity (i.e. distance between points):
 
@@ -611,6 +619,20 @@ By holding shift and left-clicking, straight lines can be drawn:
 
 ![pencil draw straight](./addons/curved_lines_2d/screenshots/pencil-draw-straight.gif)
 
+When releasing shift, another confirming click is required to finish the shape, or simple continuing to drag to continue without making straight lines.
+
+This pencil tool can also snap to grid.
+
+### Pencil tool settings
+
+The pencil tool offers the following settings.
+
+![pencil tool settings](./addons/curved_lines_2d/screenshots/pencil-settins.png)
+
+- Granularity: this is the minimum distance between points while drawing
+- Extract curve: when checked, a bézier curve is [extracted](#extracting-a-scalablevectorshape2d-from-a-polygon2d-line2d-or-collisionpolygon2d) from the line you drew, this curve will not be perfect, but an approximation
+- Close path: when check the line you draw is closed so it becomes an outline (already visible while drawing)
+- Keep drawing: when checked, after drawing one line, you can immediately draw another on the same parent node. When checked off, the line you drew will be automatically selected with the "select tool" after drawing.
 
 ## Drawing polygons using the Brush Tool
 
@@ -628,7 +650,7 @@ Configuration options for this tool are described under [The Draw Settings tab](
 
 Strokes, Fills and Collisions drawn by this tool are configured in the: [Create Shapes Tab](#the-create-shapes-dock)
 
-This pencil tool can also snap to grid.
+This brush tool can also snap to grid.
 
 ## Cutting shapes in half with the knife tool
 
