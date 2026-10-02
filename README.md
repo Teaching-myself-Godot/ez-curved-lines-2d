@@ -39,11 +39,9 @@ You can find the rest of the explainer videos on this playlist:
 - [Drawing Shapes in the Godot 2D Viewport](#drawing-shapes-in-the-godot-2d-viewport)
 	- [Basic Drawing Explainer on youtube](#basic-drawing-explainer-on-youtube)
 	- [Quick Start](#quick-start)
-- [The Create Shapes Dock](#the-create-shapes-dock)
-	- [Creating Paths based on Bézier curves](#creating-paths-based-on-bézier-curves)
-	- [Creating 'primitive' shapes: Rectangle and Ellipse](#creating-primitive-shapes-rectangle-and-ellipse)
+- [The Create Tab](#the-create-tab)
+	- [Creation tools](#creation-tools)
 	- [Draw Settings](#draw-settings)
-	- [Futher reading](#futher-reading)
 - [The Import SVG File Dock](#the-import-svg-file-dock)
 	- [Watch an explainer on Youtube](#watch-an-explainer-on-youtube)
 	- [Using the Import SVG File Dock](#using-the-import-svg-file-dock)
@@ -55,10 +53,12 @@ You can find the rest of the explainer videos on this playlist:
 	- [Editor Settings (how the 2D Viewport should behave):](#editor-settings-how-the-2d-viewport-should-behave)
 	- [Curve Settings](#curve-settings)
 	- [Extra's: Line2D antialiasing for Compatibility Mode](#extras-line2d-antialiasing-for-compatibility-mode)
-- [The Draw Settings Tab](#the-draw-settings-tab)
 - [The Advanced Tab](#the-advanced-tab)
 	- [Basic export options](#basic-export-options)
 	- [Bake Animations](#bake-animations)
+- [Creating Basic Shapes](#creating-basic-shapes)
+	- [The Create Ellipse Tool](#the-create-ellipse-tool)
+	- [The Create Rectangle Tool](#the-create-rectangle-tool)
 - [Moving, Rotating and Resizing the Points of a Shape](#moving-rotating-and-resizing-the-points-of-a-shape)
 	- [Moving (Translating) all the points](#moving-translating-all-the-points)
 		- [Translating Ellipses and Rectangles](#translating-ellipses-and-rectangles)
@@ -89,8 +89,11 @@ You can find the rest of the explainer videos on this playlist:
 	- [Sticking two or more shapes together by vertex merge](#sticking-two-or-more-shapes-together-by-vertex-merge)
 - [Free-hand Drawing](#free-hand-drawing)
 	- [Drawing strokes and outlines with the Pencil Tool](#drawing-strokes-and-outlines-with-the-pencil-tool)
+		- [Pencil tool settings](#pencil-tool-settings)
 	- [Drawing polygons using the Brush Tool](#drawing-polygons-using-the-brush-tool)
+		- [Brush tool settings](#brush-tool-settings)
 	- [Cutting shapes in half with the knife tool](#cutting-shapes-in-half-with-the-knife-tool)
+		- [Knife tool settings](#knife-tool-settings)
 - [Extracting a `ScalableVectorShape2D` from a `Polygon2D`, `Line2D`, or `CollisionPolygon2D`](#extracting-a-scalablevectorshape2d-from-a-polygon2d-line2d-or-collisionpolygon2d)
 - [Manipulating 2D Shapes in the 3D export](#manipulating-2d-shapes-in-the-3d-export)
 	- [Animating 3D curves](#animating-3d-curves)
@@ -167,50 +170,59 @@ You can find the rest of the explainer videos on this playlist:
 After activating this plugin a new bottom panel item appears, called "Scalable Vector Shapes 2D".
 
 There are 2 recommended ways to start drawing:
-1. [Creating a Circle/Ellipse, Rectangle or empty Path using the bottom panel item](#the-create-shapes-dock)
+
+1. [With the tools in the Create tab](#the-create-tab)
 2. [Using the `.svg` importer](#using-the-import-svg-file-dock)
 
 
-# The Create Shapes Dock
+# The Create Tab
 
-The  `Create Shapes` tab gives you some basic choices:
+The `Create` sports a number of tools to draw and edit shapes with. When first activating the plugin it looks like this:
 
 ![the bottom panel](./addons/curved_lines_2d/screenshots/06-scalable-vector-shapes-panel.png)
 
-## Creating Paths based on Bézier curves
 
-Pressing the `Create Empty Path` or one of the `Create Path` buttons will add a new shape to an open `2D Scene` in 'Path' mode, meaning all points in the 'Bézier' curve are editable.
+## Creation tools
 
-![create ellipse as path](./addons/curved_lines_2d/screenshots/create-ellipse-as-path.png)
+On the left side of the panel are a set of tool buttons, which are enabled the moment a node in an open scene is selected.
 
+![creation tools](./addons/curved_lines_2d/screenshots/create-rectangle-tool.png)
 
-## Creating 'primitive' shapes: Rectangle and Ellipse
+In the next section all these tools are described in more detail:
 
-It's probably easier to start out with a basic primitive shape (like you would in Inkscape <3) using the `Create Rectangle` or `Create Ellipse` button. This will expose less features, but will make it a lot easier to manipulate shapes:
-
-![create rect as rect](./addons/curved_lines_2d/screenshots/create-rect-as-rect.png)
-
-Ellipses will only have one handle to change the `size` property with (representing the x and y diameter). This will set the `rx` and `ry` property indirectly.
-
-Rectangles will have a handle for `size` and 2 handles for rounded corners `rx` and `ry` property.
+- [Create Ellipse](#the-create-ellipse-tool)
+- [Create Rectangle](#the-create-rectangle-tool)
+- Selection Tool (Q), also used for [manipulating shapes](#manipulating-shapes)
+- [Unform Translate](#moving-translating-all-the-points) (Z), which moves the points of the shape without moving the entire godot node
+- [Uniform Rotate](#rotating-all-the-points) (X), which rotates only the points and not the node
+- [Uniform Scale](#resizing-all-the-points) (C), which resizes the points without scaling the node
+- [Flip Horizontal and Vertical](#flipping-paths)
+- [Brush tool](#drawing-polygons-using-the-brush-tool) (Shift+B), with which you can paint with an Ellipse/Rectangle shaped brush
+- [Pencil tool](#drawing-strokes-and-outlines-with-the-pencil-tool) (Shift+N) to draw strokes, or outlines
+- [Knife tool](#cutting-shapes-in-half-with-the-knife-tool) (K), to cut slices off of shapes
+- [Bone Paint](#animating-using-skeleton2d) tool, to assign points of a shape to bones in a Skeleton2D
+- Merge points tool (Shift+M)
 
 ## Draw Settings
 
-- Enable/Disable Fill (when creating new shapes via this bottom panel)
-- Fill color (when creating new shapes in this bottom panel)
-- Enable/Disable Stroke (when creating new shapes this this bottom panel)
-- Stroke color (when creating new shapes in this bottom panel)
-- Choose a `CollisionObject2D` type (when creating new shapes in this bottom panel, default is no collision object assignment)
-- Paint order: a toggle which represent what comes in front of what (when creating new shapes in the bottom panel)
-- Stroke Settings:
-- Stroke Width (when creating new shapes via this bottom panel)
-- Use `Line2D`: when flagged off, a `Polygon2D` will be used to draw strokes with in stead (see also: [`Line2D Stroke` versus `Polygon2D Stroke`](#line2d-stroke-versus-polygon2d-stroke) )
-- Begin- and End Cap modes
-- Line Joint Mode
+On the right side of the create tab are general drawing settings. 
 
+![draw settings](./addons/curved_lines_2d/screenshots/draw-settings.png)
 
-## Futher reading
-Read more about [manipulating shapes](#manipulating-shapes)
+They include:
+
+- Enable Fill, which creates a [Polygon2D](#the-fill-inspector-form) assigned to the ScalableVectorShape2D node
+- Fill Color
+- Enable Stroke, which creates a [Line2D or Polygon2D based outline](#the-stroke-inspector-form)
+- Stroke color
+- Thickness, which sets the stroke width
+- A [collision object](#the-collision-inspector-form) that holds CollisionPolygon2D
+- Begin and End cap modes for strokes (round, square or bud)
+- Join modes for strokes (sharp/mitre, round or beveled)
+- Align / Extrusion direction for strokes (middle, inside or outside)
+- Paint order, which determines which assigned node is drawn over what other assigned node by default
+
+Changing these settings while shapes are selected will also change these properties of the selected shapes.
 
 # The Import SVG File Dock
 
@@ -299,19 +311,6 @@ To be more specific, I reused these bits:
 
 Of course, once you assign this to the `Line2D.texture`, you cannot use another texture on that `Line2D` anymore.
 
-# The Draw Settings Tab
-
-Since release 2.21, free hand drawing tools are being added. Settings for these tool can be found in this tab.
-
-![draw settings tab](./addons/curved_lines_2d/screenshots/draw-settings-tab.png)
-
-- Selection behavior: determines what to do once you are done drawing:
-    - draw another shape (select the parent and keep the current draw mode toggled on)
-    - edit its points and curve handles (toggling off the current draw mode)
-- Pencil / Outline draw granularity: the distance between points expressed as pixels at the active zoom level of the 2D Editor Viewport
-- Close curve of newly drawn paths
-- Brush shape settings (ellipse or rect, size and rotation)
-
 # The Advanced Tab
 
 Since release `2.13.0` a tab named 'Advanced' is added to the bottom dock.
@@ -328,6 +327,48 @@ Since release `2.13.0` a tab named 'Advanced' is added to the bottom dock.
 ## Bake Animations
 Since `2.14.0` you can export your animated scene as sprite frames in one PNG spritesheet or separate PNG files.
 
+# Creating Basic Shapes
+
+Using the 2 leftmost tools in the create tab you can create basic ellipses and rectangles, both as a path based on Bézier curves:
+
+![create ellipse as path](./addons/curved_lines_2d/screenshots/create-ellipse-as-path.png)
+
+And as a so called 'primitive shape', which is easier to resize and, in the case of rectangles, give rounded corners.
+
+![create rect as rect](./addons/curved_lines_2d/screenshots/create-rect-as-rect.png)
+
+## The Create Ellipse Tool
+
+While this tool is active, you can create ellipse primitives anywhere on top of a selected Node2D or Control node by clicking.
+
+You can also create the ellipse by clicking one of the two buttons in the dock.
+
+![create ellipse tool](./addons/curved_lines_2d/screenshots/create-ellipse.png)
+
+For the ellipse you can set the horizontal and vertical radius.
+
+When you press `Create Ellipse`, an ellipse primitive is created with just 1 handle for resizing.
+
+When you press `Create Path`, the ellipse as is created as a bézier path.
+
+When "Keep creating" is checked, you can continue adding more ellipses after adding one. If it is unchecked, your new ellipse will be autmatically selected in "select mode" after creation.
+
+## The Create Rectangle Tool
+
+While this tool is active, you can create rectangle primitives anywhere on top of a selected Node2D or Control node by clicking.
+
+You can also create the rectangle by clicking one of the two buttons in the dock.
+
+![create rectangle tool](./addons/curved_lines_2d/screenshots/create-rectangle-tool.png)
+
+For the rectangle you can pick the width, height and corder radius in the settings panel.
+
+When you press `Create Rectangle`, a rectangle primitive is created with just 2 handles (for resizing and corner radius).
+
+When you press `Create Path`, a rectangle as is created as a bézier path.
+
+When "Keep creating" is checked, you can continue adding more rectangles after adding one. If it is unchecked, your new rectangle will be autmatically selected in "select mode" after creation.
+
 # Moving, Rotating and Resizing the Points of a Shape
 
 Release `2.16.0` adds the posibility to do uniform transforms on the points of a shape, as opposed to the entire node.
@@ -337,7 +378,9 @@ When a `ScalableVectorShape2D` is selected in `Select Mode (Q)`, the following c
 - `Move all the Points without moving the Node (Z)`
 - `Rotate all the Points without rotating the Node (X)`
 - `Resize all the Points without scaling the Node (C)`
-- `Edit the points normally (Q)`
+- `Go back to editing the points normally (Q)`
+
+There are also 2 buttons for horizontal and vertical flipping, which work instantly on click.
 
 ![uniform transform buttons](./addons/curved_lines_2d/screenshots/uniform_transforms.png)
 
@@ -557,13 +600,18 @@ This action create a new instance of the `SVSVertexMerge2D` node. Delete this no
 
 # Free-hand Drawing
 
-From release 2.21 upward, you can now use the pencil button to draw shapes by hand. 
+You can draw and cut shape using the following tools, which are activated by these listed shortcuts
+
+- `Brush tool (Shift+B)`
+- `Pencil tool (Shift+N)`
+- `Knife tool (K)`
+
+![freehand tools](./addons/curved_lines_2d/screenshots/freehand-tools.png)
+
 
 ## Drawing strokes and outlines with the Pencil Tool
 
-Using this pencil tool toggle button, or by pressing `Shift+N` you start drawing strokes and outlines:
-
-![pencil tool](./addons/curved_lines_2d/screenshots/pencil-toggle.png)
+Using this pencil tool toggle button, or by pressing `Shift+N` you start drawing strokes and outlines.
 
 Clicking and dragging the mouse draws a line with points of configurable granularity (i.e. distance between points):
 
@@ -573,6 +621,20 @@ By holding shift and left-clicking, straight lines can be drawn:
 
 ![pencil draw straight](./addons/curved_lines_2d/screenshots/pencil-draw-straight.gif)
 
+When releasing shift, another confirming click is required to finish the shape, or simple continuing to drag to continue without making straight lines.
+
+This pencil tool can also snap to grid.
+
+### Pencil tool settings
+
+The pencil tool offers the following settings:
+
+![pencil tool settings](./addons/curved_lines_2d/screenshots/pencil-settins.png)
+
+- Granularity: this is the minimum distance between points while drawing
+- Extract curve: when checked, a bézier curve is [extracted](#extracting-a-scalablevectorshape2d-from-a-polygon2d-line2d-or-collisionpolygon2d) from the line you drew, this curve will not be perfect, but an approximation
+- Close path: when check the line you draw is closed so it becomes an outline (already visible while drawing)
+- Keep drawing: when checked, after drawing one line, you can immediately draw another on the same parent node. When checked off, the line you drew will be automatically selected with the "select tool" after drawing.
 
 ## Drawing polygons using the Brush Tool
 
@@ -585,12 +647,22 @@ Using the mousewheel you can change the brush shape while holding command keys:
 - `Shift`: increase and decrease brush size
 - `Ctr+Shift`: rotate the brush
 
+This brush tool can also snap to grid.
 
-Configuration options for this tool are described under [The Draw Settings tab](#the-draw-settings-tab)
+### Brush tool settings
 
-Strokes, Fills and Collisions drawn by this tool are configured in the: [Create Shapes Tab](#the-create-shapes-dock)
+The brush tool offers the following settings:
 
-This pencil tool can also snap to grid.
+![brush tool settings](./addons/curved_lines_2d/screenshots/brush-tool-settings.png)
+
+- Brush shape: ellipse or rectangle
+- Size X / Y
+- Rotation
+- Granularity: the minimum distance between points while drawing 
+- Extract curve: when checked, a bézier curve is [extracted](#extracting-a-scalablevectorshape2d-from-a-polygon2d-line2d-or-collisionpolygon2d) from the polygon you drew, this curve will not be perfect, but an approximation
+- Keep drawing: when checked, after drawing one brush stroke, you can immediately draw another on the same parent node. When checked off, the shape you drew will be automatically selected with the "select tool" after drawing.
+- Fill in parent shape: when checked, if you use the brush on a selected shape, it will try to color between the lines. This works best with a low granularity and perfectly when "extract curve" is turned off (but you get a lot of points).
+When checked off, you're ignoring the parent shape and simply drawing anywhere.
 
 ## Cutting shapes in half with the knife tool
 
@@ -603,6 +675,16 @@ With this tool you can cut a shape in half. The curve biggest half of the shape 
 A new `ScalableVectorShape2D` will be created as a sibling of the existing shape.
 
 The knife tool does not support clipping using the `clip_paths` property, so any assigned shapes for this should be (re)assigned manually.
+
+### Knife tool settings
+
+The knife tool offers the following settings:
+
+![knife tool settings](./addons/curved_lines_2d/screenshots/knife-tool-settings.png)
+
+- Granularity: the minimum distance between points while cutting
+- Extract curve: when checked, a bézier curve is [extracted](#extracting-a-scalablevectorshape2d-from-a-polygon2d-line2d-or-collisionpolygon2d) from the cutting line you drew, this curve will not be perfect, but an approximation. The rest of the shape being cut is kept the same.
+
 
 
 # Extracting a `ScalableVectorShape2D` from a `Polygon2D`, `Line2D`, or `CollisionPolygon2D`
