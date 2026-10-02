@@ -647,11 +647,6 @@ Using the mousewheel you can change the brush shape while holding command keys:
 - `Shift`: increase and decrease brush size
 - `Ctr+Shift`: rotate the brush
 
-
-Configuration options for this tool are described under [The Draw Settings tab](#the-draw-settings-tab)
-
-Strokes, Fills and Collisions drawn by this tool are configured in the: [Create Shapes Tab](#the-create-shapes-dock)
-
 This brush tool can also snap to grid.
 
 ### Brush tool settings
