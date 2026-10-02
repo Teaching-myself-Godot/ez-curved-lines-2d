@@ -91,6 +91,7 @@ You can find the rest of the explainer videos on this playlist:
 	- [Drawing strokes and outlines with the Pencil Tool](#drawing-strokes-and-outlines-with-the-pencil-tool)
 		- [Pencil tool settings](#pencil-tool-settings)
 	- [Drawing polygons using the Brush Tool](#drawing-polygons-using-the-brush-tool)
+		- [Brush tool settings](#brush-tool-settings)
 	- [Cutting shapes in half with the knife tool](#cutting-shapes-in-half-with-the-knife-tool)
 - [Extracting a `ScalableVectorShape2D` from a `Polygon2D`, `Line2D`, or `CollisionPolygon2D`](#extracting-a-scalablevectorshape2d-from-a-polygon2d-line2d-or-collisionpolygon2d)
 - [Manipulating 2D Shapes in the 3D export](#manipulating-2d-shapes-in-the-3d-export)
@@ -625,7 +626,7 @@ This pencil tool can also snap to grid.
 
 ### Pencil tool settings
 
-The pencil tool offers the following settings.
+The pencil tool offers the following settings:
 
 ![pencil tool settings](./addons/curved_lines_2d/screenshots/pencil-settins.png)
 
@@ -651,6 +652,21 @@ Configuration options for this tool are described under [The Draw Settings tab](
 Strokes, Fills and Collisions drawn by this tool are configured in the: [Create Shapes Tab](#the-create-shapes-dock)
 
 This brush tool can also snap to grid.
+
+### Brush tool settings
+
+The brush tool offers the following settings:
+
+![brush tool settings](./addons/curved_lines_2d/screenshots/brush-tool-settings.png)
+
+- Brush shape: ellipse or rectangle
+- Size X / Y
+- Rotation
+- Granularity: the minimum distance between points while drawing 
+- Extract curve: when checked, a bézier curve is [extracted](#extracting-a-scalablevectorshape2d-from-a-polygon2d-line2d-or-collisionpolygon2d) from the polygon you drew, this curve will not be perfect, but an approximation
+- Keep drawing: when checked, after drawing one brush stroke, you can immediately draw another on the same parent node. When checked off, the shape you drew will be automatically selected with the "select tool" after drawing.
+- Fill in parent shape: when checked, if you use the brush on a selected shape, it will try to color between the lines. This works best with a low granularity and perfectly when "extract curve" is turned off (but you get a lot of points).
+When checked off, you're ignoring the parent shape and simply drawing anywhere.
 
 ## Cutting shapes in half with the knife tool
 
