@@ -93,6 +93,7 @@ You can find the rest of the explainer videos on this playlist:
 	- [Drawing polygons using the Brush Tool](#drawing-polygons-using-the-brush-tool)
 		- [Brush tool settings](#brush-tool-settings)
 	- [Cutting shapes in half with the knife tool](#cutting-shapes-in-half-with-the-knife-tool)
+		- [Knife tool settings](#knife-tool-settings)
 - [Extracting a `ScalableVectorShape2D` from a `Polygon2D`, `Line2D`, or `CollisionPolygon2D`](#extracting-a-scalablevectorshape2d-from-a-polygon2d-line2d-or-collisionpolygon2d)
 - [Manipulating 2D Shapes in the 3D export](#manipulating-2d-shapes-in-the-3d-export)
 	- [Animating 3D curves](#animating-3d-curves)
@@ -679,6 +680,16 @@ With this tool you can cut a shape in half. The curve biggest half of the shape 
 A new `ScalableVectorShape2D` will be created as a sibling of the existing shape.
 
 The knife tool does not support clipping using the `clip_paths` property, so any assigned shapes for this should be (re)assigned manually.
+
+### Knife tool settings
+
+The knife tool offers the following settings:
+
+![knife tool settings](./addons/curved_lines_2d/screenshots/knife-tool-settings.png)
+
+- Granularity: the minimum distance between points while cutting
+- Extract curve: when checked, a bézier curve is [extracted](#extracting-a-scalablevectorshape2d-from-a-polygon2d-line2d-or-collisionpolygon2d) from the cutting line you drew, this curve will not be perfect, but an approximation. The rest of the shape being cut is kept the same.
+
 
 
 # Extracting a `ScalableVectorShape2D` from a `Polygon2D`, `Line2D`, or `CollisionPolygon2D`
