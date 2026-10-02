@@ -21,6 +21,7 @@ content_margin_top = 20.0
 content_margin_right = 20.0
 
 [node name="VideoExplainerTab" type="ScrollContainer" unique_id=1204278518]
+custom_minimum_size = Vector2(0, 276)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

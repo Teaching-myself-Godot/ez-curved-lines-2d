@@ -7,34 +7,32 @@ signal brush_changed()
 
 const TABS_NAME := [
 	"Project Settings",
-	"Draw Settings",
-	"Create Shapes",
+	"Create",
 	"Import SVG File",
 	"Advanced Editing",
-	"Video Explainers"
+	"Help"
 ]
 
 var warning_dialog : AcceptDialog
-var edit_tab : Control
 var import_tab : Control
-var draw_settings_tab : Control
+var create_tab : Control
 
 func _enter_tree() -> void:
 	for i in min(TABS_NAME.size(), get_child_count()):
 		set_tab_title(i, TABS_NAME[i])
 
-	edit_tab = %SVSEditTab
 	import_tab = %SVGImportTab
-	draw_settings_tab = %DrawSettingsTab
+	create_tab = %CreateTab
 	warning_dialog = AcceptDialog.new()
 	EditorInterface.get_base_control().add_child(warning_dialog)
-	edit_tab.warning_dialog = warning_dialog
 	import_tab.warning_dialog = warning_dialog
-
-	if not edit_tab.shape_created.is_connected(shape_created.emit):
-		edit_tab.shape_created.connect(shape_created.emit)
-	if not edit_tab.set_shape_preview.is_connected(set_shape_preview.emit):
-		edit_tab.set_shape_preview.connect(set_shape_preview.emit)
+	create_tab.warning_dialog = warning_dialog
+	if not create_tab.shape_created.is_connected(shape_created.emit):
+		create_tab.shape_created.connect(shape_created.emit)
+	if not create_tab.set_shape_preview.is_connected(set_shape_preview.emit):
+		create_tab.set_shape_preview.connect(set_shape_preview.emit)
+	if not create_tab.brush_changed.is_connected(brush_changed.emit):
+		create_tab.brush_changed.connect(brush_changed.emit)
 
 
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
@@ -56,4 +54,8 @@ func _on_draw_settings_tab_brush_changed() -> void:
 
 
 func sync_draw_settings() -> void:
-	draw_settings_tab.sync_settings()
+	create_tab.sync_draw_settings()
+
+
+func _on_mouse_entered() -> void:
+	set_shape_preview.emit(null)

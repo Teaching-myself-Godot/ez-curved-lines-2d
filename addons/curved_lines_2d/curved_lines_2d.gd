@@ -13,7 +13,15 @@ const SETTING_NAME_USE_LINE_2D_FOR_STROKE = "addons/curved_lines_2d/use_line_2d_
 const SETTING_NAME_FILL_COLOR := "addons/curved_lines_2d/fill_color"
 const SETTING_NAME_ADD_STROKE_ENABLED := "addons/curved_lines_2d/add_stroke_enabled"
 const SETTING_NAME_ADD_FILL_ENABLED := "addons/curved_lines_2d/add_fill_enabled"
-const SETTING_NAME_ADD_COLLISION_TYPE = "addons/curved_lines_2d/add_collision_type"
+const SETTING_NAME_ADD_COLLISION_TYPE := "addons/curved_lines_2d/add_collision_type"
+
+const SETTING_NAME_ELLIPSE_RX := "addons/curved_lines_2d/ellipse_rx"
+const SETTING_NAME_ELLIPSE_RY := "addons/curved_lines_2d/ellipse_ry"
+const SETTING_NAME_RECT_WIDTH := "addons/curved_lines_2d/rect_width"
+const SETTING_NAME_RECT_HEIGHT := "addons/curved_lines_2d/rect_height"
+const SETTING_NAME_RECT_RX := "addons/curved_lines_2d/rect_rx"
+const SETTING_NAME_RECT_RY := "addons/curved_lines_2d/rect_ry"
+
 
 const SETTING_NAME_PAINT_ORDER := "addons/curved_lines_2d/paint_order"
 
@@ -31,11 +39,13 @@ const SETTING_NAME_ANTIALIASED_LINE_2D := "addons/curved_lines_2d/antialiased_li
 
 const SETTING_NAME_KEEP_DRAWING := "addons/curved_lines_2d/keep_drawing"
 const SETTING_NAME_FREEHAND_DRAW_GRANULARITY := "addons/curved_lines_2d/granularity"
+const SETTING_NAME_APPLY_CURVE_FITTING := "addons/curved_lines_2d/apply_curve_fitting"
 const SETTING_NAME_CLOSE_PENCIL_PATH := "addons/curved_lines_2d/close_pencil_path"
 const SETTING_NAME_BRUSH_SHAPE := "addons/curved_lines_2d/brush_shape"
 const SETTING_NAME_BRUSH_SIZE_X := "addons/curved_lines_2d/brush_size_x"
 const SETTING_NAME_BRUSH_SIZE_Y := "addons/curved_lines_2d/brush_size_y"
 const SETTING_NAME_BRUSH_ROTATION := "addons/curved_lines_2d/brush_rotation"
+const SETTING_NAME_BRUSH_FILL_IN_PARENT_SHAPE := "addons/curved_lines_2d/fill_in_parent_shape_with_brush"
 
 const VIEWPORT_ORANGE := Color(0.737, 0.463, 0.337)
 const WIDTH_CURVE_EDIT_CLAMP_DISTANCE := 25.0
@@ -82,8 +92,20 @@ const OPERATION_NAME_MAP := {
 enum SVSEditMode {
 	NONE, TRANSLATE, ROTATE, SCALE,
 	MERGE, BRUSH, PENCIL, PAINT_BONE,
-	KNIFE
+	KNIFE, CREATE_ELLIPSE, CREATE_RECT
 }
+
+const CANCELABLE_MODES : Array[SVSEditMode] = [
+	SVSEditMode.TRANSLATE, SVSEditMode.ROTATE, SVSEditMode.SCALE,
+	SVSEditMode.MERGE, SVSEditMode.BRUSH, SVSEditMode.PENCIL,
+	SVSEditMode.PAINT_BONE, SVSEditMode.KNIFE,
+	SVSEditMode.CREATE_ELLIPSE, SVSEditMode.CREATE_RECT
+]
+
+const DRAW_MODES : Array[SVSEditMode] = [
+	SVSEditMode.BRUSH, SVSEditMode.PENCIL, SVSEditMode.KNIFE,
+	SVSEditMode.CREATE_ELLIPSE, SVSEditMode.CREATE_RECT
+]
 
 var plugin : Line2DGeneratorInspectorPlugin
 var scalable_vector_shapes_2d_dock
@@ -207,12 +229,16 @@ func _enter_tree():
 		scalable_vector_shapes_2d_dock.shape_created.connect(_on_shape_created)
 	if not scalable_vector_shapes_2d_dock.set_shape_preview.is_connected(_on_shape_preview):
 		scalable_vector_shapes_2d_dock.set_shape_preview.connect(_on_shape_preview)
-	if not scalable_vector_shapes_2d_dock.edit_tab.rect_created.is_connected(_on_rect_created):
-		scalable_vector_shapes_2d_dock.edit_tab.rect_created.connect(_on_rect_created)
-	if not scalable_vector_shapes_2d_dock.edit_tab.ellipse_created.is_connected(_on_ellipse_created):
-		scalable_vector_shapes_2d_dock.edit_tab.ellipse_created.connect(_on_ellipse_created)
 	if not scalable_vector_shapes_2d_dock.brush_changed.is_connected(_update_brush):
 		scalable_vector_shapes_2d_dock.brush_changed.connect(_update_brush)
+	if not scalable_vector_shapes_2d_dock.create_tab.mode_changed.is_connected(_on_svs_edit_mode_changed):
+		scalable_vector_shapes_2d_dock.create_tab.mode_changed.connect(_on_svs_edit_mode_changed)
+	if not scalable_vector_shapes_2d_dock.create_tab.ellipse_created.is_connected(_on_ellipse_created):
+		scalable_vector_shapes_2d_dock.create_tab.ellipse_created.connect(_on_ellipse_created)
+	if not scalable_vector_shapes_2d_dock.create_tab.rect_created.is_connected(_on_rect_created):
+		scalable_vector_shapes_2d_dock.create_tab.rect_created.connect(_on_rect_created)
+	scalable_vector_shapes_2d_dock.create_tab.flip_horizontal.connect(_flip_svs_horizontal)
+	scalable_vector_shapes_2d_dock.create_tab.flip_vertical.connect(_flip_svs_vertical)
 	scene_changed.connect(_on_scene_changed)
 	scene_saved.connect(_on_scene_saved)
 	svs_edit_buttons = load("res://addons/curved_lines_2d/svs_edit_buttons.tscn").instantiate()
@@ -333,24 +359,25 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 	if toggled_on and _is_svs_valid(current_selection):
 		svs_edit_buttons.show()
 		svs_edit_buttons.show_svs_editors()
+		scalable_vector_shapes_2d_dock.create_tab.enable_svs_editors()
 		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
-				_svs_edit_mode == SVSEditMode.BRUSH or _svs_edit_mode == SVSEditMode.PENCIL or
-				_svs_edit_mode == SVSEditMode.KNIFE) and
-				not Input.is_key_pressed(KEY_Q)):
+				_svs_edit_mode in DRAW_MODES) and not Input.is_key_pressed(KEY_Q)):
 					return
 		svs_edit_buttons.set_default_mode()
+		scalable_vector_shapes_2d_dock.create_tab.set_default_mode()
 	elif toggled_on and current_selection:
 		svs_edit_buttons.show()
 		svs_edit_buttons.hide_svs_editors()
+		scalable_vector_shapes_2d_dock.create_tab.disable_svs_editors()
 		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
-				_svs_edit_mode == SVSEditMode.BRUSH or _svs_edit_mode == SVSEditMode.PENCIL or
-				_svs_edit_mode == SVSEditMode.KNIFE) and
+				_svs_edit_mode in DRAW_MODES) and
 				not Input.is_key_pressed(KEY_Q)):
 					return
 		svs_edit_buttons.set_default_mode()
 	else:
 		svs_edit_buttons.set_default_mode()
 		svs_edit_buttons.hide()
+		scalable_vector_shapes_2d_dock.create_tab.disable_all_editors()
 
 
 func _on_svs_edit_mode_changed(new_mode : SVSEditMode) -> void:
@@ -363,6 +390,8 @@ func _on_svs_edit_mode_changed(new_mode : SVSEditMode) -> void:
 		if _is_svs_valid(svs):
 			(svs as ScalableVectorShape2D).reset_skeleton_to_rest_pose()
 	_svs_edit_mode = new_mode
+	scalable_vector_shapes_2d_dock.create_tab.set_edit_mode_toggle_button(new_mode)
+	svs_edit_buttons.set_edit_mode_toggle_button(new_mode)
 	update_overlays()
 
 
@@ -608,8 +637,13 @@ func _on_selection_changed():
 		svs_edit_buttons.show_convert_to_svs()
 	else:
 		svs_edit_buttons.hide_convert_to_svs()
+
 	if _is_svs_valid(current_selection):
+		var svs := current_selection as ScalableVectorShape2D
 		svs_edit_buttons.show_knife()
+		scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings(svs)
+		if not svs.assigned_node_changed.is_connected(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings.bind(svs)):
+			svs.assigned_node_changed.connect(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings.bind(svs))
 	else:
 		svs_edit_buttons.hide_knife()
 		if _svs_edit_mode == SVSEditMode.KNIFE:
@@ -1632,6 +1666,29 @@ func _handle_paint_bone_draw(viewport_control : Control) -> void:
 	viewport_control.draw_circle(_vp_transform(current_bone.global_position * mul), 5, Color.RED)
 
 
+func _editor_has_cursor() -> bool:
+	return (EditorInterface.get_editor_viewport_2d()
+			.get_visible_rect()
+			.has_point(_vp_transform(
+				EditorInterface.get_editor_viewport_2d().get_mouse_position())))
+
+
+func _handle_create_ellipse_preview(viewport_control : Control) -> void:
+	if shape_preview:
+		_draw_preview(viewport_control)
+	if _editor_has_cursor():
+		_draw_hint(viewport_control, "Click to create an ellipse here" +
+			"\n - You can change its shape in the Create tab")
+
+
+func _handle_create_rect_preview(viewport_control : Control) -> void:
+	if shape_preview:
+		_draw_preview(viewport_control)
+	if _editor_has_cursor():
+		_draw_hint(viewport_control, "Click to create an rectangle here" +
+			"\n - You can change its shape in the Create tab")
+
+
 func _is_editing_width_curve(svs : ScalableVectorShape2D) -> bool:
 	return (
 			_is_ctrl_or_cmd_pressed() and
@@ -1655,6 +1712,10 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		return _handle_knife_draw(viewport_control)
 	elif _svs_edit_mode == SVSEditMode.PAINT_BONE:
 		return _handle_paint_bone_draw(viewport_control)
+	elif _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE:
+		return _handle_create_ellipse_preview(viewport_control)
+	elif _svs_edit_mode == SVSEditMode.CREATE_RECT:
+		return _handle_create_rect_preview(viewport_control)
 
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
@@ -1693,18 +1754,29 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		if not(result.line or result.collision_polygon or result.polygon):
 			_draw_curve(viewport_control, result, false)
 
-	if shape_preview:
-		var mul := _get_svp_transform(current_selection)
 
+func _draw_preview(viewport_control : Control) -> void:
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if shape_preview and shape_preview.point_count > 2:
+		var mul :=  _get_svp_transform(current_selection)
 		var points := Array(shape_preview.tessellate())
 		var stroke_width = (_get_default_stroke_width() * EditorInterface.get_editor_viewport_2d()
 				.get_final_transform().get_scale().x)
+		var glob_pos := Vector2.ZERO
 		if current_selection is Node2D:
 			points = points.map(current_selection.to_global)
 			stroke_width *= current_selection.global_scale.x
+			glob_pos = current_selection.global_position
 		elif current_selection is Control:
 			points = points.map(func(p): return current_selection.get_global_transform() * p)
 			stroke_width *= current_selection.get_global_transform().get_scale().x
+			glob_pos = current_selection.get_global_transform().get_origin()
+
+		if _editor_has_cursor():
+			var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+			if _is_snapped_to_pixel():
+				mouse_pos = mouse_pos.snapped(_get_snap_resolution())
+			mul = Transform2D(mul.get_rotation(), mul.get_scale(), 0.0, -(mouse_pos - glob_pos))
 		points = points.map(func(p): return _vp_transform(p * mul))
 		var stroke_points := points
 		if _get_default_stroke_extrusion_direction() != ScalableVectorShape2D.StrokeExtrusionDirection.MIDDLE:
@@ -2487,6 +2559,17 @@ func _handle_draw_merge_box_input(event) -> bool:
 	return true
 
 
+func _polyline_to_curve(pts : PackedVector2Array) -> Curve2D:
+	if _apply_curve_fitting():
+		var fitness_prep := BasicFit.prepare_polyline_segments(pts, _get_basic_fit_snap(pts))
+		return BasicFit.fit_curve_to_polyline(pts, fitness_prep)
+	else:
+		var curve := Curve2D.new()
+		for p in pts:
+			curve.add_point(p)
+		return curve
+
+
 func _create_freehand_shape(name : String) -> ScalableVectorShape2D:
 	var pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if _is_snapped_to_pixel():
@@ -2544,11 +2627,8 @@ func _apply_valid_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) 
 		var cut_start_pos := _knife_intersections.pop_front()
 		var cut_end_pos := _knife_intersections.pop_front()
 		var cutting_line := Geometry2DUtil.get_polyline_segment(_pencil_stroke, cut_start_pos, cut_end_pos)
-		var fitness_prep := BasicFit.prepare_polyline_segments(cutting_line, _get_basic_fit_snap(cutting_line))
-		var curve := BasicFit.fit_curve_to_polyline(cutting_line, fitness_prep)
+		var curve := _polyline_to_curve(cutting_line)
 		var halves = Geometry2DUtil.cut_bezier_with_bezier(svs.curve, svs.curve_to_local(curve), svs.max_stages, svs.tolerance_degrees)
-
-
 		undo_redo.create_action("Replace curve for %s " % str(svs))
 		undo_redo.add_do_property(svs, "curve", halves[0])
 		undo_redo.add_undo_property(svs, "curve", svs.curve)
@@ -2623,8 +2703,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 					var svs := _create_freehand_shape("PencilDrawing")
 					svs.global_position = _pencil_start_pos
 					var poly := _pencil_stroke.map(svs.to_local)
-					var fitness_prep := BasicFit.prepare_polyline_segments(poly, _get_basic_fit_snap(poly))
-					svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
+					svs.curve = _polyline_to_curve(poly)
 					if _get_close_pencil_path() and _pencil_stroke.size() > 1:
 						svs.curve.add_point(svs.to_local(_pencil_stroke[0]))
 					_pencil_stroke.clear()
@@ -2645,12 +2724,16 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 	return false
 
 
-func _set_curve_from_polygon(svs : ScalableVectorShape2D, pts : PackedVector2Array) -> void:
+func _set_curve_from_brush_stroke(svs : ScalableVectorShape2D, pts : PackedVector2Array) -> void:
 	svs.global_position = _brush_start_pos
 	var poly := PackedVector2Array(Array(pts).map(func(p): return svs.to_local(p)))
-	var fitness_prep := BasicFit.prepare_polyline_segments(poly, 0.5 * (_get_brush_size_x() + _get_brush_size_y()))
-	poly.append(poly[0])
-	svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
+	if _apply_curve_fitting():
+		var fitness_prep := BasicFit.prepare_polyline_segments(poly, 0.5 * (_get_brush_size_x() + _get_brush_size_y()))
+		poly.append(poly[0])
+		svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
+	else:
+		poly.append(poly[0])
+		svs.curve = _polyline_to_curve(poly)
 
 
 func _get_points_from_node(node : Node) -> Array[PackedVector2Array]:
@@ -2719,7 +2802,7 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 		else:
 			if is_instance_valid(current_selection):
 				var svs := _create_freehand_shape("BrushStroke")
-				_set_curve_from_polygon(svs, _current_brush_stroke)
+				_set_curve_from_brush_stroke(svs, _current_brush_stroke)
 				_current_brush_stroke.clear()
 				if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 					select_node_reversibly(svs.get_parent())
@@ -2801,9 +2884,10 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 				if _is_svs_valid(current_selection):
 					var svs := current_selection as ScalableVectorShape2D
 					var intersect_target := Array(svs.tessellate()).map(func(p): return svs.to_global(p))
-					var res1 := Geometry2D.intersect_polygons(res[0], intersect_target)
-					if res1.size() == 1:
-						new_stroke = res1[0]
+					if _get_brush_fill_in_parent_shape():
+						var res1 := Geometry2D.intersect_polygons(res[0], intersect_target)
+						if res1.size() == 1:
+							new_stroke = res1[0]
 				_current_brush_stroke = Geometry2DUtil.get_polygon_at_granularity(new_stroke,
 						_get_guarded_brush_granularity())
 			return true
@@ -2881,7 +2965,49 @@ func _handle_bone_paint_input(event : InputEvent) -> bool:
 	return false
 
 
+func _handle_create_primitive_input(event) -> bool:
+	update_overlays()
+	if not shape_preview:
+		shape_preview = Curve2D.new()
+	if _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE:
+		ScalableVectorShape2D.set_ellipse_points(shape_preview, Vector2(_get_default_ellipse_rx() * 2, _get_default_ellipse_ry() * 2))
+	else:
+		ScalableVectorShape2D.set_rect_points(shape_preview, _get_default_rect_width(), _get_default_rect_height(), _get_default_rect_rx(), _get_default_rect_ry())
+	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT and (event as InputEventMouseButton).pressed:
+		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+		if _is_snapped_to_pixel():
+			mouse_pos = mouse_pos.snapped(_get_snap_resolution())
+		var svs := ScalableVectorShape2D.new()
+		if _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE:
+			svs.shape_type = ScalableVectorShape2D.ShapeType.ELLIPSE
+			svs.size = Vector2(_get_default_ellipse_rx() * 2, _get_default_ellipse_ry() * 2)
+			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Ellipse",
+				null, true)
+		else:
+			svs.shape_type = ScalableVectorShape2D.ShapeType.RECT
+			svs.size = Vector2(_get_default_rect_width(), _get_default_rect_height())
+			svs.rx = _get_default_rect_rx()
+			svs.ry = _get_default_rect_ry()
+			print(svs.size, " ", svs.rx, " ", svs.ry)
+			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Rectangle",
+				null, true)
+		svs.global_position = mouse_pos
+		if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
+			select_node_reversibly(svs.get_parent())
+		else:
+			svs_edit_buttons.set_default_mode(true)
+		return true
+	return false
+
+
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
+	if (
+			event is InputEventMouseButton and
+			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT and
+			_svs_edit_mode in CANCELABLE_MODES
+	):
+		_on_svs_edit_mode_changed(SVSEditMode.NONE)
+		return true
 	if _svs_edit_mode == SVSEditMode.MERGE:
 		return _handle_draw_merge_box_input(event)
 	elif _svs_edit_mode == SVSEditMode.PENCIL or _svs_edit_mode == SVSEditMode.KNIFE:
@@ -2890,7 +3016,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return _handle_brush_draw_input(event)
 	elif _svs_edit_mode == SVSEditMode.PAINT_BONE:
 		return _handle_bone_paint_input(event)
-
+	elif _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE or _svs_edit_mode == SVSEditMode.CREATE_RECT:
+		return _handle_create_primitive_input(event)
 
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
@@ -3202,6 +3329,42 @@ static func _am_showing_point_numbers() -> bool:
 	return true
 
 
+static func _get_default_ellipse_rx() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_ELLIPSE_RX):
+		return ProjectSettings.get_setting(SETTING_NAME_ELLIPSE_RX)
+	return 50.0
+
+
+static func _get_default_ellipse_ry() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_ELLIPSE_RY):
+		return ProjectSettings.get_setting(SETTING_NAME_ELLIPSE_RY)
+	return 50.0
+
+
+static func _get_default_rect_width() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_RECT_WIDTH):
+		return ProjectSettings.get_setting(SETTING_NAME_RECT_WIDTH)
+	return 100.0
+
+
+static func _get_default_rect_height() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_RECT_HEIGHT):
+		return ProjectSettings.get_setting(SETTING_NAME_RECT_HEIGHT)
+	return 100.0
+
+
+static func _get_default_rect_rx() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_RECT_RX):
+		return ProjectSettings.get_setting(SETTING_NAME_RECT_RX)
+	return 0.0
+
+
+static func _get_default_rect_ry() -> float:
+	if ProjectSettings.has_setting(SETTING_NAME_RECT_RY):
+		return ProjectSettings.get_setting(SETTING_NAME_RECT_RY)
+	return 0.0
+
+
 static func _get_default_stroke_width() -> float:
 	if ProjectSettings.has_setting(SETTING_NAME_STROKE_WIDTH):
 		return ProjectSettings.get_setting(SETTING_NAME_STROKE_WIDTH)
@@ -3329,6 +3492,12 @@ static func _get_close_pencil_path() -> bool:
 	return false
 
 
+static func _apply_curve_fitting() -> bool:
+	if ProjectSettings.has_setting(SETTING_NAME_APPLY_CURVE_FITTING):
+		return ProjectSettings.get_setting(SETTING_NAME_APPLY_CURVE_FITTING)
+	return true
+
+
 static func _get_brush_size_x() -> float:
 	if ProjectSettings.has_setting(SETTING_NAME_BRUSH_SIZE_X):
 		return ProjectSettings.get_setting(SETTING_NAME_BRUSH_SIZE_X)
@@ -3352,6 +3521,11 @@ static func _get_brush_shape() -> BrushShape:
 		return ProjectSettings.get_setting(SETTING_NAME_BRUSH_SHAPE)
 	return BrushShape.ELLIPSE
 
+
+static func _get_brush_fill_in_parent_shape() -> bool:
+	if ProjectSettings.has_setting(SETTING_NAME_BRUSH_FILL_IN_PARENT_SHAPE):
+		return ProjectSettings.get_setting(SETTING_NAME_BRUSH_FILL_IN_PARENT_SHAPE)
+	return false
 
 func _exit_tree():
 	if _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):

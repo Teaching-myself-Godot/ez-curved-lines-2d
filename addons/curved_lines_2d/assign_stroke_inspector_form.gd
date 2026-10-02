@@ -83,7 +83,6 @@ func _on_create_stroke_button_pressed():
 	undo_redo.commit_action()
 
 
-
 func _on_create_poly_stroke_button_pressed() -> void:
 	if not is_instance_valid(scalable_vector_shape_2d):
 		return

@@ -1,5 +1,22 @@
 # Changelog
 
+
+## 3.0.1 - Create Tab
+
+### Added
+
+- A create tab most of the tools in a compact design to save screen real estate (thanks for all the hard work, @DigitalDesignDex)
+- Update stroke, fill settings, paint order on currently selected shapes via bottom dock
+- Make curve extraction optional for pencil, knife and brush
+- Make fill-in selected parent shape optional for brush 
+- Place new ellipse/rectangle by clicking
+
+### Removed
+
+- The old "Draw Settings" tab in the bottom dock (everything moved to the Create Tab)
+- The old "Create Shapes" tab in the bottom dock (everything moved to the Create Tab)
+
+
 ## 2.35.2 - Snap to Grid
 
 ### Added

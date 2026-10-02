@@ -1,0 +1,1295 @@
+[gd_scene format=3 uid="uid://borfju00ut7l1"]
+
+[ext_resource type="Script" uid="uid://ddbvd6ouxg7op" path="res://addons/curved_lines_2d/create_tab.gd" id="1_vur25"]
+[ext_resource type="StyleBox" uid="uid://hjtwi4stcxmu" path="res://addons/curved_lines_2d/styleboxes/button_default_stylebox.tres" id="2_2chn8"]
+[ext_resource type="StyleBox" uid="uid://ddx1ye7r3r4lf" path="res://addons/curved_lines_2d/styleboxes/button_pressed_stylebox.tres" id="3_hti8q"]
+[ext_resource type="StyleBox" uid="uid://bo0x8scw4k70k" path="res://addons/curved_lines_2d/styleboxes/button_hover_stylebox.tres" id="4_powka"]
+[ext_resource type="Texture2D" uid="uid://ulvclg7al5cu" path="res://addons/curved_lines_2d/IconAtlas.svg" id="6_h5wiq"]
+[ext_resource type="StyleBox" uid="uid://c034pktje23oe" path="res://addons/curved_lines_2d/styleboxes/editor_spin_box_container_stylebox.tres" id="7_powka"]
+[ext_resource type="PackedScene" uid="uid://cjbkvx1pj7gq2" path="res://addons/curved_lines_2d/collision_object_type_option_button.tscn" id="20_rpvk4"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_dsrm6"]
+allow_unpress = true
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4mrje"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w8ysd"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(16, 48, 16, 16)
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_4mrje"]
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+color = Color(0.22352941, 0.22352941, 0.22352941, 1)
+grow_begin = -2.0
+grow_end = -2.0
+vertical = true
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v84w2"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6gyyp"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 64, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h5wiq"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(48, 64, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ta6ok"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 64, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_keblj"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dev60"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(16, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a0xul"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4nv23"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dv24s"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_25oso"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(48, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_powka"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 80, 16, 16)
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_dv24s"]
+color = Color(0.22352941, 0.22352941, 0.22352941, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_alf1c"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 176, 16, 16)
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_pu4iw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vur25"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pa8xa"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(16, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rpvk4"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 96, 16, 16)
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_alf1c"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_86ooi"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 128, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1885i"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(16, 128, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oyctc"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 128, 16, 16)
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_xjyyj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pu4iw"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lcmbt"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(16, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pnph2"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 96, 16, 16)
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_dv24s"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7t7wr"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 112, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4t731"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(16, 112, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1o8bw"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 112, 16, 16)
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_powka"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v81ne"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 144, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_etbwd"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(16, 144, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h3ems"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 144, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iui6f"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(0, 160, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8xpyx"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(16, 160, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_65sk2"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 160, 16, 16)
+
+[node name="CreateTab" type="HBoxContainer" unique_id=181244790]
+custom_minimum_size = Vector2(0, 212)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+script = ExtResource("1_vur25")
+metadata/_edit_horizontal_guides_ = [31.0]
+metadata/_edit_vertical_guides_ = [696.0]
+
+[node name="ToolsContainer" type="VBoxContainer" parent="." unique_id=234867127]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ToolsContainer" unique_id=765379020]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+follow_focus = true
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 0
+scroll_horizontal_by_default = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ToolsContainer/ScrollContainer" unique_id=945149153]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="CircleButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1179979946]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Create ellipse / circle shapes"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = SubResource("AtlasTexture_4mrje")
+expand_icon = true
+
+[node name="RectangleButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=326123292]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Create rectangle shapes"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = SubResource("AtlasTexture_w8ysd")
+expand_icon = true
+
+[node name="VSeparator3" type="VSeparator" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1808966385]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
+
+[node name="EditButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1572018910]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Edit the points of the selected shape normally (Q)"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = SubResource("AtlasTexture_v84w2")
+expand_icon = true
+
+[node name="TranslateButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=2135973308]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Move all the points of the selected shape without changing node position (Z)"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = SubResource("AtlasTexture_6gyyp")
+expand_icon = true
+
+[node name="RotateButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1983587831]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Rotate all the points of the selected shape without rotating the node (X)"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = SubResource("AtlasTexture_h5wiq")
+expand_icon = true
+
+[node name="ResizeButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1295417530]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Resize all the points of the selected shape without scaling the node (C)"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = SubResource("AtlasTexture_ta6ok")
+expand_icon = true
+
+[node name="FlipHorizontalButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1244107966]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Flip the points of the selected shape horizontally"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
+icon = SubResource("AtlasTexture_keblj")
+expand_icon = true
+
+[node name="FlipVerticalButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1942614303]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Flip the points of the selected shape vertically"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
+icon = SubResource("AtlasTexture_dev60")
+expand_icon = true
+
+[node name="VSeparator2" type="VSeparator" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=425011772]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
+
+[node name="BrushButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1213772213]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Brush tool (Shift+B)"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = SubResource("AtlasTexture_a0xul")
+expand_icon = true
+
+[node name="PencilButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=648886700]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Pencil tool (Shift+N)"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = SubResource("AtlasTexture_4nv23")
+expand_icon = true
+
+[node name="KnifeButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=996550358]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Knife tool (K)"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = SubResource("AtlasTexture_dv24s")
+icon_alignment = 1
+expand_icon = true
+
+[node name="VSeparator4" type="VSeparator" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=8597082]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
+
+[node name="BonePaintButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1377374135]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Assign points of the selected shape to Bone2D"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = SubResource("AtlasTexture_25oso")
+expand_icon = true
+
+[node name="MergeButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1953972853]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Merge Points (Shift+M)"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = SubResource("AtlasTexture_powka")
+expand_icon = true
+
+[node name="HSeparator" type="HSeparator" parent="ToolsContainer" unique_id=303828040]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_dv24s")
+
+[node name="MarginContainer" type="MarginContainer" parent="ToolsContainer" unique_id=1745792893]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_top = 4
+
+[node name="BrushToolContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=894405898]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ToolsContainer/MarginContainer/BrushToolContainer" unique_id=1743362581]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer" unique_id=431768934]
+layout_mode = 2
+tooltip_text = "Draw polygons with a ellipse / rectangle brush. "
+mouse_filter = 0
+text = "Brush tool"
+
+[node name="HFlowContainer2" type="HFlowContainer" parent="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer" unique_id=281114164]
+layout_mode = 2
+
+[node name="BrushShapeOptionButton" type="OptionButton" parent="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer/HFlowContainer2" unique_id=727187502]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+selected = 0
+item_count = 2
+popup/item_0/text = "Ellipse Brush"
+popup/item_0/id = 0
+popup/item_1/text = "Rectangle Brush"
+popup/item_1/id = 1
+
+[node name="BrushSizeXContainer" type="PanelContainer" parent="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer/HFlowContainer2" unique_id=655671573]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="BrushSizeYContainer" type="PanelContainer" parent="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer/HFlowContainer2" unique_id=1034017290]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="BrushRotationContainer" type="PanelContainer" parent="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer/HFlowContainer2" unique_id=999364121]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="BrushGranularity" type="PanelContainer" parent="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer/HFlowContainer2" unique_id=1369536231]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(242, 0)
+custom_maximum_size = Vector2(368, -1)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="HFlowContainer" type="HFlowContainer" parent="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer" unique_id=1909636225]
+layout_mode = 2
+
+[node name="FitCurveToBrushStrokeCheckBox" type="CheckBox" parent="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer/HFlowContainer" unique_id=1551135714]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "When checked a smooth curve is extracted from the exact points you drew: an approximation using Bézier curve control points.
+
+When unchecked, all points you drew are kept exactly as is, but no Bézier curve handles are added."
+button_pressed = true
+text = "Extract curve"
+
+[node name="KeepBrushingCheckBox" type="CheckBox" parent="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer/HFlowContainer" unique_id=870821874]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_stretch_ratio = 2.0
+tooltip_text = "When checked, after drawing a pencil stroke, you can keep drawing on the same parent node.
+When unchecked, after drawing the pencil stroke, it is selected for editing."
+text = "Keep drawing"
+
+[node name="FillInParentCheckBox" type="CheckBox" parent="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer/HFlowContainer" unique_id=1369464324]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "When checked, if you use the brush on a selected shape, it will try to color between the lines. This works best with a low granularity and perfectly when \"extract curve\" is turned off (but you get a lot of points).
+When checked off, you're ignoring the parent shape and simply drawing anywhere."
+button_pressed = true
+text = "Fill in parent shape"
+
+[node name="PencilToolContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=333204050]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ToolsContainer/MarginContainer/PencilToolContainer" unique_id=947825645]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="ToolsContainer/MarginContainer/PencilToolContainer/VBoxContainer" unique_id=1401557894]
+layout_mode = 2
+text = "Pencil Tool"
+
+[node name="PencilGranularity" type="PanelContainer" parent="ToolsContainer/MarginContainer/PencilToolContainer/VBoxContainer" unique_id=876692663]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(242, 0)
+custom_maximum_size = Vector2(368, -1)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="HFlowContainer2" type="HFlowContainer" parent="ToolsContainer/MarginContainer/PencilToolContainer/VBoxContainer" unique_id=616325953]
+layout_mode = 2
+
+[node name="FitCurveToPencilCheckBox" type="CheckBox" parent="ToolsContainer/MarginContainer/PencilToolContainer/VBoxContainer/HFlowContainer2" unique_id=1918180168]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "When checked a smooth curve is extracted from the exact points you drew: an approximation using Bézier curve control points.
+
+When unchecked, all points you drew are kept exactly as is, but no Bézier curve handles are added."
+button_pressed = true
+text = "Extract curve"
+
+[node name="ClosePathCheckBox" type="CheckBox" parent="ToolsContainer/MarginContainer/PencilToolContainer/VBoxContainer/HFlowContainer2" unique_id=292199333]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "When checked, the path you draw is an closed to an outline."
+text = "Close path"
+
+[node name="KeepPencilDrawingCheckBox" type="CheckBox" parent="ToolsContainer/MarginContainer/PencilToolContainer/VBoxContainer/HFlowContainer2" unique_id=445290022]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+tooltip_text = "When checked, after drawing a pencil stroke, you can keep drawing on the same parent node.
+When unchecked, after drawing the pencil stroke, it is selected for editing."
+text = "Keep drawing"
+
+[node name="CreateEllipseContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=525159852]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ToolsContainer/MarginContainer/CreateEllipseContainer" unique_id=1635659156]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer" unique_id=371428415]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+tooltip_text = "Create an Ellipse as:
+- ScalableEllipse2D: a primitive ellipse, which extends from ScalableVectorShape2D (easier to edit)
+ - ScalableVectorShape2D (editable as a path)"
+mouse_filter = 0
+text = "Create Ellipse / Circle"
+
+[node name="HFlowContainer" type="HFlowContainer" parent="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer" unique_id=1002398030]
+layout_mode = 2
+
+[node name="EllipseXRadiusSliderContainer" type="PanelContainer" parent="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer" unique_id=565749534]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(242, 0)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="EllipseYRadiusSliderContainer" type="PanelContainer" parent="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer" unique_id=1827395804]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(242, 0)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="HFlowContainer2" type="HFlowContainer" parent="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer" unique_id=775640134]
+layout_mode = 2
+
+[node name="CreateEllipseButton" type="Button" parent="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2" unique_id=1070699013]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Create Ellipse"
+
+[node name="CreateCircleButton" type="Button" parent="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2" unique_id=1239533478]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Create Path"
+
+[node name="MakeAnotherEllipseCheckBox" type="CheckBox" parent="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2" unique_id=2134461001]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_stretch_ratio = 2.0
+text = "Keep creating"
+
+[node name="CreateRectContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=1292094314]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ToolsContainer/MarginContainer/CreateRectContainer" unique_id=5205210]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer" unique_id=1828841050]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+tooltip_text = "Create an Ellipse as:
+- ScalableEllipse2D: a primitive ellipse, which extends from ScalableVectorShape2D (easier to edit)
+ - ScalableVectorShape2D (editable as a path)"
+mouse_filter = 0
+text = "Create Rectangle"
+
+[node name="HFlowContainer" type="HFlowContainer" parent="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer" unique_id=1394063375]
+layout_mode = 2
+
+[node name="WidthSliderContainer" type="PanelContainer" parent="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer" unique_id=1505063405]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(242, 0)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="HeightSliderContainer" type="PanelContainer" parent="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer" unique_id=1784656771]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(242, 0)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="HFlowContainer2" type="HFlowContainer" parent="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer" unique_id=653446675]
+layout_mode = 2
+
+[node name="XRadiusSliderContainer" type="PanelContainer" parent="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer2" unique_id=462377832]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(242, 0)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="YRadiusSliderContainer" type="PanelContainer" parent="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer2" unique_id=1880526749]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(242, 0)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="HFlowContainer3" type="HFlowContainer" parent="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer" unique_id=5908554]
+layout_mode = 2
+
+[node name="CreateRectButton" type="Button" parent="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3" unique_id=1330044621]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+tooltip_text = "Create a new ScalableRect2D"
+text = "Create Rectangle"
+
+[node name="CreateRectAsPathButton" type="Button" parent="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3" unique_id=1905575497]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+tooltip_text = "Create a new Rectangle as a ScalableVectorShape2D"
+text = "Create Path"
+
+[node name="MakeAnotherRectCheckBox" type="CheckBox" parent="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3" unique_id=2069460587]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_stretch_ratio = 2.0
+text = "Keep creating
+"
+
+[node name="SelectModeContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=1430453718]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="ToolsContainer/MarginContainer/SelectModeContainer" unique_id=1605373469]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CreateEmptyShapeButton" type="Button" parent="ToolsContainer/MarginContainer/SelectModeContainer/CenterContainer" unique_id=2084441798]
+layout_mode = 2
+text = "Create Empty Shape"
+
+[node name="KnifeToolContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=1104133391]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ToolsContainer/MarginContainer/KnifeToolContainer" unique_id=124482563]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="ToolsContainer/MarginContainer/KnifeToolContainer/VBoxContainer" unique_id=2028895699]
+layout_mode = 2
+text = "Knife Tool"
+
+[node name="HFlowContainer" type="HFlowContainer" parent="ToolsContainer/MarginContainer/KnifeToolContainer/VBoxContainer" unique_id=842958619]
+layout_mode = 2
+
+[node name="KnifeGranularity" type="PanelContainer" parent="ToolsContainer/MarginContainer/KnifeToolContainer/VBoxContainer/HFlowContainer" unique_id=426375738]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(242, 0)
+custom_maximum_size = Vector2(368, -1)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="FitCurveToKnifeCutCheckBox" type="CheckBox" parent="ToolsContainer/MarginContainer/KnifeToolContainer/VBoxContainer/HFlowContainer" unique_id=119560148]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "When checked a smooth curve is extracted from the exact points you drew: an approximation using Bézier curve control points.
+
+When unchecked, all points you drew are kept exactly as is, but no Bézier curve handles are added."
+button_pressed = true
+text = "Extract curve"
+
+[node name="SettingsContainer" type="VBoxContainer" parent="." unique_id=1335331203]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(450, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SettingsContainer" unique_id=105941073]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="SettingsContainer/HBoxContainer" unique_id=733683439]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+
+[node name="EnableFillCheckBox" type="CheckBox" parent="SettingsContainer/HBoxContainer/HBoxContainer2" unique_id=3202312]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+tooltip_text = "Enable Fill"
+button_pressed = true
+text = "Fill"
+
+[node name="FillPickerButton" type="ColorPickerButton" parent="SettingsContainer/HBoxContainer/HBoxContainer2" unique_id=1356466570]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+tooltip_text = "Set Fill Color"
+text = "Fill"
+color = Color(0.886719, 0.631506, 0.457214, 1)
+
+[node name="VSeparator4" type="VSeparator" parent="SettingsContainer/HBoxContainer" unique_id=265864135]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="SettingsContainer/HBoxContainer" unique_id=1454263497]
+layout_mode = 2
+
+[node name="EnableStrokeCheckBox" type="CheckBox" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=1780043997]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "Enable Stroke"
+button_pressed = true
+text = "Stroke"
+
+[node name="StrokePickerButton" type="ColorPickerButton" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=73211193]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "Set Stroke Color"
+text = "Fill"
+color = Color(0.953125, 0.919617, 0.919617, 1)
+
+[node name="StrokeWidthContainer" type="PanelContainer" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=1573755340]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="ExpandTabButton" type="Button" parent="SettingsContainer/HBoxContainer" unique_id=597237552]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 10
+tooltip_text = "Expand to show settings."
+toggle_mode = true
+button_pressed = true
+icon = SubResource("AtlasTexture_alf1c")
+expand_icon = true
+
+[node name="HSeparator" type="HSeparator" parent="SettingsContainer" unique_id=1197688896]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_dv24s")
+
+[node name="MarginContainer" type="MarginContainer" parent="SettingsContainer" unique_id=1277939225]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_top = 5
+
+[node name="GeneralSettingsContainer" type="ScrollContainer" parent="SettingsContainer/MarginContainer" unique_id=1331453309]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer" unique_id=1219246689]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer" unique_id=877392243]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+
+[node name="CollisionObjectTypeOptionButton" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer" unique_id=277946592 instance=ExtResource("20_rpvk4")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = ExtResource("2_2chn8")
+
+[node name="VSeparator4" type="VSeparator" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer" unique_id=743666587]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
+
+[node name="UseLine2DCheckButton" type="CheckBox" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer" unique_id=871135944]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(116, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "Use a Line2D node to represent the stroke with in stead of a Polygon2D. Cost/Benefit:
+- A Polygon2D stroke can be more neatly clipped than a Line2D
+- CollisionPolygon2D's match Polygon2D Stroke better
+- A Polygon2D stroke can be textured with gradients like Fills are textured
+- Line2D has sharper caps and line joints at high zoom
+- Line2D can be textured directionally in stead of like a Fill texture
+- Line2D can set different Begin and End Cap Modes where Polygon2D can only pick one"
+button_pressed = true
+text = "Use Line2D"
+
+[node name="Spacer" type="HBoxContainer" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer" unique_id=921209906]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer" unique_id=1909387932]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2" unique_id=428001573]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer" unique_id=1030138560]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="BeginCapLabel" type="Label" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer" unique_id=289376237]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(54, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+tooltip_text = "This will set the begin_cap_mode of the assigned Line2D node to:
+- Line Cap None
+- Line Cap Box
+- Line Cap Round"
+mouse_filter = 0
+text = "Begin"
+horizontal_alignment = 2
+
+[node name="BeginBoxCapToggleButton" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer" unique_id=1332892442]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "This will set the begin_cap_mode of the assigned Line2D node to:
+- Line Cap Box"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_pu4iw")
+icon = SubResource("AtlasTexture_vur25")
+expand_icon = true
+
+[node name="BeginRoundCapToggleButton" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer" unique_id=1212114440]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "This will set the begin_cap_mode of the assigned Line2D node to:
+- Line Cap Round"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_pu4iw")
+icon = SubResource("AtlasTexture_pa8xa")
+expand_icon = true
+
+[node name="BeginNoCapToggleButton" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer" unique_id=1580908221]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "This will set the begin_cap_mode of the assigned Line2D node to:
+- Line Cap None"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_pu4iw")
+icon = SubResource("AtlasTexture_rpvk4")
+expand_icon = true
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer" unique_id=723715155]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="Label" type="Label" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2" unique_id=69307550]
+custom_minimum_size = Vector2(54, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+tooltip_text = "This will set the joint_mode of the assigned Line2D node to:
+- Sharp
+- Bevel
+- Round"
+mouse_filter = 0
+text = "Join"
+horizontal_alignment = 2
+
+[node name="LineJoinSharpToggleButton" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2" unique_id=1915526320]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "This will set the joint_mode of the assigned Line2D node to:
+- Sharp"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_alf1c")
+icon = SubResource("AtlasTexture_86ooi")
+expand_icon = true
+
+[node name="LineJointRoundToggleButton" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2" unique_id=575972843]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "This will set the joint_mode of the assigned Line2D node to:
+- Round"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_alf1c")
+icon = SubResource("AtlasTexture_1885i")
+expand_icon = true
+
+[node name="LineJointBevelToggleButton" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2" unique_id=1181364363]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "This will set the joint_mode of the assigned Line2D node to:
+- Bevel"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_alf1c")
+icon = SubResource("AtlasTexture_oyctc")
+expand_icon = true
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer" unique_id=420972129]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="Label" type="Label" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer3" unique_id=1818177992]
+custom_minimum_size = Vector2(54, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+tooltip_text = "This will set the end_cap_mode of the assigned Line2D node to:
+- Line Cap None
+- Line Cap Box
+- Line Cap Round"
+mouse_filter = 0
+text = "End"
+horizontal_alignment = 2
+
+[node name="EndBoxCapToggleButton" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer3" unique_id=2023708421]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "This will set the end_cap_mode of the assigned Line2D node to:
+- Line Cap Box"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_xjyyj")
+icon = SubResource("AtlasTexture_pu4iw")
+expand_icon = true
+
+[node name="EndRoundCapToggleButton" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer3" unique_id=1916241251]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "This will set the end_cap_mode of the assigned Line2D node to:
+- Line Cap Round"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_xjyyj")
+icon = SubResource("AtlasTexture_lcmbt")
+expand_icon = true
+
+[node name="EndNoCapToggleButton" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer3" unique_id=246852935]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "This will set the end_cap_mode of the assigned Line2D node to:
+- Line Cap None"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_xjyyj")
+icon = SubResource("AtlasTexture_pnph2")
+expand_icon = true
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2" unique_id=447857716]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2" unique_id=1816085564]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="Label" type="Label" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer" unique_id=454665873]
+custom_minimum_size = Vector2(54, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+tooltip_text = "Sets the extrusion_direction of the stroke,
+- Middle
+- Inside
+- Outside"
+mouse_filter = 0
+text = "Align"
+horizontal_alignment = 2
+
+[node name="MiddleToggleButton" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer" unique_id=335899562]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "This will draw the Line2D or PolyStroke in over the middle of the outline."
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_dv24s")
+icon = SubResource("AtlasTexture_7t7wr")
+expand_icon = true
+
+[node name="InsideToggleButton" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer" unique_id=1884883422]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "TODO: set tooltip"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dv24s")
+icon = SubResource("AtlasTexture_4t731")
+expand_icon = true
+
+[node name="OutsideToggleButton" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer" unique_id=1921117242]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "This will draw the Line2D or PolyStroke on the outside of the outline."
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dv24s")
+icon = SubResource("AtlasTexture_1o8bw")
+expand_icon = true
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2" unique_id=995512142]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="Label2" type="Label" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer2" unique_id=182546506]
+custom_minimum_size = Vector2(54, 0)
+layout_mode = 2
+size_flags_vertical = 1
+tooltip_text = "- This toggle determines in what order 'Fills', 'Strokes' and 'Markers' are drawn when creating a new shape using this panel
+- This plugin treats CollisionPolygon2D as a marker, Line2D as stroke and Polygon2D as fill.
+- Button hints will show the order from back to front and use the term 'Collision' in stead of 'Marker'"
+mouse_filter = 0
+text = "Order"
+horizontal_alignment = 2
+
+[node name="PaintOrderButton0" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer2" unique_id=1937699835]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Use Paint Order:
+Fills, Strokes, Collision"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_powka")
+icon = SubResource("AtlasTexture_v81ne")
+expand_icon = true
+
+[node name="PaintOrderButton1" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer2" unique_id=2083573371]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Use Paint Order:
+Strokes, Fills, Collision"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_powka")
+icon = SubResource("AtlasTexture_etbwd")
+expand_icon = true
+
+[node name="PaintOrderButton2" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer2" unique_id=950729717]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Use Paint Order:
+Fills, Collision, Strokes"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_powka")
+icon = SubResource("AtlasTexture_h3ems")
+expand_icon = true
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2" unique_id=1730486183]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="PaintOrderButton3" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer3" unique_id=1973808029]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Use Paint Order:
+Collision, Fills, Strokes"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_powka")
+icon = SubResource("AtlasTexture_iui6f")
+expand_icon = true
+
+[node name="PaintOrderButton4" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer3" unique_id=3160583]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Use Paint Order:
+Strokes, Collision, Fills"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_powka")
+icon = SubResource("AtlasTexture_8xpyx")
+expand_icon = true
+
+[node name="PaintOrderButton5" type="Button" parent="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer3" unique_id=264577663]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Use Paint Order:
+Collision, Strokes, Fills"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_powka")
+icon = SubResource("AtlasTexture_65sk2")
+expand_icon = true
+
+[connection signal="item_selected" from="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer/HFlowContainer2/BrushShapeOptionButton" to="." method="_on_brush_shape_option_button_item_selected"]
+[connection signal="toggled" from="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer/HFlowContainer/FitCurveToBrushStrokeCheckBox" to="." method="_on_fit_curve_check_box_toggled"]
+[connection signal="toggled" from="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer/HFlowContainer/KeepBrushingCheckBox" to="." method="_on_keep_drawing_check_box_toggled"]
+[connection signal="toggled" from="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer/HFlowContainer/FillInParentCheckBox" to="." method="_on_fill_in_parent_check_box_toggled"]
+[connection signal="toggled" from="ToolsContainer/MarginContainer/PencilToolContainer/VBoxContainer/HFlowContainer2/FitCurveToPencilCheckBox" to="." method="_on_fit_curve_check_box_toggled"]
+[connection signal="toggled" from="ToolsContainer/MarginContainer/PencilToolContainer/VBoxContainer/HFlowContainer2/ClosePathCheckBox" to="." method="_on_close_path_check_box_toggled"]
+[connection signal="toggled" from="ToolsContainer/MarginContainer/PencilToolContainer/VBoxContainer/HFlowContainer2/KeepPencilDrawingCheckBox" to="." method="_on_keep_drawing_check_box_toggled"]
+[connection signal="mouse_entered" from="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2/CreateEllipseButton" to="." method="_on_create_circle_button_mouse_entered"]
+[connection signal="mouse_exited" from="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2/CreateEllipseButton" to="." method="_on_create_circle_button_mouse_exited"]
+[connection signal="pressed" from="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2/CreateEllipseButton" to="." method="_on_create_ellipse_button_pressed"]
+[connection signal="mouse_entered" from="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2/CreateCircleButton" to="." method="_on_create_circle_button_mouse_entered"]
+[connection signal="mouse_exited" from="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2/CreateCircleButton" to="." method="_on_create_circle_button_mouse_exited"]
+[connection signal="pressed" from="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2/CreateCircleButton" to="." method="_on_create_circle_button_pressed"]
+[connection signal="toggled" from="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2/MakeAnotherEllipseCheckBox" to="." method="_on_keep_drawing_check_box_toggled"]
+[connection signal="mouse_entered" from="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3/CreateRectButton" to="." method="_on_create_rect_button_mouse_entered"]
+[connection signal="mouse_exited" from="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3/CreateRectButton" to="." method="_on_create_rect_button_mouse_exited"]
+[connection signal="pressed" from="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3/CreateRectButton" to="." method="_on_create_rect_button_pressed"]
+[connection signal="mouse_entered" from="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3/CreateRectAsPathButton" to="." method="_on_create_rect_button_mouse_entered"]
+[connection signal="mouse_exited" from="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3/CreateRectAsPathButton" to="." method="_on_create_rect_button_mouse_exited"]
+[connection signal="pressed" from="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3/CreateRectAsPathButton" to="." method="_on_create_rect_as_path_button_pressed"]
+[connection signal="toggled" from="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3/MakeAnotherRectCheckBox" to="." method="_on_keep_drawing_check_box_toggled"]
+[connection signal="pressed" from="ToolsContainer/MarginContainer/SelectModeContainer/CenterContainer/CreateEmptyShapeButton" to="." method="_on_create_empty_shape_button_pressed"]
+[connection signal="toggled" from="ToolsContainer/MarginContainer/KnifeToolContainer/VBoxContainer/HFlowContainer/FitCurveToKnifeCutCheckBox" to="." method="_on_fit_curve_check_box_toggled"]
+[connection signal="toggled" from="SettingsContainer/HBoxContainer/HBoxContainer2/EnableFillCheckBox" to="." method="_on_fill_check_button_toggled"]
+[connection signal="color_changed" from="SettingsContainer/HBoxContainer/HBoxContainer2/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]
+[connection signal="toggled" from="SettingsContainer/HBoxContainer/HBoxContainer3/EnableStrokeCheckBox" to="." method="_on_stroke_check_button_toggled"]
+[connection signal="color_changed" from="SettingsContainer/HBoxContainer/HBoxContainer3/StrokePickerButton" to="." method="_on_stroke_picker_button_color_changed"]
+[connection signal="toggled" from="SettingsContainer/HBoxContainer/ExpandTabButton" to="." method="_on_expand_tab_button_toggled"]
+[connection signal="type_selected" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer/UseLine2DCheckButton" to="." method="_on_use_line_2d_check_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/BeginBoxCapToggleButton" to="." method="_on_begin_box_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/BeginRoundCapToggleButton" to="." method="_on_begin_round_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/BeginNoCapToggleButton" to="." method="_on_begin_no_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2/LineJoinSharpToggleButton" to="." method="_on_line_joint_sharp_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2/LineJointRoundToggleButton" to="." method="_on_line_joint_round_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2/LineJointBevelToggleButton" to="." method="_on_line_joint_bevel_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer3/EndBoxCapToggleButton" to="." method="_on_end_box_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer3/EndRoundCapToggleButton" to="." method="_on_end_round_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer3/EndNoCapToggleButton" to="." method="_on_end_no_cap_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer/MiddleToggleButton" to="." method="_on_middle_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer/InsideToggleButton" to="." method="_on_inside_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer/OutsideToggleButton" to="." method="_on_outside_toggle_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer2/PaintOrderButton0" to="." method="_on_paint_order_button_0_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer2/PaintOrderButton1" to="." method="_on_paint_order_button_1_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer2/PaintOrderButton2" to="." method="_on_paint_order_button_2_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer3/PaintOrderButton3" to="." method="_on_paint_order_button_3_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer3/PaintOrderButton4" to="." method="_on_paint_order_button_4_toggled"]
+[connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer3/PaintOrderButton5" to="." method="_on_paint_order_button_5_toggled"]
