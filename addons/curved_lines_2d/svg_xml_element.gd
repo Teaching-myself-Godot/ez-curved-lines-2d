@@ -93,9 +93,10 @@ func get_svg_style(log_message : Callable) -> Dictionary:
 
 func get_merged_styles(css_classes : Dictionary[String, Dictionary], log_message : Callable) -> Dictionary:
 	var style = get_svg_style(log_message)
-	var cls := get_named_attribute_value_safe("class")
-	if cls in css_classes:
-		style.merge(css_classes[cls])
+	var cls_attr := get_named_attribute_value_safe("class")
+	for cls in cls_attr.split(" "):
+		if cls in css_classes:
+			style.merge(css_classes[cls])
 	var ancestor = self
 	while ancestor.parent != null:
 		style.merge(ancestor.get_svg_style(log_message))
