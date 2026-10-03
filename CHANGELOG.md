@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 3.0.1 - Create Tab
+## 3.0.2 - Create Tab
 
 ### Added
 
@@ -10,6 +10,7 @@
 - Make curve extraction optional for pencil, knife and brush
 - Make fill-in selected parent shape optional for brush 
 - Place new ellipse/rectangle by clicking
+- Basic CSS parser for classes in the `<style>`-tag in order to support more svg formats
 
 ### Removed
 

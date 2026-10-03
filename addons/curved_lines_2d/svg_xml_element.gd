@@ -78,14 +78,8 @@ func get_svg_style(log_message : Callable) -> Dictionary:
 	var style = {}
 	if has_attribute("style"):
 		var svg_style = get_named_attribute_value("style")
-		svg_style = svg_style.rstrip(";")
-		svg_style = svg_style.replacen(": ", ":")
-		svg_style = svg_style.replacen(":", "\":\"")
-		svg_style = svg_style.replacen("; ", "\",\"")
-		svg_style = svg_style.replacen(";", "\",\"")
-		svg_style = "{\"" + svg_style + "\"}"
 		var json = JSON.new()
-		var error = json.parse(svg_style)
+		var error = json.parse(style_to_json(svg_style))
 		if error == OK:
 			style = json.data
 		else:
@@ -97,11 +91,25 @@ func get_svg_style(log_message : Callable) -> Dictionary:
 	return style
 
 
-func get_merged_styles(log_message : Callable) -> Dictionary:
+func get_merged_styles(css_classes : Dictionary[String, Dictionary], log_message : Callable) -> Dictionary:
 	var style = get_svg_style(log_message)
+	var cls_attr := get_named_attribute_value_safe("class")
+	for cls in cls_attr.split(" "):
+		if cls in css_classes:
+			style.merge(css_classes[cls])
 	var ancestor = self
 	while ancestor.parent != null:
 		style.merge(ancestor.get_svg_style(log_message))
 		ancestor = ancestor.parent
 	style.merge(ancestor.get_svg_style(log_message))
 	return style
+
+
+static func style_to_json(svg_style : String) -> String:
+	svg_style = svg_style.rstrip(";")
+	svg_style = svg_style.replacen(": ", ":")
+	svg_style = svg_style.replacen(":", "\":\"")
+	svg_style = svg_style.replacen("; ", "\",\"")
+	svg_style = svg_style.replacen(";", "\",\"")
+	svg_style = "{\"" + svg_style + "\"}"
+	return svg_style

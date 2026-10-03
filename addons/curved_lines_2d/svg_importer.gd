@@ -48,9 +48,11 @@ var resource_local_to_scene := true
 var tolerance_degrees := 4.0
 var max_stages : int = 5
 var use_antialiased_line_2d = false
-
 var undo_redo : Variant = null
 var log_consumer : Callable = func(msg: String, log_level : LogLevel): pass
+
+## Instance var helpers
+var css_classes : Dictionary[String, Dictionary] = {}
 
 func _init(is_svs := true, is_lock := true, mark_groups := false,
 		is_aa := false, is_line_2d := true,
@@ -189,9 +191,37 @@ func realign_offset_for_svs(svs : ScalableVectorShape2D, image_scale : Vector2) 
 		svs.translate_points_by(before - svs.global_position)
 
 
+func parse_css_classes(css_text : String) -> void:
+	# Extremely basic parser that only attempts to support class locators
+	var chunks := Array(css_text.remove_chars(" \n\r").split("}")).filter(func(x : String): return not x.is_empty())
+	for chunk : String in chunks:
+		var parts := chunk.split("{")
+		if parts.size() < 2:
+			continue
+		var classes := (Array(parts[0].split(","))
+				.map(func(x : String): return x.strip_edges())
+				.filter(func(x : String): return x.begins_with("."))
+				.map(func(x : String): return x.replace(".", ""))
+		)
+		var json = JSON.new()
+		var error = json.parse(SVGXMLElement.style_to_json(parts[1]))
+		if error != OK:
+			continue
+		var style = json.data
+		for css_cls_key in classes:
+			if css_cls_key not in css_classes:
+				css_classes[css_cls_key] = {}
+			css_classes[css_cls_key].merge(style)
+
+
 func parse_svg_xml_file(xml_parser : XMLParser) -> SVGXMLElement:
 	var svg_xml_node : SVGXMLElement = null
 	while xml_parser.read() == OK:
+		if svg_xml_node and svg_xml_node.name == "style":
+			if xml_parser.get_node_type() == XMLParser.NODE_TEXT:
+				parse_css_classes(xml_parser.get_node_data())
+			elif xml_parser.get_node_type() == XMLParser.NODE_CDATA:
+				parse_css_classes(xml_parser.get_node_name())
 		if not xml_parser.get_node_type() in [XMLParser.NODE_ELEMENT, XMLParser.NODE_ELEMENT_END]:
 			continue
 		if xml_parser.get_node_type() == XMLParser.NODE_ELEMENT and xml_parser.is_empty() and xml_parser.get_node_name() in ["defs", "g", "clipPath"]:
@@ -217,7 +247,7 @@ func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root 
 			href = xml_data.get_named_attribute_value_safe("href")
 		var reuse_xml_node = xml_data.find_by_id(href.replace("#", ""))
 		var style = xml_data.get_svg_style(log_message)
-		style.merge(reuse_xml_node.get_merged_styles(log_message))
+		style.merge(reuse_xml_node.get_merged_styles(css_classes, log_message))
 		var preserve_id := xml_data.get_named_attribute_value_safe("id")
 		xml_data.attributes.erase("xlink:href")
 		xml_data.attributes.merge(reuse_xml_node.attributes)
@@ -242,7 +272,7 @@ func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root 
 					log_message("⚠️ Units for this image are centimeters (cm), image scale set to 37.8")
 					svg_root.scale *= 37.8
 			if xml_data.has_attribute("style"):
-				current_node.set_meta(SVG_STYLE_META_NAME, xml_data.get_merged_styles(log_message))
+				current_node.set_meta(SVG_STYLE_META_NAME, xml_data.get_merged_styles(css_classes, log_message))
 		"g":
 			current_node = process_group(xml_data, current_node, scene_root)
 		"clipPath", "defs":
@@ -293,7 +323,7 @@ func parse_gradient(gradient_xml : SVGXMLElement) -> Dictionary:
 		for element in gradient_xml.children:
 			if element.get_node_name() == "stop":
 				new_gradient["stops"].append({
-					"style": element.get_merged_styles(log_message),
+					"style": element.get_merged_styles(css_classes, log_message),
 					"offset": float(element.get_named_attribute_value_safe("offset")),
 					"id": element.get_named_attribute_value_safe("id")
 				})
@@ -320,7 +350,7 @@ func process_group(element:SVGXMLElement, current_node : Node2D, scene_root : No
 	var new_group = Node2D.new()
 	new_group.name = get_element_label(element, alt_name)
 	new_group.transform = get_svg_transform(element)
-	var style := element.get_merged_styles(log_message)
+	var style := element.get_merged_styles(css_classes, log_message)
 	new_group.set_meta(SVG_STYLE_META_NAME, style)
 	new_group.set_meta(IS_SVG_GROUP_META_NAME, true)
 	store_inkscape_transform_center_md(element, new_group)
@@ -360,7 +390,7 @@ func create_path_from_ellipse(element:SVGXMLElement, path_name : String, rx : fl
 	new_ellipse.position = pos
 	new_ellipse.name = path_name
 	_post_process_shape(new_ellipse, current_node, get_svg_transform(element),
-			element.get_merged_styles(log_message), scene_root, gradients)
+			element.get_merged_styles(css_classes, log_message), scene_root, gradients)
 	store_inkscape_transform_center_md(element, new_ellipse)
 
 
@@ -395,7 +425,7 @@ func process_svg_image(element:SVGXMLElement, current_node : Node2D, scene_root 
 		log_message("⚠️ Only base64 encoded embedded images are supported", LogLevel.WARN)
 
 	_post_process_shape(new_image_rect, current_node, get_svg_transform(element),
-			element.get_merged_styles(log_message), scene_root, gradients, false, image_texture)
+			element.get_merged_styles(css_classes, log_message), scene_root, gradients, false, image_texture)
 	store_inkscape_transform_center_md(element, new_image_rect)
 
 
@@ -419,7 +449,7 @@ func process_svg_rectangle(element:SVGXMLElement, current_node : Node2D, scene_r
 	new_rect.ry = ry
 	new_rect.name = get_element_label(element, "Rectangle")
 	_post_process_shape(new_rect, current_node, get_svg_transform(element),
-			element.get_merged_styles(log_message), scene_root, gradients)
+			element.get_merged_styles(css_classes, log_message), scene_root, gradients)
 	store_inkscape_transform_center_md(element, new_rect)
 
 
@@ -436,7 +466,7 @@ func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_roo
 		curve.add_point(Vector2(float(points_split[p_idx]), float(points_split[p_idx + 1])))
 	var path_name = get_element_label(element, "Polygon" if is_closed else "Polyline")
 	var new_poly := create_path2d(path_name, current_node, curve, [], get_svg_transform(element),
-			element.get_merged_styles(log_message), scene_root, gradients, is_closed)
+			element.get_merged_styles(css_classes, log_message), scene_root, gradients, is_closed)
 	store_inkscape_transform_center_md(element, new_poly)
 
 
@@ -680,7 +710,7 @@ func process_svg_path(element:SVGXMLElement, current_node : Node2D, scene_root :
 	# actual node in the resulting scene
 	for shape in post_processed_shapes:
 		var new_path := create_path2d(shape_name, current_node,  shape.curve.duplicate(true), shape.arc_list.arcs.duplicate(true), get_svg_transform(element),
-					element.get_merged_styles(log_message), scene_root, gradients, shape.get_meta("is_closed"))
+					element.get_merged_styles(css_classes, log_message), scene_root, gradients, shape.get_meta("is_closed"))
 		var clips : Array[ScalableVectorShape2D] = []
 		for cutout in shape.clip_paths:
 			clips.append(create_path2d("CutoutFor%s" % shape_name, current_node, cutout.curve.duplicate(true), cutout.arc_list.arcs.duplicate(true),
