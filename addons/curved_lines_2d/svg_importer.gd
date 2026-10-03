@@ -193,7 +193,9 @@ func realign_offset_for_svs(svs : ScalableVectorShape2D, image_scale : Vector2) 
 
 func parse_css_classes(css_text : String) -> void:
 	# Extremely basic parser that only attempts to support class locators
-	var chunks := Array(css_text.remove_chars(" \n\r").split("}")).filter(func(x : String): return not x.is_empty())
+	var chunks := (Array(css_text.replacen(" ", "").replacen("\r", "").replacen("\n", "").split("}"))
+			.filter(func(x : String): return not x.is_empty())
+	)
 	for chunk : String in chunks:
 		var parts := chunk.split("{")
 		if parts.size() < 2:
