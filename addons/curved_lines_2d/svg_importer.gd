@@ -457,15 +457,13 @@ func process_svg_rectangle(element:SVGXMLElement, current_node : Node2D, scene_r
 
 func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_root : Node, is_closed : bool,
 		gradients : Array[Dictionary]) -> void:
-	var points_split = (element.get_named_attribute_value("points")
-			.replacen(",", " ")
-			.split(" ", false)
-	)
-	# FIXME: the cases of exponents and the quirky 5.5.5 -> [5.5, 0.5] are not covered
-	# here yet
+	var points := parse_svg_number_sequence(element.get_named_attribute_value("points"))
+	if points.size() % 2 != 0:
+		log_message("⚠️ Ignoring the unpaired final coordinate in <%s> points" % element.get_node_name(),
+				LogLevel.WARN)
 	var curve = Curve2D.new()
-	for p_idx in range(0, points_split.size(), 2):
-		curve.add_point(Vector2(float(points_split[p_idx]), float(points_split[p_idx + 1])))
+	for p_idx in range(0, points.size() - 1, 2):
+		curve.add_point(Vector2(points[p_idx], points[p_idx + 1]))
 	var path_name = get_element_label(element, "Polygon" if is_closed else "Polyline")
 	var new_poly := create_path2d(path_name, current_node, curve, [], get_svg_transform(element),
 			element.get_merged_styles(css_classes, log_message), scene_root, gradients, is_closed)
@@ -1067,6 +1065,15 @@ static func parse_attribute_string(raw_attribute_str : String) -> String:
 	for result  in regex.search_all(raw_attribute_str):
 		str_path += result.get_string() + " "
 	return str_path.strip_edges()
+
+
+static func parse_svg_number_sequence(raw_number_sequence : String) -> PackedFloat64Array:
+	var regex = RegEx.new()
+	regex.compile("[+-]?(?:(?:[0-9]+(?:\\.[0-9]*)?)|(?:\\.[0-9]+))(?:[eE][+-]?[0-9]+)?")
+	var values := PackedFloat64Array()
+	for result in regex.search_all(raw_number_sequence):
+		values.append(float(result.get_string()))
+	return values
 
 
 class UndoRedoHandler:

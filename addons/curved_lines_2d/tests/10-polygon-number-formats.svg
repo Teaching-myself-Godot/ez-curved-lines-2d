@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120">
+  <polygon points="10,10 1e2,10 100,1e2 10,100 10,10"
+           fill="#478cbf" stroke="#ffffff" stroke-width="3" />
+  <polyline points="130.5.5 2e2,0.5 200-9.5 1.3e2-9.5"
+            fill="none" stroke="#ff786b" stroke-width="3" />
+</svg>
