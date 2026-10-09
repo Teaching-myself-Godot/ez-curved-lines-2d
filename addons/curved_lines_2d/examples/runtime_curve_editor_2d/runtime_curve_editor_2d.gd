@@ -52,13 +52,19 @@ func _enter_tree() -> void:
 
 
 func _update_parent_pts() -> void:
+	var pts := curve.tessellate(max_stages, tolerance_degrees)
+
 	for n in [get_parent()] + other_nodes:
 		if not is_instance_valid(n):
 			return
 		elif "polygon" in n and n.polygon is PackedVector2Array:
-			n.polygon = curve.tessellate(max_stages, tolerance_degrees)
+			n.polygon = pts
 		elif "points" in n and n.points is PackedVector2Array:
-			n.points = curve.tessellate(max_stages, tolerance_degrees)
+			if "closed" in n:
+				n.closed = _is_curve_closed()
+				n.points = pts.slice(0, -1) if _is_curve_closed() else pts
+			else:
+				n.points = pts
 		elif "_update_curve" in n:
 			n._update_curve()
 	queue_redraw()
@@ -89,10 +95,11 @@ func _draw() -> void:
 		var c_o = curve.get_point_out(i)
 		if i == 0 and is_closed:
 			c_i = curve.get_point_in(curve.point_count - 1)
-		elif i == curve.point_count - 1 and is_closed:
-			continue
-		var fill := handle_hovered_color if _hovered_idx == i else handle_color
-		var stroke := handle_stroke_color if _hovered_idx == i else handle_stroke_color
+		#elif i == curve.point_count - 1 and is_closed:
+			#continue
+		var hovered := _hovered_idx == i
+		var fill := handle_hovered_color if hovered else handle_color
+		var stroke := handle_stroke_color if hovered else handle_stroke_color
 		draw_rect(Rect2(p - Vector2(5,5), Vector2(10,10)), fill, true, -1.0, antialiased)
 		draw_rect(Rect2(p - Vector2(6,6), Vector2(12,12)), stroke, false, handle_stroke_width, antialiased)
 
@@ -102,7 +109,6 @@ func _input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			print(_hovered_idx)
 			_handle_drag(event)
 		else:
 			_handle_hover(event)
@@ -111,6 +117,8 @@ func _input(event: InputEvent) -> void:
 func _handle_drag(event : InputEventMouseMotion) -> void:
 	if _hovered_idx < 0:
 		return
+	if _is_curve_closed() and _hovered_idx == curve.point_count - 1:
+		curve.set_point_position(0, to_local(event.global_position))
 	curve.set_point_position(_hovered_idx, to_local(event.global_position))
 
 
@@ -128,4 +136,4 @@ func _handle_hover(event : InputEventMouseMotion) -> void:
 
 func _is_curve_closed() -> bool:
 	var n = curve.point_count
-	return n > 2 and curve.get_point_position(0).distance_squared_to(curve.get_point_position(n - 1)) < 0.00001
+	return n > 2 and curve.get_point_position(0).distance_squared_to(curve.get_point_position(n - 1)) < 0.0001
