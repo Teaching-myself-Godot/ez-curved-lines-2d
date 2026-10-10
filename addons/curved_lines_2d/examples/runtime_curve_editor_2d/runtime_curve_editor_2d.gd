@@ -74,7 +74,7 @@ class_name RuntimeCurveEditor2D extends Path2D
 var _hovered_idx := -1
 var _hovered_cp_in_idx := -1
 var _hovered_cp_out_idx := -1
-
+var _hover_segment_point := Vector2.INF
 
 func _enter_tree() -> void:
 	if not is_instance_valid(get_parent()):
@@ -128,7 +128,8 @@ func _draw() -> void:
 	if Engine.is_editor_hint():
 		return
 	var pts := Array(curve.tessellate(max_stages, tolerance_degrees))
-	draw_polyline(pts, outline_color, outline_width, antialiased)
+	if pts.size() > 1:
+		draw_polyline(pts, outline_color, outline_width, antialiased)
 
 	var is_closed := _is_curve_closed()
 	var result := []
@@ -160,6 +161,10 @@ func _draw() -> void:
 		draw_rect(Rect2(p - Vector2.ONE * handle_size, Vector2.ONE * handle_size * 2), handle_hovered_color if hovered else handle_color, true, -1.0, antialiased)
 		draw_rect(Rect2(p - Vector2.ONE * handle_size, Vector2.ONE * handle_size * 2), handle_hovered_stroke if hovered else handle_stroke_color, false, handle_stroke_width, antialiased)
 
+	if _hover_segment_point != Vector2.INF:
+		draw_circle(_hover_segment_point, handle_size, handle_hovered_color, true, -1.0, antialiased)
+		draw_circle(_hover_segment_point, handle_size, handle_hovered_stroke, false, handle_stroke_width, antialiased)
+
 
 func _input(event: InputEvent) -> void:
 	if not is_visible_in_tree():
@@ -175,11 +180,55 @@ func _input(event: InputEvent) -> void:
 
 
 func _handle_dbl_click(g_cursor_pos : Vector2) -> void:
-	var i := _find_point_at(g_cursor_pos)
-	if i == 0 and _is_curve_closed():
+	if _hovered_idx == 0 and _is_curve_closed():
 		_toggle_closing_point_control_points()
-	elif i > -1:
-		_toggle_control_points(i)
+	elif _hovered_idx > -1:
+		_toggle_control_points(_hovered_idx)
+	elif _hover_segment_point:
+		_add_point_at_hovered_point()
+
+
+func _get_curve_segment(segment_p1_idx : int) -> Curve2D:
+	var curve_segment := Curve2D.new()
+	curve_segment.add_point(
+		curve.get_point_position(segment_p1_idx),
+		Vector2.ZERO,
+		curve.get_point_out(segment_p1_idx)
+	)
+	var segment_p2_idx = (0 if segment_p1_idx == curve.point_count - 1
+			else segment_p1_idx + 1)
+	curve_segment.add_point(
+		curve.get_point_position(segment_p2_idx),
+		curve.get_point_in(segment_p2_idx)
+	)
+	return curve_segment
+
+
+func _find_hovered_curve_segment_idx() -> int:
+	var d_min := INF
+	var before_segment := -1
+	for i in curve.point_count:
+		var seg := _get_curve_segment(i)
+		var pt := Geometry2DUtil.get_closest_point_on_polyline(
+			_hover_segment_point,
+			seg.tessellate(max_stages, tolerance_degrees))
+		var d := pt.distance_squared_to(_hover_segment_point)
+		if d < d_min:
+			d_min = d
+			before_segment = i + 1
+	return before_segment
+
+
+func _add_point_at_hovered_point():
+	var before_segment := _find_hovered_curve_segment_idx()
+	if before_segment < 0:
+		return
+	var sliced_segment := Geometry2DUtil.get_sliced_curve_segment(
+			curve, before_segment, _hover_segment_point,
+			max_stages, tolerance_degrees)
+	curve.add_point(_hover_segment_point, sliced_segment.get_point_in(1), sliced_segment.get_point_out(1), before_segment)
+	curve.set_point_out(before_segment - 1, sliced_segment.get_point_out(0))
+	curve.set_point_in(before_segment + 1, sliced_segment.get_point_in(2))
 
 
 func _toggle_closing_point_control_points() -> void:
@@ -241,6 +290,19 @@ func _handle_drag(g_cursor_pos : Vector2) -> void:
 				curve.set_point_in(curve.point_count - 1, -(cursor_pos - curve.get_point_position(_hovered_cp_out_idx)))
 			elif _hovered_cp_out_idx > 0:
 				curve.set_point_in(_hovered_cp_out_idx, -(cursor_pos - curve.get_point_position(_hovered_cp_out_idx)))
+	if _hover_segment_point != Vector2.INF:
+		var idx := _find_hovered_curve_segment_idx()
+		var segment_start_point := curve.get_point_position(idx - 1)
+		var segment_end_point := curve.get_point_position(idx)
+		var halfway_point := (segment_start_point + segment_end_point) / 2
+		var dir := halfway_point.direction_to(cursor_pos)
+		var distance := halfway_point.distance_to(cursor_pos)
+		var quadratic_bezier_control_point := halfway_point + distance * 2 * dir
+		var new_point_out := (quadratic_bezier_control_point - segment_start_point) * (2.0 / 3.0)
+		var new_point_in := (quadratic_bezier_control_point - segment_end_point) * (2.0 / 3.0)
+		curve.set_point_in(idx, new_point_in)
+		curve.set_point_out(idx - 1, new_point_out)
+		_hover_segment_point = cursor_pos
 
 
 func _find_point_at(pos : Vector2) -> int:
@@ -255,13 +317,15 @@ func _handle_hover(g_cursor_pos : Vector2) -> void:
 	var before := _hovered_idx
 	var before_cp_in := _hovered_cp_in_idx
 	var before_cp_out := _hovered_cp_out_idx
-
+	var before_segment_hover_point := _hover_segment_point
 	if _hovered_idx > -1:
 		_hovered_idx = -1
 	if _hovered_cp_in_idx > -1:
 		_hovered_cp_in_idx = -1
 	if _hovered_cp_out_idx > -1:
 		_hovered_cp_out_idx = -1
+	if _hover_segment_point != Vector2.INF:
+		_hover_segment_point = Vector2.INF
 
 	_hovered_idx = _find_point_at(g_cursor_pos)
 
@@ -275,8 +339,15 @@ func _handle_hover(g_cursor_pos : Vector2) -> void:
 			var cp_out = curve.get_point_position(i) + curve.get_point_out(i)
 			if to_global(cp_out).distance_squared_to(g_cursor_pos) <= handle_size**2:
 				_hovered_cp_out_idx = i
+	if _hovered_cp_in_idx < 0 and _hovered_cp_out_idx < 0 and _hovered_idx < 0:
+		var pts := curve.tessellate(max_stages, tolerance_degrees)
+		var cpoc := Geometry2DUtil.get_closest_point_on_polyline(to_local(g_cursor_pos), pts)
+		if to_global(cpoc).distance_squared_to(g_cursor_pos) <= handle_size**2:
+			_hover_segment_point = cpoc
 
-	if before != _hovered_idx or before_cp_in != _hovered_cp_in_idx or before_cp_out != _hovered_cp_out_idx:
+	if (before != _hovered_idx or before_cp_in != _hovered_cp_in_idx or
+			before_cp_out != _hovered_cp_out_idx or
+			before_segment_hover_point != _hover_segment_point):
 		queue_redraw()
 
 
