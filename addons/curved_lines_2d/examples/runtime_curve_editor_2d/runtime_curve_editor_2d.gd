@@ -2,36 +2,73 @@
 class_name RuntimeCurveEditor2D extends Path2D
 
 @export_group("Looks")
-@export var antialiased := false
-@export_subgroup("Outline")
-@export var outline_color := Color.WHITE
-@export var outline_width := 1.0
-@export_subgroup("Handles Default")
-@export var handle_color := Color.WHITE
-@export var handle_stroke_color := Color.BLACK
-@export var handle_stroke_width := 1.0
-@export_subgroup("Handles Hovered")
-@export var handle_hovered_color := Color.RED
-@export var handle_hovered_stroke := Color.WHITE
-@export_subgroup("Handle Lines")
-@export var handle_line_stroke := Color.BLACK
-@export var handle_line_stroke_width := 1.0
+@export var antialiased := false:
+	set(aa):
+		antialiased = aa
+		queue_redraw()
 
+@export_subgroup("Outline")
+@export var outline_color := Color.WHITE:
+	set(oc):
+		outline_color = oc
+		queue_redraw()
+@export var outline_width := 1.0:
+	set(ow):
+		outline_width = ow
+		queue_redraw()
+
+@export_subgroup("Handles Default")
+@export_range(2.0, 100.0, 0.5, "or_greater") var handle_size := 6.0:
+	set(hs):
+		handle_size = hs
+		queue_redraw()
+@export var handle_color := Color.WHITE:
+	set(hc):
+		handle_color = hc
+		queue_redraw()
+@export var handle_stroke_color := Color.BLACK:
+	set(hsc):
+		handle_stroke_color = hsc
+		queue_redraw()
+@export var handle_stroke_width := 1.0:
+	set(hsw):
+		handle_stroke_width = hsw
+		queue_redraw()
+
+@export_subgroup("Handles Hovered")
+@export var handle_hovered_color := Color.RED:
+	set(hhc):
+		handle_hovered_color = hhc
+		queue_redraw()
+@export var handle_hovered_stroke := Color.WHITE:
+	set(hhs):
+		handle_hovered_stroke = hhs
+		queue_redraw()
+
+@export_subgroup("Handle Lines")
+@export var handle_line_stroke := Color.BLACK:
+	set(hls):
+		handle_line_stroke = hls
+		queue_redraw()
+@export var handle_line_stroke_width := 1.0:
+	set(hlsw):
+		handle_line_stroke_width = hlsw
+		queue_redraw()
 
 @export_group("Curve settings")
-@export var other_nodes : Array[Node2D]:
-	set(on):
-		other_nodes = on
-		_update_parent_pts()
-
 @export_range(1, 10) var max_stages := 5:
 	set(ms):
 		max_stages = ms
 		_update_parent_pts()
-
 @export_range(0.0, 180.0) var tolerance_degrees := 4.0:
 	set(td):
 		tolerance_degrees = td
+		_update_parent_pts()
+
+@export_group("")
+@export var other_nodes : Array[Node2D]:
+	set(on):
+		other_nodes = on
 		_update_parent_pts()
 
 var _hovered_idx := -1
@@ -96,7 +133,7 @@ func _draw() -> void:
 	var is_closed := _is_curve_closed()
 	var result := []
 	for i in range(curve.point_count):
-		var p = curve.get_point_position(i)
+		var p = to_local(to_global(curve.get_point_position(i)).snapped(Vector2.ONE))
 		var c_i = curve.get_point_in(i)
 		var c_o = curve.get_point_out(i)
 		if not c_i.is_equal_approx(Vector2.ZERO):
@@ -107,21 +144,21 @@ func _draw() -> void:
 
 		if not c_o.is_equal_approx(Vector2.ZERO):
 			var co_hovered := _hovered_cp_out_idx == i
-			draw_circle(p + c_o, 5, handle_hovered_color if co_hovered else handle_color, true, -1.0, antialiased)
-			draw_circle(p + c_o, 5, handle_stroke_color if co_hovered else handle_stroke_color, false, handle_stroke_width, antialiased)
+			draw_circle(p + c_o, handle_size, handle_hovered_color if co_hovered else handle_color, true, -1.0, antialiased)
+			draw_circle(p + c_o, handle_size, handle_hovered_stroke if co_hovered else handle_stroke_color, false, handle_stroke_width, antialiased)
 
 		if not c_i.is_equal_approx(Vector2.ZERO):
 			var ci_hovered := _hovered_cp_in_idx == i
-			draw_circle(p + c_i, 5, handle_hovered_color if ci_hovered else handle_color, true, -1.0, antialiased)
-			draw_circle(p + c_i, 5, handle_stroke_color if ci_hovered else handle_stroke_color, false, handle_stroke_width, antialiased)
+			draw_circle(p + c_i, handle_size, handle_hovered_color if ci_hovered else handle_color, true, -1.0, antialiased)
+			draw_circle(p + c_i, handle_size, handle_hovered_stroke if ci_hovered else handle_stroke_color, false, handle_stroke_width, antialiased)
 
 	for i in range(curve.point_count):
 		if _is_curve_closed() and i == curve.point_count - 1:
 			continue
 		var p = curve.get_point_position(i)
 		var hovered := _hovered_idx == i
-		draw_rect(Rect2(p - Vector2(5,5), Vector2(10,10)), handle_hovered_color if hovered else handle_color, true, -1.0, antialiased)
-		draw_rect(Rect2(p - Vector2(5,5), Vector2(10,10)), handle_stroke_color if hovered else handle_stroke_color, false, handle_stroke_width, antialiased)
+		draw_rect(Rect2(p - Vector2.ONE * handle_size, Vector2.ONE * handle_size * 2), handle_hovered_color if hovered else handle_color, true, -1.0, antialiased)
+		draw_rect(Rect2(p - Vector2.ONE * handle_size, Vector2.ONE * handle_size * 2), handle_hovered_stroke if hovered else handle_stroke_color, false, handle_stroke_width, antialiased)
 
 
 func _input(event: InputEvent) -> void:
@@ -138,34 +175,50 @@ func _input(event: InputEvent) -> void:
 
 
 func _handle_dbl_click(g_cursor_pos : Vector2) -> void:
-	for i in curve.point_count:
-		var p = curve.get_point_position(i)
-		if Rect2(to_global(p) - Vector2(6,6), Vector2(12,12)).has_point(g_cursor_pos):
-			var ci := curve.get_point_in(i)
-			var co := curve.get_point_out(i)
-			if ci.is_equal_approx(Vector2.ZERO) and co.is_equal_approx(Vector2.ZERO):
-				var intersections_before := Geometry2DUtil.get_self_intersections(curve.tessellate(max_stages, tolerance_degrees)).size()
-				if i > 0:
-					curve.set_point_in(i, (Vector2.RIGHT * 20.0) * global_scale)
-				elif _is_curve_closed():
-					curve.set_point_in(curve.point_count -1, (Vector2.RIGHT * 20.0) * global_scale)
-				if i < curve.point_count - 1:
-					curve.set_point_out(i, (Vector2.LEFT * 20.0) * global_scale)
-				elif _is_curve_closed():
-					curve.set_point_out(0, (Vector2.LEFT * 20.0) * global_scale)
-				var intersections_after := Geometry2DUtil.get_self_intersections(curve.tessellate(max_stages, tolerance_degrees)).size()
-				if intersections_after > intersections_before:
-					if i > 0:
-						curve.set_point_in(i, (Vector2.LEFT * 20.0) * global_scale)
-					elif _is_curve_closed():
-						curve.set_point_in(curve.point_count -1, (Vector2.LEFT * 20.0) * global_scale)
-					if i < curve.point_count - 1:
-						curve.set_point_out(i, (Vector2.RIGHT * 20.0) * global_scale)
-					elif _is_curve_closed():
-						curve.set_point_out(0, (Vector2.RIGHT * 20.0) * global_scale)
-			else:
-				curve.set_point_in(i, Vector2.ZERO)
-				curve.set_point_out(i, Vector2.ZERO)
+	var i := _find_point_at(g_cursor_pos)
+	if i == 0 and _is_curve_closed():
+		_toggle_closing_point_control_points()
+	elif i > -1:
+		_toggle_control_points(i)
+
+
+func _toggle_closing_point_control_points() -> void:
+	var n := curve.point_count - 1
+	var ci := curve.get_point_in(n)
+	var co := curve.get_point_out(0)
+	if ci.is_equal_approx(Vector2.ZERO) and co.is_equal_approx(Vector2.ZERO):
+		var intersections_before := Geometry2DUtil.get_self_intersections(curve.tessellate(max_stages, tolerance_degrees)).size()
+		curve.set_point_in(n, (Vector2.RIGHT * handle_size * 3.0) * global_scale)
+		curve.set_point_out(0, (Vector2.LEFT * handle_size * 3.0) * global_scale)
+		var intersections_after := Geometry2DUtil.get_self_intersections(curve.tessellate(max_stages, tolerance_degrees)).size()
+		if intersections_after > intersections_before:
+			curve.set_point_in(n, (Vector2.LEFT * handle_size * 3.0) * global_scale)
+			curve.set_point_out(0, (Vector2.RIGHT * handle_size * 3.0) * global_scale)
+	else:
+		curve.set_point_in(n, Vector2.ZERO)
+		curve.set_point_out(0, Vector2.ZERO)
+		curve.set_point_in(0, Vector2.ZERO)
+		curve.set_point_out(n, Vector2.ZERO)
+
+
+func _toggle_control_points(i : int) -> void:
+	var ci := curve.get_point_in(i)
+	var co := curve.get_point_out(i)
+	if ci.is_equal_approx(Vector2.ZERO) and co.is_equal_approx(Vector2.ZERO):
+		var intersections_before := Geometry2DUtil.get_self_intersections(curve.tessellate(max_stages, tolerance_degrees)).size()
+		if i > 0:
+			curve.set_point_in(i, (Vector2.RIGHT * handle_size * 3.0) * global_scale)
+		if i < curve.point_count - 1:
+			curve.set_point_out(i, (Vector2.LEFT * handle_size * 3.0) * global_scale)
+		var intersections_after := Geometry2DUtil.get_self_intersections(curve.tessellate(max_stages, tolerance_degrees)).size()
+		if intersections_after > intersections_before:
+			if i > 0:
+				curve.set_point_in(i, (Vector2.LEFT * handle_size * 3.0) * global_scale)
+			if i < curve.point_count - 1:
+				curve.set_point_out(i, (Vector2.RIGHT * handle_size * 3.0) * global_scale)
+	else:
+		curve.set_point_in(i, Vector2.ZERO)
+		curve.set_point_out(i, Vector2.ZERO)
 
 
 func _handle_drag(g_cursor_pos : Vector2) -> void:
@@ -187,7 +240,7 @@ func _handle_drag(g_cursor_pos : Vector2) -> void:
 func _find_point_at(pos : Vector2) -> int:
 	for i in curve.point_count:
 		var p = curve.get_point_position(i)
-		if to_global(p).distance_squared_to(pos) <= 36.0:
+		if to_global(p).distance_squared_to(pos) <= handle_size**2:
 			return i
 	return -1
 
@@ -209,12 +262,12 @@ func _handle_hover(g_cursor_pos : Vector2) -> void:
 	if _hovered_idx < 0:
 		for i in curve.point_count:
 			var cp_in = curve.get_point_position(i) + curve.get_point_in(i)
-			if to_global(cp_in).distance_squared_to(g_cursor_pos) <= 36.0:
+			if to_global(cp_in).distance_squared_to(g_cursor_pos) <= handle_size**2:
 				_hovered_cp_in_idx = i
 	if _hovered_cp_in_idx < 0 and _hovered_idx < 0:
 		for i in curve.point_count:
 			var cp_out = curve.get_point_position(i) + curve.get_point_out(i)
-			if to_global(cp_out).distance_squared_to(g_cursor_pos) <= 36.0:
+			if to_global(cp_out).distance_squared_to(g_cursor_pos) <= handle_size**2:
 				_hovered_cp_out_idx = i
 
 	if before != _hovered_idx or before_cp_in != _hovered_cp_in_idx or before_cp_out != _hovered_cp_out_idx:
@@ -223,4 +276,4 @@ func _handle_hover(g_cursor_pos : Vector2) -> void:
 
 func _is_curve_closed() -> bool:
 	var n = curve.point_count
-	return n > 2 and curve.get_point_position(0).distance_squared_to(curve.get_point_position(n - 1)) < 0.0001
+	return n > 2 and curve.get_point_position(0).distance_squared_to(curve.get_point_position(n - 1)) < 0.00001
