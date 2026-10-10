@@ -230,11 +230,17 @@ func _handle_drag(g_cursor_pos : Vector2) -> void:
 	if _hovered_cp_in_idx > -1:
 		curve.set_point_in(_hovered_cp_in_idx, cursor_pos - curve.get_point_position(_hovered_cp_in_idx))
 		if Input.is_key_pressed(KEY_SHIFT):
-			curve.set_point_out(_hovered_cp_in_idx, -(cursor_pos - curve.get_point_position(_hovered_cp_in_idx)))
+			if _is_curve_closed() and _hovered_cp_in_idx == curve.point_count - 1:
+				curve.set_point_out(0, -(cursor_pos - curve.get_point_position(_hovered_cp_in_idx)))
+			elif _hovered_cp_in_idx < curve.point_count - 1:
+				curve.set_point_out(_hovered_cp_in_idx, -(cursor_pos - curve.get_point_position(_hovered_cp_in_idx)))
 	if _hovered_cp_out_idx > -1:
 		curve.set_point_out(_hovered_cp_out_idx, cursor_pos - curve.get_point_position(_hovered_cp_out_idx))
 		if Input.is_key_pressed(KEY_SHIFT):
-			curve.set_point_in(_hovered_cp_out_idx, -(cursor_pos - curve.get_point_position(_hovered_cp_out_idx)))
+			if _is_curve_closed() and _hovered_cp_out_idx == 0:
+				curve.set_point_in(curve.point_count - 1, -(cursor_pos - curve.get_point_position(_hovered_cp_out_idx)))
+			elif _hovered_cp_out_idx > 0:
+				curve.set_point_in(_hovered_cp_out_idx, -(cursor_pos - curve.get_point_position(_hovered_cp_out_idx)))
 
 
 func _find_point_at(pos : Vector2) -> int:
