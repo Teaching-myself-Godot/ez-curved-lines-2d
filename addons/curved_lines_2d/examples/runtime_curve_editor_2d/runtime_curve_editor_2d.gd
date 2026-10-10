@@ -99,19 +99,26 @@ func _draw() -> void:
 		var p = curve.get_point_position(i)
 		var c_i = curve.get_point_in(i)
 		var c_o = curve.get_point_out(i)
-		draw_line(p, p + c_i, handle_line_stroke, handle_line_stroke_width, antialiased)
-		draw_line(p, p + c_o, handle_line_stroke, handle_line_stroke_width, antialiased)
+		if not c_i.is_equal_approx(Vector2.ZERO):
+			draw_line(p, p + c_i, handle_line_stroke, handle_line_stroke_width, antialiased)
 
-		var ci_hovered := _hovered_cp_in_idx == i
-		draw_circle(p + c_i, 5, handle_hovered_color if ci_hovered else handle_color, true, -1.0, antialiased)
-		draw_circle(p + c_i, 5, handle_stroke_color if ci_hovered else handle_stroke_color, false, handle_stroke_width, antialiased)
+		if not c_o.is_equal_approx(Vector2.ZERO):
+			draw_line(p, p + c_o, handle_line_stroke, handle_line_stroke_width, antialiased)
 
+		if not c_o.is_equal_approx(Vector2.ZERO):
+			var co_hovered := _hovered_cp_out_idx == i
+			draw_circle(p + c_o, 5, handle_hovered_color if co_hovered else handle_color, true, -1.0, antialiased)
+			draw_circle(p + c_o, 5, handle_stroke_color if co_hovered else handle_stroke_color, false, handle_stroke_width, antialiased)
 
-		var co_hovered := _hovered_cp_out_idx == i
-		draw_circle(p + c_o, 5, handle_hovered_color if co_hovered else handle_color, true, -1.0, antialiased)
-		draw_circle(p + c_o, 5, handle_stroke_color if co_hovered else handle_stroke_color, false, handle_stroke_width, antialiased)
+		if not c_i.is_equal_approx(Vector2.ZERO):
+			var ci_hovered := _hovered_cp_in_idx == i
+			draw_circle(p + c_i, 5, handle_hovered_color if ci_hovered else handle_color, true, -1.0, antialiased)
+			draw_circle(p + c_i, 5, handle_stroke_color if ci_hovered else handle_stroke_color, false, handle_stroke_width, antialiased)
 
-
+	for i in range(curve.point_count):
+		if _is_curve_closed() and i == curve.point_count - 1:
+			continue
+		var p = curve.get_point_position(i)
 		var hovered := _hovered_idx == i
 		draw_rect(Rect2(p - Vector2(5,5), Vector2(10,10)), handle_hovered_color if hovered else handle_color, true, -1.0, antialiased)
 		draw_rect(Rect2(p - Vector2(5,5), Vector2(10,10)), handle_stroke_color if hovered else handle_stroke_color, false, handle_stroke_width, antialiased)
@@ -121,66 +128,71 @@ func _input(event: InputEvent) -> void:
 	if not is_visible_in_tree():
 		return
 	if event is InputEventMouseButton:
-		_handle_button(event)
+		if event.double_click:
+			_handle_dbl_click(event.global_position)
 	if event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			_handle_drag(event)
+			_handle_drag(event.global_position)
 		else:
-			_handle_hover(event)
+			_handle_hover(event.global_position)
 
 
-func _handle_button(event : InputEventMouseButton) -> void:
-	if event.double_click:
-		for i in curve.point_count:
-			var p = curve.get_point_position(i)
-			if Rect2(to_global(p) - Vector2(6,6), Vector2(12,12)).has_point(event.global_position):
-				var ci := curve.get_point_in(i)
-				var co := curve.get_point_out(i)
-				if ci.is_equal_approx(Vector2.ZERO) and co.is_equal_approx(Vector2.ZERO):
-					var intersections_before := Geometry2DUtil.get_self_intersections(curve.tessellate(max_stages, tolerance_degrees)).size()
+func _handle_dbl_click(g_cursor_pos : Vector2) -> void:
+	for i in curve.point_count:
+		var p = curve.get_point_position(i)
+		if Rect2(to_global(p) - Vector2(6,6), Vector2(12,12)).has_point(g_cursor_pos):
+			var ci := curve.get_point_in(i)
+			var co := curve.get_point_out(i)
+			if ci.is_equal_approx(Vector2.ZERO) and co.is_equal_approx(Vector2.ZERO):
+				var intersections_before := Geometry2DUtil.get_self_intersections(curve.tessellate(max_stages, tolerance_degrees)).size()
+				if i > 0:
+					curve.set_point_in(i, (Vector2.RIGHT * 20.0) * global_scale)
+				elif _is_curve_closed():
+					curve.set_point_in(curve.point_count -1, (Vector2.RIGHT * 20.0) * global_scale)
+				if i < curve.point_count - 1:
+					curve.set_point_out(i, (Vector2.LEFT * 20.0) * global_scale)
+				elif _is_curve_closed():
+					curve.set_point_out(0, (Vector2.LEFT * 20.0) * global_scale)
+				var intersections_after := Geometry2DUtil.get_self_intersections(curve.tessellate(max_stages, tolerance_degrees)).size()
+				if intersections_after > intersections_before:
 					if i > 0:
-						curve.set_point_in(i, (Vector2.RIGHT * 20.0) * global_scale)
+						curve.set_point_in(i, (Vector2.LEFT * 20.0) * global_scale)
 					elif _is_curve_closed():
-						curve.set_point_in(curve.point_count -1, (Vector2.RIGHT * 20.0) * global_scale)
+						curve.set_point_in(curve.point_count -1, (Vector2.LEFT * 20.0) * global_scale)
 					if i < curve.point_count - 1:
-						curve.set_point_out(i, (Vector2.LEFT * 20.0) * global_scale)
+						curve.set_point_out(i, (Vector2.RIGHT * 20.0) * global_scale)
 					elif _is_curve_closed():
-						curve.set_point_out(0, (Vector2.LEFT * 20.0) * global_scale)
-					var intersections_after := Geometry2DUtil.get_self_intersections(curve.tessellate(max_stages, tolerance_degrees)).size()
-					if intersections_after > intersections_before:
-						if i > 0:
-							curve.set_point_in(i, (Vector2.LEFT * 20.0) * global_scale)
-						elif _is_curve_closed():
-							curve.set_point_in(curve.point_count -1, (Vector2.LEFT * 20.0) * global_scale)
-						if i < curve.point_count - 1:
-							curve.set_point_out(i, (Vector2.RIGHT * 20.0) * global_scale)
-						elif _is_curve_closed():
-							curve.set_point_out(0, (Vector2.RIGHT * 20.0) * global_scale)
-				else:
-					curve.set_point_in(i, Vector2.ZERO)
-					curve.set_point_out(i, Vector2.ZERO)
+						curve.set_point_out(0, (Vector2.RIGHT * 20.0) * global_scale)
+			else:
+				curve.set_point_in(i, Vector2.ZERO)
+				curve.set_point_out(i, Vector2.ZERO)
 
 
-
-func _handle_drag(event : InputEventMouseMotion) -> void:
+func _handle_drag(g_cursor_pos : Vector2) -> void:
+	var cursor_pos := to_local(g_cursor_pos)
 	if _hovered_idx > -1:
-		if _is_curve_closed() and _hovered_idx == curve.point_count - 1:
-			curve.set_point_position(0, to_local(event.global_position))
-		curve.set_point_position(_hovered_idx, to_local(event.global_position))
-
+		if _is_curve_closed() and _hovered_idx == 0:
+			curve.set_point_position(curve.point_count - 1, cursor_pos)
+		curve.set_point_position(_hovered_idx, cursor_pos)
 	if _hovered_cp_in_idx > -1:
-		curve.set_point_in(_hovered_cp_in_idx, to_local(event.global_position) - curve.get_point_position(_hovered_cp_in_idx))
+		curve.set_point_in(_hovered_cp_in_idx, cursor_pos - curve.get_point_position(_hovered_cp_in_idx))
 		if Input.is_key_pressed(KEY_SHIFT):
-			curve.set_point_out(_hovered_cp_in_idx, -(to_local(event.global_position) - curve.get_point_position(_hovered_cp_in_idx)))
+			curve.set_point_out(_hovered_cp_in_idx, -(cursor_pos - curve.get_point_position(_hovered_cp_in_idx)))
 	if _hovered_cp_out_idx > -1:
-
-		curve.set_point_out(_hovered_cp_out_idx, to_local(event.global_position) - curve.get_point_position(_hovered_cp_out_idx))
+		curve.set_point_out(_hovered_cp_out_idx, cursor_pos - curve.get_point_position(_hovered_cp_out_idx))
 		if Input.is_key_pressed(KEY_SHIFT):
-			curve.set_point_in(_hovered_cp_out_idx, -(to_local(event.global_position) - curve.get_point_position(_hovered_cp_out_idx)))
+			curve.set_point_in(_hovered_cp_out_idx, -(cursor_pos - curve.get_point_position(_hovered_cp_out_idx)))
 
 
+func _find_point_at(pos : Vector2) -> int:
+	for i in curve.point_count:
+		var p = curve.get_point_position(i)
+		if to_global(p).distance_squared_to(pos) <= 36.0:
+			return i
+	return -1
 
-func _handle_hover(event : InputEventMouseMotion) -> void:
+
+func _handle_hover(g_cursor_pos : Vector2) -> void:
 	var before := _hovered_idx
 	var before_cp_in := _hovered_cp_in_idx
 	var before_cp_out := _hovered_cp_out_idx
@@ -192,18 +204,17 @@ func _handle_hover(event : InputEventMouseMotion) -> void:
 	if _hovered_cp_out_idx > -1:
 		_hovered_cp_out_idx = -1
 
-	for i in curve.point_count:
-		var p = curve.get_point_position(i)
-		if Rect2(to_global(p) - Vector2(6,6), Vector2(12,12)).has_point(event.global_position):
-			_hovered_idx = i
+	_hovered_idx = _find_point_at(g_cursor_pos)
 
 	if _hovered_idx < 0:
 		for i in curve.point_count:
 			var cp_in = curve.get_point_position(i) + curve.get_point_in(i)
-			if to_global(cp_in).distance_to(event.global_position) <= 6.0:
+			if to_global(cp_in).distance_squared_to(g_cursor_pos) <= 36.0:
 				_hovered_cp_in_idx = i
+	if _hovered_cp_in_idx < 0 and _hovered_idx < 0:
+		for i in curve.point_count:
 			var cp_out = curve.get_point_position(i) + curve.get_point_out(i)
-			if to_global(cp_out).distance_to(event.global_position) <= 6.0:
+			if to_global(cp_out).distance_squared_to(g_cursor_pos) <= 36.0:
 				_hovered_cp_out_idx = i
 
 	if before != _hovered_idx or before_cp_in != _hovered_cp_in_idx or before_cp_out != _hovered_cp_out_idx:
