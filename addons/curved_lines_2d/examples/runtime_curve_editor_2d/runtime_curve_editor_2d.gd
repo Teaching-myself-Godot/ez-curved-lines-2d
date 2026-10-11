@@ -65,7 +65,7 @@ class_name RuntimeCurveEditor2D extends Path2D
 		tolerance_degrees = td
 		_update_parent_pts()
 
-@export_group("")
+@export_group("Assigned Nodes")
 @export var other_nodes : Array[Node2D]:
 	set(on):
 		other_nodes = on
@@ -170,8 +170,10 @@ func _input(event: InputEvent) -> void:
 	if not is_visible_in_tree():
 		return
 	if event is InputEventMouseButton:
-		if event.double_click:
+		if event.double_click and event.button_index == MOUSE_BUTTON_LEFT:
 			_handle_dbl_click(event.global_position)
+		if event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+			_handle_right_click()
 	if event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			_handle_drag(event.global_position)
@@ -226,9 +228,14 @@ func _add_point_at_hovered_point():
 	var sliced_segment := Geometry2DUtil.get_sliced_curve_segment(
 			curve, before_segment, _hover_segment_point,
 			max_stages, tolerance_degrees)
-	curve.add_point(_hover_segment_point, sliced_segment.get_point_in(1), sliced_segment.get_point_out(1), before_segment)
-	curve.set_point_out(before_segment - 1, sliced_segment.get_point_out(0))
-	curve.set_point_in(before_segment + 1, sliced_segment.get_point_in(2))
+	curve.add_point(_hover_segment_point, Vector2.ZERO, Vector2.ZERO, before_segment)
+
+	if not (sliced_segment.get_point_out(0).is_equal_approx(Vector2.ZERO) and
+			sliced_segment.get_point_in(2).is_equal_approx(Vector2.ZERO)):
+		curve.set_point_in(before_segment, sliced_segment.get_point_in(1))
+		curve.set_point_out(before_segment, sliced_segment.get_point_out(1))
+		curve.set_point_out(before_segment - 1, sliced_segment.get_point_out(0))
+		curve.set_point_in(before_segment + 1, sliced_segment.get_point_in(2))
 
 
 func _toggle_closing_point_control_points() -> void:
@@ -268,6 +275,15 @@ func _toggle_control_points(i : int) -> void:
 	else:
 		curve.set_point_in(i, Vector2.ZERO)
 		curve.set_point_out(i, Vector2.ZERO)
+
+
+func _handle_right_click() -> void:
+	if _hovered_cp_in_idx > -1:
+		curve.set_point_in(_hovered_cp_in_idx, Vector2.ZERO)
+	if _hovered_cp_out_idx > -1:
+		curve.set_point_out(_hovered_cp_out_idx, Vector2.ZERO)
+	if _hovered_idx > -1 and curve.point_count > 2:
+		curve.remove_point(_hovered_idx)
 
 
 func _handle_drag(g_cursor_pos : Vector2) -> void:
