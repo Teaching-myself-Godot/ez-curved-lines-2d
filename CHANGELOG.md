@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 3.0.2 - Create Tab
+## 3.0.3 - Create Tab
 
 ### Added
 
@@ -11,6 +11,7 @@
 - Make fill-in selected parent shape optional for brush 
 - Place new ellipse/rectangle by clicking
 - Basic CSS parser for classes in the `<style>`-tag in order to support more svg formats
+- Fix auto scaling textures using SVGTextureHelper by dropping custom Resource class (breaking change vs 2.X.X releases)
 
 ### Removed
 
