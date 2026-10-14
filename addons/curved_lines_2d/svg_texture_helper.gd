@@ -11,8 +11,16 @@ const PROPERTY_MAPPINGS: Dictionary = {
 	"ignore_texture_size": true
 }
 
-@export var svg_resource := SVGResource.new(): set = _set_svg_resource
+## Emitted when the SVG texture has been rendered or re-rendered.
+signal texture_updated(new_texture: Texture2D)
+
+@export_file("*.svg") var svg_file_path: String = "" : set = _set_svg_file_path
+@export var render_scale: float = 1.0 : set = _set_render_scale # I'd recommend rendering at half scale
+@export var svg_string := ""
+@export var original_size := Vector2.ZERO
 @export var target_property: String = "" : set = _set_target_property
+
+var texture: Texture2D
 
 var _available_texture_properties: Array[String] = []
 var _is_saving_scene: bool = false
@@ -43,8 +51,7 @@ func _ready() -> void:
 		_connect_save_signals()
 
 	# Perform initial render if we have a resource.
-	if svg_resource:
-		_queue_render()
+	_queue_render()
 
 func _connect_save_signals() -> void:
 	if Engine.is_editor_hint():
@@ -166,8 +173,8 @@ func _set_target_property(new_property: String) -> void:
 	target_property = new_property
 
 	# Re-apply texture if we have one
-	if svg_resource and svg_resource.texture and get_parent():
-		_on_texture_updated(svg_resource.texture)
+	if texture and get_parent():
+		_on_texture_updated(texture)
 
 func _update_parent_properties() -> void:
 	if get_parent() == null:
@@ -183,38 +190,34 @@ func _has_property(target: Object, prop_name: StringName) -> bool:
 			return true
 	return false
 
-func _set_svg_resource(new_resource: SVGResource) -> void:
-	if not is_node_ready():
-		await ready
-	if svg_resource == new_resource:
-		return
+#func _set_svg_resource(new_resource: SVGResource) -> void:
+	#if not is_node_ready():
+		#await ready
+	#if svg_resource == new_resource:
+		#return
+#
+	## Disconnect from old resource if it exists
+	#if svg_resource:
+		#if svg_resource.is_connected("texture_updated", _on_texture_updated):
+			#svg_resource.texture_updated.disconnect(_on_texture_updated)
+		## Disconnect from the changed signal
+		#if svg_resource.is_connected("changed", _on_resource_changed):
+			#svg_resource.changed.disconnect(_on_resource_changed)
+#
+	#svg_resource = new_resource
+#
+	#if svg_resource:
+		#svg_resource.texture_updated.connect(_on_texture_updated)
+		## CONNECT TO THE CHANGED SIGNAL
+		#svg_resource.changed.connect(_on_resource_changed)
+#
+		## If the resource already has a texture, apply it immediately.
+		#if svg_resource.texture:
+			#_on_texture_updated(svg_resource.texture)
+#
+		## Queue a render to ensure it's the correct size.
+		#_queue_render()
 
-	# Disconnect from old resource if it exists
-	if svg_resource:
-		if svg_resource.is_connected("texture_updated", _on_texture_updated):
-			svg_resource.texture_updated.disconnect(_on_texture_updated)
-		# Disconnect from the changed signal
-		if svg_resource.is_connected("changed", _on_resource_changed):
-			svg_resource.changed.disconnect(_on_resource_changed)
-
-	svg_resource = new_resource
-
-	if svg_resource:
-		svg_resource.texture_updated.connect(_on_texture_updated)
-		# CONNECT TO THE CHANGED SIGNAL
-		svg_resource.changed.connect(_on_resource_changed)
-
-		# If the resource already has a texture, apply it immediately.
-		if svg_resource.texture:
-			_on_texture_updated(svg_resource.texture)
-
-		# Queue a render to ensure it's the correct size.
-		_queue_render()
-
-# Handles resource changes
-func _on_resource_changed() -> void:
-	# This gets called when svg_file_path or render_scale changes
-	_queue_render()
 
 func _on_texture_updated(new_texture: Texture2D) -> void:
 	if get_parent() and not target_property.is_empty():
@@ -232,7 +235,10 @@ func _on_texture_updated(new_texture: Texture2D) -> void:
 
 ## Called on resize or when the resource changes.
 func _queue_render() -> void:
-	if svg_resource == null or svg_resource.svg_string.is_empty():
+	if not is_instance_valid(get_parent()):
+		return
+
+	if svg_string.is_empty():
 		get_parent().set(target_property, null)
 		return
 	# Don't render during save operations
@@ -240,7 +246,7 @@ func _queue_render() -> void:
 		return
 
 	# Check for valid conditions before requesting a render.
-	if not is_instance_valid(svg_resource) or not is_instance_valid(get_parent()):
+	if not is_instance_valid(get_parent()):
 		return
 
 	if Engine.is_editor_hint() or get_tree():
@@ -260,10 +266,10 @@ func _queue_render() -> void:
 		):
 			rescale_factor = 1.0
 		else:
-			rescale_factor = (target_size.x / svg_resource.original_size.x) * svg_resource.render_scale
+			rescale_factor = (target_size.x / original_size.x) * render_scale
 
 		var image := Image.new()
-		var error := image.load_svg_from_string(Marshalls.base64_to_utf8(svg_resource.svg_string), rescale_factor)
+		var error := image.load_svg_from_string(Marshalls.base64_to_utf8(svg_string), rescale_factor)
 
 		if error != OK:
 			push_error("Failed to render SVG: " + str(error))
@@ -275,7 +281,7 @@ func _queue_render() -> void:
 			stretch_mode == TextureRect.StretchMode.STRETCH_TILE or
 			stretch_mode == TextureRect.StretchMode.STRETCH_KEEP_CENTERED
 		):
-			image_texture.set_size_override(svg_resource.original_size)
+			image_texture.set_size_override(original_size)
 		else:
 			get_parent().set(target_property, image_texture)
 
@@ -293,3 +299,40 @@ func manual_prepare_for_save() -> void:
 # Manual save restoration - you can call this from editor plugins or scripts
 func manual_restore_after_save() -> void:
 	_restore_after_save()
+
+
+func _set_svg_file_path(path: String) -> void:
+	if Engine.is_editor_hint():
+		if svg_file_path == path:
+			return
+		svg_file_path = path
+		if FileAccess.file_exists(path):
+			var file := FileAccess.open(path, FileAccess.READ)
+			svg_string = Marshalls.utf8_to_base64(file.get_as_text())
+			var image := Image.new()
+			var error := image.load_svg_from_string(Marshalls.base64_to_utf8(svg_string))
+			if error != OK:
+				push_error("Failed to render SVG: " + str(error))
+				return
+			original_size = image.get_size()
+			file.close()
+		else:
+			svg_string = ""
+			texture = null
+
+	# Notify that the resource has changed. The helper will trigger a re-render.
+	_queue_render()
+
+func _set_render_scale(scale: float) -> void:
+	if render_scale == scale:
+		return
+	render_scale = scale
+	# Notify that the resource has changed. The helper will trigger a re-render.
+	_queue_render()
+
+## Internal method called by the manager upon render completion.
+func _update_texture(new_texture: Texture2D) -> void:
+	texture = new_texture
+	texture_updated.emit(texture)
+	# Notify the editor that this resource has changed, so it updates the inspector.
+	_queue_render()
