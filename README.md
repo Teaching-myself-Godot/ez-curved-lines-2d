@@ -1063,10 +1063,9 @@ As you can see in this screenshot, the `DynamicOutline2D` node is not deleted, b
 
 # Autoscaling SVG Textures for GUI Controls
 
-Release `2.15` makes it easy to add crisp, autoscaling images for your GUI Control nodes using two new classes:
+Release `2.15` makes it easy to add crisp, autoscaling images for your GUI Control nodes using this new node typr:
 
-- `SVGTextureHelper`: a `Node` that manages an SVG image resource when it's a direct child of a `TextureRect`, `Button`, or `TextureButton`
-- `SVGTextureResource`: a `Resource` that holds a reference to the svg file and a base64 encoded string of the file's contents, as well as a baseline scale factor (so you can even keep the image crips and sharp at higher zoom levels)
+- `SVGTextureHelper`: a `Node` that manages an SVG image texture property when it's a direct child of a `TextureRect`, `Button`, or `TextureButton`. It holds a reference to the svg file and a base64 encoded string of the file's contents, as well as a baseline scale factor (so you can even keep the image crips and sharp at higher zoom levels)
 
 
 ## Adding Autoscaling SVG Textures via the Inspector
@@ -1079,7 +1078,7 @@ These 3 control nodes now have an extra button `Set Scalable SVG Texture` in the
 
 ![setting autoscaling svg textures](./addons/curved_lines_2d/screenshots/scaling_textures.png)
 
-Once an SVG file has been chosen as a texture, a `SVGTextureHelper` node is automatically added to manage the automatically scaled image via a `SVGTextureResource`.
+Once an SVG file has been chosen as a texture, a `SVGTextureHelper` node is automatically added to manage the automatically scaled image.
 
 A button with the name of the texture property and an icon-preview will then be presented with which you can pick another SVG file source.
 
