@@ -268,7 +268,7 @@ func _on_change_svg_helper_pressed(parent_control : Control, helper : SVGTexture
 	dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
 	dialog.file_selected.connect(func(path):
 			dialog.queue_free()
-			helper.svg_resource.svg_file_path = path
+			helper.svg_file_path = path
 			parent_control.notify_property_list_changed()
 	)
 	EditorInterface.get_base_control().add_child(dialog)
@@ -292,8 +292,7 @@ func _add_svg_helper(file_path : String, parent_control : Control, target_proper
 	parent_control.add_child(svg_helper, true)
 	svg_helper.owner = parent_control.owner if parent_control.owner else parent_control
 	svg_helper.target_property = target_property
-	svg_helper.svg_resource = SVGResource.new()
-	svg_helper.svg_resource.svg_file_path = file_path
+	svg_helper.svg_file_path = file_path
 	parent_control.notify_property_list_changed()
 	button.hide()
 
