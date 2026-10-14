@@ -11,8 +11,6 @@ const PROPERTY_MAPPINGS: Dictionary = {
 	"ignore_texture_size": true
 }
 
-## Emitted when the SVG texture has been rendered or re-rendered.
-signal texture_updated(new_texture: Texture2D)
 
 @export_file("*.svg") var svg_file_path: String = "" : set = _set_svg_file_path
 @export var render_scale: float = 1.0 : set = _set_render_scale # I'd recommend rendering at half scale
@@ -184,39 +182,12 @@ func _update_parent_properties() -> void:
 		if _has_property(get_parent(), prop):
 			get_parent().set(prop, PROPERTY_MAPPINGS[prop])
 
+
 func _has_property(target: Object, prop_name: StringName) -> bool:
 	for info in target.get_property_list():
 		if info.name == prop_name:
 			return true
 	return false
-
-#func _set_svg_resource(new_resource: SVGResource) -> void:
-	#if not is_node_ready():
-		#await ready
-	#if svg_resource == new_resource:
-		#return
-#
-	## Disconnect from old resource if it exists
-	#if svg_resource:
-		#if svg_resource.is_connected("texture_updated", _on_texture_updated):
-			#svg_resource.texture_updated.disconnect(_on_texture_updated)
-		## Disconnect from the changed signal
-		#if svg_resource.is_connected("changed", _on_resource_changed):
-			#svg_resource.changed.disconnect(_on_resource_changed)
-#
-	#svg_resource = new_resource
-#
-	#if svg_resource:
-		#svg_resource.texture_updated.connect(_on_texture_updated)
-		## CONNECT TO THE CHANGED SIGNAL
-		#svg_resource.changed.connect(_on_resource_changed)
-#
-		## If the resource already has a texture, apply it immediately.
-		#if svg_resource.texture:
-			#_on_texture_updated(svg_resource.texture)
-#
-		## Queue a render to ensure it's the correct size.
-		#_queue_render()
 
 
 func _on_texture_updated(new_texture: Texture2D) -> void:
@@ -333,6 +304,5 @@ func _set_render_scale(scale: float) -> void:
 ## Internal method called by the manager upon render completion.
 func _update_texture(new_texture: Texture2D) -> void:
 	texture = new_texture
-	texture_updated.emit(texture)
 	# Notify the editor that this resource has changed, so it updates the inspector.
 	_queue_render()
