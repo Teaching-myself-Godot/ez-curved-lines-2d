@@ -155,6 +155,11 @@ var _hover_gradient_to := false
 var _hover_gradient_color_stop_idx : int = -1
 var _hover_closest_point_on_gradient := Vector2.INF
 var _select_hinted_svs : Array[ScalableVectorShape2D] = []
+var _resize_orig_size := Vector2.INF
+var _resize_orig_pos := Vector2.INF
+var _resize_orig_offset := Vector2.INF
+var _resize_orig_top_left := Vector2.INF
+
 
 # Merge points helper vars
 var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
@@ -1889,12 +1894,33 @@ func _update_curve_point_position(current_selection : ScalableVectorShape2D, mou
 func _update_rect_dimensions(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
 	if not in_undo_redo_transaction:
 		_start_undo_redo_transaction("Change rect size on " + str(svs))
-		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS] = [[svs, 'size', svs.size]]
+		undo_redo_transaction[UndoRedoEntry.UNDO_PROPS] = [
+			[svs, 'size', svs.size],
+			[svs, 'offset', svs.offset]
+		]
+		_resize_orig_size = svs.size
+		_resize_orig_pos = svs.position
+		_resize_orig_offset = svs.offset
+		_resize_orig_top_left = svs.get_global_top_left()
 	if _is_snapped_to_pixel():
 		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
-	var d := (svs.to_local(mouse_pos) - svs.offset).rotated(-svs.spin)
-	svs.size = d * 2
-	undo_redo_transaction[UndoRedoEntry.DO_PROPS] = [[svs, 'size', svs.size]]
+
+	if _is_ctrl_or_cmd_pressed():
+		var d := (svs.to_local(mouse_pos) - svs.offset).rotated(-svs.spin)
+		svs.size = d * 2
+	else:
+		var d := (svs.to_local(mouse_pos) - svs.to_local(_resize_orig_top_left)).rotated(-svs.spin)
+		svs.size = d
+		svs.offset = _resize_orig_offset - (_resize_orig_size - svs.size) * 0.5
+		if _is_snapped_to_pixel():
+			svs.size = svs.size.snapped(Vector2.ONE)
+			svs.position = svs.position.snapped(Vector2.ONE)
+			svs.offset = svs.offset.snapped(Vector2.ONE)
+
+	undo_redo_transaction[UndoRedoEntry.DO_PROPS] = [
+		[svs, 'size', svs.size],
+		[svs, 'offset', svs.offset]
+	]
 
 
 func _update_rect_corner_radius(svs : ScalableVectorShape2D, mouse_pos : Vector2, prop_name : String, is_symmetrical : bool) -> void:
