@@ -1795,12 +1795,12 @@ func _draw_preview(viewport_control : Control) -> void:
 			points = points.map(func(p): return current_selection.get_global_transform() * p)
 			stroke_width *= current_selection.get_global_transform().get_scale().x
 			glob_pos = current_selection.get_global_transform().get_origin()
-
+		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _editor_has_cursor():
-			var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 			if _is_snapped_to_pixel():
 				mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 			mul = Transform2D(mul.get_rotation(), mul.get_scale(), 0.0, -(mouse_pos - glob_pos))
+
 		points = points.map(func(p): return _vp_transform(p * mul))
 		var stroke_points := points
 		if _get_default_stroke_extrusion_direction() != ScalableVectorShape2D.StrokeExtrusionDirection.MIDDLE:
@@ -1826,6 +1826,7 @@ func _draw_preview(viewport_control : Control) -> void:
 
 		if not _is_add_fill_enabled() and not _is_add_stroke_enabled():
 			viewport_control.draw_polyline(points, Color.LIME, 1)
+		_draw_crosshair(viewport_control, _vp_transform(mouse_pos))
 
 
 func _start_undo_redo_transaction(name := "", undo_redo_action_type := UndoRedoActionType.UNSPECIFIED) -> void:
