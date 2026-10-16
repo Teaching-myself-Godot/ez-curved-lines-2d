@@ -158,11 +158,13 @@ var _hover_gradient_to := false
 var _hover_gradient_color_stop_idx : int = -1
 var _hover_closest_point_on_gradient := Vector2.INF
 var _select_hinted_svs : Array[ScalableVectorShape2D] = []
+
+# Resize handle helpers
 var _resize_orig_size := Vector2.INF
 var _resize_orig_pos := Vector2.INF
 var _resize_orig_offset := Vector2.INF
 var _resize_orig_top_left := Vector2.INF
-
+var _create_size_override := Vector2.INF
 
 # Merge points helper vars
 var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
@@ -1710,16 +1712,18 @@ func _handle_create_ellipse_preview(viewport_control : Control) -> void:
 	if shape_preview:
 		_draw_preview(viewport_control)
 	if _editor_has_cursor():
-		_draw_hint(viewport_control, "Click to create an ellipse here" +
-			"\n - You can change its shape in the Create tab")
+		_draw_hint(viewport_control, "- Left click or drag to create an ellipse" +
+			("" if _get_center_ellipse_offset() or _is_ctrl_or_cmd_pressed() else "\n - Hold Ctrl to center pivot")
+		)
 
 
 func _handle_create_rect_preview(viewport_control : Control) -> void:
 	if shape_preview:
 		_draw_preview(viewport_control)
 	if _editor_has_cursor():
-		_draw_hint(viewport_control, "Click to create a rectangle here" +
-			"\n - You can change its shape in the Create tab")
+		_draw_hint(viewport_control, "- Left click or drag to create a rectangle" +
+			("" if _get_center_ellipse_offset() or _is_ctrl_or_cmd_pressed() else "\n - Hold Ctrl to center pivot")
+		)
 
 
 func _is_editing_width_curve(svs : ScalableVectorShape2D) -> bool:
@@ -1804,7 +1808,11 @@ func _draw_preview(viewport_control : Control) -> void:
 			points = points.map(func(p): return current_selection.get_global_transform() * p)
 			stroke_width *= current_selection.get_global_transform().get_scale().x
 			glob_pos = current_selection.get_global_transform().get_origin()
-		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+		var mouse_pos := (
+			_drag_start
+				if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) else
+			EditorInterface.get_editor_viewport_2d().get_mouse_position()
+		)
 		if _editor_has_cursor():
 			if _is_snapped_to_pixel():
 				mouse_pos = mouse_pos.snapped(_get_snap_resolution())
@@ -3020,52 +3028,121 @@ func _handle_bone_paint_input(event : InputEvent) -> bool:
 	return false
 
 
+func _get_preview_rect_size() -> Vector2:
+	return (
+			Vector2(_get_default_rect_width(), _get_default_rect_height())
+				if _create_size_override == Vector2.INF else
+			_create_size_override
+		)
+
+
+func _get_preview_ellipse_size() -> Vector2:
+	return (
+			Vector2(_get_default_ellipse_rx() * 2, _get_default_ellipse_ry() * 2)
+				if _create_size_override == Vector2.INF else
+			_create_size_override
+	)
+
+
+func _get_preview_ellipse_offset() -> Vector2:
+	if _get_center_ellipse_offset() or _is_ctrl_or_cmd_pressed():
+		return Vector2.ZERO
+	if _create_size_override == Vector2.INF:
+		return _get_ellipse_offset_position()
+	return _create_size_override * 0.5
+
+
+func _get_preview_rect_offset() -> Vector2:
+	if _get_center_rect_offset() or _is_ctrl_or_cmd_pressed():
+		return Vector2.ZERO
+	if _create_size_override == Vector2.INF:
+		return _get_rect_offset_position()
+	return _create_size_override * 0.5
+
+
 func _handle_create_primitive_input(event) -> bool:
 	update_overlays()
 	if not shape_preview:
 		shape_preview = Curve2D.new()
 	if _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE:
 		ScalableVectorShape2D.set_ellipse_points(shape_preview,
-				Vector2(_get_default_ellipse_rx() * 2, _get_default_ellipse_ry() * 2),
-				_get_ellipse_offset_position(true)
+				_get_preview_ellipse_size(),
+				_get_preview_ellipse_offset()
 		)
 	else:
+		var siz := _get_preview_rect_size()
 		ScalableVectorShape2D.set_rect_points(shape_preview,
-				_get_default_rect_width(), _get_default_rect_height(),
+				siz.x, siz.y,
 				_get_default_rect_rx(), _get_default_rect_ry(),
-				_get_rect_offset_position(true)
+				_get_preview_rect_offset()
 		)
 
-	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT and (event as InputEventMouseButton).pressed:
-		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
-		if _is_snapped_to_pixel():
-			mouse_pos = mouse_pos.snapped(_get_snap_resolution())
-		var svs := ScalableVectorShape2D.new()
-		if _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE and not _get_create_ellipse_as_path():
-			svs.shape_type = ScalableVectorShape2D.ShapeType.ELLIPSE
-			svs.size = Vector2(_get_default_ellipse_rx() * 2, _get_default_ellipse_ry() * 2)
-			svs.offset = _get_ellipse_offset_position(true)
-			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Ellipse",
-				null, true)
-		elif _svs_edit_mode == SVSEditMode.CREATE_RECT and not _get_create_rect_as_path():
-			svs.shape_type = ScalableVectorShape2D.ShapeType.RECT
-			svs.size = Vector2(_get_default_rect_width(), _get_default_rect_height())
-			svs.rx = _get_default_rect_rx()
-			svs.ry = _get_default_rect_ry()
-			svs.offset = _get_rect_offset_position(true)
-			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Rectangle",
-				null, true)
+	if event is InputEventMouseMotion:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+			if _is_snapped_to_pixel():
+				mouse_pos = mouse_pos.snapped(_get_snap_resolution())
+
+			var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
+			var mul :=  _get_svp_transform(sel)
+
+			var p2 := mouse_pos
+			var p1 := _drag_start
+			if sel is Control or sel is Node2D:
+				p1 = sel.get_global_transform().affine_inverse() * p1
+				p2 = sel.get_global_transform().affine_inverse() * p2
+			var siz := (p2 * mul) - (p1 * mul)
+			if _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE and siz.x > 0.0 and siz.y > 0.0:
+				_create_size_override = (
+					siz * 2.0 if _get_center_ellipse_offset() or _is_ctrl_or_cmd_pressed() else siz
+				)
+			elif _svs_edit_mode == SVSEditMode.CREATE_RECT and  siz.x > 0.0 and siz.y > 0.0 and (
+					(siz.x >= _get_default_rect_rx() * 2 and siz.y >= _get_default_rect_ry() * 2) or
+					(_is_ctrl_or_cmd_pressed() and siz.x >= _get_default_rect_rx() and siz.y >= _get_default_rect_ry())
+				):
+				_create_size_override = (
+					siz * 2.0 if _get_center_rect_offset() or _is_ctrl_or_cmd_pressed() else siz
+				)
+			else:
+				_create_size_override = Vector2.INF
+			return true
 		else:
-			svs.curve = shape_preview.duplicate(true)
-			_create_shape(svs, EditorInterface.get_edited_scene_root(), (
-				"Rectangle" if _svs_edit_mode == SVSEditMode.CREATE_RECT else "Ellipse"
-			), null, true)
-		svs.global_position = mouse_pos
-		if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
-			select_node_reversibly(svs.get_parent())
+			_create_size_override = Vector2.INF
+
+
+	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			_drag_start = EditorInterface.get_editor_viewport_2d().get_mouse_position()
+			if _is_snapped_to_pixel():
+				_drag_start = _drag_start.snapped(_get_snap_resolution())
 		else:
-			svs_edit_buttons.set_default_mode(true)
+			var svs := ScalableVectorShape2D.new()
+			if _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE and not _get_create_ellipse_as_path():
+				svs.shape_type = ScalableVectorShape2D.ShapeType.ELLIPSE
+				svs.size = _get_preview_ellipse_size()
+				svs.offset = _get_preview_ellipse_offset()
+				_create_shape(svs, EditorInterface.get_edited_scene_root(), "Ellipse",
+					null, true)
+			elif _svs_edit_mode == SVSEditMode.CREATE_RECT and not _get_create_rect_as_path():
+				svs.shape_type = ScalableVectorShape2D.ShapeType.RECT
+				svs.size = _get_preview_rect_size()
+				svs.rx = _get_default_rect_rx()
+				svs.ry = _get_default_rect_ry()
+				svs.offset = _get_preview_rect_offset()
+				_create_shape(svs, EditorInterface.get_edited_scene_root(), "Rectangle",
+					null, true)
+			else:
+				svs.curve = shape_preview.duplicate(true)
+				_create_shape(svs, EditorInterface.get_edited_scene_root(), (
+					"Rectangle" if _svs_edit_mode == SVSEditMode.CREATE_RECT else "Ellipse"
+				), null, true)
+			svs.global_position = _svp_mouse_pos(_drag_start, EditorInterface.get_selection().get_selected_nodes().pop_back())
+			if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
+				select_node_reversibly(svs.get_parent())
+			else:
+				svs_edit_buttons.set_default_mode(true)
 		return true
+
 	return false
 
 
