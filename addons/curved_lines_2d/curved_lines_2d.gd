@@ -1237,14 +1237,16 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 			)
 	elif _is_ctrl_or_cmd_pressed() and _hover_point_idx > -1 and svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:
 		pass
-	elif _is_ctrl_or_cmd_pressed() and not only_cutout_hints:
+	elif _is_ctrl_or_cmd_pressed() and not only_cutout_hints and not svs.is_curve_closed():
 		_draw_crosshair(viewport_control, p)
 		_draw_hint(viewport_control, "- Click to add point here (Ctrl held)")
 	elif Input.is_key_pressed(KEY_SHIFT):
 		_draw_hint(viewport_control, "- Use mousewheel to resize shape (Shift held)")
 	elif _hover_closest_point_on_gradient == Vector2.INF:
-		var hint := "- Hold Ctrl to add points to selected shape (or Cmd for mac)
-				- Hold Shift to resize shape with mousewheel"
+		var hint := ""
+		if not svs.is_curve_closed():
+			hint = "- Hold Ctrl to add points to selected shape (or Cmd for mac)"
+		hint += "\n- Hold Shift to resize shape with mousewheel"
 		if only_cutout_hints:
 			hint = "- Hold Shift to resize shape with mousewheel"
 		if svs.has_fine_point(_svp_mouse_pos(mouse_pos, svs)):
@@ -1707,7 +1709,7 @@ func _handle_create_rect_preview(viewport_control : Control) -> void:
 	if shape_preview:
 		_draw_preview(viewport_control)
 	if _editor_has_cursor():
-		_draw_hint(viewport_control, "Click to create an rectangle here" +
+		_draw_hint(viewport_control, "Click to create a rectangle here" +
 			"\n - You can change its shape in the Create tab")
 
 
@@ -3148,7 +3150,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			elif _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed():
 				if _is_snapped_to_pixel():
 					mouse_pos = mouse_pos.snapped(_get_snap_resolution())
-				if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+				if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not current_selection.is_curve_closed():
 					_add_point_on_position(current_selection, mouse_pos)
 				return true
 			elif _is_svs_valid(current_selection) and _hover_closest_point_on_curve:
