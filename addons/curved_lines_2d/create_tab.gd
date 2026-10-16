@@ -145,6 +145,8 @@ func _ready() -> void:
 	%HeightSliderContainer.add_child(rect_height_input)
 	%XRadiusSliderContainer.add_child(rect_rx_input)
 	%YRadiusSliderContainer.add_child(rect_ry_input)
+	%CenterRectOffsetCheckbox.button_pressed = CurvedLines2D._get_center_rect_offset()
+	%CreateRectAsPathCheckbox.button_pressed = CurvedLines2D._get_create_rect_as_path()
 
 	# Pencil Tool
 	%ClosePathCheckBox.button_pressed = CurvedLines2D._get_close_pencil_path()
@@ -711,6 +713,16 @@ func _on_create_rect_button_pressed() -> void:
 		rect_rx_input.value, rect_ry_input.value, scene_root)
 
 
+func _on_center_rect_offset_checkbox_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_CENTER_RECT_OFFSET, toggled_on)
+	ProjectSettings.save()
+
+
+func _on_create_rect_as_path_checkbox_toggled(toggled_on: bool) -> void:
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_CREATE_RECT_AS_PATH, toggled_on)
+	ProjectSettings.save()
+
+
 func _on_create_rect_button_mouse_entered() -> void:
 	set_shape_preview.emit(_get_rect_curve())
 
@@ -793,4 +805,3 @@ func _on_fit_curve_check_box_toggled(toggled_on: bool) -> void:
 	ProjectSettings.save()
 	for fc : CheckBox in fit_curve_check_boxes:
 		fc.set_pressed_no_signal(toggled_on)
-
