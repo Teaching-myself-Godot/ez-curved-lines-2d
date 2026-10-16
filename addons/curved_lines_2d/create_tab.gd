@@ -3,7 +3,7 @@ extends Control
 
 signal shape_created(curve : Curve2D, scene_root : Node2D, node_name : String)
 signal rect_created(width : float, height : float, rx : float, ry : float, scene_root : Node2D)
-signal ellipse_created(rx : float, ry : float, scene_root : Node2D)
+signal ellipse_created(scene_root : Node2D)
 signal set_shape_preview(curve : Curve2D)
 
 signal mode_changed(new_mode : CurvedLines2D.SVSEditMode)
@@ -646,7 +646,7 @@ func _on_create_ellipse_button_pressed() -> void:
 	if CurvedLines2D._get_create_ellipse_as_path():
 		shape_created.emit(_get_ellipse_curve(), scene_root, node_name)
 	else:
-		ellipse_created.emit(ellipse_rx_input.value, ellipse_ry_input.value, scene_root)
+		ellipse_created.emit(scene_root)
 
 func _on_create_circle_button_mouse_entered() -> void:
 	set_shape_preview.emit(_get_ellipse_curve())
@@ -668,7 +668,12 @@ func _on_center_ellipse_offset_checkbox_toggled(toggled_on: bool) -> void:
 
 func _get_ellipse_curve() -> Curve2D:
 	var curve := Curve2D.new()
-	ScalableVectorShape2D.set_ellipse_points(curve, Vector2(ellipse_rx_input.value * 2, ellipse_ry_input.value * 2))
+	ScalableVectorShape2D.set_ellipse_points(curve,
+			Vector2(ellipse_rx_input.value * 2, ellipse_ry_input.value * 2),
+			Vector2.ZERO
+					if CurvedLines2D._get_center_ellipse_offset() else
+			Vector2(ellipse_rx_input.value, ellipse_ry_input.value)
+	)
 	return curve
 
 

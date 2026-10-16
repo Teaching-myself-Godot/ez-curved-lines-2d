@@ -436,11 +436,23 @@ func _on_rect_created(width : float, height : float, rx : float, ry : float, sce
 	_create_shape(new_rect, scene_root, "Rectangle")
 
 
-func _on_ellipse_created(rx : float, ry : float, scene_root : Node) -> void:
-	var new_ellipse := ScalableVectorShape2D.new()
+func _get_ellipse_offset_position(test_ctrl_held := false) -> Vector2:
+	return (
+			Vector2.ZERO
+				if _get_center_ellipse_offset() or (test_ctrl_held and _is_ctrl_or_cmd_pressed()) else
+			Vector2(_get_default_ellipse_rx(), _get_default_ellipse_ry())
+	)
+
+
+func _get_ellipse_svs(new_ellipse : ScalableVectorShape2D) -> ScalableVectorShape2D:
 	new_ellipse.shape_type = ScalableVectorShape2D.ShapeType.ELLIPSE
-	new_ellipse.size = Vector2(rx * 2, ry * 2)
-	_create_shape(new_ellipse, scene_root, "Ellipse")
+	new_ellipse.size = Vector2(_get_default_ellipse_rx() * 2, _get_default_ellipse_ry() * 2)
+	new_ellipse.offset = _get_ellipse_offset_position()
+	return new_ellipse
+
+
+func _on_ellipse_created(scene_root : Node) -> void:
+	_create_shape(_get_ellipse_svs(ScalableVectorShape2D.new()), scene_root, "Ellipse")
 
 
 func _on_shape_created(curve : Curve2D, scene_root : Node, node_name : String) -> void:
@@ -3001,7 +3013,10 @@ func _handle_create_primitive_input(event) -> bool:
 	if not shape_preview:
 		shape_preview = Curve2D.new()
 	if _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE:
-		ScalableVectorShape2D.set_ellipse_points(shape_preview, Vector2(_get_default_ellipse_rx() * 2, _get_default_ellipse_ry() * 2))
+		ScalableVectorShape2D.set_ellipse_points(shape_preview,
+				Vector2(_get_default_ellipse_rx() * 2, _get_default_ellipse_ry() * 2),
+				_get_ellipse_offset_position(true)
+		)
 	else:
 		ScalableVectorShape2D.set_rect_points(shape_preview, _get_default_rect_width(), _get_default_rect_height(), _get_default_rect_rx(), _get_default_rect_ry())
 
@@ -3013,6 +3028,7 @@ func _handle_create_primitive_input(event) -> bool:
 		if _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE and not _get_create_ellipse_as_path():
 			svs.shape_type = ScalableVectorShape2D.ShapeType.ELLIPSE
 			svs.size = Vector2(_get_default_ellipse_rx() * 2, _get_default_ellipse_ry() * 2)
+			svs.offset = _get_ellipse_offset_position(true)
 			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Ellipse",
 				null, true)
 		elif _svs_edit_mode == SVSEditMode.CREATE_RECT and not _get_create_rect_as_path():
@@ -3023,7 +3039,7 @@ func _handle_create_primitive_input(event) -> bool:
 			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Rectangle",
 				null, true)
 		else:
-			svs.curve = shape_preview
+			svs.curve = shape_preview.duplicate(true)
 			_create_shape(svs, EditorInterface.get_edited_scene_root(), (
 				"Rectangle" if _svs_edit_mode == SVSEditMode.CREATE_RECT else "Ellipse"
 			), null, true)
