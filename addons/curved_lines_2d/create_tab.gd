@@ -690,17 +690,14 @@ func _on_ellipse_ry_value_changed(new_value : float) -> void:
 # --- Create Rectangle ---
 func _get_rect_curve() -> Curve2D:
 	var curve := Curve2D.new()
-	ScalableVectorShape2D.set_rect_points(curve, rect_width_input.value, rect_height_input.value, rect_rx_input.value, rect_ry_input.value)
+	ScalableVectorShape2D.set_rect_points(curve,
+		rect_width_input.value, rect_height_input.value,
+		rect_rx_input.value, rect_ry_input.value,
+			Vector2.ZERO
+					if CurvedLines2D._get_center_rect_offset() else
+			Vector2(rect_width_input.value * 0.5, rect_height_input.value * 0.5)
+	)
 	return curve
-
-
-func _on_create_rect_as_path_button_pressed() -> void:
-	var scene_root := EditorInterface.get_edited_scene_root()
-	if not scene_root is Node:
-		warning_dialog.dialog_text = OPEN_SCENE_ERROR_MESSAGE
-		warning_dialog.popup_centered()
-		return
-	shape_created.emit(_get_rect_curve(), scene_root, "Rectangle")
 
 
 func _on_create_rect_button_pressed() -> void:
@@ -709,8 +706,10 @@ func _on_create_rect_button_pressed() -> void:
 		warning_dialog.dialog_text = OPEN_SCENE_ERROR_MESSAGE
 		warning_dialog.popup_centered()
 		return
-	rect_created.emit(rect_width_input.value, rect_height_input.value,
-		rect_rx_input.value, rect_ry_input.value, scene_root)
+	if CurvedLines2D._get_create_rect_as_path():
+		shape_created.emit(_get_rect_curve(), scene_root, "Rectangle")
+	else:
+		rect_created.emit(scene_root)
 
 
 func _on_center_rect_offset_checkbox_toggled(toggled_on: bool) -> void:

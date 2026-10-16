@@ -427,12 +427,21 @@ func _on_shape_preview(curve : Curve2D):
 	update_overlays()
 
 
-func _on_rect_created(width : float, height : float, rx : float, ry : float, scene_root : Node) -> void:
+func _get_rect_offset_position(test_ctrl_held := false) -> Vector2:
+	return (
+			Vector2.ZERO
+				if _get_center_rect_offset() or (test_ctrl_held and _is_ctrl_or_cmd_pressed()) else
+			Vector2(_get_default_rect_width() * 0.5, _get_default_rect_height() * 0.5)
+	)
+
+
+func _on_rect_created(scene_root : Node) -> void:
 	var new_rect := ScalableVectorShape2D.new()
 	new_rect.shape_type = ScalableVectorShape2D.ShapeType.RECT
-	new_rect.size = Vector2(width, height)
-	new_rect.rx = rx
-	new_rect.ry = ry
+	new_rect.size = Vector2(_get_default_rect_width(), _get_default_rect_height())
+	new_rect.rx = _get_default_rect_rx()
+	new_rect.ry = _get_default_rect_ry()
+	new_rect.offset = _get_rect_offset_position()
 	_create_shape(new_rect, scene_root, "Rectangle")
 
 
@@ -3021,7 +3030,11 @@ func _handle_create_primitive_input(event) -> bool:
 				_get_ellipse_offset_position(true)
 		)
 	else:
-		ScalableVectorShape2D.set_rect_points(shape_preview, _get_default_rect_width(), _get_default_rect_height(), _get_default_rect_rx(), _get_default_rect_ry())
+		ScalableVectorShape2D.set_rect_points(shape_preview,
+				_get_default_rect_width(), _get_default_rect_height(),
+				_get_default_rect_rx(), _get_default_rect_ry(),
+				_get_rect_offset_position(true)
+		)
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT and (event as InputEventMouseButton).pressed:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
@@ -3039,6 +3052,7 @@ func _handle_create_primitive_input(event) -> bool:
 			svs.size = Vector2(_get_default_rect_width(), _get_default_rect_height())
 			svs.rx = _get_default_rect_rx()
 			svs.ry = _get_default_rect_ry()
+			svs.offset = _get_rect_offset_position(true)
 			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Rectangle",
 				null, true)
 		else:
