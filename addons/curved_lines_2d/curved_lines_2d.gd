@@ -17,11 +17,14 @@ const SETTING_NAME_ADD_COLLISION_TYPE := "addons/curved_lines_2d/add_collision_t
 
 const SETTING_NAME_ELLIPSE_RX := "addons/curved_lines_2d/ellipse_rx"
 const SETTING_NAME_ELLIPSE_RY := "addons/curved_lines_2d/ellipse_ry"
+const SETTING_NAME_CENTER_ELLIPSE_OFFSET := "addons/curved_lines_2d/ellipse_center_offset"
+const SETTING_NAME_CREATE_ELLIPSE_AS_PATH := "addons/curved_lines_2d/ellipse_create_as_path"
 const SETTING_NAME_RECT_WIDTH := "addons/curved_lines_2d/rect_width"
 const SETTING_NAME_RECT_HEIGHT := "addons/curved_lines_2d/rect_height"
 const SETTING_NAME_RECT_RX := "addons/curved_lines_2d/rect_rx"
 const SETTING_NAME_RECT_RY := "addons/curved_lines_2d/rect_ry"
-
+const SETTING_NAME_CENTER_RECT_OFFSET := "addons/curved_lines_2d/rect_center_offset"
+const SETTING_NAME_CREATE_RECT_AS_PATH := "addons/curved_lines_2d/rect_create_as_path"
 
 const SETTING_NAME_PAINT_ORDER := "addons/curved_lines_2d/paint_order"
 
@@ -998,9 +1001,9 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 					hint_txt += " - Release mouse to set curve handles"
 			else:
 				if svs.shape_type == ScalableVectorShape2D.ShapeType.RECT:
-					hint_txt += " - Drag to resize rectange"
+					hint_txt += " - Drag to resize rectange\n - Hold Ctrl to resize out from the offset position"
 				elif svs.shape_type == ScalableVectorShape2D.ShapeType.ELLIPSE:
-					hint_txt += " - Drag to resize ellipse"
+					hint_txt += " - Drag to resize ellipse\n - Hold Ctrl to resize out from the offset position"
 				else:
 					hint_txt += " - Drag to move"
 				if handle['is_closed'].length() > 0:
@@ -1220,6 +1223,8 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 							OPERATION_NAME_MAP[current_clip_operation]["noun"] +
 					"- Use right click to change the clipping operation (Ctrl+Shift held)"
 			)
+	elif _is_ctrl_or_cmd_pressed() and _hover_point_idx > -1 and svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:
+		pass
 	elif _is_ctrl_or_cmd_pressed() and not only_cutout_hints:
 		_draw_crosshair(viewport_control, p)
 		_draw_hint(viewport_control, "- Click to add point here (Ctrl held)")
@@ -2999,24 +3004,29 @@ func _handle_create_primitive_input(event) -> bool:
 		ScalableVectorShape2D.set_ellipse_points(shape_preview, Vector2(_get_default_ellipse_rx() * 2, _get_default_ellipse_ry() * 2))
 	else:
 		ScalableVectorShape2D.set_rect_points(shape_preview, _get_default_rect_width(), _get_default_rect_height(), _get_default_rect_rx(), _get_default_rect_ry())
+
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT and (event as InputEventMouseButton).pressed:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if _is_snapped_to_pixel():
 			mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 		var svs := ScalableVectorShape2D.new()
-		if _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE:
+		if _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE and not _get_create_ellipse_as_path():
 			svs.shape_type = ScalableVectorShape2D.ShapeType.ELLIPSE
 			svs.size = Vector2(_get_default_ellipse_rx() * 2, _get_default_ellipse_ry() * 2)
 			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Ellipse",
 				null, true)
-		else:
+		elif _svs_edit_mode == SVSEditMode.CREATE_RECT and not _get_create_rect_as_path():
 			svs.shape_type = ScalableVectorShape2D.ShapeType.RECT
 			svs.size = Vector2(_get_default_rect_width(), _get_default_rect_height())
 			svs.rx = _get_default_rect_rx()
 			svs.ry = _get_default_rect_ry()
-			print(svs.size, " ", svs.rx, " ", svs.ry)
 			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Rectangle",
 				null, true)
+		else:
+			svs.curve = shape_preview
+			_create_shape(svs, EditorInterface.get_edited_scene_root(), (
+				"Rectangle" if _svs_edit_mode == SVSEditMode.CREATE_RECT else "Ellipse"
+			), null, true)
 		svs.global_position = mouse_pos
 		if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 			select_node_reversibly(svs.get_parent())
@@ -3367,6 +3377,18 @@ static func _get_default_ellipse_ry() -> float:
 	return 50.0
 
 
+static func _get_center_ellipse_offset() -> bool:
+	if ProjectSettings.has_setting(SETTING_NAME_CENTER_ELLIPSE_OFFSET):
+		return ProjectSettings.get_setting(SETTING_NAME_CENTER_ELLIPSE_OFFSET)
+	return false
+
+
+static func _get_create_ellipse_as_path() -> bool:
+	if ProjectSettings.has_setting(SETTING_NAME_CREATE_ELLIPSE_AS_PATH):
+		return ProjectSettings.get_setting(SETTING_NAME_CREATE_ELLIPSE_AS_PATH)
+	return false
+
+
 static func _get_default_rect_width() -> float:
 	if ProjectSettings.has_setting(SETTING_NAME_RECT_WIDTH):
 		return ProjectSettings.get_setting(SETTING_NAME_RECT_WIDTH)
@@ -3389,6 +3411,18 @@ static func _get_default_rect_ry() -> float:
 	if ProjectSettings.has_setting(SETTING_NAME_RECT_RY):
 		return ProjectSettings.get_setting(SETTING_NAME_RECT_RY)
 	return 0.0
+
+
+static func _get_center_rect_offset() -> bool:
+	if ProjectSettings.has_setting(SETTING_NAME_CENTER_RECT_OFFSET):
+		return ProjectSettings.get_setting(SETTING_NAME_CENTER_RECT_OFFSET)
+	return false
+
+
+static func _get_create_rect_as_path() -> bool:
+	if ProjectSettings.has_setting(SETTING_NAME_CREATE_RECT_AS_PATH):
+		return ProjectSettings.get_setting(SETTING_NAME_CREATE_RECT_AS_PATH)
+	return false
 
 
 static func _get_default_stroke_width() -> float:
