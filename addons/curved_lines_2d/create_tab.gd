@@ -2,7 +2,7 @@
 extends Control
 
 signal shape_created(curve : Curve2D, scene_root : Node2D, node_name : String)
-signal rect_created(width : float, height : float, rx : float, ry : float, scene_root : Node2D)
+signal rect_created(scene_root : Node2D)
 signal ellipse_created(scene_root : Node2D)
 signal set_shape_preview(curve : Curve2D)
 
