@@ -3166,9 +3166,9 @@ func _handle_create_primitive_input(event) -> bool:
 				select_node_reversibly(svs.get_parent())
 			else:
 				svs_edit_buttons.set_default_mode(true)
-		_create_size_override = Vector2.INF
-		_create_offset_override = Vector2.INF
-		shape_preview = null
+			_create_size_override = Vector2.INF
+			_create_offset_override = Vector2.INF
+			shape_preview = null
 		return true
 
 	return false
