@@ -1,6 +1,20 @@
 # Changelog
 
 
+## 3.1.0 - Shiny Sizing 
+
+### Added
+
+- Click and drag to create a new shape of variable size
+- Resize shapes out from the topleft by default in stead of out from the center
+- Hold Ctrl/Cmd key to resize out from center
+- Checkbox to pick offset position (center versus top/left) in create rectangle and create ellipse form
+
+### Changed
+
+- Replaces "Create as Path" buttons with "As Path" checkbox so creation of rects and ellipses as path by clicking and dragging is possible now
+- UX Fix: cannot add points to a closed shape in edit mode using Ctrl+click on a free space (only by double clicking segments and by subdividing)
+
 ## 3.0.3 - Create Tab
 
 ### Added
