@@ -329,7 +329,9 @@ Since `2.14.0` you can export your animated scene as sprite frames in one PNG sp
 
 # Creating Basic Shapes
 
-Using the 2 leftmost tools in the create tab you can create basic ellipses and rectangles, both as a path based on Bézier curves:
+Using the 2 leftmost tools in the create tab you can create basic ellipses and rectangles. 
+
+They as a path based on Bézier curves:
 
 ![create ellipse as path](./addons/curved_lines_2d/screenshots/create-ellipse-as-path.png)
 
@@ -339,35 +341,37 @@ And as a so called 'primitive shape', which is easier to resize and, in the case
 
 ## The Create Ellipse Tool
 
-While this tool is active, you can create ellipse primitives anywhere on top of a selected Node2D or Control node by clicking.
+While this tool is active, you can create ellipses anywhere on top of a selected `Node2D` or `Control` node by clicking and dragging.
 
-You can also create the ellipse by clicking one of the two buttons in the dock.
+You can also create the ellipse using the form fields and button in the bottom dock.
 
 ![create ellipse tool](./addons/curved_lines_2d/screenshots/create-ellipse.png)
 
 For the ellipse you can set the horizontal and vertical radius.
 
-When you press `Create Ellipse`, an ellipse primitive is created with just 1 handle for resizing.
+When `Center Offset` is checked the shape's pivot will be in the middle by default. If unchecked it will be top/left.
 
-When you press `Create Path`, the ellipse as is created as a bézier path.
+When `As Path`, the ellipse is created as a bézier path in stead of as a primitive shape.
 
-When "Keep creating" is checked, you can continue adding more ellipses after adding one. If it is unchecked, your new ellipse will be autmatically selected in "select mode" after creation.
+When `Keep creating` is checked, you can continue adding more ellipses after adding one. If it is unchecked, your new ellipse will be autmatically selected in "select mode" after creation.
 
 ## The Create Rectangle Tool
 
-While this tool is active, you can create rectangle primitives anywhere on top of a selected Node2D or Control node by clicking.
 
-You can also create the rectangle by clicking one of the two buttons in the dock.
+While this tool is active, you can create rectangles anywhere on top of a selected `Node2D` or `Control` node by clicking and dragging.
+
+You can also create the rectangle using the form fields and button in the bottom dock.
 
 ![create rectangle tool](./addons/curved_lines_2d/screenshots/create-rectangle-tool.png)
 
 For the rectangle you can pick the width, height and corder radius in the settings panel.
 
-When you press `Create Rectangle`, a rectangle primitive is created with just 2 handles (for resizing and corner radius).
+When `Center Offset` is checked the shape's pivot will be in the middle by default. If unchecked it will be top/left.
 
-When you press `Create Path`, a rectangle as is created as a bézier path.
+When `As Path`, the rectangle is created as a bézier path in stead of as a primitive shape.
 
-When "Keep creating" is checked, you can continue adding more rectangles after adding one. If it is unchecked, your new rectangle will be autmatically selected in "select mode" after creation.
+
+When `Keep creating` is checked, you can continue adding more rectangles after adding one. If it is unchecked, your new rectangle will be autmatically selected in "select mode" after creation.
 
 # Moving, Rotating and Resizing the Points of a Shape
 
@@ -1063,7 +1067,7 @@ As you can see in this screenshot, the `DynamicOutline2D` node is not deleted, b
 
 # Autoscaling SVG Textures for GUI Controls
 
-Release `2.15` makes it easy to add crisp, autoscaling images for your GUI Control nodes using this new node typr:
+Release `2.15` makes it easy to add crisp, autoscaling images for your GUI Control nodes using this new node type:
 
 - `SVGTextureHelper`: a `Node` that manages an SVG image texture property when it's a direct child of a `TextureRect`, `Button`, or `TextureButton`. It holds a reference to the svg file and a base64 encoded string of the file's contents, as well as a baseline scale factor (so you can even keep the image crips and sharp at higher zoom levels)
 

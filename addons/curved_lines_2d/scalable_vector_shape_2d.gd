@@ -1147,15 +1147,21 @@ func is_curve_closed() -> bool:
 	return n > 2 and curve.get_point_position(0).distance_to(curve.get_point_position(n - 1)) < 0.001
 
 
+func get_global_size_handle_pos() -> Vector2:
+	return to_global((size * 0.5).rotated(spin) + offset)
+
+
+func get_global_top_left() -> Vector2:
+	return to_global( (-size * 0.5).rotated(spin) + offset)
+
+
 func get_curve_handles() -> Array:
 	if shape_type == ShapeType.RECT or shape_type == ShapeType.ELLIPSE:
-		var size_handle_pos := (size * 0.5).rotated(spin) + offset
-		var top_left := (-size * 0.5).rotated(spin) + offset
 		var rx_handle := ((-size * 0.5) + Vector2(rx, 0)).rotated(spin) + offset
 		var ry_handle := ((-size * 0.5) + Vector2(0, ry)).rotated(spin) + offset
 		return [{
-			"top_left_pos": to_global(top_left),
-			"point_position": to_global(size_handle_pos),
+			"top_left_pos": get_global_top_left(),
+			"point_position": get_global_size_handle_pos(),
 			"mirrored": true,
 			"in": rx_handle,
 			"out": ry_handle,
