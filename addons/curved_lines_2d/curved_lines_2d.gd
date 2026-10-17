@@ -165,6 +165,7 @@ var _resize_orig_pos := Vector2.INF
 var _resize_orig_offset := Vector2.INF
 var _resize_orig_top_left := Vector2.INF
 var _create_size_override := Vector2.INF
+var _create_offset_override := Vector2.INF
 
 # Merge points helper vars
 var _merge_box_rect := Rect2(Vector2.ZERO, Vector2.ZERO)
@@ -3043,17 +3044,17 @@ func _get_preview_ellipse_size() -> Vector2:
 func _get_preview_ellipse_offset() -> Vector2:
 	if _get_center_ellipse_offset() or _is_ctrl_or_cmd_pressed():
 		return Vector2.ZERO
-	if _create_size_override == Vector2.INF:
+	if _create_offset_override == Vector2.INF:
 		return _get_ellipse_offset_position()
-	return _create_size_override * 0.5
+	return _create_offset_override
 
 
 func _get_preview_rect_offset() -> Vector2:
 	if _get_center_rect_offset() or _is_ctrl_or_cmd_pressed():
 		return Vector2.ZERO
-	if _create_size_override == Vector2.INF:
+	if _create_offset_override == Vector2.INF:
 		return _get_rect_offset_position()
-	return _create_size_override * 0.5
+	return _create_offset_override
 
 
 func _handle_create_primitive_input(event) -> bool:
@@ -3087,11 +3088,31 @@ func _handle_create_primitive_input(event) -> bool:
 			if sel is Control or sel is Node2D:
 				p1 = sel.get_global_transform().affine_inverse() * p1
 				p2 = sel.get_global_transform().affine_inverse() * p2
+			var anchor_offset_right := false
+			var anchor_offset_bottom := false
+			if p1.x > p2.x:
+				var swp := p1.x
+				p1.x = p2.x
+				p2.x = swp
+				anchor_offset_right = true
+			if p1.y > p2.y:
+				var swp := p1.y
+				p1.y = p2.y
+				p2.y = swp
+				anchor_offset_bottom = true
+
 			var siz := (p2 * mul) - (p1 * mul)
 			if _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE and siz.x > 0.0 and siz.y > 0.0:
 				_create_size_override = (
 					siz * 2.0 if _get_center_ellipse_offset() or _is_ctrl_or_cmd_pressed() else siz
 				)
+				if _get_center_ellipse_offset() or _is_ctrl_or_cmd_pressed():
+					_create_offset_override = Vector2.ZERO
+				else:
+					_create_offset_override = Vector2(
+						siz.x * -0.5 if anchor_offset_right else siz.x * 0.5,
+						siz.y * -0.5 if anchor_offset_bottom else siz.y * 0.5
+					)
 			elif _svs_edit_mode == SVSEditMode.CREATE_RECT and  siz.x > 0.0 and siz.y > 0.0 and (
 					(siz.x >= _get_default_rect_rx() * 2 and siz.y >= _get_default_rect_ry() * 2) or
 					(_is_ctrl_or_cmd_pressed() and siz.x >= _get_default_rect_rx() and siz.y >= _get_default_rect_ry())
@@ -3099,12 +3120,20 @@ func _handle_create_primitive_input(event) -> bool:
 				_create_size_override = (
 					siz * 2.0 if _get_center_rect_offset() or _is_ctrl_or_cmd_pressed() else siz
 				)
+				if _get_center_ellipse_offset() or _is_ctrl_or_cmd_pressed():
+					_create_offset_override = Vector2.ZERO
+				else:
+					_create_offset_override = Vector2(
+						siz.x * -0.5 if anchor_offset_right else siz.x * 0.5,
+						siz.y * -0.5 if anchor_offset_bottom else siz.y * 0.5
+					)
 			else:
 				_create_size_override = Vector2.INF
+				_create_offset_override = Vector2.INF
 			return true
 		else:
 			_create_size_override = Vector2.INF
-
+			_create_offset_override = Vector2.INF
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
@@ -3138,6 +3167,7 @@ func _handle_create_primitive_input(event) -> bool:
 			else:
 				svs_edit_buttons.set_default_mode(true)
 		_create_size_override = Vector2.INF
+		_create_offset_override = Vector2.INF
 		return true
 
 	return false
