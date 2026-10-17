@@ -1067,7 +1067,7 @@ As you can see in this screenshot, the `DynamicOutline2D` node is not deleted, b
 
 # Autoscaling SVG Textures for GUI Controls
 
-Release `2.15` makes it easy to add crisp, autoscaling images for your GUI Control nodes using this new node typr:
+Release `2.15` makes it easy to add crisp, autoscaling images for your GUI Control nodes using this new node type:
 
 - `SVGTextureHelper`: a `Node` that manages an SVG image texture property when it's a direct child of a `TextureRect`, `Button`, or `TextureButton`. It holds a reference to the svg file and a base64 encoded string of the file's contents, as well as a baseline scale factor (so you can even keep the image crips and sharp at higher zoom levels)
 
