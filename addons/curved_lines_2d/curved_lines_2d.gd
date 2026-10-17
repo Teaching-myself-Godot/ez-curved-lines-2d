@@ -1949,10 +1949,6 @@ func _update_rect_dimensions(svs : ScalableVectorShape2D, mouse_pos : Vector2) -
 		var d := (svs.to_local(mouse_pos) - svs.to_local(_resize_orig_top_left)).rotated(-svs.spin)
 		svs.size = d
 		svs.offset = _resize_orig_offset - (_resize_orig_size - svs.size) * 0.5
-		if _is_snapped_to_pixel():
-			svs.size = svs.size.snapped(Vector2.ONE)
-			svs.position = svs.position.snapped(Vector2.ONE)
-			svs.offset = svs.offset.snapped(Vector2.ONE)
 
 	undo_redo_transaction[UndoRedoEntry.DO_PROPS] = [
 		[svs, 'size', svs.size],
