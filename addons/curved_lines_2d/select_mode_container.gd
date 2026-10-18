@@ -46,7 +46,7 @@ func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 	y_offset_input.set_value_no_signal(svs.offset.y)
 	x_size_input.set_value_no_signal(svs.size.x)
 	y_size_input.set_value_no_signal(svs.size.y)
-	spin_input.set_value_no_signal(svs.spin)
+	spin_input.set_value_no_signal(rad_to_deg(svs.spin))
 	rx_input.set_value_no_signal(svs.rx)
 	ry_input.set_value_no_signal(svs.ry)
 

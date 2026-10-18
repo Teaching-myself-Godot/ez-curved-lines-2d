@@ -345,11 +345,12 @@ var stroke_width := 10.0:
 			if sz.y < ry * 2.001:
 				sz.y = ry * 2.001
 			size = sz
-			dimensions_changed.emit()
 		elif shape_type == ShapeType.ELLIPSE:
 			size = sz
 			rx = sz.x * 0.5
 			ry = sz.y * 0.5
+		dimensions_changed.emit()
+
 
 ## The rotation of the Rect/Ellipse's points relative to its natural center
 @export_range(-180.0, 180.0, 0.1, "radians_as_degrees") var spin := 0.0:
