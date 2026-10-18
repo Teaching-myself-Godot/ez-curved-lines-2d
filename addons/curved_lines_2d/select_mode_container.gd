@@ -58,7 +58,6 @@ func _on_selection_changed() -> void:
 		%ShapeTypeSettingsContainer.hide()
 
 
-
 func _make_number_input(lbl : String, value : float, min_value : float, max_value : float,
 			suffix : String, step := 1.0, tooltip_text := "", allow_lesser  := false,
 			allow_greater := false) -> EditorSpinSlider:
@@ -74,3 +73,18 @@ func _make_number_input(lbl : String, value : float, min_value : float, max_valu
 	x_slider.allow_greater = allow_greater
 	x_slider.allow_lesser = allow_lesser
 	return x_slider
+
+
+func _on_convert_to_path_button_pressed() -> void:
+	var sel := (EditorInterface.get_selection().get_selected_nodes()
+		.filter(func(x): return x is ScalableVectorShape2D and x)
+		.filter(func(x : ScalableVectorShape2D): return x.shape_type != ScalableVectorShape2D.ShapeType.PATH)
+	)
+	if sel.is_empty():
+		return
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	undo_redo.create_action("Convert %d shape%s to path" % [sel.size(), "" if sel.size() == 1 else "s"])
+	for svs : ScalableVectorShape2D in sel:
+		undo_redo.add_do_property(svs, "shape_type", ScalableVectorShape2D.ShapeType.PATH)
+		undo_redo.add_undo_property(svs, "shape_type", svs.shape_type)
+	undo_redo.commit_action()

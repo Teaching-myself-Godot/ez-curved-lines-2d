@@ -257,4 +257,5 @@ size_flags_horizontal = 0
 size_flags_vertical = 4
 text = "Create Empty Shape"
 
+[connection signal="pressed" from="ShapeTypeSettingsContainer/VBoxContainer/ConvertToPathButton" to="." method="_on_convert_to_path_button_pressed"]
 [connection signal="pressed" from="CreateEmptyShapeContainer/VBoxContainer2/CreateEmptyShapeButton" to="CreateEmptyShapeContainer" method="_on_create_empty_shape_button_pressed"]
