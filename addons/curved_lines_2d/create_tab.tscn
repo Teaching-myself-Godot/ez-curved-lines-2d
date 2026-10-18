@@ -5,6 +5,7 @@
 [ext_resource type="StyleBox" uid="uid://ddx1ye7r3r4lf" path="res://addons/curved_lines_2d/styleboxes/button_pressed_stylebox.tres" id="3_hti8q"]
 [ext_resource type="StyleBox" uid="uid://bo0x8scw4k70k" path="res://addons/curved_lines_2d/styleboxes/button_hover_stylebox.tres" id="4_powka"]
 [ext_resource type="Texture2D" uid="uid://ulvclg7al5cu" path="res://addons/curved_lines_2d/IconAtlas.svg" id="6_h5wiq"]
+[ext_resource type="PackedScene" uid="uid://b0diouoeyhvh5" path="res://addons/curved_lines_2d/select_mode_container.tscn" id="7_dv24s"]
 [ext_resource type="StyleBox" uid="uid://c034pktje23oe" path="res://addons/curved_lines_2d/styleboxes/editor_spin_box_container_stylebox.tres" id="7_powka"]
 [ext_resource type="PackedScene" uid="uid://cjbkvx1pj7gq2" path="res://addons/curved_lines_2d/collision_object_type_option_button.tscn" id="20_rpvk4"]
 
@@ -498,7 +499,6 @@ layout_mode = 2
 size_flags_stretch_ratio = 2.0
 tooltip_text = "When checked, after drawing a pencil stroke, you can keep drawing on the same parent node.
 When unchecked, after drawing the pencil stroke, it is selected for editing."
-button_pressed = true
 text = "Keep drawing"
 
 [node name="FillInParentCheckBox" type="CheckBox" parent="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer/HFlowContainer" unique_id=1369464324]
@@ -558,7 +558,6 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 tooltip_text = "When checked, after drawing a pencil stroke, you can keep drawing on the same parent node.
 When unchecked, after drawing the pencil stroke, it is selected for editing."
-button_pressed = true
 text = "Keep drawing"
 
 [node name="CreateEllipseContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=525159852]
@@ -615,7 +614,6 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 size_flags_stretch_ratio = 2.0
-button_pressed = true
 text = "Keep creating"
 
 [node name="CreateEllipseButton" type="Button" parent="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2" unique_id=1070699013]
@@ -626,6 +624,7 @@ text = "Create Ellipse"
 
 [node name="CreateRectContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=1292094314]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -685,6 +684,7 @@ text = "Center Offset"
 [node name="CreateRectAsPathCheckbox" type="CheckBox" parent="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3" unique_id=2047876141]
 unique_name_in_owner = true
 layout_mode = 2
+button_pressed = true
 text = "As Path"
 
 [node name="MakeAnotherRectCheckBox" type="CheckBox" parent="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3" unique_id=2069460587]
@@ -692,7 +692,6 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 size_flags_stretch_ratio = 2.0
-button_pressed = true
 text = "Keep creating
 "
 
@@ -702,19 +701,9 @@ layout_mode = 2
 tooltip_text = "Create a new ScalableRect2D"
 text = "Create Rectangle"
 
-[node name="SelectModeContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=1430453718]
+[node name="SelectModeContainer" parent="ToolsContainer/MarginContainer" unique_id=1578466445 instance=ExtResource("7_dv24s")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_vertical = 3
-
-[node name="CenterContainer" type="CenterContainer" parent="ToolsContainer/MarginContainer/SelectModeContainer" unique_id=1605373469]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="CreateEmptyShapeButton" type="Button" parent="ToolsContainer/MarginContainer/SelectModeContainer/CenterContainer" unique_id=2084441798]
-layout_mode = 2
-text = "Create Empty Shape"
 
 [node name="KnifeToolContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=1104133391]
 unique_name_in_owner = true
@@ -779,7 +768,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(0.789063, 0.382202, 0.382202, 1)
+color = Color(1, 0.195313, 0.772794, 0.592157)
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/HBoxContainer" unique_id=265864135]
 layout_mode = 2
@@ -803,6 +792,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Set Stroke Color"
 text = "Fill"
+color = Color(1, 1, 1, 1)
 
 [node name="StrokeWidthContainer" type="PanelContainer" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=1573755340]
 unique_name_in_owner = true
@@ -1279,7 +1269,7 @@ expand_icon = true
 [connection signal="mouse_entered" from="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3/CreateRectButton" to="." method="_on_create_rect_button_mouse_entered"]
 [connection signal="mouse_exited" from="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3/CreateRectButton" to="." method="_on_create_rect_button_mouse_exited"]
 [connection signal="pressed" from="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3/CreateRectButton" to="." method="_on_create_rect_button_pressed"]
-[connection signal="pressed" from="ToolsContainer/MarginContainer/SelectModeContainer/CenterContainer/CreateEmptyShapeButton" to="." method="_on_create_empty_shape_button_pressed"]
+[connection signal="create_empty_shape" from="ToolsContainer/MarginContainer/SelectModeContainer" to="." method="_on_create_empty_shape_button_pressed"]
 [connection signal="toggled" from="ToolsContainer/MarginContainer/KnifeToolContainer/VBoxContainer/HFlowContainer/FitCurveToKnifeCutCheckBox" to="." method="_on_fit_curve_check_box_toggled"]
 [connection signal="toggled" from="SettingsContainer/HBoxContainer/HBoxContainer2/EnableFillCheckBox" to="." method="_on_fill_check_button_toggled"]
 [connection signal="color_changed" from="SettingsContainer/HBoxContainer/HBoxContainer2/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]

@@ -319,6 +319,7 @@ func sync_draw_settings() -> void:
 
 
 func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
+	%SelectModeContainer.sync_svs_settings(svs)
 	if svs not in EditorInterface.get_selection().get_selected_nodes():
 		return
 	%FillPickerButton.color = svs.fill_color
@@ -804,3 +805,4 @@ func _on_fit_curve_check_box_toggled(toggled_on: bool) -> void:
 	ProjectSettings.save()
 	for fc : CheckBox in fit_curve_check_boxes:
 		fc.set_pressed_no_signal(toggled_on)
+
