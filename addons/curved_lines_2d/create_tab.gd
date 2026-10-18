@@ -37,7 +37,7 @@ var tab_default_min_height : int
 
 var granularity_inputs : Array[EditorSpinSlider] = []
 
-@onready var mode_containers : Array[Container] = [
+@onready var mode_containers : Array[Control] = [
 	%CreateEllipseContainer, %CreateRectContainer,
 	%SelectModeContainer, %PencilToolContainer,
 	%BrushToolContainer, %KnifeToolContainer
@@ -319,9 +319,10 @@ func sync_draw_settings() -> void:
 
 
 func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
-	%SelectModeContainer.sync_svs_settings(svs)
 	if svs not in EditorInterface.get_selection().get_selected_nodes():
 		return
+	%SelectModeContainer.sync_svs_settings(svs)
+
 	%FillPickerButton.color = svs.fill_color
 	%StrokePickerButton.color = svs.stroke_color
 	stroke_width_input.set_value_no_signal(svs.stroke_width)
