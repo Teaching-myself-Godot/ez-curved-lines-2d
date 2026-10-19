@@ -44,6 +44,10 @@ region = Rect2(48, 64, 16, 16)
 atlas = ExtResource("6_h5wiq")
 region = Rect2(32, 64, 16, 16)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_hti8q"]
+atlas = ExtResource("6_h5wiq")
+region = Rect2(32, 176, 16, 16)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_keblj"]
 atlas = ExtResource("6_h5wiq")
 region = Rect2(0, 80, 16, 16)
@@ -292,6 +296,22 @@ disabled = true
 toggle_mode = true
 button_group = SubResource("ButtonGroup_dsrm6")
 icon = SubResource("AtlasTexture_ta6ok")
+expand_icon = true
+
+[node name="SetPivotButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1711259966]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Set pivot point of the selected shape (A)"
+theme_override_styles/normal = ExtResource("2_2chn8")
+theme_override_styles/pressed = ExtResource("3_hti8q")
+theme_override_styles/hover = ExtResource("4_powka")
+disabled = true
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = SubResource("AtlasTexture_hti8q")
 expand_icon = true
 
 [node name="FlipHorizontalButton" type="Button" parent="ToolsContainer/ScrollContainer/HBoxContainer" unique_id=1244107966]
@@ -783,7 +803,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Enable Stroke"
-button_pressed = true
 text = "Stroke"
 
 [node name="StrokePickerButton" type="ColorPickerButton" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=73211193]
