@@ -3,13 +3,7 @@ extends Control
 
 signal create_empty_shape()
 
-var x_offset_input : EditorSpinSlider
-var y_offset_input : EditorSpinSlider
-var x_size_input : EditorSpinSlider
-var y_size_input : EditorSpinSlider
 var spin_input : EditorSpinSlider
-var rx_input : EditorSpinSlider
-var ry_input : EditorSpinSlider
 
 var node_x_pos_input : EditorSpinSlider
 var node_y_pos_input : EditorSpinSlider
@@ -22,41 +16,9 @@ func _ready() -> void:
 	if not EditorInterface.get_selection().selection_changed.is_connected(_on_selection_changed):
 		EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
 	_on_selection_changed()
-	x_offset_input = _make_number_input("X Offset", 0.0, 0.0, 1000.0, "px", 0.5, "X Offset position", true, true)
-	%XOffsetInputContainer.add_child(x_offset_input)
-	y_offset_input = _make_number_input("Y Offset", 0.0, 0.0, 1000.0, "px", 0.5, "Y Offset position", true, true)
-	%YOffsetPosInputContainer.add_child(y_offset_input)
-	x_size_input = _make_number_input("Size X", 100.0, 1.0, 1000.0, "px", 0.5, "X Size", false, true)
-	%XSizeInputContainer.add_child(x_size_input)
-	y_size_input = _make_number_input("Size Y", 100.0, 1.0, 1000.0, "px", 0.5, "Y Size", false, true)
-	%YSizePosInputContainer.add_child(y_size_input)
-	spin_input = _make_number_input("Spin", 0.0, -180.0, 180.0, "°", 0.5, "Local Point Rotation (Spin)", false, false)
+	spin_input = _make_number_input("Spin", 0.0, -180.0, 180.0, "°", 1.0, "Local Point Rotation (Spin)", false, false)
 	%SpinContainer.add_child(spin_input)
-	rx_input = _make_number_input("Radius X", 0.0, 0.0, 1000.0, "px", 0.5, "Radius X", false, true)
-	%RXContainer.add_child(rx_input)
-	ry_input = _make_number_input("Radius Y", 0.0, 0.0, 1000.0, "px", 0.5, "Radius Y", false, true)
-	%RYContainer.add_child(ry_input)
-	x_offset_input.value_changed.connect(_on_shape_prop_changed.bind("offset", 0))
-	y_offset_input.value_changed.connect(_on_shape_prop_changed.bind("offset", 1))
-	x_size_input.value_changed.connect(_on_shape_prop_changed.bind("size", 0))
-	y_size_input.value_changed.connect(_on_shape_prop_changed.bind("size", 1))
 	spin_input.value_changed.connect(_on_shape_prop_changed.bind("spin", -1, deg_to_rad))
-	rx_input.value_changed.connect(_on_shape_prop_changed.bind("rx"))
-	ry_input.value_changed.connect(_on_shape_prop_changed.bind("ry"))
-	
-	# Node inputs
-	node_x_pos_input = _make_number_input("X Pos", 0.0, 0.0, 1000.0, "px", 0.5, "Node X position", true, true)
-	%NodeXPosInputContainer.add_child(node_x_pos_input)
-	node_y_pos_input = _make_number_input("Y Pos", 0.0, 0.0, 1000.0, "px", 0.5, "Node Y position", true, true)
-	%NodeYPosInputContainer.add_child(node_y_pos_input)
-	node_x_scale_input = _make_number_input("Scale X", 0.0, 0.0, 500.0, "", 0.001, "Node Scale X", true, true)
-	%NodeScaleYInputContainer.add_child(node_x_scale_input)
-	node_y_scale_input = _make_number_input("Scale Y", 0.0, 0.0, 500.0, "", 0.001, "Node Scale Y", true, true)
-	%NodeScaleXInputContainer.add_child(node_y_scale_input)
-	node_rotate_input = _make_number_input("Rotate", 0.0, -360.0, 360.0, "°", 0.1, "Rotate Node", false, false)
-	%NodeRotateInputContainer.add_child(node_rotate_input)
-	node_skew_input = _make_number_input("Skew", 0.0, -89.9, 89.9, "°", 0.1, "Skew Node", false, false)
-	%NodeSkewInputContainer.add_child(node_skew_input)
 
 
 func _on_create_empty_shape_button_pressed() -> void:
@@ -69,13 +31,10 @@ func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 		%ShapeTypeSettingsContainer.show()
 	else:
 		%ShapeTypeSettingsContainer.hide()
-	x_offset_input.set_value_no_signal(svs.offset.x)
-	y_offset_input.set_value_no_signal(svs.offset.y)
-	x_size_input.set_value_no_signal(svs.size.x)
-	y_size_input.set_value_no_signal(svs.size.y)
+	%OffsetInput.set_value_no_signal(svs.offset)
+	%SizeInput.set_value_no_signal(svs.size)
+	%RadiusInput.set_value_no_signal(Vector2(svs.rx, svs.ry))
 	spin_input.set_value_no_signal(rad_to_deg(svs.spin))
-	rx_input.set_value_no_signal(svs.rx)
-	ry_input.set_value_no_signal(svs.ry)
 
 
 func _on_selection_changed() -> void:
@@ -117,7 +76,7 @@ func _on_convert_to_path_button_pressed() -> void:
 	undo_redo.commit_action()
 
 
-func _on_shape_prop_changed(new_val : float, field : String, field_idx : int = -1, transformer : Callable = func(x): return x) -> void:
+func _on_shape_prop_changed(new_val : Variant, field : String, field_idx : int = -1, transformer : Callable = func(x): return x) -> void:
 	var sel := (EditorInterface.get_selection().get_selected_nodes()
 		.filter(func(x): return x is ScalableVectorShape2D and x)
 		.filter(func(x : ScalableVectorShape2D): return x.shape_type != ScalableVectorShape2D.ShapeType.PATH)
@@ -132,4 +91,34 @@ func _on_shape_prop_changed(new_val : float, field : String, field_idx : int = -
 			new_value[field_idx] = transformer.call(new_val)
 		undo_redo.add_do_property(svs, field, new_value)
 		undo_redo.add_undo_property(svs, field, svs[field])
+	undo_redo.commit_action()
+
+
+func _on_offset_input_value_changed(new_value: Vector2) -> void:
+	_on_shape_prop_changed(new_value, "offset")
+
+
+func _on_size_input_value_changed(new_value: Vector2) -> void:
+	_on_shape_prop_changed(new_value, "size")
+
+
+func _on_radius_input_value_changed(new_value: Vector2) -> void:
+	var sel := (EditorInterface.get_selection().get_selected_nodes()
+		.filter(func(x): return x is ScalableVectorShape2D and x)
+		.filter(func(x : ScalableVectorShape2D): return x.shape_type != ScalableVectorShape2D.ShapeType.PATH)
+	)
+	if sel.is_empty():
+		return
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	undo_redo.create_action("Update radius for %d shape%s" % [sel.size(), "" if sel.size() == 1 else "s"])
+	for svs : ScalableVectorShape2D in sel:
+		if svs.shape_type == ScalableVectorShape2D.ShapeType.RECT:
+			undo_redo.add_do_property(svs, "rx", new_value.x)
+			undo_redo.add_undo_property(svs, "rx", svs.rx)
+			undo_redo.add_do_property(svs, "ry", new_value.y)
+			undo_redo.add_undo_property(svs, "ry", svs.ry)
+		else:
+			undo_redo.add_do_property(svs, "size", new_value * 2.0)
+			undo_redo.add_undo_property(svs, "size", svs.size)
+
 	undo_redo.commit_action()
