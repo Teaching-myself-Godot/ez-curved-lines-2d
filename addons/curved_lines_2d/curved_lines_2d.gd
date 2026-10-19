@@ -95,14 +95,16 @@ const OPERATION_NAME_MAP := {
 enum SVSEditMode {
 	NONE, TRANSLATE, ROTATE, SCALE,
 	MERGE, BRUSH, PENCIL, PAINT_BONE,
-	KNIFE, CREATE_ELLIPSE, CREATE_RECT
+	KNIFE, CREATE_ELLIPSE, CREATE_RECT,
+	SET_PIVOT
 }
 
 const CANCELABLE_MODES : Array[SVSEditMode] = [
 	SVSEditMode.TRANSLATE, SVSEditMode.ROTATE, SVSEditMode.SCALE,
 	SVSEditMode.MERGE, SVSEditMode.BRUSH, SVSEditMode.PENCIL,
 	SVSEditMode.PAINT_BONE, SVSEditMode.KNIFE,
-	SVSEditMode.CREATE_ELLIPSE, SVSEditMode.CREATE_RECT
+	SVSEditMode.CREATE_ELLIPSE, SVSEditMode.CREATE_RECT,
+	SVSEditMode.SET_PIVOT
 ]
 
 const DRAW_MODES : Array[SVSEditMode] = [
@@ -327,7 +329,7 @@ func _get_grid_snap_settings_from_scene_config() -> Vector4i:
 	)
 
 
-func _find_canvas_item_editor_control() -> Node:
+func _find_canvas_item_editor_control() -> Control:
 	var candidate := EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*")
 	if candidate:
 		return candidate
@@ -755,7 +757,7 @@ func _get_canvas_item_editor_button_by_base_index(idx : int) -> BaseButton:
 		idx += 1
 	if Engine.get_version_info()["minor"] >= 8 and idx >= 8:
 		idx += 4
-	if Engine.get_version_info()["minor"] >= 7:
+	if Engine.get_version_info()["minor"] >= 7 and idx > 0:
 		if results.size() >= idx + 1:
 			return results[idx + 1]
 	else:
@@ -2140,6 +2142,8 @@ func _update_curve_cp_out_position(current_selection : ScalableVectorShape2D, mo
 
 
 func _set_shape_origin(current_selection : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	undo_redo.create_action("Set origin on %s" % current_selection)
 	undo_redo.add_do_method(current_selection, 'set_origin', mouse_pos)
 	undo_redo.add_undo_method(current_selection, 'set_origin', current_selection.global_position)
@@ -3177,11 +3181,13 @@ func _handle_create_primitive_input(event) -> bool:
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if (
 			event is InputEventMouseButton and
-			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT and
-			_svs_edit_mode in CANCELABLE_MODES
+			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT
 	):
-		_on_svs_edit_mode_changed(SVSEditMode.NONE)
-		return true
+		if _svs_edit_mode in CANCELABLE_MODES:
+			_on_svs_edit_mode_changed(SVSEditMode.NONE)
+			return true
+
+
 	if _svs_edit_mode == SVSEditMode.MERGE:
 		return _handle_draw_merge_box_input(event)
 	elif _svs_edit_mode == SVSEditMode.PENCIL or _svs_edit_mode == SVSEditMode.KNIFE:
