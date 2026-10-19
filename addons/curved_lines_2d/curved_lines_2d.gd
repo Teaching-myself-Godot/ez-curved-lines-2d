@@ -95,14 +95,16 @@ const OPERATION_NAME_MAP := {
 enum SVSEditMode {
 	NONE, TRANSLATE, ROTATE, SCALE,
 	MERGE, BRUSH, PENCIL, PAINT_BONE,
-	KNIFE, CREATE_ELLIPSE, CREATE_RECT
+	KNIFE, CREATE_ELLIPSE, CREATE_RECT,
+	SET_PIVOT
 }
 
 const CANCELABLE_MODES : Array[SVSEditMode] = [
 	SVSEditMode.TRANSLATE, SVSEditMode.ROTATE, SVSEditMode.SCALE,
 	SVSEditMode.MERGE, SVSEditMode.BRUSH, SVSEditMode.PENCIL,
 	SVSEditMode.PAINT_BONE, SVSEditMode.KNIFE,
-	SVSEditMode.CREATE_ELLIPSE, SVSEditMode.CREATE_RECT
+	SVSEditMode.CREATE_ELLIPSE, SVSEditMode.CREATE_RECT,
+	SVSEditMode.SET_PIVOT
 ]
 
 const DRAW_MODES : Array[SVSEditMode] = [
@@ -327,7 +329,7 @@ func _get_grid_snap_settings_from_scene_config() -> Vector4i:
 	)
 
 
-func _find_canvas_item_editor_control() -> Node:
+func _find_canvas_item_editor_control() -> Control:
 	var candidate := EditorInterface.get_editor_viewport_2d().find_parent("*CanvasItemEditor*")
 	if candidate:
 		return candidate
@@ -755,7 +757,7 @@ func _get_canvas_item_editor_button_by_base_index(idx : int) -> BaseButton:
 		idx += 1
 	if Engine.get_version_info()["minor"] >= 8 and idx >= 8:
 		idx += 4
-	if Engine.get_version_info()["minor"] >= 7:
+	if Engine.get_version_info()["minor"] >= 7 and idx > 0:
 		if results.size() >= idx + 1:
 			return results[idx + 1]
 	else:
@@ -1735,6 +1737,20 @@ func _is_editing_width_curve(svs : ScalableVectorShape2D) -> bool:
 	)
 
 
+func _draw_set_pivot_hints(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
+	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
+	_draw_outline_for_uniform_transforms(viewport_control, svs)
+	_draw_crosshair(viewport_control, _vp_transform(mouse_pos),
+		2.0, 6.0, Color.WHITE, 3
+	)
+	_draw_crosshair(viewport_control, _vp_transform(mouse_pos),
+		2.0, 6.0, VIEWPORT_ORANGE, 1
+	)
+	_draw_hint(viewport_control, " - Click to set pivot")
+
+
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 	if not _is_editing_enabled():
 		return
@@ -1763,6 +1779,9 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 			return _draw_canvas_for_uniform_scale(viewport_control, current_selection)
 		elif _svs_edit_mode == SVSEditMode.ROTATE:
 			return _draw_canvas_for_uniform_rotate(viewport_control, current_selection)
+		elif _svs_edit_mode == SVSEditMode.SET_PIVOT:
+			return _draw_set_pivot_hints(viewport_control, current_selection)
+
 
 	var all_valid_svs_nodes := _find_scalable_vector_shape_2d_nodes().filter(_is_svs_valid)
 	for result : ScalableVectorShape2D in all_valid_svs_nodes:
@@ -2140,6 +2159,8 @@ func _update_curve_cp_out_position(current_selection : ScalableVectorShape2D, mo
 
 
 func _set_shape_origin(current_selection : ScalableVectorShape2D, mouse_pos : Vector2) -> void:
+	if _is_snapped_to_pixel():
+		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	undo_redo.create_action("Set origin on %s" % current_selection)
 	undo_redo.add_do_method(current_selection, 'set_origin', mouse_pos)
 	undo_redo.add_undo_method(current_selection, 'set_origin', current_selection.global_position)
@@ -3177,11 +3198,12 @@ func _handle_create_primitive_input(event) -> bool:
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if (
 			event is InputEventMouseButton and
-			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT and
-			_svs_edit_mode in CANCELABLE_MODES
+			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT
 	):
-		_on_svs_edit_mode_changed(SVSEditMode.NONE)
-		return true
+		if _svs_edit_mode in CANCELABLE_MODES:
+			_on_svs_edit_mode_changed(SVSEditMode.NONE)
+			return true
+
 	if _svs_edit_mode == SVSEditMode.MERGE:
 		return _handle_draw_merge_box_input(event)
 	elif _svs_edit_mode == SVSEditMode.PENCIL or _svs_edit_mode == SVSEditMode.KNIFE:
@@ -3192,7 +3214,6 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return _handle_bone_paint_input(event)
 	elif _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE or _svs_edit_mode == SVSEditMode.CREATE_RECT:
 		return _handle_create_primitive_input(event)
-
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		_lmb_is_down_inside_viewport = (event as InputEventMouseButton).pressed
@@ -3213,12 +3234,19 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return false
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
+		if event is InputEventKey and (event as InputEventKey).keycode == KEY_A and (
+				not (event as InputEventKey).is_command_or_control_pressed() and
+				not (event as InputEventKey).shift_pressed and
+				not (event as InputEventKey).alt_pressed
+		):
+			_on_svs_edit_mode_changed(SVSEditMode.SET_PIVOT)
 		if _svs_edit_mode == SVSEditMode.TRANSLATE:
 			return _handle_input_for_uniform_translate(event, current_selection)
 		elif _svs_edit_mode == SVSEditMode.SCALE:
 			return _handle_input_for_uniform_scale(event, current_selection)
 		elif _svs_edit_mode == SVSEditMode.ROTATE:
 			return _handle_input_for_uniform_rotate(event, current_selection)
+
 
 	if ((_is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT))
 			or
@@ -3243,9 +3271,10 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		var mouse_pos := _svp_mouse_pos(
 				EditorInterface.get_editor_viewport_2d().get_mouse_position(),
 				current_selection)
-		if _is_change_pivot_button_active():
+		if _is_change_pivot_button_active() or _svs_edit_mode == SVSEditMode.SET_PIVOT:
 			if _is_svs_valid(current_selection):
 				_set_shape_origin(current_selection, mouse_pos)
+				return true
 		else:
 			if _is_svs_valid(current_selection) and _handle_has_hover(current_selection):
 				if event.double_click and _hover_point_idx > -1:
