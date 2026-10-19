@@ -23,7 +23,6 @@ corner_radius_bottom_left = 4
 font_color = Color(0.345098, 0.47451, 0.396078, 1)
 
 [node name="BasicVector2Input" type="VBoxContainer" unique_id=311560463]
-custom_minimum_size = Vector2(120, 0)
 size_flags_horizontal = 2
 theme_override_constants/separation = 0
 script = ExtResource("1_3pr44")
@@ -41,6 +40,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_3pr44")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="XValuePanelContainer" unique_id=1362108832]
 layout_mode = 2
+theme_override_constants/separation = 0
 
 [node name="Label" type="Label" parent="XValuePanelContainer/HBoxContainer" unique_id=2046696515]
 custom_minimum_size = Vector2(20, 0)
@@ -54,7 +54,7 @@ vertical_alignment = 1
 
 [node name="XValueEditorSpinSlider" type="EditorSpinSlider" parent="XValuePanelContainer/HBoxContainer" unique_id=971937849]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -66,6 +66,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_rr680")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="YValuePanelContainer" unique_id=1681395636]
 layout_mode = 2
+theme_override_constants/separation = 0
 
 [node name="Label" type="Label" parent="YValuePanelContainer/HBoxContainer" unique_id=261089280]
 custom_minimum_size = Vector2(20, 0)
@@ -79,7 +80,7 @@ vertical_alignment = 1
 
 [node name="YValueEditorSpinSlider" type="EditorSpinSlider" parent="YValuePanelContainer/HBoxContainer" unique_id=1624224281]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 

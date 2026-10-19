@@ -4,11 +4,6 @@ extends Control
 signal create_empty_shape()
 
 var spin_input : EditorSpinSlider
-
-var node_x_pos_input : EditorSpinSlider
-var node_y_pos_input : EditorSpinSlider
-var node_x_scale_input : EditorSpinSlider
-var node_y_scale_input : EditorSpinSlider
 var node_rotate_input : EditorSpinSlider
 var node_skew_input : EditorSpinSlider
 
@@ -19,7 +14,13 @@ func _ready() -> void:
 	spin_input = _make_number_input("Spin", 0.0, -180.0, 180.0, "°", 1.0, "Local Point Rotation (Spin)", false, false)
 	%SpinContainer.add_child(spin_input)
 	spin_input.value_changed.connect(_on_shape_prop_changed.bind("spin", -1, deg_to_rad))
-
+	spin_input = _make_number_input("Spin", 0.0, -180.0, 180.0, "°", 1.0, "Local Point Rotation (Spin)", false, false)
+	
+	# Node inputs
+	node_rotate_input = _make_number_input("Rotate", 0.0, -360.0, 360.0, "°", 0.1, "Rotate Node", false, false)
+	%NodeRotateInputContainer.add_child(node_rotate_input)
+	node_skew_input = _make_number_input("Skew", 0.0, -89.9, 89.9, "°", 0.1, "Skew Node", false, false)
+	%NodeSkewInputContainer.add_child(node_skew_input)
 
 func _on_create_empty_shape_button_pressed() -> void:
 	create_empty_shape.emit()
