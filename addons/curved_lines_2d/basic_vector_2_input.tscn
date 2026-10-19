@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://djdapj672ftld"]
+
+[ext_resource type="Script" uid="uid://5n6ije8b54d8" path="res://addons/curved_lines_2d/basic_vector_2_input.gd" id="1_3pr44"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3pr44"]
+resource_local_to_scene = true
+bg_color = Color(0.106, 0.106, 0.106, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_2qsp5"]
+line_spacing = 0.0
+font_color = Color(0.54, 0.33696, 0.2808, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rr680"]
+resource_local_to_scene = true
+content_margin_bottom = 4.0
+bg_color = Color(0.106, 0.106, 0.106, 1)
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_oifti"]
+font_color = Color(0.345098, 0.47451, 0.396078, 1)
+
+[node name="BasicVector2Input" type="VBoxContainer" unique_id=311560463]
+custom_minimum_size = Vector2(120, 0)
+size_flags_horizontal = 2
+theme_override_constants/separation = 0
+script = ExtResource("1_3pr44")
+
+[node name="Label" type="Label" parent="." unique_id=2129186792]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+
+[node name="XValuePanelContainer" type="PanelContainer" parent="." unique_id=713373627]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3pr44")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="XValuePanelContainer" unique_id=1362108832]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="XValuePanelContainer/HBoxContainer" unique_id=2046696515]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 1
+text = "x"
+label_settings = SubResource("LabelSettings_2qsp5")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="XValueEditorSpinSlider" type="EditorSpinSlider" parent="XValuePanelContainer/HBoxContainer" unique_id=971937849]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="YValuePanelContainer" type="PanelContainer" parent="." unique_id=2068442310]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_rr680")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="YValuePanelContainer" unique_id=1681395636]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="YValuePanelContainer/HBoxContainer" unique_id=261089280]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 1
+text = "y"
+label_settings = SubResource("LabelSettings_oifti")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="YValueEditorSpinSlider" type="EditorSpinSlider" parent="YValuePanelContainer/HBoxContainer" unique_id=1624224281]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[connection signal="value_changed" from="XValuePanelContainer/HBoxContainer/XValueEditorSpinSlider" to="." method="_on_x_value_editor_spin_slider_value_changed"]
+[connection signal="value_changed" from="YValuePanelContainer/HBoxContainer/YValueEditorSpinSlider" to="." method="_on_y_value_editor_spin_slider_value_changed"]
