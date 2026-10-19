@@ -11,24 +11,30 @@ var spin_input : EditorSpinSlider
 var rx_input : EditorSpinSlider
 var ry_input : EditorSpinSlider
 
+var node_x_pos_input : EditorSpinSlider
+var node_y_pos_input : EditorSpinSlider
+var node_x_scale_input : EditorSpinSlider
+var node_y_scale_input : EditorSpinSlider
+var node_rotate_input : EditorSpinSlider
+var node_skew_input : EditorSpinSlider
 
 func _ready() -> void:
 	if not EditorInterface.get_selection().selection_changed.is_connected(_on_selection_changed):
 		EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
 	_on_selection_changed()
-	x_offset_input = _make_number_input("Offset", 0.0, 0.0, 1000.0, "px", 1.0, "X Offset position", true, true)
+	x_offset_input = _make_number_input("X Offset", 0.0, 0.0, 1000.0, "px", 0.5, "X Offset position", true, true)
 	%XOffsetInputContainer.add_child(x_offset_input)
-	y_offset_input = _make_number_input("Offset", 0.0, 0.0, 1000.0, "px", 1.0, "Y Offset position", true, true)
+	y_offset_input = _make_number_input("Y Offset", 0.0, 0.0, 1000.0, "px", 0.5, "Y Offset position", true, true)
 	%YOffsetPosInputContainer.add_child(y_offset_input)
-	x_size_input = _make_number_input("Size", 100.0, 1.0, 1000.0, "px", 1.0, "X Size", false, true)
+	x_size_input = _make_number_input("Size X", 100.0, 1.0, 1000.0, "px", 0.5, "X Size", false, true)
 	%XSizeInputContainer.add_child(x_size_input)
-	y_size_input = _make_number_input("Size", 100.0, 1.0, 1000.0, "px", 1.0, "Y Size", false, true)
+	y_size_input = _make_number_input("Size Y", 100.0, 1.0, 1000.0, "px", 0.5, "Y Size", false, true)
 	%YSizePosInputContainer.add_child(y_size_input)
-	spin_input = _make_number_input("Spin", 0.0, -180.0, 180.0, "°", 1.0, "Local Point Rotation (Spin)", false, false)
+	spin_input = _make_number_input("Spin", 0.0, -180.0, 180.0, "°", 0.5, "Local Point Rotation (Spin)", false, false)
 	%SpinContainer.add_child(spin_input)
-	rx_input = _make_number_input("X Corner Radius", 0.0, 0.0, 500.0, "px", 1.0, "X Corner radius", false, true)
+	rx_input = _make_number_input("Radius X", 0.0, 0.0, 1000.0, "px", 0.5, "Radius X", false, true)
 	%RXContainer.add_child(rx_input)
-	ry_input = _make_number_input("Y Corner Radius", 0.0, 0.0, 500.0, "px", 1.0, "Y Corner radius", false, true)
+	ry_input = _make_number_input("Radius Y", 0.0, 0.0, 1000.0, "px", 0.5, "Radius Y", false, true)
 	%RYContainer.add_child(ry_input)
 	x_offset_input.value_changed.connect(_on_shape_prop_changed.bind("offset", 0))
 	y_offset_input.value_changed.connect(_on_shape_prop_changed.bind("offset", 1))
@@ -37,6 +43,20 @@ func _ready() -> void:
 	spin_input.value_changed.connect(_on_shape_prop_changed.bind("spin", -1, deg_to_rad))
 	rx_input.value_changed.connect(_on_shape_prop_changed.bind("rx"))
 	ry_input.value_changed.connect(_on_shape_prop_changed.bind("ry"))
+	
+	# Node inputs
+	node_x_pos_input = _make_number_input("X Pos", 0.0, 0.0, 1000.0, "px", 0.5, "Node X position", true, true)
+	%NodeXPosInputContainer.add_child(node_x_pos_input)
+	node_y_pos_input = _make_number_input("Y Pos", 0.0, 0.0, 1000.0, "px", 0.5, "Node Y position", true, true)
+	%NodeYPosInputContainer.add_child(node_y_pos_input)
+	node_x_scale_input = _make_number_input("Scale X", 0.0, 0.0, 500.0, "", 0.001, "Node Scale X", true, true)
+	%NodeScaleYInputContainer.add_child(node_x_scale_input)
+	node_y_scale_input = _make_number_input("Scale Y", 0.0, 0.0, 500.0, "", 0.001, "Node Scale Y", true, true)
+	%NodeScaleXInputContainer.add_child(node_y_scale_input)
+	node_rotate_input = _make_number_input("Rotate", 0.0, -360.0, 360.0, "°", 0.1, "Rotate Node", false, false)
+	%NodeRotateInputContainer.add_child(node_rotate_input)
+	node_skew_input = _make_number_input("Skew", 0.0, -89.9, 89.9, "°", 0.1, "Skew Node", false, false)
+	%NodeSkewInputContainer.add_child(node_skew_input)
 
 
 func _on_create_empty_shape_button_pressed() -> void:

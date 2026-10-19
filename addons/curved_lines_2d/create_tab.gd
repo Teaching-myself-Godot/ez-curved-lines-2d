@@ -85,7 +85,7 @@ func _ready() -> void:
 		%FillPickerButton.popup_closed.connect(_on_fill_picker_button_popup_closed)
 	%EnableStrokeCheckBox.button_pressed = CurvedLines2D._is_add_stroke_enabled()
 	%EnableFillCheckBox.button_pressed = CurvedLines2D._is_add_fill_enabled()
-	stroke_width_input = _make_number_input("Thickness", 10.0, 0.5, 100.0, "px", 0.5)
+	stroke_width_input = _make_number_input("", 10.0, 0.5, 100.0, "px", 0.5, "Set Stroke Thickness")
 	stroke_width_input.value = CurvedLines2D._get_default_stroke_width()
 	stroke_width_input.value_changed.connect(_on_stroke_width_input_value_changed)
 	%StrokeWidthContainer.add_child(stroke_width_input)

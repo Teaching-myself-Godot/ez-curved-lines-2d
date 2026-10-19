@@ -168,7 +168,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 0
 script = ExtResource("1_vur25")
 metadata/_edit_horizontal_guides_ = [31.0]
 metadata/_edit_vertical_guides_ = [696.0]
@@ -740,18 +740,17 @@ text = "Extract curve"
 
 [node name="SettingsContainer" type="VBoxContainer" parent="." unique_id=1335331203]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(450, 0)
+custom_minimum_size = Vector2(360, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="SettingsContainer" unique_id=105941073]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 8
 size_flags_vertical = 0
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="SettingsContainer/HBoxContainer" unique_id=733683439]
-custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 
 [node name="EnableFillCheckBox" type="CheckBox" parent="SettingsContainer/HBoxContainer/HBoxContainer2" unique_id=3202312]
@@ -796,12 +795,17 @@ color = Color(1, 1, 1, 1)
 
 [node name="StrokeWidthContainer" type="PanelContainer" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=1573755340]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(150, 0)
+custom_minimum_size = Vector2(90, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = ExtResource("7_powka")
 
-[node name="ExpandTabButton" type="Button" parent="SettingsContainer/HBoxContainer" unique_id=597237552]
+[node name="VSeparator5" type="VSeparator" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=1744221627]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
+
+[node name="ExpandTabButton" type="Button" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=597237552]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 10
@@ -1275,7 +1279,7 @@ expand_icon = true
 [connection signal="color_changed" from="SettingsContainer/HBoxContainer/HBoxContainer2/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]
 [connection signal="toggled" from="SettingsContainer/HBoxContainer/HBoxContainer3/EnableStrokeCheckBox" to="." method="_on_stroke_check_button_toggled"]
 [connection signal="color_changed" from="SettingsContainer/HBoxContainer/HBoxContainer3/StrokePickerButton" to="." method="_on_stroke_picker_button_color_changed"]
-[connection signal="toggled" from="SettingsContainer/HBoxContainer/ExpandTabButton" to="." method="_on_expand_tab_button_toggled"]
+[connection signal="toggled" from="SettingsContainer/HBoxContainer/HBoxContainer3/ExpandTabButton" to="." method="_on_expand_tab_button_toggled"]
 [connection signal="type_selected" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
 [connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer/UseLine2DCheckButton" to="." method="_on_use_line_2d_check_button_toggled"]
 [connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/BeginBoxCapToggleButton" to="." method="_on_begin_box_cap_toggle_button_toggled"]
