@@ -67,6 +67,7 @@ func _ready() -> void:
 	%EditButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.NONE))
 	%TranslateButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.TRANSLATE))
 	%ResizeButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.SCALE))
+	%SetPivotButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.SET_PIVOT))
 	%RotateButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.ROTATE))
 	%BrushButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.BRUSH))
 	%PencilButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.PENCIL))
@@ -216,6 +217,9 @@ func set_edit_mode_toggle_button(mode : CurvedLines2D.SVSEditMode) -> void:
 		CurvedLines2D.SVSEditMode.ROTATE:
 			if not %RotateButton.button_pressed:
 				%RotateButton.button_pressed = true
+		CurvedLines2D.SVSEditMode.SET_PIVOT:
+			if not %SetPivotButton.button_pressed:
+				%SetPivotButton.button_pressed = true
 		CurvedLines2D.SVSEditMode.BRUSH:
 			if not %BrushButton.button_pressed:
 				%BrushButton.button_pressed = true
@@ -257,6 +261,7 @@ func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
 		CurvedLines2D.SVSEditMode.KNIFE:
 			%KnifeToolContainer.show()
 
+
 func enable_svs_editors() -> void:
 	%RotateButton.disabled = false
 	%TranslateButton.disabled = false
@@ -271,6 +276,7 @@ func enable_svs_editors() -> void:
 	%PencilButton.disabled = false
 	%CircleButton.disabled = false
 	%RectangleButton.disabled = false
+	%SetPivotButton.disabled = false
 
 
 func set_default_mode() -> void:
@@ -289,7 +295,7 @@ func disable_svs_editors(disable_all := false) -> void:
 	_disable_and_toggle_off(%FlipHorizontalButton)
 	_disable_and_toggle_off(%FlipVerticalButton)
 	_disable_and_toggle_off(%BonePaintButton)
-	#_disable_and_toggle_off(%EditButton)
+	_disable_and_toggle_off(%SetPivotButton)
 	_disable_and_toggle_off(%KnifeButton)
 	if disable_all:
 		_disable_and_toggle_off(%BrushButton)
