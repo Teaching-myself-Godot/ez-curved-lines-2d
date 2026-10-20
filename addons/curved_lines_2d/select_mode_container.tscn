@@ -4,9 +4,6 @@
 [ext_resource type="StyleBox" uid="uid://c034pktje23oe" path="res://addons/curved_lines_2d/styleboxes/editor_spin_box_container_stylebox.tres" id="2_2qsp5"]
 [ext_resource type="PackedScene" uid="uid://djdapj672ftld" path="res://addons/curved_lines_2d/basic_vector_2_input.tscn" id="3_s7q4c"]
 
-[sub_resource type="StyleBoxLine" id="StyleBoxLine_dv24s"]
-color = Color(0.22352941, 0.22352941, 0.22352941, 1)
-
 [node name="SelectModeContainer" type="Control" unique_id=2111067405]
 layout_mode = 3
 anchors_preset = 15
@@ -26,26 +23,23 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ShapeTypeSettingsContainer" unique_id=457794097]
+[node name="HFlowContainer" type="HFlowContainer" parent="ShapeTypeSettingsContainer" unique_id=120906300]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ShapeSettingsContainer" type="VBoxContainer" parent="ShapeTypeSettingsContainer/HFlowContainer" unique_id=457794097]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="ShapeTypeSettingsContainer/VBoxContainer" unique_id=508456596]
-layout_mode = 2
-text = "Shape Settings"
-
-[node name="HSeparator3" type="HSeparator" parent="ShapeTypeSettingsContainer/VBoxContainer" unique_id=1752677781]
-layout_mode = 2
-theme_override_styles/separator = SubResource("StyleBoxLine_dv24s")
-
-[node name="HFlowContainer" type="HFlowContainer" parent="ShapeTypeSettingsContainer/VBoxContainer" unique_id=1658071120]
+[node name="HFlowContainer" type="HFlowContainer" parent="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer" unique_id=1658071120]
 layout_mode = 2
 
-[node name="OffsetInput" parent="ShapeTypeSettingsContainer/VBoxContainer/HFlowContainer" unique_id=311560463 instance=ExtResource("3_s7q4c")]
+[node name="OffsetInput" parent="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer" unique_id=311560463 instance=ExtResource("3_s7q4c")]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 1
 tooltip_text = "Offset position for shape"
 label = "Offset"
 suffix = "px"
@@ -55,10 +49,11 @@ step = 0.5
 allow_greater = true
 allow_lesser = true
 
-[node name="SizeInput" parent="ShapeTypeSettingsContainer/VBoxContainer/HFlowContainer" unique_id=98151697 instance=ExtResource("3_s7q4c")]
+[node name="SizeInput" parent="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer" unique_id=98151697 instance=ExtResource("3_s7q4c")]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 1
 tooltip_text = "Size of the shape"
 label = "Size"
 suffix = "px"
@@ -68,10 +63,11 @@ step = 0.5
 allow_greater = true
 value = Vector2(1, 1)
 
-[node name="RadiusInput" parent="ShapeTypeSettingsContainer/VBoxContainer/HFlowContainer" unique_id=745816487 instance=ExtResource("3_s7q4c")]
+[node name="RadiusInput" parent="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer" unique_id=745816487 instance=ExtResource("3_s7q4c")]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 1
 tooltip_text = "(Corner) Radius of the shape"
 label = "Radius"
 suffix = "px"
@@ -79,29 +75,68 @@ max_value = 500.0
 step = 0.5
 allow_greater = true
 
-[node name="HSeparator" type="HSeparator" parent="ShapeTypeSettingsContainer/VBoxContainer" unique_id=1821944848]
-layout_mode = 2
-theme_override_styles/separator = SubResource("StyleBoxLine_dv24s")
-
-[node name="HFlowContainer2" type="HFlowContainer" parent="ShapeTypeSettingsContainer/VBoxContainer" unique_id=429711457]
+[node name="HFlowContainer2" type="HFlowContainer" parent="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer" unique_id=429711457]
 layout_mode = 2
 
-[node name="SpinContainer" type="PanelContainer" parent="ShapeTypeSettingsContainer/VBoxContainer/HFlowContainer2" unique_id=1724536808]
+[node name="SpinContainer" type="PanelContainer" parent="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer2" unique_id=1724536808]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(150, 0)
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
-size_flags_horizontal = 3
 theme_override_styles/panel = ExtResource("2_2qsp5")
 
-[node name="HSeparator2" type="HSeparator" parent="ShapeTypeSettingsContainer/VBoxContainer" unique_id=628503301]
-layout_mode = 2
-theme_override_styles/separator = SubResource("StyleBoxLine_dv24s")
-
-[node name="ConvertToPathButton" type="Button" parent="ShapeTypeSettingsContainer/VBoxContainer" unique_id=1989675619]
+[node name="ConvertToPathButton" type="Button" parent="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer2" unique_id=1989675619]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Convert To Path"
+
+[node name="NodeSettingsContainer" type="VBoxContainer" parent="ShapeTypeSettingsContainer/HFlowContainer" unique_id=1289229615]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+
+[node name="HFlowContainer" type="HFlowContainer" parent="ShapeTypeSettingsContainer/HFlowContainer/NodeSettingsContainer" unique_id=1404705732]
+layout_mode = 2
+
+[node name="NodePosInput" parent="ShapeTypeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer" unique_id=1309305434 instance=ExtResource("3_s7q4c")]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 1
+tooltip_text = "Node position"
+label = "Node Pos"
+suffix = "px"
+min_value = -1000.0
+max_value = 1000.0
+step = 0.5
+allow_greater = true
+allow_lesser = true
+
+[node name="NodeScaleInput" parent="ShapeTypeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer" unique_id=1414872564 instance=ExtResource("3_s7q4c")]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 1
+tooltip_text = "Node position"
+label = "Node Scale"
+suffix = "px"
+min_value = -1000.0
+max_value = 1000.0
+step = 0.5
+allow_greater = true
+allow_lesser = true
+
+[node name="HFlowContainer2" type="HFlowContainer" parent="ShapeTypeSettingsContainer/HFlowContainer/NodeSettingsContainer" unique_id=479100086]
+layout_mode = 2
+
+[node name="NodeRotateInputContainer" type="PanelContainer" parent="ShapeTypeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer2" unique_id=1620303996]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("2_2qsp5")
+
+[node name="NodeSkewInputContainer" type="PanelContainer" parent="ShapeTypeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer2" unique_id=2145197911]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("2_2qsp5")
 
 [node name="CreateEmptyShapeContainer" type="ScrollContainer" parent="." unique_id=1578466445]
 unique_name_in_owner = true
@@ -130,8 +165,8 @@ size_flags_horizontal = 0
 size_flags_vertical = 4
 text = "Create Empty Shape"
 
-[connection signal="value_changed" from="ShapeTypeSettingsContainer/VBoxContainer/HFlowContainer/OffsetInput" to="." method="_on_offset_input_value_changed"]
-[connection signal="value_changed" from="ShapeTypeSettingsContainer/VBoxContainer/HFlowContainer/SizeInput" to="." method="_on_size_input_value_changed"]
-[connection signal="value_changed" from="ShapeTypeSettingsContainer/VBoxContainer/HFlowContainer/RadiusInput" to="." method="_on_radius_input_value_changed"]
-[connection signal="pressed" from="ShapeTypeSettingsContainer/VBoxContainer/ConvertToPathButton" to="." method="_on_convert_to_path_button_pressed"]
+[connection signal="value_changed" from="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer/OffsetInput" to="." method="_on_offset_input_value_changed"]
+[connection signal="value_changed" from="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer/SizeInput" to="." method="_on_size_input_value_changed"]
+[connection signal="value_changed" from="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer/RadiusInput" to="." method="_on_radius_input_value_changed"]
+[connection signal="pressed" from="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer2/ConvertToPathButton" to="." method="_on_convert_to_path_button_pressed"]
 [connection signal="pressed" from="CreateEmptyShapeContainer/VBoxContainer2/CreateEmptyShapeButton" to="CreateEmptyShapeContainer" method="_on_create_empty_shape_button_pressed"]
