@@ -796,7 +796,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Enable Stroke"
-button_pressed = true
 text = "Stroke"
 
 [node name="StrokePickerButton" type="ColorPickerButton" parent="SettingsContainer/HBoxContainer" unique_id=73211193]
