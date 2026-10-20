@@ -680,6 +680,9 @@ func _on_selection_changed():
 			svs.assigned_node_changed.connect(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings.bind(svs))
 		if not svs.dimensions_changed.is_connected(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings.bind(svs)):
 			svs.dimensions_changed.connect(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings.bind(svs))
+		if not svs.transform_changed.is_connected(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings):
+			svs.set_notify_transform(true)
+			svs.transform_changed.connect(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings)
 	else:
 		svs_edit_buttons.hide_knife()
 		if _svs_edit_mode == SVSEditMode.KNIFE:

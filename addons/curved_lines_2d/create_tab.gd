@@ -254,6 +254,14 @@ func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
 			%CreateRectContainer.show()
 		CurvedLines2D.SVSEditMode.NONE:
 			%SelectModeContainer.show()
+		CurvedLines2D.SVSEditMode.TRANSLATE:
+			%SelectModeContainer.show()
+		CurvedLines2D.SVSEditMode.ROTATE:
+			%SelectModeContainer.show()
+		CurvedLines2D.SVSEditMode.SCALE:
+			%SelectModeContainer.show()
+		CurvedLines2D.SVSEditMode.SET_PIVOT:
+			%SelectModeContainer.show()
 		CurvedLines2D.SVSEditMode.PENCIL:
 			%PencilToolContainer.show()
 		CurvedLines2D.SVSEditMode.BRUSH:
@@ -433,9 +441,13 @@ func _on_stroke_picker_button_popup_closed() -> void:
 
 func _on_stroke_check_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_STROKE_ENABLED, toggled_on)
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_COLOR, %StrokePickerButton.color)
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_WIDTH, stroke_width_input.value)
 	ProjectSettings.save()
 	if _is_property_sync_allowed():
 		SVSPropertySync.sync_stroke()
+		SVSPropertySync.sync_stroke_color(true)
+		SVSPropertySync.sync_stroke_width()
 
 
 func _on_stroke_width_input_value_changed(new_value: float) -> void:
@@ -446,9 +458,11 @@ func _on_stroke_width_input_value_changed(new_value: float) -> void:
 
 func _on_fill_check_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_FILL_ENABLED, toggled_on)
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_FILL_COLOR, %FillPickerButton.color)
 	ProjectSettings.save()
 	if _is_property_sync_allowed():
 		SVSPropertySync.sync_polygon()
+		SVSPropertySync.sync_fill_color(true)
 
 
 func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVectorShape2D.CollisionObjectType) -> void:

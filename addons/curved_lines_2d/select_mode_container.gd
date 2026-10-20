@@ -13,14 +13,16 @@ func _ready() -> void:
 	_on_selection_changed()
 	spin_input = _make_number_input("Spin", 0.0, -180.0, 180.0, "°", 1.0, "Local Point Rotation (Spin)", false, false)
 	%SpinContainer.add_child(spin_input)
-	spin_input.value_changed.connect(_on_shape_prop_changed.bind("spin", -1, deg_to_rad))
-	spin_input = _make_number_input("Spin", 0.0, -180.0, 180.0, "°", 1.0, "Local Point Rotation (Spin)", false, false)
-	
+	spin_input.value_changed.connect(_on_shape_prop_changed.bind("spin", deg_to_rad))
+
 	# Node inputs
 	node_rotate_input = _make_number_input("Rotate", 0.0, -360.0, 360.0, "°", 0.1, "Rotate Node", false, false)
 	%NodeRotateInputContainer.add_child(node_rotate_input)
+	node_rotate_input.value_changed.connect(_on_shape_prop_changed.bind("rotation", deg_to_rad))
 	node_skew_input = _make_number_input("Skew", 0.0, -89.9, 89.9, "°", 0.1, "Skew Node", false, false)
 	%NodeSkewInputContainer.add_child(node_skew_input)
+	node_skew_input.value_changed.connect(_on_shape_prop_changed.bind("skew", deg_to_rad))
+
 
 func _on_create_empty_shape_button_pressed() -> void:
 	create_empty_shape.emit()
@@ -28,6 +30,8 @@ func _on_create_empty_shape_button_pressed() -> void:
 
 func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 	%CreateEmptyShapeContainer.hide()
+	%ShapeSettingsContainer.show()
+
 	if svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:
 		%ShapeTypeSettingsContainer.show()
 	else:
@@ -35,14 +39,18 @@ func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 	%OffsetInput.set_value_no_signal(svs.offset)
 	%SizeInput.set_value_no_signal(svs.size)
 	%RadiusInput.set_value_no_signal(Vector2(svs.rx, svs.ry))
+	%NodePosInput.set_value_no_signal(svs.position)
+	%NodeScaleInput.set_value_no_signal(svs.scale)
 	spin_input.set_value_no_signal(rad_to_deg(svs.spin))
+	node_rotate_input.set_value_no_signal(rad_to_deg(svs.rotation))
+	node_skew_input.set_value_no_signal(rad_to_deg(svs.skew))
 
 
 func _on_selection_changed() -> void:
 	var sel := EditorInterface.get_selection().get_selected_nodes()
 	if sel.filter(func(n): return n is ScalableVectorShape2D).is_empty():
 		%CreateEmptyShapeContainer.show()
-		%ShapeTypeSettingsContainer.hide()
+		%ShapeSettingsContainer.hide()
 
 
 func _make_number_input(lbl : String, value : float, min_value : float, max_value : float,
@@ -77,19 +85,16 @@ func _on_convert_to_path_button_pressed() -> void:
 	undo_redo.commit_action()
 
 
-func _on_shape_prop_changed(new_val : Variant, field : String, field_idx : int = -1, transformer : Callable = func(x): return x) -> void:
+func _on_shape_prop_changed(new_val : Variant, field : String, transformer : Callable = func(x): return x) -> void:
 	var sel := (EditorInterface.get_selection().get_selected_nodes()
 		.filter(func(x): return x is ScalableVectorShape2D and x)
-		.filter(func(x : ScalableVectorShape2D): return x.shape_type != ScalableVectorShape2D.ShapeType.PATH)
 	)
 	if sel.is_empty():
 		return
 	var undo_redo := EditorInterface.get_editor_undo_redo()
 	undo_redo.create_action("Update %s for %d shape%s" % [field, sel.size(), "" if sel.size() == 1 else "s"])
 	for svs : ScalableVectorShape2D in sel:
-		var new_value = svs[field] if field_idx > -1 else transformer.call(new_val)
-		if field_idx > -1:
-			new_value[field_idx] = transformer.call(new_val)
+		var new_value = transformer.call(new_val)
 		undo_redo.add_do_property(svs, field, new_value)
 		undo_redo.add_undo_property(svs, field, svs[field])
 	undo_redo.commit_action()
@@ -101,6 +106,14 @@ func _on_offset_input_value_changed(new_value: Vector2) -> void:
 
 func _on_size_input_value_changed(new_value: Vector2) -> void:
 	_on_shape_prop_changed(new_value, "size")
+
+
+func _on_node_pos_input_value_changed(new_value: Vector2) -> void:
+	_on_shape_prop_changed(new_value, "position")
+
+
+func _on_node_scale_input_value_changed(new_value: Vector2) -> void:
+	_on_shape_prop_changed(new_value, "scale")
 
 
 func _on_radius_input_value_changed(new_value: Vector2) -> void:

@@ -13,7 +13,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_tcova")
 
-[node name="ShapeTypeSettingsContainer" type="ScrollContainer" parent="." unique_id=1943387412]
+[node name="ShapeSettingsContainer" type="ScrollContainer" parent="." unique_id=1943387412]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
@@ -23,19 +23,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HFlowContainer" type="HFlowContainer" parent="ShapeTypeSettingsContainer" unique_id=120906300]
+[node name="HFlowContainer" type="HFlowContainer" parent="ShapeSettingsContainer" unique_id=120906300]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ShapeSettingsContainer" type="VBoxContainer" parent="ShapeTypeSettingsContainer/HFlowContainer" unique_id=457794097]
+[node name="ShapeTypeSettingsContainer" type="VBoxContainer" parent="ShapeSettingsContainer/HFlowContainer" unique_id=457794097]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HFlowContainer" type="HFlowContainer" parent="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer" unique_id=1658071120]
+[node name="HFlowContainer" type="HFlowContainer" parent="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer" unique_id=1658071120]
 layout_mode = 2
 
-[node name="OffsetInput" parent="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer" unique_id=311560463 instance=ExtResource("3_s7q4c")]
+[node name="OffsetInput" parent="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer" unique_id=311560463 instance=ExtResource("3_s7q4c")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
@@ -46,10 +47,11 @@ suffix = "px"
 min_value = -1000.0
 max_value = 1000.0
 step = 0.5
+exp_edit = null
 allow_greater = true
 allow_lesser = true
 
-[node name="SizeInput" parent="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer" unique_id=98151697 instance=ExtResource("3_s7q4c")]
+[node name="SizeInput" parent="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer" unique_id=98151697 instance=ExtResource("3_s7q4c")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
@@ -60,10 +62,11 @@ suffix = "px"
 min_value = 1.0
 max_value = 1000.0
 step = 0.5
+exp_edit = null
 allow_greater = true
 value = Vector2(1, 1)
 
-[node name="RadiusInput" parent="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer" unique_id=745816487 instance=ExtResource("3_s7q4c")]
+[node name="RadiusInput" parent="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer" unique_id=745816487 instance=ExtResource("3_s7q4c")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
@@ -73,31 +76,33 @@ label = "Radius"
 suffix = "px"
 max_value = 500.0
 step = 0.5
+exp_edit = null
 allow_greater = true
 
-[node name="HFlowContainer2" type="HFlowContainer" parent="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer" unique_id=429711457]
+[node name="HFlowContainer2" type="HFlowContainer" parent="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer" unique_id=429711457]
 layout_mode = 2
 
-[node name="SpinContainer" type="PanelContainer" parent="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer2" unique_id=1724536808]
+[node name="SpinContainer" type="PanelContainer" parent="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer2" unique_id=1724536808]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 theme_override_styles/panel = ExtResource("2_2qsp5")
 
-[node name="ConvertToPathButton" type="Button" parent="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer2" unique_id=1989675619]
+[node name="ConvertToPathButton" type="Button" parent="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer2" unique_id=1989675619]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Convert To Path"
 
-[node name="NodeSettingsContainer" type="VBoxContainer" parent="ShapeTypeSettingsContainer/HFlowContainer" unique_id=1289229615]
+[node name="NodeSettingsContainer" type="VBoxContainer" parent="ShapeSettingsContainer/HFlowContainer" unique_id=1289229615]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 
-[node name="HFlowContainer" type="HFlowContainer" parent="ShapeTypeSettingsContainer/HFlowContainer/NodeSettingsContainer" unique_id=1404705732]
+[node name="HFlowContainer" type="HFlowContainer" parent="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer" unique_id=1404705732]
 layout_mode = 2
 
-[node name="NodePosInput" parent="ShapeTypeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer" unique_id=1309305434 instance=ExtResource("3_s7q4c")]
+[node name="NodePosInput" parent="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer" unique_id=1309305434 instance=ExtResource("3_s7q4c")]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_horizontal = 1
@@ -107,32 +112,35 @@ suffix = "px"
 min_value = -1000.0
 max_value = 1000.0
 step = 0.5
+exp_edit = null
 allow_greater = true
 allow_lesser = true
 
-[node name="NodeScaleInput" parent="ShapeTypeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer" unique_id=1414872564 instance=ExtResource("3_s7q4c")]
+[node name="NodeScaleInput" parent="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer" unique_id=1414872564 instance=ExtResource("3_s7q4c")]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_horizontal = 1
 tooltip_text = "Node position"
 label = "Node Scale"
 suffix = "px"
-min_value = -1000.0
-max_value = 1000.0
-step = 0.5
+max_value = 10.0
+step = 0.01
+exp_edit = true
 allow_greater = true
 allow_lesser = true
+value = Vector2(0.01, 0.01)
 
-[node name="HFlowContainer2" type="HFlowContainer" parent="ShapeTypeSettingsContainer/HFlowContainer/NodeSettingsContainer" unique_id=479100086]
+[node name="HFlowContainer2" type="HFlowContainer" parent="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer" unique_id=479100086]
 layout_mode = 2
 
-[node name="NodeRotateInputContainer" type="PanelContainer" parent="ShapeTypeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer2" unique_id=1620303996]
+[node name="NodeRotateInputContainer" type="PanelContainer" parent="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer2" unique_id=1620303996]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 theme_override_styles/panel = ExtResource("2_2qsp5")
 
-[node name="NodeSkewInputContainer" type="PanelContainer" parent="ShapeTypeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer2" unique_id=2145197911]
+[node name="NodeSkewInputContainer" type="PanelContainer" parent="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer2" unique_id=2145197911]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
@@ -165,8 +173,10 @@ size_flags_horizontal = 0
 size_flags_vertical = 4
 text = "Create Empty Shape"
 
-[connection signal="value_changed" from="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer/OffsetInput" to="." method="_on_offset_input_value_changed"]
-[connection signal="value_changed" from="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer/SizeInput" to="." method="_on_size_input_value_changed"]
-[connection signal="value_changed" from="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer/RadiusInput" to="." method="_on_radius_input_value_changed"]
-[connection signal="pressed" from="ShapeTypeSettingsContainer/HFlowContainer/ShapeSettingsContainer/HFlowContainer2/ConvertToPathButton" to="." method="_on_convert_to_path_button_pressed"]
+[connection signal="value_changed" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer/OffsetInput" to="." method="_on_offset_input_value_changed"]
+[connection signal="value_changed" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer/SizeInput" to="." method="_on_size_input_value_changed"]
+[connection signal="value_changed" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer/RadiusInput" to="." method="_on_radius_input_value_changed"]
+[connection signal="pressed" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer2/ConvertToPathButton" to="." method="_on_convert_to_path_button_pressed"]
+[connection signal="value_changed" from="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer/NodePosInput" to="." method="_on_node_pos_input_value_changed"]
+[connection signal="value_changed" from="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer/NodeScaleInput" to="." method="_on_node_scale_input_value_changed"]
 [connection signal="pressed" from="CreateEmptyShapeContainer/VBoxContainer2/CreateEmptyShapeButton" to="CreateEmptyShapeContainer" method="_on_create_empty_shape_button_pressed"]

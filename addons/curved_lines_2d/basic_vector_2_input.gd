@@ -44,6 +44,13 @@ signal value_changed(new_value : Vector2)
 			%XValueEditorSpinSlider.step = x
 			%YValueEditorSpinSlider.step = x
 
+@export var exp_edit := false:
+	set(x):
+		exp_edit = x
+		if is_node_ready():
+			%XValueEditorSpinSlider.exp_edit = x
+			%YValueEditorSpinSlider.exp_edit = x
+
 @export var allow_greater := false:
 	set(x):
 		allow_greater = x
