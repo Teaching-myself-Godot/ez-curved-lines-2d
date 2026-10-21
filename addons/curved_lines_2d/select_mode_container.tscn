@@ -29,6 +29,7 @@ size_flags_horizontal = 3
 
 [node name="ShapeTypeSettingsContainer" type="VBoxContainer" parent="ShapeSettingsContainer/HFlowContainer" unique_id=457794097]
 unique_name_in_owner = true
+custom_maximum_size = Vector2(400, -1)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -88,7 +89,7 @@ theme_override_styles/panel = ExtResource("2_2qsp5")
 [node name="ConvertToPathButton" type="Button" parent="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer2" unique_id=1989675619]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 2
 text = "Convert To Path"
 
 [node name="NodeSettingsContainer" type="VBoxContainer" parent="ShapeSettingsContainer/HFlowContainer" unique_id=1289229615]
