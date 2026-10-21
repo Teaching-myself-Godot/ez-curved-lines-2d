@@ -2,6 +2,8 @@
 class_name BasicVector2Input extends VBoxContainer
 
 signal value_changed(new_value : Vector2)
+signal commit_value()
+
 
 @export var label := "":
 	set(x):
@@ -97,6 +99,8 @@ func _ready() -> void:
 		x.step = step
 		x.allow_greater = allow_greater
 		x.allow_lesser = allow_lesser
+		x.focus_exited.connect(commit_value.emit)
+		x.value_focus_exited.connect(commit_value.emit)
 	%XValueEditorSpinSlider.value = value.x
 	%YValueEditorSpinSlider.value = value.y
 	%Label.text = label

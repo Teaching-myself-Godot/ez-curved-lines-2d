@@ -47,7 +47,6 @@ suffix = "px"
 min_value = -1000.0
 max_value = 1000.0
 step = 0.5
-exp_edit = null
 allow_greater = true
 allow_lesser = true
 
@@ -62,7 +61,6 @@ suffix = "px"
 min_value = 1.0
 max_value = 1000.0
 step = 0.5
-exp_edit = null
 allow_greater = true
 value = Vector2(1, 1)
 
@@ -76,7 +74,6 @@ label = "Radius"
 suffix = "px"
 max_value = 500.0
 step = 0.5
-exp_edit = null
 allow_greater = true
 
 [node name="HFlowContainer2" type="HFlowContainer" parent="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer" unique_id=429711457]
@@ -112,7 +109,6 @@ suffix = "px"
 min_value = -1000.0
 max_value = 1000.0
 step = 0.5
-exp_edit = null
 allow_greater = true
 allow_lesser = true
 
@@ -123,7 +119,6 @@ layout_mode = 2
 size_flags_horizontal = 1
 tooltip_text = "Node position"
 label = "Node Scale"
-suffix = "px"
 max_value = 10.0
 step = 0.01
 exp_edit = true
@@ -173,10 +168,15 @@ size_flags_horizontal = 0
 size_flags_vertical = 4
 text = "Create Empty Shape"
 
+[connection signal="commit_value" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer/OffsetInput" to="." method="_on_offset_input_commit_value"]
 [connection signal="value_changed" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer/OffsetInput" to="." method="_on_offset_input_value_changed"]
+[connection signal="commit_value" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer/SizeInput" to="." method="_on_size_input_commit_value"]
 [connection signal="value_changed" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer/SizeInput" to="." method="_on_size_input_value_changed"]
+[connection signal="commit_value" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer/RadiusInput" to="." method="_on_radius_input_commit_value"]
 [connection signal="value_changed" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer/RadiusInput" to="." method="_on_radius_input_value_changed"]
 [connection signal="pressed" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer2/ConvertToPathButton" to="." method="_on_convert_to_path_button_pressed"]
+[connection signal="commit_value" from="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer/NodePosInput" to="." method="_on_node_pos_input_commit_value"]
 [connection signal="value_changed" from="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer/NodePosInput" to="." method="_on_node_pos_input_value_changed"]
+[connection signal="commit_value" from="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer/NodeScaleInput" to="." method="_on_node_scale_input_commit_value"]
 [connection signal="value_changed" from="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer/NodeScaleInput" to="." method="_on_node_scale_input_value_changed"]
 [connection signal="pressed" from="CreateEmptyShapeContainer/VBoxContainer2/CreateEmptyShapeButton" to="CreateEmptyShapeContainer" method="_on_create_empty_shape_button_pressed"]
