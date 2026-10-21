@@ -3276,7 +3276,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		var mouse_pos := _svp_mouse_pos(
 				EditorInterface.get_editor_viewport_2d().get_mouse_position(),
 				current_selection)
-		if _is_change_pivot_button_active() or _svs_edit_mode == SVSEditMode.SET_PIVOT:
+		if (_is_change_pivot_button_active() or _svs_edit_mode == SVSEditMode.SET_PIVOT) and event.is_pressed():
 			if _is_svs_valid(current_selection):
 				_set_shape_origin(current_selection, mouse_pos)
 				return true
