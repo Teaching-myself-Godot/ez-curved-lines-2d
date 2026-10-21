@@ -442,7 +442,8 @@ func _on_stroke_picker_button_popup_closed() -> void:
 func _on_stroke_check_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_STROKE_ENABLED, toggled_on)
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_COLOR, %StrokePickerButton.color)
-	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_WIDTH, stroke_width_input.value)
+	if is_instance_valid(stroke_width_input):
+		ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_WIDTH, stroke_width_input.value)
 	ProjectSettings.save()
 	if _is_property_sync_allowed():
 		SVSPropertySync.sync_stroke()
