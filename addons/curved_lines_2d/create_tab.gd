@@ -40,7 +40,7 @@ var _prev_value_map : Dictionary[ScalableVectorShape2D, Variant] = {}
 	%CreateEllipseContainer, %CreateRectContainer,
 	%SelectModeContainer, %PencilToolContainer,
 	%BrushToolContainer, %KnifeToolContainer,
-	%SetPivotContainer
+	%SetPivotContainer, %ColorToolContainer
 ]
 
 @onready var tool_mode_button_group : ButtonGroup =	%CircleButton.button_group
@@ -74,6 +74,7 @@ func _ready() -> void:
 	%KnifeButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.KNIFE))
 	%BonePaintButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.PAINT_BONE))
 	%MergeButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.MERGE))
+	%ColorToolButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.COLOR_TOOL))
 	%FlipHorizontalButton.pressed.connect(flip_horizontal.emit)
 	%FlipVerticalButton.pressed.connect(flip_vertical.emit)
 
@@ -235,6 +236,9 @@ func set_edit_mode_toggle_button(mode : CurvedLines2D.SVSEditMode) -> void:
 		CurvedLines2D.SVSEditMode.MERGE:
 			if not %MergeButton.button_pressed:
 				%MergeButton.button_pressed = true
+		CurvedLines2D.SVSEditMode.COLOR_TOOL:
+			if not %ColorToolButton.button_pressed:
+				%ColorToolButton.button_pressed = true
 		_:
 			if not %EditButton.button_pressed:
 				%EditButton.button_pressed = true
@@ -268,6 +272,8 @@ func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
 			%BrushToolContainer.show()
 		CurvedLines2D.SVSEditMode.KNIFE:
 			%KnifeToolContainer.show()
+		CurvedLines2D.SVSEditMode.COLOR_TOOL:
+			%ColorToolContainer.show()
 
 
 func enable_svs_editors() -> void:
