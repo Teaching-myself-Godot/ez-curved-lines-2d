@@ -345,11 +345,12 @@ var stroke_width := 10.0:
 			if sz.y < ry * 2.001:
 				sz.y = ry * 2.001
 			size = sz
-			dimensions_changed.emit()
 		elif shape_type == ShapeType.ELLIPSE:
 			size = sz
 			rx = sz.x * 0.5
 			ry = sz.y * 0.5
+		dimensions_changed.emit()
+
 
 ## The rotation of the Rect/Ellipse's points relative to its natural center
 @export_range(-180.0, 180.0, 0.1, "radians_as_degrees") var spin := 0.0:
@@ -1102,6 +1103,10 @@ func set_position_to_center() -> void:
 
 func set_origin(global_pos : Vector2) -> void:
 	var local_pos = to_local(global_pos)
+	var retention_pos_map : Dictionary[Node, Vector2] = {}
+	for ch in get_children():
+		if ch is ScalableVectorShape2D:
+			retention_pos_map[ch] = ch.global_position
 	match shape_type:
 		ShapeType.RECT, ShapeType.ELLIPSE:
 			offset = offset - to_local(global_pos)
@@ -1114,7 +1119,8 @@ func set_origin(global_pos : Vector2) -> void:
 			global_position = global_pos
 			if is_instance_valid(polygon) and polygon.texture is GradientTexture2D:
 				polygon.texture_offset = -get_bounding_rect().position
-
+	for ch in retention_pos_map:
+		ch.global_position = retention_pos_map[ch]
 
 
 func get_bounding_box() -> Array[Vector2]:

@@ -5,7 +5,9 @@
 [ext_resource type="StyleBox" uid="uid://ddx1ye7r3r4lf" path="res://addons/curved_lines_2d/styleboxes/button_pressed_stylebox.tres" id="3_hti8q"]
 [ext_resource type="StyleBox" uid="uid://bo0x8scw4k70k" path="res://addons/curved_lines_2d/styleboxes/button_hover_stylebox.tres" id="4_powka"]
 [ext_resource type="Texture2D" uid="uid://ulvclg7al5cu" path="res://addons/curved_lines_2d/IconAtlas.svg" id="6_h5wiq"]
+[ext_resource type="PackedScene" uid="uid://b0diouoeyhvh5" path="res://addons/curved_lines_2d/select_mode_container.tscn" id="7_dv24s"]
 [ext_resource type="StyleBox" uid="uid://c034pktje23oe" path="res://addons/curved_lines_2d/styleboxes/editor_spin_box_container_stylebox.tres" id="7_powka"]
+[ext_resource type="PackedScene" uid="uid://djdapj672ftld" path="res://addons/curved_lines_2d/basic_vector_2_input.tscn" id="8_dv24s"]
 [ext_resource type="PackedScene" uid="uid://cjbkvx1pj7gq2" path="res://addons/curved_lines_2d/collision_object_type_option_button.tscn" id="20_rpvk4"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_dsrm6"]
@@ -171,7 +173,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 0
 script = ExtResource("1_vur25")
 metadata/_edit_horizontal_guides_ = [31.0]
 metadata/_edit_vertical_guides_ = [696.0]
@@ -190,7 +192,6 @@ size_flags_vertical = 0
 follow_focus = true
 horizontal_scroll_mode = 3
 vertical_scroll_mode = 0
-scroll_horizontal_by_default = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="ToolsContainer/ScrollContainer" unique_id=945149153]
 layout_mode = 2
@@ -518,7 +519,6 @@ layout_mode = 2
 size_flags_stretch_ratio = 2.0
 tooltip_text = "When checked, after drawing a pencil stroke, you can keep drawing on the same parent node.
 When unchecked, after drawing the pencil stroke, it is selected for editing."
-button_pressed = true
 text = "Keep drawing"
 
 [node name="FillInParentCheckBox" type="CheckBox" parent="ToolsContainer/MarginContainer/BrushToolContainer/VBoxContainer/HFlowContainer" unique_id=1369464324]
@@ -578,7 +578,6 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 tooltip_text = "When checked, after drawing a pencil stroke, you can keep drawing on the same parent node.
 When unchecked, after drawing the pencil stroke, it is selected for editing."
-button_pressed = true
 text = "Keep drawing"
 
 [node name="CreateEllipseContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=525159852]
@@ -635,7 +634,6 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 size_flags_stretch_ratio = 2.0
-button_pressed = true
 text = "Keep creating"
 
 [node name="CreateEllipseButton" type="Button" parent="ToolsContainer/MarginContainer/CreateEllipseContainer/VBoxContainer/HFlowContainer2" unique_id=1070699013]
@@ -706,6 +704,7 @@ text = "Center Offset"
 [node name="CreateRectAsPathCheckbox" type="CheckBox" parent="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3" unique_id=2047876141]
 unique_name_in_owner = true
 layout_mode = 2
+button_pressed = true
 text = "As Path"
 
 [node name="MakeAnotherRectCheckBox" type="CheckBox" parent="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3" unique_id=2069460587]
@@ -713,7 +712,6 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 size_flags_stretch_ratio = 2.0
-button_pressed = true
 text = "Keep creating
 "
 
@@ -723,19 +721,9 @@ layout_mode = 2
 tooltip_text = "Create a new ScalableRect2D"
 text = "Create Rectangle"
 
-[node name="SelectModeContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=1430453718]
+[node name="SelectModeContainer" parent="ToolsContainer/MarginContainer" unique_id=1578466445 instance=ExtResource("7_dv24s")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_vertical = 3
-
-[node name="CenterContainer" type="CenterContainer" parent="ToolsContainer/MarginContainer/SelectModeContainer" unique_id=1605373469]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="CreateEmptyShapeButton" type="Button" parent="ToolsContainer/MarginContainer/SelectModeContainer/CenterContainer" unique_id=2084441798]
-layout_mode = 2
-text = "Create Empty Shape"
 
 [node name="KnifeToolContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=1104133391]
 unique_name_in_owner = true
@@ -770,23 +758,36 @@ When unchecked, all points you drew are kept exactly as is, but no Bézier curve
 button_pressed = true
 text = "Extract curve"
 
+[node name="SetPivotContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=1355219972]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="OriginInput" parent="ToolsContainer/MarginContainer/SetPivotContainer" unique_id=311560463 instance=ExtResource("8_dv24s")]
+unique_name_in_owner = true
+layout_mode = 2
+label = "Global Pivot Position"
+suffix = "px"
+min_value = -1000.0
+max_value = 1000.0
+step = 0.001
+allow_greater = true
+allow_lesser = true
+
 [node name="SettingsContainer" type="VBoxContainer" parent="." unique_id=1335331203]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(450, 0)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="SettingsContainer" unique_id=105941073]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 8
 size_flags_vertical = 0
+theme_override_constants/separation = 4
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="SettingsContainer/HBoxContainer" unique_id=733683439]
-custom_minimum_size = Vector2(120, 0)
-layout_mode = 2
-
-[node name="EnableFillCheckBox" type="CheckBox" parent="SettingsContainer/HBoxContainer/HBoxContainer2" unique_id=3202312]
+[node name="EnableFillCheckBox" type="CheckBox" parent="SettingsContainer/HBoxContainer" unique_id=3202312]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
@@ -794,42 +795,44 @@ tooltip_text = "Enable Fill"
 button_pressed = true
 text = "Fill"
 
-[node name="FillPickerButton" type="ColorPickerButton" parent="SettingsContainer/HBoxContainer/HBoxContainer2" unique_id=1356466570]
+[node name="FillPickerButton" type="ColorPickerButton" parent="SettingsContainer/HBoxContainer" unique_id=1356466570]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(0.789063, 0.382202, 0.382202, 1)
+color = Color(0.46875, 0.23986816, 0.23986816, 1)
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/HBoxContainer" unique_id=265864135]
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="SettingsContainer/HBoxContainer" unique_id=1454263497]
-layout_mode = 2
-
-[node name="EnableStrokeCheckBox" type="CheckBox" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=1780043997]
+[node name="EnableStrokeCheckBox" type="CheckBox" parent="SettingsContainer/HBoxContainer" unique_id=1780043997]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Enable Stroke"
 text = "Stroke"
 
-[node name="StrokePickerButton" type="ColorPickerButton" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=73211193]
+[node name="StrokePickerButton" type="ColorPickerButton" parent="SettingsContainer/HBoxContainer" unique_id=73211193]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Set Stroke Color"
 text = "Fill"
 
-[node name="StrokeWidthContainer" type="PanelContainer" parent="SettingsContainer/HBoxContainer/HBoxContainer3" unique_id=1573755340]
+[node name="StrokeWidthContainer" type="PanelContainer" parent="SettingsContainer/HBoxContainer" unique_id=1573755340]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(150, 0)
+custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = ExtResource("7_powka")
+
+[node name="VSeparator5" type="VSeparator" parent="SettingsContainer/HBoxContainer" unique_id=1744221627]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
 
 [node name="ExpandTabButton" type="Button" parent="SettingsContainer/HBoxContainer" unique_id=597237552]
 custom_minimum_size = Vector2(32, 32)
@@ -1299,12 +1302,14 @@ expand_icon = true
 [connection signal="mouse_entered" from="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3/CreateRectButton" to="." method="_on_create_rect_button_mouse_entered"]
 [connection signal="mouse_exited" from="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3/CreateRectButton" to="." method="_on_create_rect_button_mouse_exited"]
 [connection signal="pressed" from="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3/CreateRectButton" to="." method="_on_create_rect_button_pressed"]
-[connection signal="pressed" from="ToolsContainer/MarginContainer/SelectModeContainer/CenterContainer/CreateEmptyShapeButton" to="." method="_on_create_empty_shape_button_pressed"]
+[connection signal="create_empty_shape" from="ToolsContainer/MarginContainer/SelectModeContainer" to="." method="_on_create_empty_shape_button_pressed"]
 [connection signal="toggled" from="ToolsContainer/MarginContainer/KnifeToolContainer/VBoxContainer/HFlowContainer/FitCurveToKnifeCutCheckBox" to="." method="_on_fit_curve_check_box_toggled"]
-[connection signal="toggled" from="SettingsContainer/HBoxContainer/HBoxContainer2/EnableFillCheckBox" to="." method="_on_fill_check_button_toggled"]
-[connection signal="color_changed" from="SettingsContainer/HBoxContainer/HBoxContainer2/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]
-[connection signal="toggled" from="SettingsContainer/HBoxContainer/HBoxContainer3/EnableStrokeCheckBox" to="." method="_on_stroke_check_button_toggled"]
-[connection signal="color_changed" from="SettingsContainer/HBoxContainer/HBoxContainer3/StrokePickerButton" to="." method="_on_stroke_picker_button_color_changed"]
+[connection signal="commit_value" from="ToolsContainer/MarginContainer/SetPivotContainer/OriginInput" to="." method="_on_origin_input_commit_value"]
+[connection signal="value_changed" from="ToolsContainer/MarginContainer/SetPivotContainer/OriginInput" to="." method="_on_origin_input_value_changed"]
+[connection signal="toggled" from="SettingsContainer/HBoxContainer/EnableFillCheckBox" to="." method="_on_fill_check_button_toggled"]
+[connection signal="color_changed" from="SettingsContainer/HBoxContainer/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]
+[connection signal="toggled" from="SettingsContainer/HBoxContainer/EnableStrokeCheckBox" to="." method="_on_stroke_check_button_toggled"]
+[connection signal="color_changed" from="SettingsContainer/HBoxContainer/StrokePickerButton" to="." method="_on_stroke_picker_button_color_changed"]
 [connection signal="toggled" from="SettingsContainer/HBoxContainer/ExpandTabButton" to="." method="_on_expand_tab_button_toggled"]
 [connection signal="type_selected" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
 [connection signal="toggled" from="SettingsContainer/MarginContainer/GeneralSettingsContainer/VBoxContainer/HBoxContainer/UseLine2DCheckButton" to="." method="_on_use_line_2d_check_button_toggled"]

@@ -87,6 +87,9 @@ You can find the rest of the explainer videos on this playlist:
   - [Changing the width curve of a Stroke (`Line2D`-Stroke only)](#changing-the-width-curve-of-a-stroke-line2d-stroke-only)
   - [Setting the pivot of your shape](#setting-the-pivot-of-your-shape)
   - [Sticking two or more shapes together by vertex merge](#sticking-two-or-more-shapes-together-by-vertex-merge)
+- [The select tool settings form](#the-select-tool-settings-form)
+  - [Shape Type Settings](#shape-type-settings)
+  - [Node2D properties](#node2d-properties)
 - [Free-hand Drawing](#free-hand-drawing)
   - [Drawing strokes and outlines with the Pencil Tool](#drawing-strokes-and-outlines-with-the-pencil-tool)
     - [Pencil tool settings](#pencil-tool-settings)
@@ -192,10 +195,11 @@ In the next section all these tools are described in more detail:
 
 - [Create Ellipse](#the-create-ellipse-tool)
 - [Create Rectangle](#the-create-rectangle-tool)
-- Selection Tool (Q), also used for [manipulating shapes](#manipulating-shapes)
+- [Selection Tool](#manipulating-shapes) (Q), used for manipulating shapes
 - [Unform Translate](#moving-translating-all-the-points) (Z), which moves the points of the shape without moving the entire godot node
 - [Uniform Rotate](#rotating-all-the-points) (X), which rotates only the points and not the node
 - [Uniform Scale](#resizing-all-the-points) (C), which resizes the points without scaling the node
+- [Set Pivot](#setting-the-pivot-of-your-shape) (A), to set the shape's pivot
 - [Flip Horizontal and Vertical](#flipping-paths)
 - [Brush tool](#drawing-polygons-using-the-brush-tool) (Shift+B), with which you can paint with an Ellipse/Rectangle shaped brush
 - [Pencil tool](#drawing-strokes-and-outlines-with-the-pencil-tool) (Shift+N) to draw strokes, or outlines
@@ -461,10 +465,11 @@ Arcs are flipped by toggling negating the `sweep` flag of each listed arc.
 
 # Manipulating shapes
 
-The hints in the 2D viewport should have you covered, but this section lists all the operations available to you. You can also watch the chapter on sculpting paths on youtube:
+The hints in the 2D viewport should have you covered, but this section lists all the operations available to you.
 
-[![sculpting paths on youtube](./screenshots/sculpting-paths-on-youtube.png)](https://www.youtube.com/watch?v=z8Y1e-TehoE&t=710s)
+This [section from the A-Z Explainer video](https://www.youtube.com/watch?v=z8Y1e-TehoE&t=710s) demonstrates most operations, but some things have changed since then. Especially the layout in the bottom dock since release 3.0.1. 
 
+The select tool now also hosts [its own settings form](#the-select-tool-settings-form), to make some common properties easier to find than hidden away in the inspector.
 
 ## Adding a point to a shape
 
@@ -578,7 +583,11 @@ Press `Right click` while holding `Ctrl` to remove a width curve control point:
 
 ## Setting the pivot of your shape
 
-You can use the `Change pivot` mode to change the origin of your shape, just like you would a `Sprite2D`. In this case, the 'pivot' will actually be the `position` property of you `ScalableVectorShape2D` node.
+You can use the `Change pivot` mode to change the origin of your shape, just like you would a `Sprite2D`. 
+
+This same tool is also available from the bottom dock and via the Shortcut A.
+
+In this case, the 'pivot' will actually be the `position` property of you `ScalableVectorShape2D` node.
 
 This rat will want to rotate it's head elsewhere:
 
@@ -587,6 +596,9 @@ This rat will want to rotate it's head elsewhere:
 Like this:
 
 ![set origin 2](./screenshots/16a-set_origin.png)
+
+Note that child nodes of the shape will also move position, unless they're the assigned polygon and line nodes.
+
 
 ## Sticking two or more shapes together by vertex merge
 
@@ -601,6 +613,32 @@ This allows you to link one point of 2 or more shapes together, so they will now
 This action create a new instance of the `SVSVertexMerge2D` node. Delete this node to break the link between points.
 
 ![merge 2 points](./screenshots/svs_vertex_merge_2d_node.png)
+
+
+# The select tool settings form
+
+When a `ScalableVectorShape2D` node is selected during select mode some of its most common properties can be altered in the bottom dock (besides the inspector).
+
+![Select Tool Form](./screenshots/select-tool-form.png)
+
+## Shape Type Settings
+
+The fields here are the same as the [shape type settings](#the-shape-type-inspector-form) in the inspector and only work on primitve rectangles and ellipses:
+
+- Offset: this represents the position of the pivot relative to the shape's natural center.
+- Size: the box size of the entire shape (stroke thickness excluded)
+- Radius: the radius of the shape in case of ellipses and radius of rounded corners in case of rectangles.
+- Spin: the shape's rotation relative to its natural center
+
+There is also a "convert to path" button which turns the shape into a Bézier curve. This operation cannot be properly undone.
+
+## Node2D properties
+
+- Node Pos: this is the [`Node2D.position`](https://docs.godotengine.org/en/stable/classes/class_node2d.html#class-node2d-property-position)
+- Node Scale: this is the [`Node2D.scale`](https://docs.godotengine.org/en/stable/classes/class_node2d.html#class-node2d-property-scale)
+- Rotate: this is the [`Node2D.rotation`](https://docs.godotengine.org/en/stable/classes/class_node2d.html#class-node2d-property-rotation)
+- Skew: this is the [`Node2D.skew`](https://docs.godotengine.org/en/stable/classes/class_node2d.html#class-node2d-property-skew)
+
 
 # Free-hand Drawing
 

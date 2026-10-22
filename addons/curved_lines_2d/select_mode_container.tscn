@@ -1,0 +1,183 @@
+[gd_scene format=3 uid="uid://b0diouoeyhvh5"]
+
+[ext_resource type="Script" uid="uid://b1j58l4qa0h2u" path="res://addons/curved_lines_2d/select_mode_container.gd" id="1_tcova"]
+[ext_resource type="StyleBox" uid="uid://c034pktje23oe" path="res://addons/curved_lines_2d/styleboxes/editor_spin_box_container_stylebox.tres" id="2_2qsp5"]
+[ext_resource type="PackedScene" uid="uid://djdapj672ftld" path="res://addons/curved_lines_2d/basic_vector_2_input.tscn" id="3_s7q4c"]
+
+[node name="SelectModeContainer" type="Control" unique_id=2111067405]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_tcova")
+
+[node name="ShapeSettingsContainer" type="ScrollContainer" parent="." unique_id=1943387412]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HFlowContainer" type="HFlowContainer" parent="ShapeSettingsContainer" unique_id=120906300]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ShapeTypeSettingsContainer" type="VBoxContainer" parent="ShapeSettingsContainer/HFlowContainer" unique_id=457794097]
+unique_name_in_owner = true
+custom_maximum_size = Vector2(400, -1)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HFlowContainer" type="HFlowContainer" parent="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer" unique_id=1658071120]
+layout_mode = 2
+
+[node name="OffsetInput" parent="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer" unique_id=311560463 instance=ExtResource("3_s7q4c")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 1
+tooltip_text = "Offset position for shape"
+label = "Offset"
+suffix = "px"
+min_value = -1000.0
+max_value = 1000.0
+step = 0.5
+allow_greater = true
+allow_lesser = true
+
+[node name="SizeInput" parent="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer" unique_id=98151697 instance=ExtResource("3_s7q4c")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 1
+tooltip_text = "Size of the shape"
+label = "Size"
+suffix = "px"
+min_value = 1.0
+max_value = 1000.0
+step = 0.5
+allow_greater = true
+value = Vector2(1, 1)
+
+[node name="RadiusInput" parent="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer" unique_id=745816487 instance=ExtResource("3_s7q4c")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 1
+tooltip_text = "(Corner) Radius of the shape"
+label = "Radius"
+suffix = "px"
+max_value = 500.0
+step = 0.5
+allow_greater = true
+
+[node name="HFlowContainer2" type="HFlowContainer" parent="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer" unique_id=429711457]
+layout_mode = 2
+
+[node name="SpinContainer" type="PanelContainer" parent="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer2" unique_id=1724536808]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("2_2qsp5")
+
+[node name="ConvertToPathButton" type="Button" parent="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer2" unique_id=1989675619]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Convert To Path"
+
+[node name="NodeSettingsContainer" type="VBoxContainer" parent="ShapeSettingsContainer/HFlowContainer" unique_id=1289229615]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+
+[node name="HFlowContainer" type="HFlowContainer" parent="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer" unique_id=1404705732]
+layout_mode = 2
+
+[node name="NodePosInput" parent="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer" unique_id=1309305434 instance=ExtResource("3_s7q4c")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 1
+tooltip_text = "Node position"
+label = "Node Pos"
+suffix = "px"
+min_value = -1000.0
+max_value = 1000.0
+step = 0.5
+allow_greater = true
+allow_lesser = true
+
+[node name="NodeScaleInput" parent="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer" unique_id=1414872564 instance=ExtResource("3_s7q4c")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 1
+tooltip_text = "Node position"
+label = "Node Scale"
+max_value = 10.0
+step = 0.01
+exp_edit = true
+allow_greater = true
+allow_lesser = true
+value = Vector2(0.01, 0.01)
+
+[node name="HFlowContainer2" type="HFlowContainer" parent="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer" unique_id=479100086]
+layout_mode = 2
+
+[node name="NodeRotateInputContainer" type="PanelContainer" parent="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer2" unique_id=1620303996]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("2_2qsp5")
+
+[node name="NodeSkewInputContainer" type="PanelContainer" parent="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer2" unique_id=2145197911]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/panel = ExtResource("2_2qsp5")
+
+[node name="CreateEmptyShapeContainer" type="ScrollContainer" parent="." unique_id=1578466445]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="CreateEmptyShapeContainer" unique_id=1347791848]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="CreateEmptyShapeContainer/VBoxContainer2" unique_id=1076169827]
+layout_mode = 2
+text = "No Shape Selected"
+
+[node name="CreateEmptyShapeButton" type="Button" parent="CreateEmptyShapeContainer/VBoxContainer2" unique_id=1751696463]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+text = "Create Empty Shape"
+
+[connection signal="commit_value" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer/OffsetInput" to="." method="_on_offset_input_commit_value"]
+[connection signal="value_changed" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer/OffsetInput" to="." method="_on_offset_input_value_changed"]
+[connection signal="commit_value" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer/SizeInput" to="." method="_on_size_input_commit_value"]
+[connection signal="value_changed" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer/SizeInput" to="." method="_on_size_input_value_changed"]
+[connection signal="commit_value" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer/RadiusInput" to="." method="_on_radius_input_commit_value"]
+[connection signal="value_changed" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer/RadiusInput" to="." method="_on_radius_input_value_changed"]
+[connection signal="pressed" from="ShapeSettingsContainer/HFlowContainer/ShapeTypeSettingsContainer/HFlowContainer2/ConvertToPathButton" to="." method="_on_convert_to_path_button_pressed"]
+[connection signal="commit_value" from="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer/NodePosInput" to="." method="_on_node_pos_input_commit_value"]
+[connection signal="value_changed" from="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer/NodePosInput" to="." method="_on_node_pos_input_value_changed"]
+[connection signal="commit_value" from="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer/NodeScaleInput" to="." method="_on_node_scale_input_commit_value"]
+[connection signal="value_changed" from="ShapeSettingsContainer/HFlowContainer/NodeSettingsContainer/HFlowContainer/NodeScaleInput" to="." method="_on_node_scale_input_value_changed"]
+[connection signal="pressed" from="CreateEmptyShapeContainer/VBoxContainer2/CreateEmptyShapeButton" to="CreateEmptyShapeContainer" method="_on_create_empty_shape_button_pressed"]

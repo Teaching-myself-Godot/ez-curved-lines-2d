@@ -678,6 +678,11 @@ func _on_selection_changed():
 		scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings(svs)
 		if not svs.assigned_node_changed.is_connected(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings.bind(svs)):
 			svs.assigned_node_changed.connect(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings.bind(svs))
+		if not svs.dimensions_changed.is_connected(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings.bind(svs)):
+			svs.dimensions_changed.connect(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings.bind(svs))
+		if not svs.transform_changed.is_connected(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings):
+			svs.set_notify_transform(true)
+			svs.transform_changed.connect(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings)
 	else:
 		svs_edit_buttons.hide_knife()
 		if _svs_edit_mode == SVSEditMode.KNIFE:
@@ -1748,7 +1753,7 @@ func _draw_set_pivot_hints(viewport_control : Control, svs : ScalableVectorShape
 	_draw_crosshair(viewport_control, _vp_transform(mouse_pos),
 		2.0, 6.0, VIEWPORT_ORANGE, 1
 	)
-	_draw_hint(viewport_control, " - Click to set pivot")
+	_draw_hint(viewport_control, " - Click to set pivot at %s " % str(mouse_pos))
 
 
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
@@ -3271,7 +3276,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		var mouse_pos := _svp_mouse_pos(
 				EditorInterface.get_editor_viewport_2d().get_mouse_position(),
 				current_selection)
-		if _is_change_pivot_button_active() or _svs_edit_mode == SVSEditMode.SET_PIVOT:
+		if (_is_change_pivot_button_active() or _svs_edit_mode == SVSEditMode.SET_PIVOT) and event.is_pressed():
 			if _is_svs_valid(current_selection):
 				_set_shape_origin(current_selection, mouse_pos)
 				return true

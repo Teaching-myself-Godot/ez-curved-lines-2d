@@ -31,16 +31,16 @@ var brush_size_y_input : EditorSpinSlider
 var brush_rotation_input : EditorSpinSlider
 
 var warning_dialog : AcceptDialog = null
-
 var tab_default_min_height : int
-
-
 var granularity_inputs : Array[EditorSpinSlider] = []
 
-@onready var mode_containers : Array[Container] = [
+var _prev_value_map : Dictionary[ScalableVectorShape2D, Variant] = {}
+
+@onready var mode_containers : Array[Control] = [
 	%CreateEllipseContainer, %CreateRectContainer,
 	%SelectModeContainer, %PencilToolContainer,
-	%BrushToolContainer, %KnifeToolContainer
+	%BrushToolContainer, %KnifeToolContainer,
+	%SetPivotContainer
 ]
 
 @onready var tool_mode_button_group : ButtonGroup =	%CircleButton.button_group
@@ -86,7 +86,7 @@ func _ready() -> void:
 		%FillPickerButton.popup_closed.connect(_on_fill_picker_button_popup_closed)
 	%EnableStrokeCheckBox.button_pressed = CurvedLines2D._is_add_stroke_enabled()
 	%EnableFillCheckBox.button_pressed = CurvedLines2D._is_add_fill_enabled()
-	stroke_width_input = _make_number_input("Thickness", 10.0, 0.5, 100.0, "px", 0.5)
+	stroke_width_input = _make_number_input("", 10.0, 0.5, 100.0, "px", 0.5, "Set Stroke Thickness")
 	stroke_width_input.value = CurvedLines2D._get_default_stroke_width()
 	stroke_width_input.value_changed.connect(_on_stroke_width_input_value_changed)
 	%StrokeWidthContainer.add_child(stroke_width_input)
@@ -254,6 +254,14 @@ func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
 			%CreateRectContainer.show()
 		CurvedLines2D.SVSEditMode.NONE:
 			%SelectModeContainer.show()
+		CurvedLines2D.SVSEditMode.TRANSLATE:
+			%SelectModeContainer.show()
+		CurvedLines2D.SVSEditMode.ROTATE:
+			%SelectModeContainer.show()
+		CurvedLines2D.SVSEditMode.SCALE:
+			%SelectModeContainer.show()
+		CurvedLines2D.SVSEditMode.SET_PIVOT:
+			%SetPivotContainer.show()
 		CurvedLines2D.SVSEditMode.PENCIL:
 			%PencilToolContainer.show()
 		CurvedLines2D.SVSEditMode.BRUSH:
@@ -327,6 +335,8 @@ func sync_draw_settings() -> void:
 func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 	if svs not in EditorInterface.get_selection().get_selected_nodes():
 		return
+	%SelectModeContainer.sync_svs_settings(svs)
+	%OriginInput.set_value_no_signal(svs.global_position)
 	%FillPickerButton.color = svs.fill_color
 	%StrokePickerButton.color = svs.stroke_color
 	stroke_width_input.set_value_no_signal(svs.stroke_width)
@@ -394,6 +404,31 @@ func _make_number_input(lbl : String, value : float, min_value : float, max_valu
 	return x_slider
 
 
+func _on_origin_input_value_changed(new_value: Vector2) -> void:
+	for svs : ScalableVectorShape2D in EditorInterface.get_selection().get_selected_nodes().filter(func(x): return x is ScalableVectorShape2D):
+		if svs not in _prev_value_map:
+			_prev_value_map[svs] = svs.global_position
+		svs.set_origin(new_value)
+
+
+func _on_origin_input_commit_value() -> void:
+	var sel := (
+			EditorInterface.get_selection()
+				.get_selected_nodes()
+				.filter(func(x): return x is ScalableVectorShape2D)
+				.filter(func(x): return x in _prev_value_map)
+	)
+	if sel.is_empty():
+		return
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	undo_redo.create_action("Set pivot for %d shape%s" % [sel.size(), "" if sel.size() == 1 else "s"])
+	for svs : ScalableVectorShape2D in sel:
+		undo_redo.add_do_method(svs, "set_origin", svs.global_position)
+		undo_redo.add_undo_method(svs, "set_origin", _prev_value_map[svs])
+	undo_redo.commit_action(false)
+	_prev_value_map.clear()
+
+
 func _is_property_sync_allowed() -> bool:
 	if %BrushButton.button_pressed or %PencilButton.button_pressed:
 		return false
@@ -431,9 +466,14 @@ func _on_stroke_picker_button_popup_closed() -> void:
 
 func _on_stroke_check_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_STROKE_ENABLED, toggled_on)
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_COLOR, %StrokePickerButton.color)
+	if is_instance_valid(stroke_width_input):
+		ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_WIDTH, stroke_width_input.value)
 	ProjectSettings.save()
 	if _is_property_sync_allowed():
 		SVSPropertySync.sync_stroke()
+		SVSPropertySync.sync_stroke_color(true)
+		SVSPropertySync.sync_stroke_width()
 
 
 func _on_stroke_width_input_value_changed(new_value: float) -> void:
@@ -444,9 +484,11 @@ func _on_stroke_width_input_value_changed(new_value: float) -> void:
 
 func _on_fill_check_button_toggled(toggled_on: bool) -> void:
 	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_FILL_ENABLED, toggled_on)
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_FILL_COLOR, %FillPickerButton.color)
 	ProjectSettings.save()
 	if _is_property_sync_allowed():
 		SVSPropertySync.sync_polygon()
+		SVSPropertySync.sync_fill_color(true)
 
 
 func _on_collision_object_type_option_button_type_selected(obj_type: ScalableVectorShape2D.CollisionObjectType) -> void:
@@ -810,3 +852,4 @@ func _on_fit_curve_check_box_toggled(toggled_on: bool) -> void:
 	ProjectSettings.save()
 	for fc : CheckBox in fit_curve_check_boxes:
 		fc.set_pressed_no_signal(toggled_on)
+

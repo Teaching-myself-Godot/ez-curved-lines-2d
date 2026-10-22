@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.2.0 - Property Editors
+
+### Added
+
+- Set pivot tool with global pivot position editor in bottom dock
+- Property editors in bottom dock for offset, size, radius, spin, position, scale, rotation and skew
+
+### Changed
+
+- Set pivot can now snap to grid
+- Changing the pivot does not change position of direct child ScalableVectorShape2D anymore
 
 ## 3.1.0 - Shiny Sizing 
 
