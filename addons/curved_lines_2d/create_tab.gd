@@ -40,7 +40,8 @@ var granularity_inputs : Array[EditorSpinSlider] = []
 @onready var mode_containers : Array[Control] = [
 	%CreateEllipseContainer, %CreateRectContainer,
 	%SelectModeContainer, %PencilToolContainer,
-	%BrushToolContainer, %KnifeToolContainer
+	%BrushToolContainer, %KnifeToolContainer,
+	%SetPivotContainer
 ]
 
 @onready var tool_mode_button_group : ButtonGroup =	%CircleButton.button_group
@@ -261,7 +262,7 @@ func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
 		CurvedLines2D.SVSEditMode.SCALE:
 			%SelectModeContainer.show()
 		CurvedLines2D.SVSEditMode.SET_PIVOT:
-			%SelectModeContainer.show()
+			%SetPivotContainer.show()
 		CurvedLines2D.SVSEditMode.PENCIL:
 			%PencilToolContainer.show()
 		CurvedLines2D.SVSEditMode.BRUSH:
@@ -336,7 +337,7 @@ func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 	if svs not in EditorInterface.get_selection().get_selected_nodes():
 		return
 	%SelectModeContainer.sync_svs_settings(svs)
-
+	%OriginInput.value = svs.global_position
 	%FillPickerButton.color = svs.fill_color
 	%StrokePickerButton.color = svs.stroke_color
 	stroke_width_input.set_value_no_signal(svs.stroke_width)
@@ -402,6 +403,11 @@ func _make_number_input(lbl : String, value : float, min_value : float, max_valu
 	x_slider.focus_exited.connect(ProjectSettings.save)
 	x_slider.tooltip_text = tooltip_text
 	return x_slider
+
+
+func _on_origin_input_value_changed(new_value: Vector2) -> void:
+	for svs : ScalableVectorShape2D in EditorInterface.get_selection().get_selected_nodes().filter(func(x): return x is ScalableVectorShape2D):
+		svs.set_origin(new_value)
 
 
 func _is_property_sync_allowed() -> bool:
@@ -827,4 +833,3 @@ func _on_fit_curve_check_box_toggled(toggled_on: bool) -> void:
 	ProjectSettings.save()
 	for fc : CheckBox in fit_curve_check_boxes:
 		fc.set_pressed_no_signal(toggled_on)
-

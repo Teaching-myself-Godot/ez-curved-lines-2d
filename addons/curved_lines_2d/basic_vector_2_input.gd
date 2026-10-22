@@ -76,6 +76,8 @@ signal commit_value()
 
 @export var value := Vector2.ZERO:
 	set(new_val):
+		if new_val.is_equal_approx(value):
+			return
 		value = new_val
 		if _do_emit:
 			if is_node_ready():

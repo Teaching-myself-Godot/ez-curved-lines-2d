@@ -1753,7 +1753,7 @@ func _draw_set_pivot_hints(viewport_control : Control, svs : ScalableVectorShape
 	_draw_crosshair(viewport_control, _vp_transform(mouse_pos),
 		2.0, 6.0, VIEWPORT_ORANGE, 1
 	)
-	_draw_hint(viewport_control, " - Click to set pivot")
+	_draw_hint(viewport_control, " - Click to set pivot at %s " % str(mouse_pos))
 
 
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:

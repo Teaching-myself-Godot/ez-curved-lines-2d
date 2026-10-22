@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://ulvclg7al5cu" path="res://addons/curved_lines_2d/IconAtlas.svg" id="6_h5wiq"]
 [ext_resource type="PackedScene" uid="uid://b0diouoeyhvh5" path="res://addons/curved_lines_2d/select_mode_container.tscn" id="7_dv24s"]
 [ext_resource type="StyleBox" uid="uid://c034pktje23oe" path="res://addons/curved_lines_2d/styleboxes/editor_spin_box_container_stylebox.tres" id="7_powka"]
+[ext_resource type="PackedScene" uid="uid://djdapj672ftld" path="res://addons/curved_lines_2d/basic_vector_2_input.tscn" id="8_dv24s"]
 [ext_resource type="PackedScene" uid="uid://cjbkvx1pj7gq2" path="res://addons/curved_lines_2d/collision_object_type_option_button.tscn" id="20_rpvk4"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_dsrm6"]
@@ -757,6 +758,21 @@ When unchecked, all points you drew are kept exactly as is, but no Bézier curve
 button_pressed = true
 text = "Extract curve"
 
+[node name="SetPivotContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=1355219972]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="OriginInput" parent="ToolsContainer/MarginContainer/SetPivotContainer" unique_id=311560463 instance=ExtResource("8_dv24s")]
+unique_name_in_owner = true
+layout_mode = 2
+label = "Global Pivot Position"
+suffix = "px"
+min_value = -1000.0
+max_value = 1000.0
+allow_greater = true
+allow_lesser = true
+
 [node name="SettingsContainer" type="VBoxContainer" parent="." unique_id=1335331203]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(300, 0)
@@ -784,7 +800,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(1, 1, 1, 1)
+color = Color(0.46875, 0.23986816, 0.23986816, 1)
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/HBoxContainer" unique_id=265864135]
 layout_mode = 2
@@ -804,7 +820,6 @@ layout_mode = 2
 size_flags_horizontal = 0
 tooltip_text = "Set Stroke Color"
 text = "Fill"
-color = Color(1, 1, 1, 1)
 
 [node name="StrokeWidthContainer" type="PanelContainer" parent="SettingsContainer/HBoxContainer" unique_id=1573755340]
 unique_name_in_owner = true
@@ -1288,6 +1303,7 @@ expand_icon = true
 [connection signal="pressed" from="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3/CreateRectButton" to="." method="_on_create_rect_button_pressed"]
 [connection signal="create_empty_shape" from="ToolsContainer/MarginContainer/SelectModeContainer" to="." method="_on_create_empty_shape_button_pressed"]
 [connection signal="toggled" from="ToolsContainer/MarginContainer/KnifeToolContainer/VBoxContainer/HFlowContainer/FitCurveToKnifeCutCheckBox" to="." method="_on_fit_curve_check_box_toggled"]
+[connection signal="value_changed" from="ToolsContainer/MarginContainer/SetPivotContainer/OriginInput" to="." method="_on_origin_input_value_changed"]
 [connection signal="toggled" from="SettingsContainer/HBoxContainer/EnableFillCheckBox" to="." method="_on_fill_check_button_toggled"]
 [connection signal="color_changed" from="SettingsContainer/HBoxContainer/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]
 [connection signal="toggled" from="SettingsContainer/HBoxContainer/EnableStrokeCheckBox" to="." method="_on_stroke_check_button_toggled"]
