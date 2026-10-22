@@ -31,11 +31,10 @@ var brush_size_y_input : EditorSpinSlider
 var brush_rotation_input : EditorSpinSlider
 
 var warning_dialog : AcceptDialog = null
-
 var tab_default_min_height : int
-
-
 var granularity_inputs : Array[EditorSpinSlider] = []
+
+var _prev_value_map : Dictionary[ScalableVectorShape2D, Variant] = {}
 
 @onready var mode_containers : Array[Control] = [
 	%CreateEllipseContainer, %CreateRectContainer,
@@ -337,7 +336,7 @@ func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 	if svs not in EditorInterface.get_selection().get_selected_nodes():
 		return
 	%SelectModeContainer.sync_svs_settings(svs)
-	%OriginInput.value = svs.global_position
+	%OriginInput.set_value_no_signal(svs.global_position)
 	%FillPickerButton.color = svs.fill_color
 	%StrokePickerButton.color = svs.stroke_color
 	stroke_width_input.set_value_no_signal(svs.stroke_width)
@@ -407,7 +406,27 @@ func _make_number_input(lbl : String, value : float, min_value : float, max_valu
 
 func _on_origin_input_value_changed(new_value: Vector2) -> void:
 	for svs : ScalableVectorShape2D in EditorInterface.get_selection().get_selected_nodes().filter(func(x): return x is ScalableVectorShape2D):
+		if svs not in _prev_value_map:
+			_prev_value_map[svs] = svs.global_position
 		svs.set_origin(new_value)
+
+
+func _on_origin_input_commit_value() -> void:
+	var sel := (
+			EditorInterface.get_selection()
+				.get_selected_nodes()
+				.filter(func(x): return x is ScalableVectorShape2D)
+				.filter(func(x): return x in _prev_value_map)
+	)
+	if sel.is_empty():
+		return
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	undo_redo.create_action("Set pivot for %d shape%s" % [sel.size(), "" if sel.size() == 1 else "s"])
+	for svs : ScalableVectorShape2D in sel:
+		undo_redo.add_do_method(svs, "set_origin", svs.global_position)
+		undo_redo.add_undo_method(svs, "set_origin", _prev_value_map[svs])
+	undo_redo.commit_action(false)
+	_prev_value_map.clear()
 
 
 func _is_property_sync_allowed() -> bool:
@@ -833,3 +852,4 @@ func _on_fit_curve_check_box_toggled(toggled_on: bool) -> void:
 	ProjectSettings.save()
 	for fc : CheckBox in fit_curve_check_boxes:
 		fc.set_pressed_no_signal(toggled_on)
+

@@ -770,6 +770,7 @@ label = "Global Pivot Position"
 suffix = "px"
 min_value = -1000.0
 max_value = 1000.0
+step = 0.001
 allow_greater = true
 allow_lesser = true
 
@@ -1303,6 +1304,7 @@ expand_icon = true
 [connection signal="pressed" from="ToolsContainer/MarginContainer/CreateRectContainer/VBoxContainer/HFlowContainer3/CreateRectButton" to="." method="_on_create_rect_button_pressed"]
 [connection signal="create_empty_shape" from="ToolsContainer/MarginContainer/SelectModeContainer" to="." method="_on_create_empty_shape_button_pressed"]
 [connection signal="toggled" from="ToolsContainer/MarginContainer/KnifeToolContainer/VBoxContainer/HFlowContainer/FitCurveToKnifeCutCheckBox" to="." method="_on_fit_curve_check_box_toggled"]
+[connection signal="commit_value" from="ToolsContainer/MarginContainer/SetPivotContainer/OriginInput" to="." method="_on_origin_input_commit_value"]
 [connection signal="value_changed" from="ToolsContainer/MarginContainer/SetPivotContainer/OriginInput" to="." method="_on_origin_input_value_changed"]
 [connection signal="toggled" from="SettingsContainer/HBoxContainer/EnableFillCheckBox" to="." method="_on_fill_check_button_toggled"]
 [connection signal="color_changed" from="SettingsContainer/HBoxContainer/FillPickerButton" to="." method="_on_fill_picker_button_color_changed"]

@@ -136,7 +136,7 @@ func _on_shape_prop_committed(field : String) -> void:
 	for svs : ScalableVectorShape2D in sel:
 		undo_redo.add_do_property(svs, field, svs[field])
 		undo_redo.add_undo_property(svs, field, _prev_value_map[svs])
-	undo_redo.commit_action()
+	undo_redo.commit_action(false)
 	_prev_value_map.clear()
 
 
@@ -159,7 +159,7 @@ func _on_radius_input_commit_value() -> void:
 			undo_redo.add_undo_property(svs, "rx", _prev_value_map[svs][0])
 			undo_redo.add_undo_property(svs, "ry", _prev_value_map[svs][1])
 
-	undo_redo.commit_action()
+	undo_redo.commit_action(false)
 	_prev_value_map.clear()
 
 
