@@ -1775,6 +1775,8 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		return _handle_create_ellipse_preview(viewport_control)
 	elif _svs_edit_mode == SVSEditMode.CREATE_RECT:
 		return _handle_create_rect_preview(viewport_control)
+	elif _svs_edit_mode == SVSEditMode.COLOR_TOOL:
+		return
 
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
@@ -3219,6 +3221,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return _handle_bone_paint_input(event)
 	elif _svs_edit_mode == SVSEditMode.CREATE_ELLIPSE or _svs_edit_mode == SVSEditMode.CREATE_RECT:
 		return _handle_create_primitive_input(event)
+	elif _svs_edit_mode == SVSEditMode.COLOR_TOOL:
+		return false
 
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		_lmb_is_down_inside_viewport = (event as InputEventMouseButton).pressed
