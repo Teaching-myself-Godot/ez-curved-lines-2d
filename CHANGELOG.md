@@ -10,6 +10,7 @@
 ### Changed
 
 - Set pivot can now snap to grid
+- Changing the pivot does not change position of direct child ScalableVectorShape2D anymore
 
 ## 3.1.0 - Shiny Sizing 
 
