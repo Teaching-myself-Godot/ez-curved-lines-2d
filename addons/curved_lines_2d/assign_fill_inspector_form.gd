@@ -154,7 +154,7 @@ func _on_linear_gradient_toggle_button_button_down() -> void:
 	if (scalable_vector_shape_2d.polygon.texture is GradientTexture2D and
 				scalable_vector_shape_2d.polygon.texture.fill == GradientTexture2D.FILL_RADIAL):
 		var undo_redo := EditorInterface.get_editor_undo_redo()
-		undo_redo.create_action("Replace linear gradient with radial gradient")
+		undo_redo.create_action("Replace radial gradient with linear gradient")
 		undo_redo.add_do_property(scalable_vector_shape_2d.polygon.texture, "fill", GradientTexture2D.FILL_LINEAR)
 		undo_redo.add_undo_property(scalable_vector_shape_2d.polygon.texture, "fill", GradientTexture2D.FILL_RADIAL)
 		undo_redo.commit_action()
