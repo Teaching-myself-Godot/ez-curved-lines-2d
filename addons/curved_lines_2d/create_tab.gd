@@ -40,7 +40,7 @@ var _prev_value_map : Dictionary[ScalableVectorShape2D, Variant] = {}
 	%CreateEllipseContainer, %CreateRectContainer,
 	%SelectModeContainer, %PencilToolContainer,
 	%BrushToolContainer, %KnifeToolContainer,
-	%SetPivotContainer
+	%SetPivotContainer, %ColorToolContainer
 ]
 
 @onready var tool_mode_button_group : ButtonGroup =	%CircleButton.button_group
@@ -74,6 +74,7 @@ func _ready() -> void:
 	%KnifeButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.KNIFE))
 	%BonePaintButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.PAINT_BONE))
 	%MergeButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.MERGE))
+	%ColorToolButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.COLOR_TOOL))
 	%FlipHorizontalButton.pressed.connect(flip_horizontal.emit)
 	%FlipVerticalButton.pressed.connect(flip_vertical.emit)
 
@@ -235,6 +236,9 @@ func set_edit_mode_toggle_button(mode : CurvedLines2D.SVSEditMode) -> void:
 		CurvedLines2D.SVSEditMode.MERGE:
 			if not %MergeButton.button_pressed:
 				%MergeButton.button_pressed = true
+		CurvedLines2D.SVSEditMode.COLOR_TOOL:
+			if not %ColorToolButton.button_pressed:
+				%ColorToolButton.button_pressed = true
 		_:
 			if not %EditButton.button_pressed:
 				%EditButton.button_pressed = true
@@ -268,6 +272,8 @@ func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
 			%BrushToolContainer.show()
 		CurvedLines2D.SVSEditMode.KNIFE:
 			%KnifeToolContainer.show()
+		CurvedLines2D.SVSEditMode.COLOR_TOOL:
+			%ColorToolContainer.show()
 
 
 func enable_svs_editors() -> void:
@@ -853,3 +859,40 @@ func _on_fit_curve_check_box_toggled(toggled_on: bool) -> void:
 	for fc : CheckBox in fit_curve_check_boxes:
 		fc.set_pressed_no_signal(toggled_on)
 
+# --- Color Tools ---
+func _on_find_replace_color_button_pressed() -> void:
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	var rt := EditorInterface.get_edited_scene_root()
+	var sel := (
+		rt
+			.find_children("*", "ScalableVectorShape2D", true, true)
+			.filter(func(x): return x.owner == EditorInterface.get_edited_scene_root()) +
+			([rt] if rt is ScalableVectorShape2D else [])
+	)
+
+	if sel.is_empty():
+		return
+	undo_redo.create_action("Find and replace color in %d shape%s" % [sel.size(), "" if sel.size() == 1 else "s"])
+	for svs : ScalableVectorShape2D in sel:
+		if %ReplaceStrokesCheckBox.button_pressed and _colors_are_equal_enough(svs.stroke_color, %FindColorButton.color):
+			undo_redo.add_do_property(svs, "stroke_color",  %ReplaceColorButton.color)
+			undo_redo.add_undo_property(svs, "stroke_color", svs.stroke_color)
+		if %ReplaceFillsCheckBox.button_pressed and _colors_are_equal_enough(svs.fill_color, %FindColorButton.color):
+			undo_redo.add_do_property(svs, "fill_color",  %ReplaceColorButton.color)
+			undo_redo.add_undo_property(svs, "fill_color", svs.fill_color)
+
+		if %ReplaceStopsCheckBox.button_pressed and is_instance_valid(svs.polygon) and svs.polygon.texture is GradientTexture2D:
+			var found := false
+			for i in svs.polygon.texture.gradient.colors.size():
+				if _colors_are_equal_enough(svs.polygon.texture.gradient.colors[i], %FindColorButton.color):
+					undo_redo.add_do_method(svs.polygon.texture.gradient, 'set_color', i, %ReplaceColorButton.color)
+					undo_redo.add_undo_method(svs.polygon.texture.gradient, 'set_color', i, svs.polygon.texture.gradient.colors[i])
+					found = true
+			if found:
+				undo_redo.add_do_method(svs, 'notify_assigned_node_change')
+				undo_redo.add_undo_method(svs, 'notify_assigned_node_change')
+	undo_redo.commit_action()
+
+
+func _colors_are_equal_enough(a : Color, b : Color, d := 0.0001) -> float:
+	return Vector4(a.r, a.g, a.b, a.a).distance_squared_to(Vector4(b.r, b.g, b.b, b.a)) < d
