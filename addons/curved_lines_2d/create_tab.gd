@@ -862,7 +862,14 @@ func _on_fit_curve_check_box_toggled(toggled_on: bool) -> void:
 # --- Color Tools ---
 func _on_find_replace_color_button_pressed() -> void:
 	var undo_redo := EditorInterface.get_editor_undo_redo()
-	var sel := EditorInterface.get_edited_scene_root().find_children("*", "ScalableVectorShape2D", true, true)
+	var rt := EditorInterface.get_edited_scene_root()
+	var sel := (
+		rt
+			.find_children("*", "ScalableVectorShape2D", true, true)
+			.filter(func(x): return x.owner == EditorInterface.get_edited_scene_root()) +
+			([rt] if rt is ScalableVectorShape2D else [])
+	)
+
 	if sel.is_empty():
 		return
 	undo_redo.create_action("Find and replace color in %d shape%s" % [sel.size(), "" if sel.size() == 1 else "s"])
