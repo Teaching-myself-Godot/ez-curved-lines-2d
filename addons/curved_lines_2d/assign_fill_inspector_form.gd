@@ -93,7 +93,7 @@ func _set_texture(texture : Texture2D, texture_offset := Vector2.ZERO) -> void:
 
 
 func _update_stop_color(idx : int, color : Color) -> void:
-	scalable_vector_shape_2d.polygon.texture.gradient.colors[idx] = color
+	scalable_vector_shape_2d.polygon.texture.gradient.set_color(idx, color)
 
 
 func _handle_stop_color_undo_redo_action(idx : int, btn : ColorPickerButton, toggled_on : bool) -> void:
@@ -151,6 +151,14 @@ func _on_linear_gradient_toggle_button_button_down() -> void:
 				scalable_vector_shape_2d.polygon.texture.fill == GradientTexture2D.FILL_LINEAR):
 		return
 
+	if (scalable_vector_shape_2d.polygon.texture is GradientTexture2D and
+				scalable_vector_shape_2d.polygon.texture.fill == GradientTexture2D.FILL_RADIAL):
+		var undo_redo := EditorInterface.get_editor_undo_redo()
+		undo_redo.create_action("Replace linear gradient with radial gradient")
+		undo_redo.add_do_property(scalable_vector_shape_2d.polygon.texture, "fill", GradientTexture2D.FILL_LINEAR)
+		undo_redo.add_undo_property(scalable_vector_shape_2d.polygon.texture, "fill", GradientTexture2D.FILL_RADIAL)
+		undo_redo.commit_action()
+		return
 	var box := scalable_vector_shape_2d.get_bounding_rect()
 	var texture := _initialize_gradient(box)
 	texture.fill = GradientTexture2D.FILL_LINEAR
@@ -168,6 +176,14 @@ func _on_radial_gradient_toggle_button_button_down() -> void:
 				scalable_vector_shape_2d.polygon.texture.fill == GradientTexture2D.FILL_RADIAL):
 		return
 
+	if (scalable_vector_shape_2d.polygon.texture is GradientTexture2D and
+				scalable_vector_shape_2d.polygon.texture.fill == GradientTexture2D.FILL_LINEAR):
+		var undo_redo := EditorInterface.get_editor_undo_redo()
+		undo_redo.create_action("Replace linear gradient with radial gradient")
+		undo_redo.add_do_property(scalable_vector_shape_2d.polygon.texture, "fill", GradientTexture2D.FILL_RADIAL)
+		undo_redo.add_undo_property(scalable_vector_shape_2d.polygon.texture, "fill", GradientTexture2D.FILL_LINEAR)
+		undo_redo.commit_action()
+		return
 	var box := scalable_vector_shape_2d.get_bounding_rect()
 	var texture := _initialize_gradient(box)
 	texture.fill = GradientTexture2D.FILL_RADIAL
