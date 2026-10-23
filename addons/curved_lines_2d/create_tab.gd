@@ -874,10 +874,14 @@ func _on_find_replace_color_button_pressed() -> void:
 		return
 	undo_redo.create_action("Find and replace color in %d shape%s" % [sel.size(), "" if sel.size() == 1 else "s"])
 	for svs : ScalableVectorShape2D in sel:
-		if _colors_are_equal_enough(svs.stroke_color, %FindColorButton.color):
+		if %ReplaceStrokesCheckBox.button_pressed and _colors_are_equal_enough(svs.stroke_color, %FindColorButton.color):
 			undo_redo.add_do_property(svs, "stroke_color",  %ReplaceColorButton.color)
 			undo_redo.add_undo_property(svs, "stroke_color", svs.stroke_color)
-		if is_instance_valid(svs.polygon) and svs.polygon.texture is GradientTexture2D:
+		if %ReplaceFillsCheckBox.button_pressed and _colors_are_equal_enough(svs.fill_color, %FindColorButton.color):
+			undo_redo.add_do_property(svs, "fill_color",  %ReplaceColorButton.color)
+			undo_redo.add_undo_property(svs, "fill_color", svs.fill_color)
+
+		if %ReplaceStopsCheckBox.button_pressed and is_instance_valid(svs.polygon) and svs.polygon.texture is GradientTexture2D:
 			var found := false
 			for i in svs.polygon.texture.gradient.colors.size():
 				if _colors_are_equal_enough(svs.polygon.texture.gradient.colors[i], %FindColorButton.color):
@@ -887,9 +891,6 @@ func _on_find_replace_color_button_pressed() -> void:
 			if found:
 				undo_redo.add_do_method(svs, 'notify_assigned_node_change')
 				undo_redo.add_undo_method(svs, 'notify_assigned_node_change')
-		elif _colors_are_equal_enough(svs.fill_color, %FindColorButton.color):
-			undo_redo.add_do_property(svs, "fill_color",  %ReplaceColorButton.color)
-			undo_redo.add_undo_property(svs, "fill_color", svs.fill_color)
 	undo_redo.commit_action()
 
 
