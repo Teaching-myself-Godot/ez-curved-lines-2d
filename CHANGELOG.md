@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.0 - Find / Replace color
+
+### Added
+
+- Color tools button in bottom dock with the Find / Replace color form
+
 ## 3.2.0 - Property Editors
 
 ### Added

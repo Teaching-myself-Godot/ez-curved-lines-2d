@@ -104,6 +104,7 @@ You can find the rest of the explainer videos on this playlist:
 	- [Changing the start- and endpoint of the gradient](#changing-the-start--and-endpoint-of-the-gradient)
 	- [Changing the color stop positions](#changing-the-color-stop-positions)
 	- [Add new color stops](#add-new-color-stops)
+- [Color Tools](#color-tools)
 - [Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes](#ways-to-prevent-over-selecting-scalablevectorshape2d-nodes)
 - [Using the Inspector Form for `ScalableVectorShape2D`](#using-the-inspector-form-for-scalablevectorshape2d)
 	- [Inspector Form](#inspector-form)
@@ -206,6 +207,7 @@ In the next section all these tools are described in more detail:
 - [Knife tool](#cutting-shapes-in-half-with-the-knife-tool) (K), to cut slices off of shapes
 - [Bone Paint](#animating-using-skeleton2d) tool, to assign points of a shape to bones in a Skeleton2D
 - Merge points tool (Shift+M)
+- [Color Tools](#color-tools): find and replace colors for strokes, fills and gradient stops
 
 ## Draw Settings
 
@@ -779,7 +781,13 @@ Double clicking on the gradient line will add a new color stop (the assigned col
 ![adding a color stop](./addons/curved_lines_2d/screenshots/add_color_stop.png)
 
 
+# Color Tools
 
+Under color tools, currently, there is the Find / Replace color form. With this you can change one color with another anywhere in the open scene for the strokes, fills and gradient stops of a `ScalableVectorShape2D`. 
+
+The color replacement does not apply to shape nodes within an imported scene.
+
+![color tools](./addons/curved_lines_2d/screenshots/color-tools.png)
 
 
 # Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes
