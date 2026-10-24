@@ -6,6 +6,10 @@
 
 - Color tools button in bottom dock with the Find / Replace color form
 
+### Changed
+
+- Color stops are retained when toggling between radial and linear gradient
+
 ## 3.2.0 - Property Editors
 
 ### Added
