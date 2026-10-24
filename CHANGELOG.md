@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.3.0 - Find / Replace color
+## 3.3.1 - Find / Replace color
 
 ### Added
 
@@ -9,6 +9,7 @@
 ### Changed
 
 - Color stops are retained when toggling between radial and linear gradient
+- Bugfix SVG import: polygon, polyline and path now all support quirky number lists like this one: `"10, 15.20.8 -11,15-25+75 4.2e3"`
 
 ## 3.2.0 - Property Editors
 
