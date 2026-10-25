@@ -3208,6 +3208,8 @@ func _handle_create_primitive_input(event) -> bool:
 
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
+	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
+
 	if (
 			event is InputEventMouseButton and
 			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT
@@ -3215,6 +3217,10 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		if _svs_edit_mode in CANCELABLE_MODES:
 			_on_svs_edit_mode_changed(SVSEditMode.NONE)
 			return true
+
+	if StyleCopier.is_copy_key_pressed(event) and _is_svs_valid(current_selection):
+		StyleCopier.copy_style_to_buffer(current_selection)
+		return true
 
 	if _svs_edit_mode == SVSEditMode.MERGE:
 		return _handle_draw_merge_box_input(event)
@@ -3246,7 +3252,6 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return false
 	if not is_instance_valid(EditorInterface.get_edited_scene_root()):
 		return false
-	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
 		if event is InputEventKey and (event as InputEventKey).keycode == KEY_A and (
 				not (event as InputEventKey).is_command_or_control_pressed() and
