@@ -344,18 +344,25 @@ func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 	%SelectModeContainer.sync_svs_settings(svs)
 	%OriginInput.set_value_no_signal(svs.global_position)
 	%FillPickerButton.color = svs.fill_color
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_FILL_COLOR, svs.fill_color)
 	%StrokePickerButton.color = svs.stroke_color
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_COLOR, svs.stroke_color)
 	stroke_width_input.set_value_no_signal(svs.stroke_width)
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_STROKE_WIDTH, svs.stroke_width)
 	if is_instance_valid(svs.polygon):
 		%EnableFillCheckBox.set_pressed_no_signal(true)
 	else:
 		%EnableFillCheckBox.set_pressed_no_signal(false)
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_FILL_ENABLED, %EnableFillCheckBox.button_pressed)
 
 	if is_instance_valid(svs.line) or is_instance_valid(svs.poly_stroke):
 		%EnableStrokeCheckBox.set_pressed_no_signal(true)
 		%UseLine2DCheckButton.set_pressed_no_signal(is_instance_valid(svs.line))
 	else:
 		%EnableStrokeCheckBox.set_pressed_no_signal(false)
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_ADD_STROKE_ENABLED, %EnableStrokeCheckBox.button_pressed)
+	ProjectSettings.set_setting(CurvedLines2D.SETTING_NAME_USE_LINE_2D_FOR_STROKE, %UseLine2DCheckButton.button_pressed)
+
 	_toggle_end_cap_disabled(not %UseLine2DCheckButton.button_pressed)
 
 	%CollisionObjectTypeOptionButton.select(svs.get_collision_object_type())
@@ -436,7 +443,8 @@ func _on_origin_input_commit_value() -> void:
 
 
 func _is_property_sync_allowed() -> bool:
-	if %BrushButton.button_pressed or %PencilButton.button_pressed:
+	if (%BrushButton.button_pressed or %PencilButton.button_pressed or
+			%CircleButton.button_pressed or %RectangleButton.button_pressed):
 		return false
 	return true
 
