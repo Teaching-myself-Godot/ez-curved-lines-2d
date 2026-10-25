@@ -394,10 +394,14 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 
 
 func _on_svs_edit_mode_changed(new_mode : SVSEditMode) -> void:
+	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if new_mode not in DRAW_MODES and _is_svs_valid(sel):
+		scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings(sel)
 	if _svs_edit_mode == SVSEditMode.MERGE and new_mode != SVSEditMode.MERGE:
 		_merge_box_rect.size = Vector2.ZERO
 	if new_mode != SVSEditMode.PENCIL:
 		_drawing_pencil_line = false
+		_pencil_stroke.clear()
 	if new_mode == SVSEditMode.KNIFE:
 		var svs := EditorInterface.get_selection().get_selected_nodes().pop_back()
 		if _is_svs_valid(svs):
@@ -675,7 +679,8 @@ func _on_selection_changed():
 	if _is_svs_valid(current_selection):
 		var svs := current_selection as ScalableVectorShape2D
 		svs_edit_buttons.show_knife()
-		scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings(svs)
+		if _svs_edit_mode not in DRAW_MODES:
+			scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings(svs)
 		if not svs.assigned_node_changed.is_connected(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings.bind(svs)):
 			svs.assigned_node_changed.connect(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings.bind(svs))
 		if not svs.dimensions_changed.is_connected(scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings.bind(svs)):
@@ -1602,6 +1607,23 @@ func _show_draw_line_hints(viewport_control : Control) -> void:
 			])
 
 
+func _draw_brush_stroke(viewport_control : Control, pts : Array) -> void:
+	match _get_default_paint_order():
+		PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
+			if _is_add_stroke_enabled():
+				viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
+			if _is_add_fill_enabled() and _polygon_can_be_drawn(pts):
+				viewport_control.draw_polygon(pts, [_get_default_fill_color()])
+		PaintOrder.MARKERS_FILL_STROKE, PaintOrder.FILL_STROKE_MARKERS, PaintOrder.FILL_MARKERS_STROKE, _:
+			if _is_add_fill_enabled() and _polygon_can_be_drawn(pts):
+				viewport_control.draw_polygon(pts, [_get_default_fill_color()])
+			if _is_add_stroke_enabled():
+				viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
+	if not _is_add_fill_enabled() and not _is_add_stroke_enabled():
+		viewport_control.draw_polyline(pts, Color.LIME, 1.0, true)
+
+
+
 func _handle_brush_draw(viewport_control : Control) -> void:
 	var ctrl_hint := (
 		"- Toggle brush shape between Rectangle and Ellipse (Ctrl/Cmd held)"
@@ -1631,20 +1653,7 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 		if not _current_brush_stroke.is_empty():
 			var pts := Array(_current_brush_stroke).map(func(p): return _vp_transform(p * mul))
 			pts.append(pts[0])
-			match _get_default_paint_order():
-				PaintOrder.MARKERS_STROKE_FILL, PaintOrder.STROKE_FILL_MARKERS, PaintOrder.STROKE_MARKERS_FILL:
-					if _is_add_stroke_enabled():
-						viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
-					if _is_add_fill_enabled() and _polygon_can_be_drawn(pts):
-						viewport_control.draw_polygon(pts, [_get_default_fill_color()])
-				PaintOrder.MARKERS_FILL_STROKE, PaintOrder.FILL_STROKE_MARKERS, PaintOrder.FILL_MARKERS_STROKE, _:
-					if _is_add_fill_enabled() and _polygon_can_be_drawn(pts):
-						viewport_control.draw_polygon(pts, [_get_default_fill_color()])
-					if _is_add_stroke_enabled():
-						viewport_control.draw_polyline(pts, _get_default_stroke_color(), _get_default_stroke_width() * EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale().x, true)
-			if not _is_add_fill_enabled() and not _is_add_stroke_enabled():
-				viewport_control.draw_polyline(pts, Color.LIME, 1.0, true)
-
+			_draw_brush_stroke(viewport_control, pts)
 		_draw_hint(viewport_control, "- Release left mouse button finish drawing" + cmd_key_hints)
 	else:
 		var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
@@ -1653,11 +1662,7 @@ func _handle_brush_draw(viewport_control : Control) -> void:
 		var pts := Array(Geometry2DUtil.get_polygon_at_granularity(_current_brush_shape,
 				_get_guarded_brush_granularity()
 		)).map(func(p): return _vp_transform(p * Transform2D(mul.get_rotation(), mul.get_scale(), 0.0, Vector2.ZERO) + mouse_pos))
-		if _is_add_fill_enabled() and _polygon_can_be_drawn(pts):
-			viewport_control.draw_polygon(pts, [_get_default_fill_color()])
-		else:
-			viewport_control.draw_polyline(pts, Color.LIME)
-
+		_draw_brush_stroke(viewport_control, pts)
 		_draw_hint(viewport_control, "- Hold and drag left mouse button to draw a polygon with brush" +
 				cmd_key_hints
 		)
@@ -2784,7 +2789,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 				_start_pencil_draw()
 				_drawing_pencil_line = true
 				return true
-			if not event.is_pressed():
+			if not event.is_pressed() and _pencil_stroke.size() > 1:
 				if _svs_edit_mode == SVSEditMode.KNIFE:
 					return _finish_knife_cutting()
 				if is_instance_valid(current_selection):
@@ -2794,13 +2799,13 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 					svs.curve = _polyline_to_curve(poly)
 					if _get_close_pencil_path() and _pencil_stroke.size() > 1:
 						svs.curve.add_point(svs.to_local(_pencil_stroke[0]))
-					_pencil_stroke.clear()
 					if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 						select_node_reversibly(svs.get_parent())
 					else:
 						svs_edit_buttons.set_default_mode(true)
-				update_overlays()
+				_pencil_stroke.clear()
 				_drawing_pencil_line = false
+				update_overlays()
 				return true
 
 	if event is InputEventMouseMotion:

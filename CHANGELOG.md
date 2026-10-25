@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.3.1 - Find / Replace color
+## 3.3.2 - Find / Replace color
 
 ### Added
 
@@ -10,6 +10,10 @@
 
 - Color stops are retained when toggling between radial and linear gradient
 - Bugfix SVG import: polygon, polyline and path now all support quirky number lists like this one: `"10, 15.20.8 -11,15-25+75 4.2e3"`
+- Fix: Prevent pencil strokes with one point from being created
+- Fix: Prevent changing selected shape's colors/strokes while a draw-tool is active
+- Fix: Synchronize colors and strokes with selected shape in bottom dock when appropriate for selected tool
+- Fix: Also draw stroke hint for brush tool when mouse button is not pressed
 
 ## 3.2.0 - Property Editors
 
