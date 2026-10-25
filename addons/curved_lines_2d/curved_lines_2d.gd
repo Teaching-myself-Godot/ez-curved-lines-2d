@@ -3222,6 +3222,10 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		StyleCopier.copy_style_to_buffer(current_selection)
 		return true
 
+	if StyleCopier.is_paste_key_pressed(event) and _is_svs_valid(current_selection):
+		StyleCopier.paste_style_to_svs(current_selection)
+		return true
+
 	if _svs_edit_mode == SVSEditMode.MERGE:
 		return _handle_draw_merge_box_input(event)
 	elif _svs_edit_mode == SVSEditMode.PENCIL or _svs_edit_mode == SVSEditMode.KNIFE:

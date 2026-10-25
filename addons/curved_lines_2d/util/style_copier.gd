@@ -16,7 +16,6 @@ class StyleCopyBuffer:
 	var line_join : Line2D.LineJointMode
 	var stroke_extrusion : ScalableVectorShape2D.StrokeExtrusionDirection
 	var use_line_2d : bool
-	var collision_object_type : ScalableVectorShape2D.CollisionObjectType
 	var paint_order : CurvedLines2D.PaintOrder
 
 
@@ -26,6 +25,16 @@ static func is_copy_key_pressed(event : InputEvent) -> bool:
 	return (
 			event is InputEventKey and
 			(event as InputEventKey).keycode == KEY_C and
+			(event as InputEventKey).is_command_or_control_pressed() and
+			(event as InputEventKey).shift_pressed and
+			(event as InputEventKey).pressed
+	)
+
+
+static func is_paste_key_pressed(event : InputEvent) -> bool:
+	return (
+			event is InputEventKey and
+			(event as InputEventKey).keycode == KEY_V and
 			(event as InputEventKey).is_command_or_control_pressed() and
 			(event as InputEventKey).shift_pressed and
 			(event as InputEventKey).pressed
@@ -50,39 +59,91 @@ static func copy_style_to_buffer(svs : ScalableVectorShape2D) -> void:
 	_copy_buffer.line_join = svs.line_joint_mode
 	_copy_buffer.stroke_extrusion = svs.extrusion_direction
 	_copy_buffer.use_line_2d = is_instance_valid(svs.line)
-	_copy_buffer.collision_object_type = svs.get_collision_object_type()
 	_copy_buffer.paint_order = SVSPropertySync.get_valid_orders(svs).pop_front()
 
-	print("""TODO: copy these:
-Fill Present = %s
-Fill color = %s
-Gradient Setting = %s
-Stroke Present = %s
-Stroke Color = %s
-Stroke Width = %f
-Stroke Width Curve = %s
-Stroke Settings:
-	Cap Begin = %s
-	Cap End = %s
-	Join = %s
-	Align = %s
-Line2D usage = %s
-CollisionObject type = %s
-Paint Order = %s
-		""" % [
-			_copy_buffer.has_fill,
-			_copy_buffer.fill_color,
-			_copy_buffer.gradient,
-			_copy_buffer.has_stroke,
-			_copy_buffer.stroke_color,
-			_copy_buffer.stroke_width,
-			_copy_buffer.width_curve,
-			_copy_buffer.line_cap_begin,
-			_copy_buffer.line_cap_end,
-			_copy_buffer.line_join,
-			_copy_buffer.stroke_extrusion,
-			_copy_buffer.use_line_2d,
-			_copy_buffer.collision_object_type,
-			_copy_buffer.paint_order
-		])
+
+
+static func paste_style_to_svs(svs : ScalableVectorShape2D) -> void:
+	var scene_root := EditorInterface.get_edited_scene_root()
+	if not _copy_buffer.valid:
+		return
+	if not is_instance_valid(scene_root):
+		return
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	undo_redo.create_action("Paste styles")
+	if _copy_buffer.has_fill:
+		var polygon := svs.polygon if is_instance_valid(svs.polygon) else Polygon2D.new()
+		if not is_instance_valid(svs.polygon):
+			polygon.name = "Fill"
+			undo_redo.add_do_property(svs, 'polygon', polygon)
+			undo_redo.add_do_method(svs, 'add_child', polygon, true)
+			undo_redo.add_do_method(polygon, 'set_owner', scene_root)
+			undo_redo.add_undo_reference(polygon)
+			undo_redo.add_undo_method(svs, 'remove_child', polygon)
+			undo_redo.add_undo_property(svs, 'polygon', null)
+		undo_redo.add_do_property(polygon, 'texture', _copy_buffer.gradient)
+		undo_redo.add_undo_property(polygon, 'texture', polygon.texture)
+	else:
+		if is_instance_valid(svs.polygon):
+			undo_redo.add_do_property(svs.polygon, 'visible', false)
+			undo_redo.add_undo_property(svs.polygon, 'visible', true)
+
+	if _copy_buffer.has_stroke:
+		if _copy_buffer.use_line_2d:
+			var line := svs.line if is_instance_valid(svs.line) else Line2D.new()
+			if not is_instance_valid(svs.line):
+				line.name = "Stroke"
+				undo_redo.add_do_property(svs, 'line', line)
+				undo_redo.add_do_method(svs, 'add_child', line, true)
+				undo_redo.add_do_method(line, 'set_owner', scene_root)
+				undo_redo.add_undo_reference(line)
+				undo_redo.add_undo_method(svs, 'remove_child', line)
+				undo_redo.add_undo_property(svs, 'line', null)
+			undo_redo.add_do_property(line, 'width_curve', _copy_buffer.width_curve)
+			undo_redo.add_undo_property(line, 'width_curve', line.width_curve)
+
+		else:
+			if not is_instance_valid(svs.poly_stroke):
+				var poly_stroke := Polygon2D.new()
+				poly_stroke.name = "Stroke"
+				undo_redo.add_do_property(svs, 'poly_stroke', poly_stroke)
+				undo_redo.add_do_method(svs, 'add_child', poly_stroke, true)
+				undo_redo.add_do_method(poly_stroke, 'set_owner', scene_root)
+				undo_redo.add_undo_reference(poly_stroke)
+				undo_redo.add_undo_method(svs, 'remove_child', poly_stroke)
+				undo_redo.add_undo_property(svs, 'poly_stroke', null)
+	else:
+		if is_instance_valid(svs.line):
+			undo_redo.add_do_property(svs.line, 'visible', false)
+			undo_redo.add_undo_property(svs.line, 'visible', true)
+		if is_instance_valid(svs.poly_stroke):
+			undo_redo.add_do_property(svs.poly_stroke, 'visible', false)
+			undo_redo.add_undo_property(svs.poly_stroke, 'visible', true)
+
+	undo_redo.add_do_property(svs, 'fill_color', _copy_buffer.fill_color)
+	undo_redo.add_undo_property(svs, 'fill_color', svs.fill_color)
+	undo_redo.add_do_property(svs, 'stroke_color', _copy_buffer.stroke_color)
+	undo_redo.add_undo_property(svs, 'stroke_color', svs.stroke_color)
+	undo_redo.add_do_property(svs, 'stroke_width', _copy_buffer.stroke_width)
+	undo_redo.add_undo_property(svs, 'stroke_width', svs.stroke_width)
+	undo_redo.add_do_property(svs, 'begin_cap_mode', _copy_buffer.line_cap_begin)
+	undo_redo.add_undo_property(svs, 'begin_cap_mode', svs.begin_cap_mode)
+	undo_redo.add_do_property(svs, 'end_cap_mode', _copy_buffer.line_cap_end)
+	undo_redo.add_undo_property(svs, 'end_cap_mode', svs.end_cap_mode)
+	undo_redo.add_do_property(svs, 'line_joint_mode', _copy_buffer.line_join)
+	undo_redo.add_undo_property(svs, 'line_joint_mode', svs.line_joint_mode)
+	undo_redo.add_do_property(svs, 'extrusion_direction', _copy_buffer.stroke_extrusion)
+	undo_redo.add_undo_property(svs, 'extrusion_direction', svs.extrusion_direction)
+
+	for n in [svs.polygon, svs.poly_stroke, svs.line, svs.collision_object]:
+		if is_instance_valid(n) and n.get_parent() == svs:
+			undo_redo.add_undo_method(svs, "move_child", n, n.get_index())
+	SVSPropertySync.apply_paint_order(svs, _copy_buffer.paint_order)
+	svs.notify_assigned_node_change()
+	for n in [svs.polygon, svs.poly_stroke, svs.line, svs.collision_object]:
+		if is_instance_valid(n) and n.get_parent() == svs:
+			undo_redo.add_do_method(svs, "move_child", n, n.get_index())
+	undo_redo.add_do_method(svs, 'notify_assigned_node_change')
+	undo_redo.add_undo_method(svs, 'notify_assigned_node_change')
+	undo_redo.commit_action()
 
