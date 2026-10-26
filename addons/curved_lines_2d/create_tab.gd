@@ -325,7 +325,6 @@ func disable_svs_editors(disable_all := false) -> void:
 		%RectangleButton.disabled = false
 
 
-
 func disable_all_editors() -> void:
 	disable_svs_editors(true)
 
@@ -868,16 +867,20 @@ func _on_fit_curve_check_box_toggled(toggled_on: bool) -> void:
 		fc.set_pressed_no_signal(toggled_on)
 
 # --- Color Tools ---
-func _on_find_replace_color_button_pressed() -> void:
-	var undo_redo := EditorInterface.get_editor_undo_redo()
+func _find_shapes_in_open_scene() -> Array:
 	var rt := EditorInterface.get_edited_scene_root()
-	var sel := (
+	return (
 		rt
 			.find_children("*", "ScalableVectorShape2D", true, true)
 			.filter(func(x): return x.owner == EditorInterface.get_edited_scene_root()) +
 			([rt] if rt is ScalableVectorShape2D else [])
 	)
 
+
+func _on_find_replace_color_button_pressed() -> void:
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	var rt := EditorInterface.get_edited_scene_root()
+	var sel := _find_shapes_in_open_scene()
 	if sel.is_empty():
 		return
 	undo_redo.create_action("Find and replace color in %d shape%s" % [sel.size(), "" if sel.size() == 1 else "s"])
@@ -904,3 +907,18 @@ func _on_find_replace_color_button_pressed() -> void:
 
 func _colors_are_equal_enough(a : Color, b : Color, d := 0.0001) -> float:
 	return Vector4(a.r, a.g, a.b, a.a).distance_squared_to(Vector4(b.r, b.g, b.b, b.a)) < d
+
+
+func _on_copy_styles_button_pressed() -> void:
+	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
+	if is_instance_valid(sel) and sel is ScalableVectorShape2D:
+		StyleCopier.copy_style_to_buffer(sel)
+
+
+func _on_paste_styles_button_pressed() -> void:
+	var sel := EditorInterface.get_selection().get_selected_nodes()
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	undo_redo.create_action("Paste styles")
+	for svs in _find_shapes_in_open_scene().filter(func(x): return x in sel):
+		StyleCopier.paste_style_to_svs(svs, false)
+	undo_redo.commit_action()

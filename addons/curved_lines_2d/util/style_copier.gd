@@ -63,14 +63,17 @@ static func copy_style_to_buffer(svs : ScalableVectorShape2D) -> void:
 
 
 
-static func paste_style_to_svs(svs : ScalableVectorShape2D) -> void:
+static func paste_style_to_svs(svs : ScalableVectorShape2D, do_commit := true) -> void:
 	var scene_root := EditorInterface.get_edited_scene_root()
 	if not _copy_buffer.valid:
 		return
 	if not is_instance_valid(scene_root):
 		return
 	var undo_redo := EditorInterface.get_editor_undo_redo()
-	undo_redo.create_action("Paste styles")
+	if do_commit:
+		undo_redo.create_action("Paste styles")
+
+
 	if _copy_buffer.has_fill:
 		var polygon := svs.polygon if is_instance_valid(svs.polygon) else Polygon2D.new()
 		if not is_instance_valid(svs.polygon):
@@ -79,8 +82,8 @@ static func paste_style_to_svs(svs : ScalableVectorShape2D) -> void:
 			undo_redo.add_do_method(svs, 'add_child', polygon, true)
 			undo_redo.add_do_method(polygon, 'set_owner', scene_root)
 			undo_redo.add_undo_reference(polygon)
-			undo_redo.add_undo_method(svs, 'remove_child', polygon)
 			undo_redo.add_undo_property(svs, 'polygon', null)
+			undo_redo.add_undo_method(svs, 'remove_child', polygon)
 		undo_redo.add_do_property(polygon, 'texture', _copy_buffer.gradient)
 		undo_redo.add_undo_property(polygon, 'texture', polygon.texture)
 	else:
@@ -150,5 +153,6 @@ static func paste_style_to_svs(svs : ScalableVectorShape2D) -> void:
 	undo_redo.add_undo_property(svs, 'extrusion_direction', svs.extrusion_direction)
 	undo_redo.add_do_method(svs, 'notify_assigned_node_change')
 	undo_redo.add_undo_method(svs, 'notify_assigned_node_change')
-	undo_redo.commit_action()
+	if do_commit:
+		undo_redo.commit_action()
 
