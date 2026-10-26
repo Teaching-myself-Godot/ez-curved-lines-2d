@@ -2546,9 +2546,11 @@ func _toggle_loop_if_applies(svs : ScalableVectorShape2D, idx : int) -> void:
 			new_glue_map[new_idx] = svs.glue_map[i]
 		new_idx += 1
 
-	var new_pt_pos := svs.curve.get_point_position(idx) + svs.get_center().direction_to(svs.curve.get_point_position(idx)) * 20 / EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale()
+	var new_pt_pos := svs.curve.get_point_position(idx) + svs.get_center().direction_to(svs.curve.get_point_position(idx)) * 10 / EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale()
 	new_curve.add_point(new_pt_pos, svs.curve.get_point_in(idx))
 	new_curve.set_point_in(0, Vector2.ZERO)
+	var orig_pt_pos := svs.curve.get_point_position(idx) + svs.get_center().direction_to(svs.curve.get_point_position(idx)) * -10 / EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale()
+	new_curve.set_point_position(0, orig_pt_pos)
 	if 0 in new_deformation_map:
 		new_deformation_map[new_idx] = new_deformation_map[0]
 	undo_redo.add_do_property(svs, 'curve', new_curve)
