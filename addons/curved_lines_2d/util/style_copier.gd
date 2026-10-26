@@ -85,8 +85,13 @@ static func paste_style_to_svs(svs : ScalableVectorShape2D) -> void:
 		undo_redo.add_undo_property(polygon, 'texture', polygon.texture)
 	else:
 		if is_instance_valid(svs.polygon):
-			undo_redo.add_do_property(svs.polygon, 'visible', false)
-			undo_redo.add_undo_property(svs.polygon, 'visible', true)
+			var polygon_2d := svs.polygon
+			undo_redo.add_do_method(svs, 'remove_child', polygon_2d)
+			undo_redo.add_do_property(svs, 'polygon', null)
+			undo_redo.add_undo_method(svs, 'add_child', polygon_2d, true)
+			undo_redo.add_undo_method(polygon_2d, 'set_owner', EditorInterface.get_edited_scene_root())
+			undo_redo.add_undo_reference(polygon_2d)
+			undo_redo.add_undo_property(svs, 'polygon', polygon_2d)
 
 	if _copy_buffer.has_stroke:
 		if _copy_buffer.use_line_2d:
@@ -101,7 +106,6 @@ static func paste_style_to_svs(svs : ScalableVectorShape2D) -> void:
 				undo_redo.add_undo_property(svs, 'line', null)
 			undo_redo.add_do_property(line, 'width_curve', _copy_buffer.width_curve)
 			undo_redo.add_undo_property(line, 'width_curve', line.width_curve)
-
 		else:
 			if not is_instance_valid(svs.poly_stroke):
 				var poly_stroke := Polygon2D.new()
@@ -114,11 +118,21 @@ static func paste_style_to_svs(svs : ScalableVectorShape2D) -> void:
 				undo_redo.add_undo_property(svs, 'poly_stroke', null)
 	else:
 		if is_instance_valid(svs.line):
-			undo_redo.add_do_property(svs.line, 'visible', false)
-			undo_redo.add_undo_property(svs.line, 'visible', true)
+			var line := svs.line
+			undo_redo.add_do_method(svs, 'remove_child', line)
+			undo_redo.add_do_property(svs, 'line', null)
+			undo_redo.add_undo_method(svs, 'add_child', line, true)
+			undo_redo.add_undo_method(line, 'set_owner', EditorInterface.get_edited_scene_root())
+			undo_redo.add_undo_reference(line)
+			undo_redo.add_undo_property(svs, 'line', line)
 		if is_instance_valid(svs.poly_stroke):
-			undo_redo.add_do_property(svs.poly_stroke, 'visible', false)
-			undo_redo.add_undo_property(svs.poly_stroke, 'visible', true)
+			var polygon_2d := svs.poly_stroke
+			undo_redo.add_do_method(svs, 'remove_child', polygon_2d)
+			undo_redo.add_do_property(svs, 'poly_stroke', null)
+			undo_redo.add_undo_method(svs, 'add_child', polygon_2d, true)
+			undo_redo.add_undo_method(polygon_2d, 'set_owner', EditorInterface.get_edited_scene_root())
+			undo_redo.add_undo_reference(polygon_2d)
+			undo_redo.add_undo_property(svs, 'poly_stroke', polygon_2d)
 
 	undo_redo.add_do_property(svs, 'fill_color', _copy_buffer.fill_color)
 	undo_redo.add_undo_property(svs, 'fill_color', svs.fill_color)
@@ -134,15 +148,6 @@ static func paste_style_to_svs(svs : ScalableVectorShape2D) -> void:
 	undo_redo.add_undo_property(svs, 'line_joint_mode', svs.line_joint_mode)
 	undo_redo.add_do_property(svs, 'extrusion_direction', _copy_buffer.stroke_extrusion)
 	undo_redo.add_undo_property(svs, 'extrusion_direction', svs.extrusion_direction)
-
-	for n in [svs.polygon, svs.poly_stroke, svs.line, svs.collision_object]:
-		if is_instance_valid(n) and n.get_parent() == svs:
-			undo_redo.add_undo_method(svs, "move_child", n, n.get_index())
-	SVSPropertySync.apply_paint_order(svs, _copy_buffer.paint_order)
-	svs.notify_assigned_node_change()
-	for n in [svs.polygon, svs.poly_stroke, svs.line, svs.collision_object]:
-		if is_instance_valid(n) and n.get_parent() == svs:
-			undo_redo.add_do_method(svs, "move_child", n, n.get_index())
 	undo_redo.add_do_method(svs, 'notify_assigned_node_change')
 	undo_redo.add_undo_method(svs, 'notify_assigned_node_change')
 	undo_redo.commit_action()
