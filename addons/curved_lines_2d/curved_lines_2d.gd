@@ -1042,7 +1042,7 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 					hint_txt += " - Drag to resize ellipse\n - Hold Ctrl to resize out from the offset position"
 				else:
 					hint_txt += " - Drag to move"
-				if handle['is_closed'].length() > 0:
+				if svs.is_curve_closed():
 					hint_txt += "\n - Double click to break loop"
 				elif svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 					hint_txt += "\n - Right click to delete"
@@ -2502,14 +2502,30 @@ func _drag_curve_segment(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> vo
 func _toggle_loop_if_applies(svs : ScalableVectorShape2D, idx : int) -> void:
 	if svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:
 		return
-	if not svs.is_curve_closed():
+	if svs.is_curve_closed():
+		return _break_loop_at(svs, idx)
+
+	if svs.curve.point_count < 2:
 		return
+
+	if idx == 0 or idx == svs.curve.point_count - 1:
+		var a := svs.curve.get_point_position(0)
+		var b := svs.curve.get_point_position(svs.curve.point_count - 1)
+		var c := (a + b) / 2.0
+		undo_redo.create_action("Close loop")
+		undo_redo.add_do_method(svs.curve, 'set_point_position', 0, c)
+		undo_redo.add_do_method(svs.curve, 'set_point_position', svs.curve.point_count - 1, c)
+		undo_redo.add_undo_method(svs.curve, 'set_point_position', 0, a)
+		undo_redo.add_undo_method(svs.curve, 'set_point_position', svs.curve.point_count - 1, b)
+		undo_redo.commit_action()
+
+
+func _break_loop_at(svs : ScalableVectorShape2D, idx : int) -> void:
 	var new_curve := Curve2D.new()
 	var new_idx := 0
 	var new_deformation_map : Dictionary[int, Bone2D] = {}
 	var new_glue_map : Dictionary[int, Node2D] = {}
 	undo_redo.create_action("Break loop at point index: %d" % idx)
-
 	if idx == 0:
 		idx = svs.curve.point_count - 1
 
@@ -3351,7 +3367,9 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				return true
 		else:
 			if _is_svs_valid(current_selection) and _handle_has_hover(current_selection):
-				if (_is_svs_valid(current_selection) and Input.is_key_pressed(KEY_ALT)
+				if event.double_click and _hover_point_idx > -1:
+					_toggle_loop_if_applies(current_selection, _hover_point_idx)
+				elif (_is_svs_valid(current_selection) and Input.is_key_pressed(KEY_ALT)
 						and current_selection.shape_type == ScalableVectorShape2D.ShapeType.PATH
 						and _curve_control_has_hover(current_selection)):
 					set_global_position_popup_panel.popup_with_value(
