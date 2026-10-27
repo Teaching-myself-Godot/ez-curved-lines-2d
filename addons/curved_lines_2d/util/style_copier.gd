@@ -26,7 +26,7 @@ static func is_copy_key_pressed(event : InputEvent) -> bool:
 			event is InputEventKey and
 			(event as InputEventKey).keycode == KEY_C and
 			(event as InputEventKey).is_command_or_control_pressed() and
-			(event as InputEventKey).shift_pressed and
+			(event as InputEventKey).alt_pressed and
 			(event as InputEventKey).pressed
 	)
 
@@ -36,7 +36,7 @@ static func is_paste_key_pressed(event : InputEvent) -> bool:
 			event is InputEventKey and
 			(event as InputEventKey).keycode == KEY_V and
 			(event as InputEventKey).is_command_or_control_pressed() and
-			(event as InputEventKey).shift_pressed and
+			(event as InputEventKey).alt_pressed and
 			(event as InputEventKey).pressed
 	)
 
