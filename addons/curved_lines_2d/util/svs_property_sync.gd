@@ -240,7 +240,16 @@ static func _reorder_children(svs : ScalableVectorShape2D, undo_redo : EditorUnd
 		if is_instance_valid(n) and n.get_parent() == svs:
 			undo_redo.add_undo_method(svs, "move_child", n, n.get_index())
 	undo_redo.add_undo_method(svs, "notify_assigned_node_change")
-	match CurvedLines2D._get_default_paint_order():
+	apply_paint_order(svs, CurvedLines2D._get_default_paint_order())
+	svs.notify_assigned_node_change()
+	for n in [svs.polygon, svs.poly_stroke, svs.line, svs.collision_object]:
+		if is_instance_valid(n) and n.get_parent() == svs:
+			undo_redo.add_do_method(svs, "move_child", n, n.get_index())
+	undo_redo.add_do_method(svs, "notify_assigned_node_change")
+
+
+static func apply_paint_order(svs : ScalableVectorShape2D, paint_order : CurvedLines2D.PaintOrder) -> void:
+	match paint_order:
 		CurvedLines2D.PaintOrder.FILL_STROKE_MARKERS:
 			_place_stroke_behind_fill(svs)
 			_place_collision_behind_stroke(svs)
@@ -265,11 +274,7 @@ static func _reorder_children(svs : ScalableVectorShape2D, undo_redo : EditorUnd
 			_place_stroke_behind_collision(svs)
 			_place_fill_behind_stroke(svs)
 			_place_fill_behind_collision(svs)
-	svs.notify_assigned_node_change()
-	for n in [svs.polygon, svs.poly_stroke, svs.line, svs.collision_object]:
-		if is_instance_valid(n) and n.get_parent() == svs:
-			undo_redo.add_do_method(svs, "move_child", n, n.get_index())
-	undo_redo.add_do_method(svs, "notify_assigned_node_change")
+
 
 static func	_place_stroke_behind_fill(svs: ScalableVectorShape2D) -> void:
 	if (
