@@ -2531,9 +2531,11 @@ func _break_loop_at(svs : ScalableVectorShape2D, idx : int) -> void:
 	var new_deformation_map : Dictionary[int, Bone2D] = {}
 	var new_glue_map : Dictionary[int, Node2D] = {}
 	undo_redo.create_action("Break loop at point index: %d" % idx)
+	# The loop is closed, so if breaking up at start idx pick the end idx for this operation
 	if idx == 0:
 		idx = svs.curve.point_count - 1
 
+	# Add the points to a new curve from the chosen point idx
 	for i in range(idx, svs.curve.point_count):
 		var out := svs.curve.get_point_out(i) if i < svs.curve.point_count - 1 else svs.curve.get_point_out(0)
 		new_curve.add_point(svs.curve.get_point_position(i), svs.curve.get_point_in(i), out)
@@ -2547,6 +2549,7 @@ func _break_loop_at(svs : ScalableVectorShape2D, idx : int) -> void:
 			new_glue_map[new_idx] = svs.glue_map[i]
 		new_idx += 1
 
+	# Handle the case of the start point being mapped
 	if 0 in svs.glue_map:
 		new_glue_map[new_idx - 1] = svs.glue_map[0]
 	var arc_1 := svs.arc_list.get_arc_for_point(0)
@@ -2554,7 +2557,7 @@ func _break_loop_at(svs : ScalableVectorShape2D, idx : int) -> void:
 		undo_redo.add_do_property(arc_1, 'start_point', new_idx - 1)
 		undo_redo.add_undo_property(arc_1, 'start_point', 0)
 
-
+	# Add the rest of the point indices
 	for i in range(1, idx):
 		new_curve.add_point(svs.curve.get_point_position(i), svs.curve.get_point_in(i), svs.curve.get_point_out(i))
 		var arc := svs.arc_list.get_arc_for_point(i)
@@ -2567,13 +2570,33 @@ func _break_loop_at(svs : ScalableVectorShape2D, idx : int) -> void:
 			new_glue_map[new_idx] = svs.glue_map[i]
 		new_idx += 1
 
+	# Spread out the 2 points evenly from a common center at an angle to the SVS's center
 	var new_pt_pos := svs.curve.get_point_position(idx) + svs.get_center().direction_to(svs.curve.get_point_position(idx)) * 10 / EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale()
-	new_curve.add_point(new_pt_pos, svs.curve.get_point_in(idx))
-	new_curve.set_point_in(0, Vector2.ZERO)
 	var orig_pt_pos := svs.curve.get_point_position(idx) + svs.get_center().direction_to(svs.curve.get_point_position(idx)) * -10 / EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale()
 	new_curve.set_point_position(0, orig_pt_pos)
+	new_curve.add_point(new_pt_pos, svs.curve.get_point_in(idx))
+	new_curve.set_point_in(0, Vector2.ZERO)
+
+	# Handle the case of the start point being assigned to a bone so also assign
+	# the newly created end point to the same bone
 	if 0 in new_deformation_map:
 		new_deformation_map[new_idx] = new_deformation_map[0]
+
+	if is_instance_valid(svs.line) and svs.line.width_curve and idx < svs.curve.point_count:
+		var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
+			svs.curve.get_point_position(idx), svs.curve, svs.max_stages, svs.tolerance_degrees)
+		var new_width_curve := Curve.new()
+		for i in svs.line.width_curve.point_count:
+			var p := svs.line.width_curve.get_point_position(i)
+			var p1 := Vector2(p.x - progress_ratio, p.y)
+			if p1.x < 0.0:
+				p1.x += 1.0
+			new_width_curve.add_point(p1)
+		new_width_curve.add_point(Vector2(0.0, svs.line.width_curve.sample(progress_ratio)))
+		new_width_curve.add_point(Vector2(0, svs.line.width_curve.sample(progress_ratio)))
+		undo_redo.add_do_property(svs.line, 'width_curve', new_width_curve)
+		undo_redo.add_undo_property(svs.line, 'width_curve', svs.line.width_curve)
+
 	undo_redo.add_do_property(svs, 'curve', new_curve)
 	undo_redo.add_undo_property(svs, 'curve', svs.curve)
 	undo_redo.add_do_property(svs, 'deformation_map', new_deformation_map)
