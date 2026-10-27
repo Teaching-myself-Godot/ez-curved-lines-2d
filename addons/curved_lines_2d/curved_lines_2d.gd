@@ -2509,6 +2509,11 @@ func _toggle_loop_if_applies(svs : ScalableVectorShape2D, idx : int) -> void:
 		return
 
 	if idx == 0 or idx == svs.curve.point_count - 1:
+		if svs.curve.point_count == 2:
+			# create a new point over the starting point
+			_add_point_to_curve(svs, svs.curve.get_point_position(0))
+			return
+		# Move the start and end point to the same place
 		var a := svs.curve.get_point_position(0)
 		var b := svs.curve.get_point_position(svs.curve.point_count - 1)
 		var c := (a + b) / 2.0
