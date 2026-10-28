@@ -3313,6 +3313,10 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			_on_svs_edit_mode_changed(SVSEditMode.NONE)
 			return true
 
+	if SVSResourceUnlinker.is_unlink_hotkey_pressed(event) and _is_svs_valid(current_selection):
+		SVSResourceUnlinker.make_resources_unique(current_selection)
+		return true
+
 	if StyleCopier.is_copy_key_pressed(event) and _is_svs_valid(current_selection):
 		StyleCopier.copy_style_to_buffer(current_selection)
 		return true
