@@ -105,6 +105,8 @@ You can find the rest of the explainer videos on this playlist:
 	- [Changing the color stop positions](#changing-the-color-stop-positions)
 	- [Add new color stops](#add-new-color-stops)
 - [Color Tools](#color-tools)
+	- [Find and Replace a color in the entire scene](#find-and-replace-a-color-in-the-entire-scene)
+	- [Copy and Paste Styles of a shape](#copy-and-paste-styles-of-a-shape)
 - [Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes](#ways-to-prevent-over-selecting-scalablevectorshape2d-nodes)
 - [Using the Inspector Form for `ScalableVectorShape2D`](#using-the-inspector-form-for-scalablevectorshape2d)
 	- [Inspector Form](#inspector-form)
@@ -516,11 +518,13 @@ Dragging them without holding shift will allow for unmirrored / shap corners:
 
 ## Closing the loop and breaking the loop
 
-Double clicking on the start node, or end node of an unclosed shape will close the loop.
+Double clicking or pressing `Alt + Right Click` on the start node, or end node of an unclosed shape will close the loop.
 
-Double clicking on the start-/endpoint again will break the loop back up:
+Double clicking on a point of a closed loop will break the loop. 
 
 ![closed loop](./addons/curved_lines_2d/screenshots/09-loop.png)
+
+Note that breaking the loop at another point than the start+end point will change the point indices of your curve and references to points in an animation player will change. 
 
 You can recognise the start-/endpoint(s) by the infinity symbol: ∞
 
@@ -783,12 +787,34 @@ Double clicking on the gradient line will add a new color stop (the assigned col
 
 # Color Tools
 
-Under color tools, currently, there is the Find / Replace color form. With this you can change one color with another anywhere in the open scene for the strokes, fills and gradient stops of a `ScalableVectorShape2D`. 
+Under color tools, currently, you can:
 
-The color replacement does not apply to shape nodes within an imported scene.
+1. Find / Replace colors in the entire scene
+2. Copy and paste all the style elements of a shape
 
 ![color tools](./addons/curved_lines_2d/screenshots/color-tools.png)
 
+## Find and Replace a color in the entire scene
+
+With the Find / Replace color form you can change one color with another anywhere in the open scene for the strokes, fills and gradient stops of a `ScalableVectorShape2D`. 
+
+The color replacement does not apply to shape nodes within an imported scene.
+
+## Copy and Paste Styles of a shape
+
+Using the `Copy Styles` button you can copy the following properties of the selected shape:
+
+- Fill color
+- Gradient Setting (Color Stops, Gradient Orientation and Type)
+- Stroke Color
+- Stroke Width
+- Stroke Width Curve
+- Stroke Settings (Cap, Join, Align)
+- Line2D usage
+
+Using the `Paste Styles` button those listed properties are overwritten for all the selected shapes that are owned by the open scene.
+
+You can use the keyboard shortcut `Ctrl + Alt + C` in the 2D editor to copy styles and `Ctrl + Alt + V` to paste them to one selected shape.
 
 # Ways to prevent 'over-selecting' `ScalableVectorShape2D` nodes
 

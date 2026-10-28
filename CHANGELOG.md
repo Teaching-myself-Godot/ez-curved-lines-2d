@@ -1,5 +1,15 @@
 # Changelog
 
+
+## 3.4.0 - Copy Styles / Take a Break
+
+### Added
+
+- Copy + Paste styling properties from/to a selected ScalableVectorShape2D (colors, stroke width, line width curve, etc) using Ctrl+Alt+C and Ctrl+Alt+V
+- Paste to multiple shapes using the button in the bottom dock under Color Tools
+- Break a closed curve at any point in the loop in stead of only at the 'joining point' of point 0 and point N (where N = the amount of points in the curve minus one)
+
+
 ## 3.3.2 - Find / Replace color
 
 ### Added
