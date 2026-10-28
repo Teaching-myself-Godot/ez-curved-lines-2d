@@ -3321,6 +3321,12 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		StyleCopier.paste_style_to_svs(current_selection)
 		return true
 
+	if MoveLayerTool.is_move_backward_pressed(event) and _is_svs_valid(current_selection):
+		MoveLayerTool.move_svs_backward(current_selection)
+
+	if MoveLayerTool.is_move_forward_pressed(event) and _is_svs_valid(current_selection):
+		MoveLayerTool.move_svs_forward(current_selection)
+
 	if _svs_edit_mode == SVSEditMode.MERGE:
 		return _handle_draw_merge_box_input(event)
 	elif _svs_edit_mode == SVSEditMode.PENCIL or _svs_edit_mode == SVSEditMode.KNIFE:
