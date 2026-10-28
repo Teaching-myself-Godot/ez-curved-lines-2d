@@ -520,7 +520,7 @@ Dragging them without holding shift will allow for unmirrored / shap corners:
 
 Double clicking or pressing `Alt + Right Click` on the start node, or end node of an unclosed shape will close the loop.
 
-Double clicking on a point of a closed loop will break the loop. 
+Double clicking or pressing `Alt + Right Click` on a point of a closed loop will break the loop. 
 
 ![closed loop](./addons/curved_lines_2d/screenshots/09-loop.png)
 
