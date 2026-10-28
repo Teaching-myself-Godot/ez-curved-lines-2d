@@ -1042,7 +1042,7 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 					hint_txt += " - Drag to resize ellipse\n - Hold Ctrl to resize out from the offset position"
 				else:
 					hint_txt += " - Drag to move"
-				if handle['is_closed'].length() > 0:
+				if svs.is_curve_closed():
 					hint_txt += "\n - Double click to break loop"
 				elif svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 					hint_txt += "\n - Right click to delete"
@@ -2502,13 +2502,108 @@ func _drag_curve_segment(svs : ScalableVectorShape2D, mouse_pos : Vector2) -> vo
 func _toggle_loop_if_applies(svs : ScalableVectorShape2D, idx : int) -> void:
 	if svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:
 		return
-	if svs.curve.point_count < 3:
+	if svs.is_curve_closed():
+		return _break_loop_at(svs, idx)
+
+	if svs.curve.point_count < 2:
 		return
+
 	if idx == 0 or idx == svs.curve.point_count - 1:
-		if svs.is_curve_closed():
-			_remove_point_from_curve(svs, svs.curve.point_count - 1)
-		else:
+		if svs.curve.point_count == 2:
+			# create a new point over the starting point
 			_add_point_to_curve(svs, svs.curve.get_point_position(0))
+			return
+		# Move the start and end point to the same place
+		var a := svs.curve.get_point_position(0)
+		var b := svs.curve.get_point_position(svs.curve.point_count - 1)
+		var c := (a + b) / 2.0
+		undo_redo.create_action("Close loop")
+		undo_redo.add_do_method(svs.curve, 'set_point_position', 0, c)
+		undo_redo.add_do_method(svs.curve, 'set_point_position', svs.curve.point_count - 1, c)
+		undo_redo.add_undo_method(svs.curve, 'set_point_position', 0, a)
+		undo_redo.add_undo_method(svs.curve, 'set_point_position', svs.curve.point_count - 1, b)
+		undo_redo.commit_action()
+
+
+func _break_loop_at(svs : ScalableVectorShape2D, idx : int) -> void:
+	var new_curve := Curve2D.new()
+	var new_idx := 0
+	var new_deformation_map : Dictionary[int, Bone2D] = {}
+	var new_glue_map : Dictionary[int, Node2D] = {}
+	undo_redo.create_action("Break loop at point index: %d" % idx)
+	# The loop is closed, so if breaking up at start idx pick the end idx for this operation
+	if idx == 0:
+		idx = svs.curve.point_count - 1
+
+	# Add the points to a new curve from the chosen point idx
+	for i in range(idx, svs.curve.point_count):
+		var out := svs.curve.get_point_out(i) if i < svs.curve.point_count - 1 else svs.curve.get_point_out(0)
+		new_curve.add_point(svs.curve.get_point_position(i), svs.curve.get_point_in(i), out)
+		var arc := svs.arc_list.get_arc_for_point(i)
+		if arc:
+			undo_redo.add_do_property(arc, 'start_point', new_idx)
+			undo_redo.add_undo_property(arc, 'start_point', i)
+		if i in svs.deformation_map:
+			new_deformation_map[new_idx] = svs.deformation_map[i]
+		if i in svs.glue_map:
+			new_glue_map[new_idx] = svs.glue_map[i]
+		new_idx += 1
+
+	# Handle the case of the start point being mapped
+	if 0 in svs.glue_map:
+		new_glue_map[new_idx - 1] = svs.glue_map[0]
+	var arc_1 := svs.arc_list.get_arc_for_point(0)
+	if arc_1:
+		undo_redo.add_do_property(arc_1, 'start_point', new_idx - 1)
+		undo_redo.add_undo_property(arc_1, 'start_point', 0)
+
+	# Add the rest of the point indices
+	for i in range(1, idx):
+		new_curve.add_point(svs.curve.get_point_position(i), svs.curve.get_point_in(i), svs.curve.get_point_out(i))
+		var arc := svs.arc_list.get_arc_for_point(i)
+		if arc:
+			undo_redo.add_do_property(arc, 'start_point', new_idx)
+			undo_redo.add_undo_property(arc, 'start_point', i)
+		if i in svs.deformation_map:
+			new_deformation_map[new_idx] = svs.deformation_map[i]
+		if i in svs.glue_map:
+			new_glue_map[new_idx] = svs.glue_map[i]
+		new_idx += 1
+
+	# Spread out the 2 points evenly from a common center at an angle to the SVS's center
+	var new_pt_pos := svs.curve.get_point_position(idx) + svs.get_center().direction_to(svs.curve.get_point_position(idx)) * 10 / EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale()
+	var orig_pt_pos := svs.curve.get_point_position(idx) + svs.get_center().direction_to(svs.curve.get_point_position(idx)) * -10 / EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale()
+	new_curve.set_point_position(0, orig_pt_pos)
+	new_curve.add_point(new_pt_pos, svs.curve.get_point_in(idx))
+	new_curve.set_point_in(0, Vector2.ZERO)
+
+	# Handle the case of the start point being assigned to a bone so also assign
+	# the newly created end point to the same bone
+	if 0 in new_deformation_map:
+		new_deformation_map[new_idx] = new_deformation_map[0]
+
+	if is_instance_valid(svs.line) and svs.line.width_curve and idx < svs.curve.point_count:
+		var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
+			svs.curve.get_point_position(idx), svs.curve, svs.max_stages, svs.tolerance_degrees)
+		var new_width_curve := Curve.new()
+		for i in svs.line.width_curve.point_count:
+			var p := svs.line.width_curve.get_point_position(i)
+			var p1 := Vector2(p.x - progress_ratio, p.y)
+			if p1.x < 0.0:
+				p1.x += 1.0
+			new_width_curve.add_point(p1)
+		new_width_curve.add_point(Vector2(0.0, svs.line.width_curve.sample(progress_ratio)))
+		new_width_curve.add_point(Vector2(0, svs.line.width_curve.sample(progress_ratio)))
+		undo_redo.add_do_property(svs.line, 'width_curve', new_width_curve)
+		undo_redo.add_undo_property(svs.line, 'width_curve', svs.line.width_curve)
+
+	undo_redo.add_do_property(svs, 'curve', new_curve)
+	undo_redo.add_undo_property(svs, 'curve', svs.curve)
+	undo_redo.add_do_property(svs, 'deformation_map', new_deformation_map)
+	undo_redo.add_undo_property(svs, 'deformation_map', svs.deformation_map)
+	undo_redo.add_do_property(svs, 'glue_map', new_glue_map)
+	undo_redo.add_undo_property(svs, 'glue_map', svs.glue_map)
+	undo_redo.commit_action()
 
 
 func _get_vp_h_scroll_bar() -> HScrollBar:
@@ -3369,6 +3464,9 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				current_clip_operation += 1
 				current_clip_operation = 2 if current_clip_operation < 0 else current_clip_operation
 				current_clip_operation = 0 if current_clip_operation > 2 else current_clip_operation
+			return true
+		if Input.is_key_pressed(KEY_ALT) and _hover_point_idx > -1 and not event.is_pressed():
+			_toggle_loop_if_applies(current_selection, _hover_point_idx)
 			return true
 		if _is_svs_valid(current_selection) and _handle_has_hover(current_selection) and not _is_editing_width_curve(current_selection):
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not _is_ctrl_or_cmd_pressed():
