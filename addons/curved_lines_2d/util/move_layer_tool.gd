@@ -20,45 +20,32 @@ static func is_move_forward_pressed(event : InputEvent) -> bool:
 
 
 static func move_svs_backward(svs : ScalableVectorShape2D) -> void:
-	if svs == EditorInterface.get_edited_scene_root():
-		return
-	var parent := svs.get_parent()
-	if not is_instance_valid(parent):
-		return
-	var siblings : Array[Node] = parent.get_children().filter(_is_prev_svs.bind(svs))
-	if siblings.is_empty():
-		return
-	var undo_redo := EditorInterface.get_editor_undo_redo()
-	undo_redo.create_action("Move backward")
-	undo_redo.add_do_method(parent, "move_child", svs, siblings.pop_back().get_index())
-	undo_redo.add_undo_method(parent, "move_child", svs, svs.get_index())
-	undo_redo.commit_action()
-
+	_move_node_next_to_sibling(svs)
 
 
 static func move_svs_forward(svs : ScalableVectorShape2D) -> void:
+	_move_node_next_to_sibling(svs, true)
+
+
+static func _move_node_next_to_sibling(svs : ScalableVectorShape2D, forward := false) -> void:
 	if svs == EditorInterface.get_edited_scene_root():
 		return
 	var parent := svs.get_parent()
 	if not is_instance_valid(parent):
 		return
-	var siblings : Array[Node] = parent.get_children().filter(_is_next_svs.bind(svs))
-	if siblings.is_empty():
+	var new_idx := -1
+	var siblings = parent.get_children().filter(func(n): return n != svs and n is ScalableVectorShape2D)
+	if forward:
+		siblings.reverse()
+	for sibling in siblings:
+		if (sibling.get_index() > svs.get_index() and forward) or (sibling.get_index() < svs.get_index() and not forward):
+			new_idx = sibling.get_index()
+	if new_idx < 0:
 		return
 	var undo_redo := EditorInterface.get_editor_undo_redo()
-	undo_redo.create_action("Move forward")
-	undo_redo.add_do_method(parent, "move_child", svs, siblings.pop_front().get_index())
+	undo_redo.create_action("Move %s" % ("Forward" if forward else "Backward"))
+	undo_redo.add_do_method(parent, "move_child", svs, new_idx)
 	undo_redo.add_undo_method(parent, "move_child", svs, svs.get_index())
 	undo_redo.commit_action()
 
 
-static func _is_next_svs(n : Node, after_svs : ScalableVectorShape2D) -> bool:
-	if n is ScalableVectorShape2D and n.get_index() > after_svs.get_index():
-		return true
-	return false
-
-
-static func _is_prev_svs(n : Node, before_svs : ScalableVectorShape2D) -> bool:
-	if n is ScalableVectorShape2D and n.get_index() < before_svs.get_index():
-		return true
-	return false
