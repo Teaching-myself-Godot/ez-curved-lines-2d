@@ -87,6 +87,7 @@ You can find the rest of the explainer videos on this playlist:
   - [Changing the width curve of a Stroke (`Line2D`-Stroke only)](#changing-the-width-curve-of-a-stroke-line2d-stroke-only)
   - [Setting the pivot of your shape](#setting-the-pivot-of-your-shape)
   - [Sticking two or more shapes together by vertex merge](#sticking-two-or-more-shapes-together-by-vertex-merge)
+- [Useful shortcuts](#useful-shortcuts)
 - [The select tool settings form](#the-select-tool-settings-form)
   - [Shape Type Settings](#shape-type-settings)
   - [Node2D properties](#node2d-properties)
@@ -154,6 +155,8 @@ You can find the rest of the explainer videos on this playlist:
   - [I want to change shapes while debugging my game. Is this even possible?](#i-want-to-change-shapes-while-debugging-my-game-is-this-even-possible)
   - [When I animate the curve of an imported scene, it animates all the other curves as well](#when-i-animate-the-curve-of-an-imported-scene-it-animates-all-the-other-curves-as-well)
   - [When I duplicate a `ScalableVectorShape2D` and change its shape, the original `ScalableVectorShape2D` shape also changes](#when-i-duplicate-a-scalablevectorshape2d-and-change-its-shape-the-original-scalablevectorshape2d-shape-also-changes)
+    - [The traditional way](#the-traditional-way)
+    - [Make all curves and arcs unique at once with Ctrl + U](#make-all-curves-and-arcs-unique-at-once-with-ctrl--u)
   - [Can I draw shapes programmatically?](#can-i-draw-shapes-programmatically)
   - [Should I draw shapes programmatically?](#should-i-draw-shapes-programmatically)
   - [When should I draw shapes programmatically?](#when-should-i-draw-shapes-programmatically)
@@ -621,6 +624,23 @@ This action create a new instance of the `SVSVertexMerge2D` node. Delete this no
 ![merge 2 points](./screenshots/svs_vertex_merge_2d_node.png)
 
 
+# Useful shortcuts
+
+Aside from the curve editing features there is a growing list of common shortcuts that try to match functionality of drawing programs.
+
+| Action | Shortcut | Notes |
+|--------|----------|-------|
+| Edit Points                                                    | Q                                                   | Design apps usually use hotkey (A), but (Q) goes well with Godot's Select Mode default hotkey.                                                                                                    |
+| Move, Rotate, Scale All Points                                 | Z, X, C                                             | In most design apps, the move, rotate, shear, and  scale points features are combined into one Move Tool with the hotkey (V). Depending on what handle is dragged activates the desired function. |
+| Pencil Tool                                                    | Shift + N                                           |                                                                                                                                                                                                   |
+| Polygon Brush Tool                                             | Shift + B                                           |                                                                                                                                                                                                   |
+| Knife Tool                                                     | K                                                   |                                                                                                                                                                                                   |
+| Copy Styles | Ctrl + Alt +C | Copy styling properties from a selected shape (colors, stroke width, line width curve, gradients) |
+| Paste Styles | Ctrl + Alt + V | Overwrite styling properties of the selected shape |
+| Unlink Resources | Ctrl + U | Make curves, arcs and gradients unique in the selected shape and all its descendants. Especially useful when combined in a 'chord' after pressing `Ctrl + D`, which duplicates a node and its descendants, but does not make the nodes' resources unique. |
+| Move shape forward | Ctrl + ] | Moves the node below (in front of in draw order) the next shape node (`ScalableVectorShape2D`) - this only works with direct siblings |
+| Move shape backward | Ctrl + [ | Moves the node above (behind in draw order) the next shape node (`ScalableVectorShape2D`) - this only works with direct siblings |
+
 # The select tool settings form
 
 When a `ScalableVectorShape2D` node is selected during select mode some of its most common properties can be altered in the bottom dock (besides the inspector).
@@ -947,7 +967,6 @@ With the property `glue_map : Dictionary[int, Node2D]` you can control the posit
 ![The new glue map](./screenshots/glue_map.png)
 
 
-
 ## The Masking Inspector form
 
 These properties are used for clipping this shape and cutting out of this shape.
@@ -1194,18 +1213,19 @@ This is a common issue: there is _one_ `Curve2D` instance being referenced by al
 
 This is a common issue: there is _one_ `Curve2D` instance being referenced by both nodes.
 
+
+### The traditional way
+
 You can work around this by using 'Make unique' by right-clicking `Curve settings > Curve > Curve2D` in the Inspector of your duplicated shape:
 
 ![make unique in inspector](./screenshots/make-unique.png)
 
 When using [arcs](#editing-arc-properties) in a shape the `Arc List` property must also be 'made unique'
 
-Overriding the default duplication behavior of godot can lead to more unforeseen problems. So [a good solution must be well thought through](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d/issues/200#issuecomment-3318594193).
 
-Search reddit on the trials and tribulations of 'Make Unique':
+### Make all curves and arcs unique at once with Ctrl + U
 
-- https://www.reddit.com/r/godot/search/?q=make+unique
-
+As of release 3.5 you can use the shortcut `Ctrl + U` to make all the curves, arcs and gradients of your selected shape and its children unique.
 
 
 ## Can I draw shapes programmatically?
