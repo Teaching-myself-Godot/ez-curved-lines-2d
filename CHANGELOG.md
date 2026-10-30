@@ -1,11 +1,15 @@
 # Changelog
 
-## 3.5.0 - Make Unique with Ctrl + U
+## 3.5.1 - Make Unique with Ctrl + U
 
 ### Added
 
 - Use the shortcut `Ctrl + U` to make all the curves, arcs and gradients of your selected shape and its descendants unique (especially handy after duplicating a branch with `Ctrl + D`)
 - Use `Ctrl + [` and `Ctrl + ]` to move `ScalableVectorShape2D` below / above (i.e. front / back in draw order) a sibling `ScalableVectorShape2D` (only works when shapes share the same parent)
+
+### Changed
+
+- Fixed alignment bug when creating rectangle and create ellipse in a subviewport by dragging
 
 ## 3.4.0 - Copy Styles / Take a Break
 

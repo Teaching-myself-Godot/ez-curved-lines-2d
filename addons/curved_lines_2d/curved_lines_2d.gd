@@ -3289,7 +3289,8 @@ func _handle_create_primitive_input(event) -> bool:
 				_create_shape(svs, EditorInterface.get_edited_scene_root(), (
 					"Rectangle" if _svs_edit_mode == SVSEditMode.CREATE_RECT else "Ellipse"
 				), null, true)
-			svs.global_position = _svp_mouse_pos(_drag_start, EditorInterface.get_selection().get_selected_nodes().pop_back())
+
+			svs.global_position = _drag_start * _get_svp_transform(svs).affine_inverse()
 			if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 				select_node_reversibly(svs.get_parent())
 			else:
