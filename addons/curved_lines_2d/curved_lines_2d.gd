@@ -1278,13 +1278,17 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 		_draw_hint(viewport_control, "- Click to add point here (Ctrl held)")
 	elif Input.is_key_pressed(KEY_SHIFT):
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			_draw_hint(viewport_control, "- Dragging to select multiple points (%d point%s selected)" % [
+			_draw_hint(viewport_control, "- Dragging to %sselect multiple points (%sShift held%s)\n- %d point%s selected" % [
+					"de" if Input.is_key_pressed(KEY_ALT) else "",
+					"Alt + " if Input.is_key_pressed(KEY_ALT) else "",
+					"" if Input.is_key_pressed(KEY_ALT) else " - hold Alt to deselect)",
 					MultiSelectHandler.get_point_count(),
 					"" if MultiSelectHandler.get_point_count() == 1 else "s"
 			])
 		else:
 			var hint := (
-				"- Drag to select multiple points / controls (Shift Held)\n"
+				"- Drag to %sselect multiple points (%sShift Held%s)\n" %
+						(["de", "Alt + ", ""] if Input.is_key_pressed(KEY_ALT) else ["", "", " - hold Alt to deselect"])
 					if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH else
 				""
 			)
@@ -3423,7 +3427,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		_locking_vp_horizontal_scrollbar = false
 		_locking_vp_vertical_scrollbar = false
 
-	if event is InputEventKey and event.keycode == KEY_ALT and event.is_pressed() and _is_svs_valid(current_selection):
+	if event is InputEventKey and event.keycode == KEY_ALT and event.is_pressed() and _is_svs_valid(current_selection) and not Input.is_key_pressed(KEY_SHIFT):
 		_set_handle_hover(_svp_mouse_pos(
 				EditorInterface.get_editor_viewport_2d().get_mouse_position(),
 				current_selection), current_selection
