@@ -881,6 +881,8 @@ func _get_hovered_handle_metadata(svs : ScalableVectorShape2D) -> Dictionary:
 
 
 func _curve_control_has_hover(svs : ScalableVectorShape2D) -> bool:
+	if not _is_svs_valid(svs):
+		return false
 	return (
 		_hover_point_idx > -1 or
 		_hover_cp_in_idx > -1 or
@@ -889,6 +891,8 @@ func _curve_control_has_hover(svs : ScalableVectorShape2D) -> bool:
 
 
 func _handle_has_hover(svs : ScalableVectorShape2D) -> bool:
+	if not _is_svs_valid(svs):
+		return false
 	return (
 		_hover_point_idx > -1 or
 		_hover_cp_in_idx > -1 or
@@ -1265,12 +1269,25 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 		_draw_crosshair(viewport_control, p)
 		_draw_hint(viewport_control, "- Click to add point here (Ctrl held)")
 	elif Input.is_key_pressed(KEY_SHIFT):
-		_draw_hint(viewport_control, "- Use mousewheel to resize shape (Shift held)")
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			_draw_hint(viewport_control, "- Multiselect selected %d point%s" % [
+					MultiSelectHandler.get_point_count(),
+					"" if MultiSelectHandler.get_point_count() == 1 else "s"
+			])
+		else:
+			var hint := (
+				"- Drag to select multiple points / controls (Shift Held)\n"
+					if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH else
+				""
+			)
+			_draw_hint(viewport_control, hint + "- Use mousewheel to resize shape (Shift held)")
 	elif _hover_closest_point_on_gradient == Vector2.INF:
 		var hint := ""
 		if not svs.is_curve_closed():
-			hint = "- Hold Ctrl to add points to selected shape (or Cmd for mac)"
-		hint += "\n- Hold Shift to resize shape with mousewheel"
+			hint = "- Hold Ctrl to add points to selected shape (or Cmd for mac)\n"
+		if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
+			hint += "- Use Shift + Drag to select multiple points / controls\n"
+		hint += "- Hold Shift to resize shape with mousewheel"
 		if only_cutout_hints:
 			hint = "- Hold Shift to resize shape with mousewheel"
 		if svs.has_fine_point(_svp_mouse_pos(mouse_pos, svs)):
@@ -3331,6 +3348,10 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 
 	if MoveLayerTool.is_move_forward_pressed(event) and _is_svs_valid(current_selection):
 		MoveLayerTool.move_svs_forward(current_selection)
+
+	if _is_svs_valid(current_selection) and MultiSelectHandler.is_selecting(event, current_selection, _handle_has_hover(current_selection)):
+		update_overlays()
+		return true
 
 	if _svs_edit_mode == SVSEditMode.MERGE:
 		return _handle_draw_merge_box_input(event)
