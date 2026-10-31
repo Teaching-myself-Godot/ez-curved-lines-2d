@@ -1036,9 +1036,14 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 			if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 				point_txt = str(i) + handle['is_closed']
 				point_hint_pos = handle['point_position']
-			if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not _is_ctrl_or_cmd_pressed():
 				if Input.is_key_pressed(KEY_SHIFT) and svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 					hint_txt += " - Release mouse to set curve handles"
+			elif _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
+				hint_txt = "- Click to add point to selection (%d point%s selected)" % [
+						MultiSelectHandler.get_point_count(),
+						"" if MultiSelectHandler.get_point_count() == 1 else "s"
+				]
 			else:
 				if svs.shape_type == ScalableVectorShape2D.ShapeType.RECT:
 					hint_txt += " - Drag to resize rectange\n - Hold Ctrl to resize out from the offset position"
@@ -1056,12 +1061,15 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 					):
 						hint_txt += "\n - Double click to close loop"
 				if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
-					hint_txt += "\n - Hold Shift + Drag to create curve handles"
+					if Input.is_key_pressed(KEY_SHIFT):
+						hint_txt += "\n - Drag to create mirrored curve handles (Shift held)"
+					else:
+						hint_txt += "\n - Hold Shift + Drag to create mirrored curve handles"
+					hint_txt += "\n - Ctrl + Shift + Click to add point to multiple point select"
 					if Input.is_key_pressed(KEY_ALT):
 						hint_txt += "\n - Click to set exact global position (Alt held)"
 					else:
 						hint_txt += "\n - Alt + Click to set exact global position"
-
 
 	var gradient_handles := svs.get_gradient_handles()
 	if not gradient_handles.is_empty():
@@ -1270,7 +1278,7 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 		_draw_hint(viewport_control, "- Click to add point here (Ctrl held)")
 	elif Input.is_key_pressed(KEY_SHIFT):
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			_draw_hint(viewport_control, "- Multiselect selected %d point%s" % [
+			_draw_hint(viewport_control, "- Dragging to select multiple points (%d point%s selected)" % [
 					MultiSelectHandler.get_point_count(),
 					"" if MultiSelectHandler.get_point_count() == 1 else "s"
 			])
@@ -1319,7 +1327,7 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 			var clamped_to_existing := false
 			if Input.is_key_pressed(KEY_ALT):
 				_draw_crosshair(viewport_control, _vp_transform(svs.to_global(svs.get_curve_segment_halfway_point(md_p.before_segment)) * mul), 3.0, 8, Color.ANTIQUE_WHITE, 2)
-			elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line) and md_p.before_segment < svs.curve.point_count:
+			elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line) and md_p.before_segment < svs.curve.point_count and not Input.is_key_pressed(KEY_SHIFT):
 				if svs.line.width_curve:
 					for i in svs.line.width_curve.point_count:
 						var p := svs.line.width_curve.get_point_position(i)
@@ -1343,7 +1351,7 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 				if svs.curve.point_count > 1:
 					if Input.is_key_pressed(KEY_ALT):
 						hint += "\n- Left Click to add point halfway the line (Alt held)"
-					elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line):
+					elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line) and not Input.is_key_pressed(KEY_SHIFT):
 						hint += "\n- Use mousewheel to thin/thicken the stroke line (Ctrl held)"
 						if clamped_to_existing:
 							hint += "\n- Right click to remove this width curve control point (Ctrl held)"
@@ -1758,7 +1766,7 @@ func _handle_create_rect_preview(viewport_control : Control) -> void:
 
 func _is_editing_width_curve(svs : ScalableVectorShape2D) -> bool:
 	return (
-			_is_ctrl_or_cmd_pressed() and
+			(_is_ctrl_or_cmd_pressed() and not Input.is_key_pressed(KEY_SHIFT)) and
 			_hover_closest_point_on_curve and
 			is_instance_valid(svs.line)
 	)
@@ -1823,7 +1831,7 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 			_draw_curve(viewport_control, result)
 			if not _is_editing_width_curve(result):
 				_draw_handles(viewport_control, result)
-			if (not _handle_has_hover(result)) or _is_ctrl_or_cmd_pressed():
+			if (not _handle_has_hover(result)) or (_is_ctrl_or_cmd_pressed() and not Input.is_key_pressed(KEY_SHIFT)):
 				if result.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 					if _hover_closest_point_on_curve:
 						_draw_closest_point_on_curve(viewport_control, result)
@@ -3380,7 +3388,14 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if not is_instance_valid(EditorInterface.get_edited_scene_root()):
 		return false
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
-		if MultiSelectHandler.is_selecting(event, current_selection, _handle_has_hover(current_selection)):
+		if MultiSelectHandler.is_selecting(event, current_selection,
+				_handle_has_hover(current_selection), _hover_point_idx):
+			# TODO: handle multi select
+			if _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
+				_set_handle_hover(_svp_mouse_pos(
+						EditorInterface.get_editor_viewport_2d().get_mouse_position(),
+						current_selection), current_selection
+				)
 			update_overlays()
 			return true
 
