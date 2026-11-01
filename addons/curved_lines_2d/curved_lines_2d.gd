@@ -659,6 +659,7 @@ func _scene_can_export_animations() -> bool:
 
 
 func _on_selection_changed():
+	MultiSelectHandler.clear_selection()
 	var scene_root := EditorInterface.get_edited_scene_root()
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_editing_enabled() and is_instance_valid(scene_root):
@@ -994,8 +995,6 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 		var is_hovered : bool = _hover_point_idx == i
 		var cp_in_is_hovered : bool = _hover_cp_in_idx == i
 		var cp_out_is_hovered : bool = _hover_cp_out_idx == i
-		var color := VIEWPORT_ORANGE if is_hovered else Color.WHITE
-		var width := 2 if is_hovered else 1
 		if is_hovered:
 			point_pos_txt = "Global point position: (%.3f, %.3f)" % [handle["point_position"].x, handle["point_position"].y]
 		elif cp_in_is_hovered:
@@ -1016,6 +1015,10 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 				hint_txt +=_draw_control_point_handle(viewport_control, svs, handle, 'out',
 						is_hovered or cp_out_is_hovered, cp_out_is_hovered)
 
+		var width := 2 if is_hovered else 1
+		if i in MultiSelectHandler.selection(svs):
+			width = 3
+		var color := VIEWPORT_ORANGE if is_hovered or i in MultiSelectHandler.selection(svs) else Color.WHITE
 		if handle['mirrored']:
 			# mirrored handles
 			var rect := Rect2(_vp_transform(handle['point_position'] * mul) - Vector2(5, 5), Vector2(10, 10))
@@ -1040,9 +1043,11 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 				if Input.is_key_pressed(KEY_SHIFT) and svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 					hint_txt += " - Release mouse to set curve handles"
 			elif _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
-				hint_txt = "- Click to add point to selection (%d point%s selected)" % [
-						MultiSelectHandler.get_point_count(),
-						"" if MultiSelectHandler.get_point_count() == 1 else "s"
+				hint_txt = "- Click to %s point %s selection (%d point%s selected)" % [
+						"remove" if _hover_point_idx in MultiSelectHandler.selection(svs) else "add",
+						"from" if _hover_point_idx in MultiSelectHandler.selection(svs) else "to",
+						MultiSelectHandler.get_point_count(svs),
+						"" if MultiSelectHandler.get_point_count(svs) == 1 else "s"
 				]
 			else:
 				if svs.shape_type == ScalableVectorShape2D.ShapeType.RECT:
@@ -1065,7 +1070,11 @@ func _draw_handles(viewport_control : Control, svs : ScalableVectorShape2D) -> v
 						hint_txt += "\n - Drag to create mirrored curve handles (Shift held)"
 					else:
 						hint_txt += "\n - Hold Shift + Drag to create mirrored curve handles"
-					hint_txt += "\n - Ctrl + Shift + Click to add point to multiple point select"
+					hint_txt += (
+						"\n - Ctrl + Shift + Click to %s point %s multiple point select" % [
+						"remove" if _hover_point_idx in MultiSelectHandler.selection(svs) else "add",
+						"from" if _hover_point_idx in MultiSelectHandler.selection(svs) else "to"
+					])
 					if Input.is_key_pressed(KEY_ALT):
 						hint_txt += "\n - Click to set exact global position (Alt held)"
 					else:
@@ -1282,8 +1291,8 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 					"de" if Input.is_key_pressed(KEY_ALT) else "",
 					"Alt + " if Input.is_key_pressed(KEY_ALT) else "",
 					"" if Input.is_key_pressed(KEY_ALT) else " - hold Alt to deselect)",
-					MultiSelectHandler.get_point_count(),
-					"" if MultiSelectHandler.get_point_count() == 1 else "s"
+					MultiSelectHandler.get_point_count(svs),
+					"" if MultiSelectHandler.get_point_count(svs) == 1 else "s"
 			])
 		else:
 			var hint := (
@@ -3394,7 +3403,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
 		if MultiSelectHandler.is_selecting(event, current_selection,
 				_handle_has_hover(current_selection), _hover_point_idx):
-			# TODO: handle multi select
+			MultiSelectHandler.handle_selecting(event, current_selection,
+					_handle_has_hover(current_selection), _hover_point_idx)
 			if _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
 				_set_handle_hover(_svp_mouse_pos(
 						EditorInterface.get_editor_viewport_2d().get_mouse_position(),
