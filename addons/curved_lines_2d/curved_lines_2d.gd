@@ -904,6 +904,15 @@ func _handle_has_hover(svs : ScalableVectorShape2D) -> bool:
 	)
 
 
+func _get_points_in_viewport_area(svs : ScalableVectorShape2D, area : Rect2) -> Array[int]:
+	var mul := _get_svp_transform(svs)
+	var result : Array[int] = []
+	for i in svs.curve.point_count:
+		if area.has_point(_vp_transform(svs.to_global(svs.curve.get_point_position(i)))):
+			result.append(i)
+	return result
+
+
 func _draw_control_point_handle(viewport_control : Control, svs : ScalableVectorShape2D,
 		handle : Dictionary, prefix : String, is_hovered : bool, self_is_hovered : bool) -> String:
 	if handle[prefix].length():
@@ -1287,6 +1296,8 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 		_draw_hint(viewport_control, "- Click to add point here (Ctrl held)")
 	elif Input.is_key_pressed(KEY_SHIFT):
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			viewport_control.draw_rect(MultiSelectHandler.selection_area,
+					Color.RED if Input.is_key_pressed(KEY_ALT) else Color.WHITE, false)
 			_draw_hint(viewport_control, "- Dragging to %sselect multiple points (%sShift held%s)\n- %d point%s selected" % [
 					"de" if Input.is_key_pressed(KEY_ALT) else "",
 					"Alt + " if Input.is_key_pressed(KEY_ALT) else "",
@@ -1820,6 +1831,7 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		return _handle_create_rect_preview(viewport_control)
 	elif _svs_edit_mode == SVSEditMode.COLOR_TOOL:
 		return
+
 
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
@@ -3404,7 +3416,9 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		if MultiSelectHandler.is_selecting(event, current_selection,
 				_handle_has_hover(current_selection), _hover_point_idx):
 			MultiSelectHandler.handle_selecting(event, current_selection,
-					_handle_has_hover(current_selection), _hover_point_idx)
+					_handle_has_hover(current_selection), _hover_point_idx,
+					_get_points_in_viewport_area
+			)
 			if _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
 				_set_handle_hover(_svp_mouse_pos(
 						EditorInterface.get_editor_viewport_2d().get_mouse_position(),
@@ -3412,7 +3426,6 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				)
 			update_overlays()
 			return true
-
 
 		if event is InputEventKey and (event as InputEventKey).keycode == KEY_A and (
 				not (event as InputEventKey).is_command_or_control_pressed() and
