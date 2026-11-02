@@ -1282,7 +1282,8 @@ func translate_points_by(global_vector : Vector2, lst := []) -> void:
 		offset += delta
 
 
-func scale_points_by(from_global_vector : Vector2, to_global_vector : Vector2, around_center := false) -> void:
+func scale_points_by(from_global_vector : Vector2, to_global_vector : Vector2,
+			around_center := false, lst := []) -> void:
 	var local_from := to_local(from_global_vector)
 	var local_to := to_local(to_global_vector)
 	var origin := get_center() if around_center else Vector2.ZERO
@@ -1290,6 +1291,8 @@ func scale_points_by(from_global_vector : Vector2, to_global_vector : Vector2, a
 	if shape_type == ShapeType.PATH:
 		curve.set_block_signals(true)
 		for idx in curve.point_count:
+			if not lst.is_empty() and idx not in lst:
+				continue
 			var p := curve.get_point_position(idx)
 			var p1 := (p - origin) * s + origin
 			var cp_in_abs := curve.get_point_in(idx) + p

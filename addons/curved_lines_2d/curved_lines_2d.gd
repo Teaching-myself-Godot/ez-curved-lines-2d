@@ -2736,9 +2736,9 @@ func _handle_input_for_uniform_scale(event : InputEvent, svs : ScalableVectorSha
 			if _is_snapped_to_pixel():
 				drag_delta = drag_delta.snapped(_get_snap_resolution())
 			if drag_delta.abs() > Vector2.ZERO:
-				undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'scale_points_by', _drag_start, mouse_pos, Input.is_key_pressed(KEY_SHIFT)])
-				undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'scale_points_by', mouse_pos, _drag_start, Input.is_key_pressed(KEY_SHIFT)])
-				svs.scale_points_by(_drag_start, mouse_pos, Input.is_key_pressed(KEY_SHIFT))
+				undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'scale_points_by', _drag_start, mouse_pos, Input.is_key_pressed(KEY_SHIFT), MultiSelectHandler.selection(svs)])
+				undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'scale_points_by', mouse_pos, _drag_start, Input.is_key_pressed(KEY_SHIFT), MultiSelectHandler.selection(svs)])
+				svs.scale_points_by(_drag_start, mouse_pos, Input.is_key_pressed(KEY_SHIFT), MultiSelectHandler.selection(svs))
 				_drag_start = mouse_pos
 			return true
 	return false
