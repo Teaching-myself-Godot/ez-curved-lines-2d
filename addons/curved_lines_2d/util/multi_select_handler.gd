@@ -100,6 +100,43 @@ static func move_points(event : InputEvent, svs : ScalableVectorShape2D, hover_p
 	return false
 
 
+static func delete_points(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
+	if get_point_count(svs) == 0:
+		return false
+	if (
+		event is InputEventKey and
+		(event as InputEventKey).keycode == KEY_DELETE and
+		(event as InputEventKey).pressed
+	):
+		var undo_redo := EditorInterface.get_editor_undo_redo()
+		undo_redo.create_action("Delete %d points" % get_point_count(svs))
+		var new_curve := Curve2D.new()
+		var new_arcs := ScalableArcList.new()
+		var new_deform : Dictionary[int, Bone2D] = {}
+		for i in svs.curve.point_count:
+			if i not in selection(svs):
+				new_curve.add_point(svs.curve.get_point_position(i),
+						svs.curve.get_point_in(i), svs.curve.get_point_out(i))
+				var arc := (svs.arc_list.get_arc_for_point(i).duplicate(true)
+					if svs.arc_list.get_arc_for_point(i) else null
+				)
+				if arc:
+					arc.start_point = new_curve.point_count - 1
+					new_arcs.add_arc(arc)
+				if i in svs.deformation_map:
+					new_deform[new_curve.point_count - 1] = svs.deformation_map[i]
+		undo_redo.add_do_property(svs, 'curve', new_curve)
+		undo_redo.add_do_property(svs, 'arc_list', new_arcs)
+		undo_redo.add_do_property(svs, 'deformation_map', new_deform)
+		undo_redo.add_undo_property(svs, 'curve', svs.curve)
+		undo_redo.add_undo_property(svs, 'arc_list', svs.arc_list)
+		undo_redo.add_undo_property(svs, 'deformation_map', svs.deformation_map)
+		undo_redo.commit_action()
+		clear_selection()
+		return true
+	return false
+
+
 static func is_selecting(event : InputEvent, svs : ScalableVectorShape2D,
 			handle_has_hover : bool, hover_point_idx : int) -> bool:
 	if handle_has_hover:

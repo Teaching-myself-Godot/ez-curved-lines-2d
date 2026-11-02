@@ -3451,7 +3451,9 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		):
 			update_overlays()
 			return true
-
+		if MultiSelectHandler.delete_points(event, current_selection):
+			update_overlays()
+			return true
 	if ((_is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT))
 			or
 		(_is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and _hover_closest_point_on_curve)
