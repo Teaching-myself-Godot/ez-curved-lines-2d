@@ -1304,13 +1304,15 @@ func scale_points_by(from_global_vector : Vector2, to_global_vector : Vector2, a
 		size *= s
 
 
-func rotate_points_by(angle : float, rotation_origin := Vector2.ZERO) -> void:
+func rotate_points_by(angle : float, rotation_origin := Vector2.ZERO, lst := []) -> void:
 	if shape_type != ShapeType.PATH:
 		spin += angle
 		return
 	var transform := Transform2D.IDENTITY.rotated(-angle)
 	curve.set_block_signals(true)
 	for idx in curve.point_count:
+		if not lst.is_empty() and idx not in lst:
+			continue
 		var p := curve.get_point_position(idx)
 		var p1 := (p - rotation_origin) * transform + rotation_origin
 		var cp_in_abs := curve.get_point_in(idx) + p

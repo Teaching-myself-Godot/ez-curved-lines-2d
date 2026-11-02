@@ -1402,7 +1402,11 @@ func _draw_outline_for_uniform_transforms(viewport_control : Control, svs : Scal
 	_draw_curve_def(viewport_control, svs, svs.shape_hint_color, 0.5, true)
 	for idx in svs.curve.point_count:
 		var p := svs.to_global(svs.curve.get_point_position(idx))
-		_draw_crosshair(viewport_control, _vp_transform(p * mul), 2.0, 4.0, Color.WHITE)
+		if idx in MultiSelectHandler.selection(svs):
+			viewport_control.draw_circle(_vp_transform(p * mul), 6, Color.DIM_GRAY, true)
+			viewport_control.draw_circle(_vp_transform(p * mul), 6, VIEWPORT_ORANGE, false, 4)
+		else:
+			_draw_crosshair(viewport_control, _vp_transform(p * mul), 2.0, 4.0, Color.WHITE)
 	var natural_center := svs.to_global(svs.get_center())
 	if (_svs_edit_mode == SVSEditMode.ROTATE
 				and _lmb_is_down_inside_viewport
@@ -2768,13 +2772,13 @@ func _handle_input_for_uniform_rotate(event : InputEvent, svs : ScalableVectorSh
 			if ang != _prev_uniform_rotate_angle:
 				var drag_delta := ang - _prev_uniform_rotate_angle
 				if use_cntr:
-					undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'rotate_points_by', drag_delta, svs.to_local(rotation_origin)])
-					undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'rotate_points_by', -drag_delta, svs.to_local(rotation_origin)])
-					svs.rotate_points_by(drag_delta, svs.to_local(rotation_origin))
+					undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'rotate_points_by', drag_delta, svs.to_local(rotation_origin), MultiSelectHandler.selection(svs)])
+					undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'rotate_points_by', -drag_delta, svs.to_local(rotation_origin), MultiSelectHandler.selection(svs)])
+					svs.rotate_points_by(drag_delta, svs.to_local(rotation_origin), MultiSelectHandler.selection(svs))
 				else:
-					undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'rotate_points_by', drag_delta])
-					undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'rotate_points_by', -drag_delta])
-					svs.rotate_points_by(drag_delta)
+					undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'rotate_points_by', drag_delta, Vector2.ZERO, MultiSelectHandler.selection(svs)])
+					undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'rotate_points_by', -drag_delta, Vector2.ZERO, MultiSelectHandler.selection(svs)])
+					svs.rotate_points_by(drag_delta, Vector2.ZERO, MultiSelectHandler.selection(svs))
 
 				_prev_uniform_rotate_angle = ang
 			return true

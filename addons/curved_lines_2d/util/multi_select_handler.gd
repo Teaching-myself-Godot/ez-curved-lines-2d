@@ -203,7 +203,7 @@ static func clear_selection_if_rmb_clicked(event : InputEvent, n : Node) -> bool
 	if (
 		event is InputEventMouseButton and
 		(event as InputEventMouseButton).pressed and
-		(event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT and
+		(event as InputEventMouseButton).button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT] and
 		n is ScalableVectorShape2D and n in selected_points and selected_points[n as ScalableVectorShape2D].size() > 0
 	):
 		clear_selection()
