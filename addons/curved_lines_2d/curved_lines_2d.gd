@@ -3418,6 +3418,19 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return false
 
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
+		if event is InputEventKey and (event as InputEventKey).keycode == KEY_A and (
+				not (event as InputEventKey).is_command_or_control_pressed() and
+				not (event as InputEventKey).shift_pressed and
+				not (event as InputEventKey).alt_pressed
+		):
+			_on_svs_edit_mode_changed(SVSEditMode.SET_PIVOT)
+		if _svs_edit_mode == SVSEditMode.TRANSLATE:
+			return _handle_input_for_uniform_translate(event, current_selection)
+		elif _svs_edit_mode == SVSEditMode.SCALE:
+			return _handle_input_for_uniform_scale(event, current_selection)
+		elif _svs_edit_mode == SVSEditMode.ROTATE:
+			return _handle_input_for_uniform_rotate(event, current_selection)
+
 		if MultiSelectHandler.is_selecting(event, current_selection,
 				_handle_has_hover(current_selection), _hover_point_idx):
 			MultiSelectHandler.handle_selecting(event, current_selection,
@@ -3431,19 +3444,13 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				)
 			update_overlays()
 			return true
-
-		if event is InputEventKey and (event as InputEventKey).keycode == KEY_A and (
-				not (event as InputEventKey).is_command_or_control_pressed() and
-				not (event as InputEventKey).shift_pressed and
-				not (event as InputEventKey).alt_pressed
+		if MultiSelectHandler.move_points(event, current_selection, _hover_point_idx,
+				_svp_mouse_pos(
+					EditorInterface.get_editor_viewport_2d().get_mouse_position(), current_selection
+				), _is_snapped_to_pixel(), _get_snap_resolution(),
 		):
-			_on_svs_edit_mode_changed(SVSEditMode.SET_PIVOT)
-		if _svs_edit_mode == SVSEditMode.TRANSLATE:
-			return _handle_input_for_uniform_translate(event, current_selection)
-		elif _svs_edit_mode == SVSEditMode.SCALE:
-			return _handle_input_for_uniform_scale(event, current_selection)
-		elif _svs_edit_mode == SVSEditMode.ROTATE:
-			return _handle_input_for_uniform_rotate(event, current_selection)
+			update_overlays()
+			return true
 
 	if ((_is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT))
 			or

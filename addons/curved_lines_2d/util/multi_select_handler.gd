@@ -1,9 +1,10 @@
 @tool
 class_name MultiSelectHandler extends Object
 
+static var _move_drag_start := Vector2.INF
 static var selected_points : Dictionary[ScalableVectorShape2D, Array] = {}
-
 static var selection_area := Rect2(Vector2.ZERO, Vector2.ZERO)
+static var _stored_positions : Dictionary[int, Vector2] = {}
 
 static func _is_ctrl_shift_held_on_point_handle(event : InputEvent,
 			handle_has_hover : bool, hover_point_idx : int) -> bool:
@@ -60,6 +61,45 @@ static func _is_dragging(event : InputEvent, svs : ScalableVectorShape2D) -> boo
 	)
 
 
+static func move_points(event : InputEvent, svs : ScalableVectorShape2D, hover_point_idx : int,
+			mouse_pos : Vector2, is_snapped_to_pixed : bool, snap_resolution : Vector2) -> bool:
+	if hover_point_idx < 0:
+		return false
+	if hover_point_idx not in selection(svs):
+		return false
+	if  (
+		event is InputEventMouseButton and
+		(event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT
+	):
+		if event.pressed:
+			for i in selection(svs):
+				_stored_positions[i] = svs.curve.get_point_position(i)
+		else:
+			var undo_redo := EditorInterface.get_editor_undo_redo()
+			undo_redo.create_action("Move %d points" % get_point_count(svs))
+			for i in _stored_positions.keys():
+				undo_redo.add_do_method(svs.curve, "set_point_position", i, svs.curve.get_point_position(i))
+				undo_redo.add_undo_method(svs.curve, "set_point_position", i, _stored_positions[i])
+			undo_redo.commit_action(false)
+			_stored_positions.clear()
+		return true
+
+	if  (
+		event is InputEventMouseMotion and
+		Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
+	):
+		var pos_before := svs.curve.get_point_position(hover_point_idx)
+		svs.set_global_curve_point_position(mouse_pos, hover_point_idx, is_snapped_to_pixed, snap_resolution)
+		var pos_after := svs.curve.get_point_position(hover_point_idx)
+		var delta := pos_after - pos_before
+		for i in selection(svs):
+			if i == hover_point_idx:
+				continue
+			svs.curve.set_point_position(i, svs.curve.get_point_position(i) + delta)
+		return true
+	return false
+
+
 static func is_selecting(event : InputEvent, svs : ScalableVectorShape2D,
 			handle_has_hover : bool, hover_point_idx : int) -> bool:
 	if handle_has_hover:
@@ -74,8 +114,17 @@ static func handle_selecting(event : InputEvent, svs : ScalableVectorShape2D,
 			selected_points[svs] = []
 		if hover_point_idx in selected_points[svs]:
 			selected_points[svs].erase(hover_point_idx)
+			if svs.is_curve_closed() and hover_point_idx == svs.curve.point_count - 1:
+				selected_points[svs].erase(0)
+			elif svs.is_curve_closed() and hover_point_idx == 0:
+				selected_points[svs].erase(svs.curve.point_count - 1)
 		else:
 			selected_points[svs].append(hover_point_idx)
+			if svs.is_curve_closed() and hover_point_idx == svs.curve.point_count - 1:
+				selected_points[svs].append(0)
+			elif svs.is_curve_closed() and hover_point_idx == 0:
+				selected_points[svs].append(svs.curve.point_count - 1)
+
 	if _is_drag_start(event, svs):
 		selection_area.position = event.position
 		selection_area.size = Vector2.ZERO
@@ -131,6 +180,7 @@ static func selection(svs : ScalableVectorShape2D) -> Array:
 
 static func clear_selection() -> void:
 	selected_points.clear()
+	_stored_positions.clear()
 
 
 static func clear_selection_area() -> void:
