@@ -3382,6 +3382,10 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if MoveLayerTool.is_move_forward_pressed(event) and _is_svs_valid(current_selection):
 		MoveLayerTool.move_svs_forward(current_selection)
 
+
+	if MultiSelectHandler.clear_selection_if_rmb_clicked(event, current_selection):
+		return true
+
 	if _svs_edit_mode == SVSEditMode.MERGE:
 		return _handle_draw_merge_box_input(event)
 	elif _svs_edit_mode == SVSEditMode.PENCIL or _svs_edit_mode == SVSEditMode.KNIFE:
@@ -3412,6 +3416,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return false
 	if not is_instance_valid(EditorInterface.get_edited_scene_root()):
 		return false
+
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
 		if MultiSelectHandler.is_selecting(event, current_selection,
 				_handle_has_hover(current_selection), _hover_point_idx):
@@ -3439,7 +3444,6 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			return _handle_input_for_uniform_scale(event, current_selection)
 		elif _svs_edit_mode == SVSEditMode.ROTATE:
 			return _handle_input_for_uniform_rotate(event, current_selection)
-
 
 	if ((_is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT))
 			or

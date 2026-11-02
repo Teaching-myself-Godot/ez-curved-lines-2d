@@ -107,6 +107,18 @@ static func deleselect_points_in_area(svs : ScalableVectorShape2D, area_check : 
 			selected_points[svs].erase(i)
 
 
+static func clear_selection_if_rmb_clicked(event : InputEvent, n : Node) -> bool:
+	if (
+		event is InputEventMouseButton and
+		(event as InputEventMouseButton).pressed and
+		(event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT and
+		n is ScalableVectorShape2D and n in selected_points and selected_points[n as ScalableVectorShape2D].size() > 0
+	):
+		clear_selection()
+		return true
+	return false
+
+
 static func get_point_count(svs : ScalableVectorShape2D) -> int:
 	return selection(svs).size()
 
