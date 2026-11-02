@@ -1268,11 +1268,13 @@ func flip_points(flip_dir := Vector2(-1, 1)) -> void:
 		spin = -spin
 
 
-func translate_points_by(global_vector : Vector2) -> void:
+func translate_points_by(global_vector : Vector2, lst := []) -> void:
 	var delta := global_vector.rotated(-global_rotation) / global_scale
 	if shape_type == ShapeType.PATH:
 		curve.set_block_signals(true)
 		for idx in curve.point_count:
+			if not lst.is_empty() and idx not in lst:
+				continue
 			curve.set_point_position(idx, curve.get_point_position(idx) + delta)
 		curve.set_block_signals(false)
 		curve.emit_changed()

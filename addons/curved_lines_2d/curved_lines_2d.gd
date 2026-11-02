@@ -2692,9 +2692,9 @@ func _handle_input_for_uniform_translate(event : InputEvent, svs : ScalableVecto
 				drag_delta = drag_delta.snapped(_get_snap_resolution())
 			if drag_delta.abs() > Vector2.ZERO:
 				_drag_start = mouse_pos
-				undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'translate_points_by', drag_delta])
-				undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'translate_points_by', -drag_delta])
-				svs.translate_points_by(drag_delta)
+				undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'translate_points_by', drag_delta, MultiSelectHandler.selection(svs)])
+				undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'translate_points_by', -drag_delta, MultiSelectHandler.selection(svs)])
+				svs.translate_points_by(drag_delta, MultiSelectHandler.selection(svs))
 			return true
 	return false
 
