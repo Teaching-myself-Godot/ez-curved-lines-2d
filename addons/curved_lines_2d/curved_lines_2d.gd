@@ -881,7 +881,7 @@ func _get_hovered_handle_metadata(svs : ScalableVectorShape2D) -> Dictionary:
 	return {}
 
 
-func _curve_control_has_hover(svs : ScalableVectorShape2D) -> bool:
+func _curve_control_has_hover(svs : Node) -> bool:
 	if not _is_svs_valid(svs):
 		return false
 	return (
@@ -891,7 +891,7 @@ func _curve_control_has_hover(svs : ScalableVectorShape2D) -> bool:
 	)
 
 
-func _handle_has_hover(svs : ScalableVectorShape2D) -> bool:
+func _handle_has_hover(svs : Node) -> bool:
 	if not _is_svs_valid(svs):
 		return false
 	return (
@@ -3383,9 +3383,6 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		MoveLayerTool.move_svs_forward(current_selection)
 
 
-	if MultiSelectHandler.clear_selection_if_rmb_clicked(event, current_selection):
-		return true
-
 	if _svs_edit_mode == SVSEditMode.MERGE:
 		return _handle_draw_merge_box_input(event)
 	elif _svs_edit_mode == SVSEditMode.PENCIL or _svs_edit_mode == SVSEditMode.KNIFE:
@@ -3443,6 +3440,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 						current_selection), current_selection
 				)
 			update_overlays()
+			return true
+		if (not _handle_has_hover(current_selection)) and MultiSelectHandler.clear_selection_if_rmb_clicked(event, current_selection):
 			return true
 		if MultiSelectHandler.move_points(event, current_selection, _hover_point_idx,
 				_svp_mouse_pos(

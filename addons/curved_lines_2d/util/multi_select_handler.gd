@@ -5,6 +5,7 @@ static var _move_drag_start := Vector2.INF
 static var selected_points : Dictionary[ScalableVectorShape2D, Array] = {}
 static var selection_area := Rect2(Vector2.ZERO, Vector2.ZERO)
 static var _stored_positions : Dictionary[int, Vector2] = {}
+static var _stashed_selected_points : Array = []
 
 static func _is_ctrl_shift_held_on_point_handle(event : InputEvent,
 			handle_has_hover : bool, hover_point_idx : int) -> bool:
@@ -163,6 +164,7 @@ static func handle_selecting(event : InputEvent, svs : ScalableVectorShape2D,
 				selected_points[svs].append(svs.curve.point_count - 1)
 
 	if _is_drag_start(event, svs):
+		_stashed_selected_points = selection(svs).duplicate()
 		selection_area.position = event.position
 		selection_area.size = Vector2.ZERO
 	if _is_dragging(event, svs):
@@ -182,6 +184,8 @@ static func select_points_in_area(svs : ScalableVectorShape2D, area_check : Call
 	for i in svs.curve.point_count:
 		if i in result and i not in selected_points[svs]:
 			selected_points[svs].append(i)
+		if i not in result and i not in _stashed_selected_points:
+			selected_points[svs].erase(i)
 
 
 static func deleselect_points_in_area(svs : ScalableVectorShape2D, area_check : Callable) -> void:
@@ -191,6 +195,8 @@ static func deleselect_points_in_area(svs : ScalableVectorShape2D, area_check : 
 	for i in svs.curve.point_count:
 		if i in result and i in selected_points[svs]:
 			selected_points[svs].erase(i)
+		if i not in result and i in _stashed_selected_points and i not in selected_points[svs]:
+			selected_points[svs].append(i)
 
 
 static func clear_selection_if_rmb_clicked(event : InputEvent, n : Node) -> bool:
