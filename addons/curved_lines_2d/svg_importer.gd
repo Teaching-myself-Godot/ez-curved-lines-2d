@@ -258,7 +258,8 @@ func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root 
 		if preserve_id.is_empty():
 			xml_data.attributes.erase("id")
 		xml_data.name = reuse_xml_node.name
-
+		for ch in reuse_xml_node.children:
+			xml_data.add_child(ch)
 	match xml_data.name:
 		"svg":
 			if xml_data.has_attribute("viewBox") and xml_data.has_attribute("width") and xml_data.has_attribute("height"):
@@ -753,7 +754,7 @@ func create_path2d(path_name: String, parent: Node, curve: Curve2D, arcs: Array[
 
 
 func _apply_clip_path_by_href(href : String, svs : ScalableVectorShape2D, scene_root : Node):
-	var clip_path_node := scene_root.find_child(href.replace("url(#", "").replace(")", ""))
+	var clip_path_node := scene_root.find_child(href.replace("url(#", "").replace(")", "").replace(".", "_"))
 	var new_clip_paths : Array[ScalableVectorShape2D] = []
 	for clip_path : ScalableVectorShape2D in clip_path_node.find_children("*", "ScalableVectorShape2D"):
 		clip_path.use_interect_when_clipping = true
