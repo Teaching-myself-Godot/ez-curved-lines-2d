@@ -146,8 +146,6 @@ var _locking_vp_vertical_scrollbar := false
 var svs_edit_buttons : Control
 var _svs_edit_mode := SVSEditMode.NONE
 var _drag_start := Vector2.ZERO
-var _prev_uniform_rotate_angle := 0.0
-var _stored_natural_center := Vector2.ZERO
 var _lmb_is_down_inside_viewport := false
 
 # Hover state helpers
@@ -660,6 +658,7 @@ func _scene_can_export_animations() -> bool:
 
 func _on_selection_changed():
 	MultiSelectHandler.clear_selection()
+	UniformRotateHandler.clear_settings()
 	var scene_root := EditorInterface.get_edited_scene_root()
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_editing_enabled() and is_instance_valid(scene_root):
@@ -1407,14 +1406,14 @@ func _draw_outline_for_uniform_transforms(viewport_control : Control, svs : Scal
 			viewport_control.draw_circle(_vp_transform(p * mul), 6, VIEWPORT_ORANGE, false, 4)
 		else:
 			_draw_crosshair(viewport_control, _vp_transform(p * mul), 2.0, 4.0, Color.WHITE)
-	var natural_center := svs.to_global(svs.get_center())
-	if (_svs_edit_mode == SVSEditMode.ROTATE
-				and _lmb_is_down_inside_viewport
-				and Input.is_key_pressed(KEY_SHIFT)
-	):
-		natural_center = _stored_natural_center
+	if _svs_edit_mode == SVSEditMode.ROTATE and UniformRotateHandler.temp_pivot_hint != Vector2.INF:
+		_draw_crosshair(viewport_control, _vp_transform(UniformRotateHandler.temp_pivot_hint * mul), 2.0, 5.0, Color.ROYAL_BLUE)
+	var temp_pivot := svs.to_global(svs.get_center())
+	if _svs_edit_mode == SVSEditMode.ROTATE and UniformRotateHandler.temp_pivot != Vector2.INF:
+		temp_pivot = UniformRotateHandler.temp_pivot
 
-	_draw_crosshair(viewport_control, _vp_transform(natural_center * mul), 2.0, 4.0, Color.WHITE)
+	_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 5.0, Color.WHITE, 3)
+	_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 5.0, Color.ROYAL_BLUE)
 
 
 func _draw_canvas_for_uniform_translate(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
@@ -1424,39 +1423,6 @@ func _draw_canvas_for_uniform_translate(viewport_control : Control, svs : Scalab
 	else:
 		_draw_hint(viewport_control, "- Hold left mouse button to start moving all points" +
 				"\n- Press Q to return to normal editing")
-
-
-func _draw_canvas_for_uniform_rotate(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
-	_draw_outline_for_uniform_transforms(viewport_control, svs)
-	if _lmb_is_down_inside_viewport:
-		var hint_text := "- Drag to rotate all points (left mouse button held)"
-		if _is_ctrl_or_cmd_pressed():
-			hint_text += "\n- Rotating in steps of 5° (Ctrl held)"
-		else:
-			hint_text += "\n- Hold Ctrl to rotate in steps of 5°"
-		if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
-			if Input.is_key_pressed(KEY_SHIFT):
-				hint_text += "\n- Rotating around the natural center in stead of the pivot (Shift held)"
-			else:
-				hint_text += "\n- Hold Shift to rotate around the natural center in stead of the pivot"
-		_draw_hint(viewport_control, hint_text)
-	else:
-		_draw_hint(viewport_control, "- Hold left mouse button to start rotating all points" +
-				"\n- Press Q to return to normal editing")
-	if _lmb_is_down_inside_viewport:
-		var rotation_origin = svs.global_position
-		if (Input.is_key_pressed(KEY_SHIFT) or
-				svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
-		):
-			rotation_origin = _stored_natural_center
-		var rotation_target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
-		if _is_ctrl_or_cmd_pressed():
-			var ang := snapped(rotation_origin.angle_to_point(rotation_target), deg_to_rad(5.0))
-			var dst := rotation_origin.distance_to(rotation_target)
-			rotation_target = rotation_origin + Vector2.RIGHT.rotated(ang) * dst
-		var mul := _get_svp_transform(svs)
-		viewport_control.draw_line(_vp_transform(rotation_origin * mul) ,_vp_transform(rotation_target),
-				svs.shape_hint_color, 1, true)
 
 
 func _draw_canvas_for_uniform_scale(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
@@ -1844,7 +1810,11 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		elif _svs_edit_mode == SVSEditMode.SCALE:
 			return _draw_canvas_for_uniform_scale(viewport_control, current_selection)
 		elif _svs_edit_mode == SVSEditMode.ROTATE:
-			return _draw_canvas_for_uniform_rotate(viewport_control, current_selection)
+			_draw_outline_for_uniform_transforms(viewport_control, current_selection)
+			return UniformRotateHandler.draw(viewport_control, current_selection,
+					_draw_hint, _lmb_is_down_inside_viewport,
+					_is_ctrl_or_cmd_pressed(),
+					_vp_transform, _get_svp_transform(current_selection))
 		elif _svs_edit_mode == SVSEditMode.SET_PIVOT:
 			return _draw_set_pivot_hints(viewport_control, current_selection)
 
@@ -2744,47 +2714,6 @@ func _handle_input_for_uniform_scale(event : InputEvent, svs : ScalableVectorSha
 	return false
 
 
-func _handle_input_for_uniform_rotate(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
-	var mouse_pos := _svp_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), svs)
-	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
-		if (event as InputEventMouseButton).pressed:
-			_drag_start = mouse_pos
-			_prev_uniform_rotate_angle = 0.0
-			_stored_natural_center = svs.to_global(svs.get_center())
-			if not in_undo_redo_transaction:
-				_start_undo_redo_transaction("Rotate curve points for %s" % str(svs))
-		update_overlays()
-		return true
-
-	if event is InputEventMouseMotion:
-		update_overlays()
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			var use_cntr := Input.is_key_pressed(KEY_SHIFT) or svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
-			var rotation_origin = (
-					_stored_natural_center
-						if use_cntr else
-					svs.global_position
-			)
-			var rotation_target := mouse_pos
-			var ang := rotation_origin.angle_to_point(rotation_target) - rotation_origin.angle_to_point(_drag_start)
-			if _is_ctrl_or_cmd_pressed():
-				ang = snappedf(ang, deg_to_rad(5.0))
-			if ang != _prev_uniform_rotate_angle:
-				var drag_delta := ang - _prev_uniform_rotate_angle
-				if use_cntr:
-					undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'rotate_points_by', drag_delta, svs.to_local(rotation_origin), MultiSelectHandler.selection(svs)])
-					undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'rotate_points_by', -drag_delta, svs.to_local(rotation_origin), MultiSelectHandler.selection(svs)])
-					svs.rotate_points_by(drag_delta, svs.to_local(rotation_origin), MultiSelectHandler.selection(svs))
-				else:
-					undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'rotate_points_by', drag_delta, Vector2.ZERO, MultiSelectHandler.selection(svs)])
-					undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'rotate_points_by', -drag_delta, Vector2.ZERO, MultiSelectHandler.selection(svs)])
-					svs.rotate_points_by(drag_delta, Vector2.ZERO, MultiSelectHandler.selection(svs))
-
-				_prev_uniform_rotate_angle = ang
-			return true
-	return false
-
-
 func _handle_draw_merge_box_input(event) -> bool:
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		if event.is_pressed():
@@ -3419,6 +3348,9 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return false
 
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
+		var mouse_pos := _svp_mouse_pos(
+			EditorInterface.get_editor_viewport_2d().get_mouse_position(), current_selection
+		)
 		if event is InputEventKey and (event as InputEventKey).keycode == KEY_A and (
 				not (event as InputEventKey).is_command_or_control_pressed() and
 				not (event as InputEventKey).shift_pressed and
@@ -3430,7 +3362,13 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		elif _svs_edit_mode == SVSEditMode.SCALE:
 			return _handle_input_for_uniform_scale(event, current_selection)
 		elif _svs_edit_mode == SVSEditMode.ROTATE:
-			return _handle_input_for_uniform_rotate(event, current_selection)
+			if UniformRotateHandler.handle_input(
+					event, current_selection, mouse_pos,
+					_is_snapped_to_pixel(), _get_snap_resolution()
+			):
+				update_overlays()
+				return true
+			return false
 
 		if MultiSelectHandler.is_selecting(event, current_selection,
 				_handle_has_hover(current_selection), _hover_point_idx):
@@ -3439,10 +3377,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 					_get_points_in_viewport_area
 			)
 			if _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
-				_set_handle_hover(_svp_mouse_pos(
-						EditorInterface.get_editor_viewport_2d().get_mouse_position(),
-						current_selection), current_selection
-				)
+				_set_handle_hover(mouse_pos, current_selection)
 			update_overlays()
 			return true
 		if (not _handle_has_hover(current_selection)) and MultiSelectHandler.clear_selection_if_rmb_clicked(event, current_selection):
