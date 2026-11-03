@@ -658,6 +658,7 @@ func _scene_can_export_animations() -> bool:
 
 func _on_selection_changed():
 	MultiSelectHandler.clear_selection()
+	UniformRotateHandler.clear_settings()
 	var scene_root := EditorInterface.get_edited_scene_root()
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_editing_enabled() and is_instance_valid(scene_root):
@@ -1405,6 +1406,8 @@ func _draw_outline_for_uniform_transforms(viewport_control : Control, svs : Scal
 			viewport_control.draw_circle(_vp_transform(p * mul), 6, VIEWPORT_ORANGE, false, 4)
 		else:
 			_draw_crosshair(viewport_control, _vp_transform(p * mul), 2.0, 4.0, Color.WHITE)
+	if _svs_edit_mode == SVSEditMode.ROTATE and UniformRotateHandler.temp_pivot_hint != Vector2.INF:
+		_draw_crosshair(viewport_control, _vp_transform(UniformRotateHandler.temp_pivot_hint * mul), 2.0, 5.0, Color.ROYAL_BLUE)
 	var temp_pivot := svs.to_global(svs.get_center())
 	if _svs_edit_mode == SVSEditMode.ROTATE and UniformRotateHandler.temp_pivot != Vector2.INF:
 		temp_pivot = UniformRotateHandler.temp_pivot
@@ -1420,39 +1423,6 @@ func _draw_canvas_for_uniform_translate(viewport_control : Control, svs : Scalab
 	else:
 		_draw_hint(viewport_control, "- Hold left mouse button to start moving all points" +
 				"\n- Press Q to return to normal editing")
-
-
-func _draw_canvas_for_uniform_rotate(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
-	_draw_outline_for_uniform_transforms(viewport_control, svs)
-	if _lmb_is_down_inside_viewport:
-		var hint_text := "- Drag to rotate all points (left mouse button held)"
-		if _is_ctrl_or_cmd_pressed():
-			hint_text += "\n- Rotating in steps of 5° (Ctrl held)"
-		else:
-			hint_text += "\n- Hold Ctrl to rotate in steps of 5°"
-		if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
-			if Input.is_key_pressed(KEY_SHIFT):
-				hint_text += "\n- Rotating around the natural center in stead of the pivot (Shift held)"
-			else:
-				hint_text += "\n- Hold Shift to rotate around the natural center in stead of the pivot"
-		_draw_hint(viewport_control, hint_text)
-	else:
-		_draw_hint(viewport_control, "- Hold left mouse button to start rotating all points" +
-				"\n- Press Q to return to normal editing")
-	if _lmb_is_down_inside_viewport:
-		var rotation_origin = svs.global_position
-		if (Input.is_key_pressed(KEY_SHIFT) or
-				svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
-		):
-			rotation_origin = UniformRotateHandler.temp_pivot
-		var rotation_target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
-		if _is_ctrl_or_cmd_pressed():
-			var ang := snapped(rotation_origin.angle_to_point(rotation_target), deg_to_rad(5.0))
-			var dst := rotation_origin.distance_to(rotation_target)
-			rotation_target = rotation_origin + Vector2.RIGHT.rotated(ang) * dst
-		var mul := _get_svp_transform(svs)
-		viewport_control.draw_line(_vp_transform(rotation_origin * mul) ,_vp_transform(rotation_target),
-				svs.shape_hint_color, 1, true)
 
 
 func _draw_canvas_for_uniform_scale(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
@@ -1840,7 +1810,11 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 		elif _svs_edit_mode == SVSEditMode.SCALE:
 			return _draw_canvas_for_uniform_scale(viewport_control, current_selection)
 		elif _svs_edit_mode == SVSEditMode.ROTATE:
-			return _draw_canvas_for_uniform_rotate(viewport_control, current_selection)
+			_draw_outline_for_uniform_transforms(viewport_control, current_selection)
+			return UniformRotateHandler.draw(viewport_control, current_selection,
+					_draw_hint, _lmb_is_down_inside_viewport,
+					_is_ctrl_or_cmd_pressed(),
+					_vp_transform, _get_svp_transform(current_selection))
 		elif _svs_edit_mode == SVSEditMode.SET_PIVOT:
 			return _draw_set_pivot_hints(viewport_control, current_selection)
 
