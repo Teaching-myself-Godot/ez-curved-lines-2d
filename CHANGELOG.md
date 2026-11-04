@@ -1,5 +1,25 @@
 # Changelog
 
+## 3.6.0 - Select Multiple Points
+
+### Added
+
+- Select multiple points in edit mode (Q) using Shift + Drag
+- Deselect multiple points using Alt + Shift + Drag
+- Toggle selected point using Ctrl + Shift + Click on point
+- Move multiple points by dragging
+- Move only selected points with translate tool
+- Rotate only selected points with rotate tool
+- Scale only selected points with resize tool
+- Set temporary pivot with rotate tool and scale tool using alt + click
+- Rotate around / Scale out from temporary pivot using shift + drag 
+
+### Changed
+
+- Bugfix SVG Importer: support for `display: none` style property re-added
+- Bugfix SVG Importer: `<use>` node now includes children of dereferenced node
+- Bugfix SVG Importer: treat line feeds, newlines and tab characters as normal space delimiter in number lists and path data attribute
+
 ## 3.5.1 - Make Unique with Ctrl + U
 
 ### Added
