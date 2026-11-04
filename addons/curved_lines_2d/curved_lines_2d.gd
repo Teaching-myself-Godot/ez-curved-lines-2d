@@ -659,6 +659,7 @@ func _scene_can_export_animations() -> bool:
 func _on_selection_changed():
 	MultiSelectHandler.clear_selection()
 	UniformRotateHandler.clear_settings()
+	UniformResizeHandler.clear_settings()
 	var scene_root := EditorInterface.get_edited_scene_root()
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_editing_enabled() and is_instance_valid(scene_root):
@@ -1408,9 +1409,13 @@ func _draw_outline_for_uniform_transforms(viewport_control : Control, svs : Scal
 			_draw_crosshair(viewport_control, _vp_transform(p * mul), 2.0, 4.0, Color.WHITE)
 	if _svs_edit_mode == SVSEditMode.ROTATE and UniformRotateHandler.temp_pivot_hint != Vector2.INF:
 		_draw_crosshair(viewport_control, _vp_transform(UniformRotateHandler.temp_pivot_hint * mul), 2.0, 5.0, Color.ROYAL_BLUE)
+	elif _svs_edit_mode == SVSEditMode.SCALE and UniformResizeHandler.temp_pivot_hint != Vector2.INF:
+		_draw_crosshair(viewport_control, _vp_transform(UniformResizeHandler.temp_pivot_hint * mul), 2.0, 5.0, Color.ROYAL_BLUE)
 	var temp_pivot := svs.to_global(svs.get_center())
 	if _svs_edit_mode == SVSEditMode.ROTATE and UniformRotateHandler.temp_pivot != Vector2.INF:
 		temp_pivot = UniformRotateHandler.temp_pivot
+	if _svs_edit_mode == SVSEditMode.SCALE and UniformResizeHandler.temp_pivot != Vector2.INF:
+		temp_pivot = UniformResizeHandler.temp_pivot
 
 	_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 5.0, Color.WHITE, 3)
 	_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 5.0, Color.ROYAL_BLUE)
@@ -1423,32 +1428,6 @@ func _draw_canvas_for_uniform_translate(viewport_control : Control, svs : Scalab
 	else:
 		_draw_hint(viewport_control, "- Hold left mouse button to start moving all points" +
 				"\n- Press Q to return to normal editing")
-
-
-func _draw_canvas_for_uniform_scale(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
-	_draw_outline_for_uniform_transforms(viewport_control, svs)
-	if _lmb_is_down_inside_viewport:
-		var hint_text := "- Drag to scale all points (left mouse button held)"
-		if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
-			if Input.is_key_pressed(KEY_SHIFT):
-				hint_text += "\n- Scaling out from natural center (Shift held)"
-			else:
-				hint_text += "\n- Hold Shift to scale out from natural center in stead of pivot"
-		_draw_hint(viewport_control, hint_text)
-	else:
-		_draw_hint(viewport_control, "- Hold left mouse button to start scaling all points" +
-				"\n- Press Q to return to normal editing")
-
-	if _lmb_is_down_inside_viewport:
-		var origin = svs.global_position
-		if (Input.is_key_pressed(KEY_SHIFT) or
-				svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
-		):
-			origin = svs.to_global(svs.get_center())
-		var target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
-		var mul := _get_svp_transform(svs)
-		viewport_control.draw_line(_vp_transform(origin * mul), _vp_transform(target),
-				svs.shape_hint_color, 1, true)
 
 
 func _find_merge_vertices() -> Dictionary[ScalableVectorShape2D, int]:
@@ -1802,13 +1781,16 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 	elif _svs_edit_mode == SVSEditMode.COLOR_TOOL:
 		return
 
-
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
 		if _svs_edit_mode == SVSEditMode.TRANSLATE:
 			return _draw_canvas_for_uniform_translate(viewport_control, current_selection)
 		elif _svs_edit_mode == SVSEditMode.SCALE:
-			return _draw_canvas_for_uniform_scale(viewport_control, current_selection)
+			_draw_outline_for_uniform_transforms(viewport_control, current_selection)
+			return UniformResizeHandler.draw(viewport_control, current_selection,
+					_draw_hint, _lmb_is_down_inside_viewport,
+					_is_ctrl_or_cmd_pressed(),
+					_vp_transform, _get_svp_transform(current_selection))
 		elif _svs_edit_mode == SVSEditMode.ROTATE:
 			_draw_outline_for_uniform_transforms(viewport_control, current_selection)
 			return UniformRotateHandler.draw(viewport_control, current_selection,
@@ -2689,29 +2671,7 @@ func _flip_svs_vertical():
 		update_overlays()
 
 
-func _handle_input_for_uniform_scale(event : InputEvent, svs : ScalableVectorShape2D) -> bool:
-	var mouse_pos := _svp_mouse_pos(EditorInterface.get_editor_viewport_2d().get_mouse_position(), svs)
-	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
-		if (event as InputEventMouseButton).pressed:
-			_drag_start = mouse_pos
-			if not in_undo_redo_transaction:
-				_start_undo_redo_transaction("Scale curve points for %s" % str(svs))
-		update_overlays()
-		return true
 
-	if event is InputEventMouseMotion:
-		update_overlays()
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			var drag_delta := mouse_pos - _drag_start
-			if _is_snapped_to_pixel():
-				drag_delta = drag_delta.snapped(_get_snap_resolution())
-			if drag_delta.abs() > Vector2.ZERO:
-				undo_redo_transaction[UndoRedoEntry.DOS].append([svs, 'scale_points_by', _drag_start, mouse_pos, Input.is_key_pressed(KEY_SHIFT), MultiSelectHandler.selection(svs)])
-				undo_redo_transaction[UndoRedoEntry.UNDOS].append([svs, 'scale_points_by', mouse_pos, _drag_start, Input.is_key_pressed(KEY_SHIFT), MultiSelectHandler.selection(svs)])
-				svs.scale_points_by(_drag_start, mouse_pos, Input.is_key_pressed(KEY_SHIFT), MultiSelectHandler.selection(svs))
-				_drag_start = mouse_pos
-			return true
-	return false
 
 
 func _handle_draw_merge_box_input(event) -> bool:
@@ -3360,7 +3320,13 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		if _svs_edit_mode == SVSEditMode.TRANSLATE:
 			return _handle_input_for_uniform_translate(event, current_selection)
 		elif _svs_edit_mode == SVSEditMode.SCALE:
-			return _handle_input_for_uniform_scale(event, current_selection)
+			if UniformResizeHandler.handle_input(
+					event, current_selection, mouse_pos,
+					_is_snapped_to_pixel(), _get_snap_resolution()
+			):
+				update_overlays()
+				return true
+			return false
 		elif _svs_edit_mode == SVSEditMode.ROTATE:
 			if UniformRotateHandler.handle_input(
 					event, current_selection, mouse_pos,

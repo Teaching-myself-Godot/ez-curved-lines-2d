@@ -1283,10 +1283,9 @@ func translate_points_by(global_vector : Vector2, lst := []) -> void:
 
 
 func scale_points_by(from_global_vector : Vector2, to_global_vector : Vector2,
-			around_center := false, lst := []) -> void:
+			origin := Vector2.ZERO, lst := []) -> void:
 	var local_from := to_local(from_global_vector)
 	var local_to := to_local(to_global_vector)
-	var origin := get_center() if around_center else Vector2.ZERO
 	var s := origin.distance_to(local_to) / origin.distance_to(local_from)
 	if shape_type == ShapeType.PATH:
 		curve.set_block_signals(true)

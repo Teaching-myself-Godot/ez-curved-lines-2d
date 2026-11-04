@@ -32,13 +32,16 @@ static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_
 				if _stashed_curve != null:
 					var undo_redo := EditorInterface.get_editor_undo_redo()
 					undo_redo.create_action("Rotate points")
-					undo_redo.add_do_property(svs, "curve", svs.curve)
+					undo_redo.add_do_property(svs, "curve", svs.curve.duplicate(true))
 					undo_redo.add_undo_property(svs, "curve", _stashed_curve)
 					undo_redo.commit_action(false)
+					_stashed_curve = null
 		return true
 
 	if event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			if _stashed_curve == null:
+				_stashed_curve = svs.curve.duplicate(true)
 			var use_temp_pivot := Input.is_key_pressed(KEY_SHIFT) or svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
 			var rotation_origin = (
 					temp_pivot
