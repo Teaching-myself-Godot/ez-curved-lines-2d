@@ -460,6 +460,9 @@ func _parse_raw_svg_numbers(str : String) -> Array[String]:
 	# NOTICE: inject a separating whitespace to make sure negative numbers are
 	# separated from preceding number, unless they're part of exponent notation
 	var str_num_array_raw := (str
+				.replace("\t", " ")
+				.replace("\r", " ")
+				.replace("\n", " ")
 				.replacen(",", " ")
 				.replace("+", " ")
 				.replace("e-", PLC_EXP)
@@ -490,6 +493,9 @@ func process_svg_polygon(element:SVGXMLElement, current_node : Node2D, scene_roo
 
 	var curve = Curve2D.new()
 	for p_idx in range(0, points_split.size(), 2):
+		if p_idx >= points_split.size() - 1:
+			log_message("Parse error for points attribute, uneven: " + str(points_split) , LogLevel.WARN)
+			continue
 		curve.add_point(Vector2(float(points_split[p_idx]), float(points_split[p_idx + 1])))
 	var path_name = get_element_label(element, "Polygon" if is_closed else "Polyline")
 	var new_poly := create_path2d(path_name, current_node, curve, [], get_svg_transform(element),
