@@ -5,7 +5,7 @@ class_name SVGXMLElement
 
 const SUPPORTED_STYLES : Array[String] = ["opacity", "stroke", "stroke-width", "stroke-opacity",
 		"fill", "fill-opacity", "paint-order", "stroke-linecap", "stroke-linejoin",
-		"stroke-miterlimit", "clip-path"]
+		"stroke-miterlimit", "clip-path", "display"]
 
 var name : String
 var attributes : Dictionary[String, String]
@@ -74,7 +74,7 @@ func _to_string() -> String:
 		return "<" + name + " " + " ".join(attrs) + ">" + "\n".join(ch) + "</" + name + ">"
 
 
-func get_svg_style(log_message : Callable) -> Dictionary:
+func get_svg_style(log_message : Callable, skip := []) -> Dictionary:
 	var style = {}
 	if has_attribute("style"):
 		var svg_style = get_named_attribute_value("style")
@@ -86,7 +86,7 @@ func get_svg_style(log_message : Callable) -> Dictionary:
 			log_message.call("Failed to parse some styles for <%s id=\"%s\">" % [name,
 					get_named_attribute_value("id") if has_attribute("id") else "?"], 2)
 	for style_prop in SUPPORTED_STYLES:
-		if has_attribute(style_prop):
+		if has_attribute(style_prop) and style_prop not in skip:
 			style[style_prop] = get_named_attribute_value(style_prop)
 	return style
 
@@ -99,9 +99,9 @@ func get_merged_styles(css_classes : Dictionary[String, Dictionary], log_message
 			style.merge(css_classes[cls])
 	var ancestor = self
 	while ancestor.parent != null:
-		style.merge(ancestor.get_svg_style(log_message))
+		style.merge(ancestor.get_svg_style(log_message, ["display"]))
 		ancestor = ancestor.parent
-	style.merge(ancestor.get_svg_style(log_message))
+	style.merge(ancestor.get_svg_style(log_message, ["display"]))
 	return style
 
 
