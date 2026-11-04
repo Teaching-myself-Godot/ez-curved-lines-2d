@@ -1268,11 +1268,13 @@ func flip_points(flip_dir := Vector2(-1, 1)) -> void:
 		spin = -spin
 
 
-func translate_points_by(global_vector : Vector2) -> void:
+func translate_points_by(global_vector : Vector2, lst := []) -> void:
 	var delta := global_vector.rotated(-global_rotation) / global_scale
 	if shape_type == ShapeType.PATH:
 		curve.set_block_signals(true)
 		for idx in curve.point_count:
+			if not lst.is_empty() and idx not in lst:
+				continue
 			curve.set_point_position(idx, curve.get_point_position(idx) + delta)
 		curve.set_block_signals(false)
 		curve.emit_changed()
@@ -1280,14 +1282,16 @@ func translate_points_by(global_vector : Vector2) -> void:
 		offset += delta
 
 
-func scale_points_by(from_global_vector : Vector2, to_global_vector : Vector2, around_center := false) -> void:
+func scale_points_by(from_global_vector : Vector2, to_global_vector : Vector2,
+			origin := Vector2.ZERO, lst := []) -> void:
 	var local_from := to_local(from_global_vector)
 	var local_to := to_local(to_global_vector)
-	var origin := get_center() if around_center else Vector2.ZERO
 	var s := origin.distance_to(local_to) / origin.distance_to(local_from)
 	if shape_type == ShapeType.PATH:
 		curve.set_block_signals(true)
 		for idx in curve.point_count:
+			if not lst.is_empty() and idx not in lst:
+				continue
 			var p := curve.get_point_position(idx)
 			var p1 := (p - origin) * s + origin
 			var cp_in_abs := curve.get_point_in(idx) + p
@@ -1304,13 +1308,15 @@ func scale_points_by(from_global_vector : Vector2, to_global_vector : Vector2, a
 		size *= s
 
 
-func rotate_points_by(angle : float, rotation_origin := Vector2.ZERO) -> void:
+func rotate_points_by(angle : float, rotation_origin := Vector2.ZERO, lst := []) -> void:
 	if shape_type != ShapeType.PATH:
 		spin += angle
 		return
 	var transform := Transform2D.IDENTITY.rotated(-angle)
 	curve.set_block_signals(true)
 	for idx in curve.point_count:
+		if not lst.is_empty() and idx not in lst:
+			continue
 		var p := curve.get_point_position(idx)
 		var p1 := (p - rotation_origin) * transform + rotation_origin
 		var cp_in_abs := curve.get_point_in(idx) + p
