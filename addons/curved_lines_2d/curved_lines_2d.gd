@@ -96,7 +96,7 @@ enum SVSEditMode {
 	NONE, TRANSLATE, ROTATE, SCALE,
 	MERGE, BRUSH, PENCIL, PAINT_BONE,
 	KNIFE, CREATE_ELLIPSE, CREATE_RECT,
-	SET_PIVOT, COLOR_TOOL
+	SET_PIVOT, COLOR_TOOL, WIDTH_CURVE_TOOL
 }
 
 const CANCELABLE_MODES : Array[SVSEditMode] = [
@@ -370,7 +370,7 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 	if toggled_on and _is_svs_valid(current_selection):
 		svs_edit_buttons.show()
 		svs_edit_buttons.show_svs_editors()
-		scalable_vector_shapes_2d_dock.create_tab.enable_svs_editors()
+		scalable_vector_shapes_2d_dock.create_tab.enable_svs_editors(current_selection)
 		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
 				_svs_edit_mode in DRAW_MODES) and not Input.is_key_pressed(KEY_Q)):
 					return
@@ -3866,6 +3866,15 @@ static func _get_brush_fill_in_parent_shape() -> bool:
 	if ProjectSettings.has_setting(SETTING_NAME_BRUSH_FILL_IN_PARENT_SHAPE):
 		return ProjectSettings.get_setting(SETTING_NAME_BRUSH_FILL_IN_PARENT_SHAPE)
 	return false
+
+
+static func print_trace() -> void:
+	var st := get_stack()
+	print("Stacktrace requested:")
+	for l in st:
+		print("   at ", l["function"], " (", l["source"].replace("res://addons/curved_lines_2d/", ""), ":", l["line"], ")")
+	print("--")
+
 
 func _exit_tree():
 	if _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):
