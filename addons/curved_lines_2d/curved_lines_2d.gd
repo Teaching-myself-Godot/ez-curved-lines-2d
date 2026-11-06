@@ -1740,14 +1740,6 @@ func _handle_create_rect_preview(viewport_control : Control) -> void:
 		)
 
 
-func _is_editing_width_curve(svs : ScalableVectorShape2D) -> bool:
-	return (
-			(_is_ctrl_or_cmd_pressed() and not Input.is_key_pressed(KEY_SHIFT)) and
-			_hover_closest_point_on_curve and
-			is_instance_valid(svs.line)
-	)
-
-
 func _draw_set_pivot_hints(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
 	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if _is_snapped_to_pixel():
@@ -1787,6 +1779,9 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
+		var mouse_pos := _svp_mouse_pos(
+			EditorInterface.get_editor_viewport_2d().get_mouse_position(), current_selection
+		)
 		if _svs_edit_mode == SVSEditMode.TRANSLATE:
 			return _draw_canvas_for_uniform_translate(viewport_control, current_selection)
 		elif _svs_edit_mode == SVSEditMode.SCALE:
@@ -1807,7 +1802,8 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 			_draw_curve(viewport_control, current_selection)
 			return WidthCurveTool.draw(viewport_control, current_selection,
 					_draw_hint, _lmb_is_down_inside_viewport, _vp_transform,
-					_get_svp_transform(current_selection))
+					_get_svp_transform(current_selection), mouse_pos,
+					_is_snapped_to_pixel(), _get_snap_resolution())
 
 	var all_valid_svs_nodes := _find_scalable_vector_shape_2d_nodes().filter(_is_svs_valid)
 	for result : ScalableVectorShape2D in all_valid_svs_nodes:
@@ -1818,8 +1814,7 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 					.map(func(p): return p * mul)
 					.map(_vp_transform), VIEWPORT_ORANGE, 2.0)
 			_draw_curve(viewport_control, result)
-			if not _is_editing_width_curve(result):
-				_draw_handles(viewport_control, result)
+			_draw_handles(viewport_control, result)
 			if (not _handle_has_hover(result)) or (_is_ctrl_or_cmd_pressed() and not Input.is_key_pressed(KEY_SHIFT)):
 				if result.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 					if _hover_closest_point_on_curve:
@@ -3344,7 +3339,9 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				return true
 			return false
 		elif _svs_edit_mode == SVSEditMode.WIDTH_CURVE_TOOL:
-			if WidthCurveTool.handle_input(event, current_selection, mouse_pos, _vp_transform):
+			if WidthCurveTool.handle_input(event, current_selection, mouse_pos,
+					_vp_transform, _on_svs_edit_mode_changed.bind(SVSEditMode.NONE),
+					_is_snapped_to_pixel(), _get_snap_resolution()):
 				update_overlays()
 				return true
 			return false
@@ -3473,8 +3470,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		if Input.is_key_pressed(KEY_ALT) and _hover_point_idx > -1 and not event.is_pressed():
 			_toggle_loop_if_applies(current_selection, _hover_point_idx)
 			return true
-		if _is_svs_valid(current_selection) and _handle_has_hover(current_selection) and not _is_editing_width_curve(current_selection):
-			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not _is_ctrl_or_cmd_pressed():
+		if _is_svs_valid(current_selection) and _handle_has_hover(current_selection):
+			if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not _is_ctrl_or_cmd_pressed():
 				if _hover_point_idx > -1 and current_selection.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 					_remove_point_from_curve(current_selection, _hover_point_idx)
 				elif _hover_cp_in_idx > -1:
