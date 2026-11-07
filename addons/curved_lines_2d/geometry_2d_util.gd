@@ -276,10 +276,10 @@ static func get_progress_ratio_for_point_on_curve(p : Vector2, c : Curve2D, max_
 	for i in range(1, pts.size()):
 		if Geometry2DUtil.is_point_on_segment(p, p1, pts[i], r):
 			d += p1.distance_to(p)
-			break
+			return d / c.get_baked_length()
 		d += p1.distance_to(pts[i])
 		p1 = pts[i]
-	return d / c.get_baked_length()
+	return -1.0
 
 
 static func get_halfway_point_on_bezier(c : Curve2D, max_stages := 5, tolerance_degrees := 4.0) -> Vector2:

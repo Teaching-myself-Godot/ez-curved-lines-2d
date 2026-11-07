@@ -140,8 +140,11 @@ static func _change_width_curve(svs : ScalableVectorShape2D, vp_transform : Call
 	if md_p.before_segment >= svs.curve.point_count:
 		return
 	var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
-			md_p.local_point_position, svs.get_deformed_curve(), svs.max_stages, svs.tolerance_degrees
+			md_p.local_point_position, svs.get_deformed_curve(), svs.max_stages, svs.tolerance_degrees,
+			0.1
 	)
+	if progress_ratio < 0.0:
+		return
 
 	var width_curve := Curve.new()
 	if svs.line.width_curve == null:
@@ -178,7 +181,7 @@ static func _change_width_curve(svs : ScalableVectorShape2D, vp_transform : Call
 
 
 static func match_start_end_point(svs : ScalableVectorShape2D, width_curve : Curve):
-	if svs.is_curve_closed() and not is_equal_approx(width_curve.sample(0.0), width_curve.sample(1.0)):
+	if width_curve and svs.is_curve_closed() and not is_equal_approx(width_curve.sample(0.0), width_curve.sample(1.0)):
 		var end_idx := -1
 		for i in width_curve.point_count:
 			if is_equal_approx(width_curve.get_point_position(i).x, 1.0):
