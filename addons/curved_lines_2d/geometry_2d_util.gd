@@ -316,6 +316,9 @@ static func get_sliced_curve_segment(curve : Curve2D, before_segment : int, poin
 	curve_segment.set_point_in(1, curve.get_point_in(before_segment))
 	var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
 			point_position, curve_segment, max_stages, tolerance_degrees, r)
+	if progress_ratio < 0.0:
+		progress_ratio = Geometry2DUtil.get_progress_ratio_for_point_on_curve(
+			point_position, curve_segment, max_stages, tolerance_degrees, 0.1)
 	return slice_bezier(
 		curve_segment.get_point_position(0),
 		curve_segment.get_point_out(0),
