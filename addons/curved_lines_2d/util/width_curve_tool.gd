@@ -25,6 +25,8 @@ static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_
 				_remove_width_curve_point(svs, vp_transform)
 			else:
 				on_cancel.call()
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			_stashed_width_curve = svs.line.width_curve.duplicate(true) if svs.line.width_curve else null
 		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 			_hover_closest_point_on_curve = null
 			var undo_redo := EditorInterface.get_editor_undo_redo()
@@ -130,8 +132,7 @@ static func _remove_width_curve_point(svs : ScalableVectorShape2D, vp_transform 
 static func _change_width_curve(svs : ScalableVectorShape2D, vp_transform : Callable, mouse_pos : Vector2) -> void:
 	if not is_instance_valid(svs.line):
 		return
-	if not _stashed_width_curve:
-		_stashed_width_curve = svs.line.width_curve.duplicate(true) if svs.line.width_curve else null
+
 	var md_p : ClosestPointOnCurveMeta = _hover_closest_point_on_curve
 	if md_p.before_segment >= svs.curve.point_count:
 		return
