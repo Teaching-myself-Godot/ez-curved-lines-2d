@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.6.0 - Select Multiple Points
+## 3.6.1 - Select Multiple Points
 
 ### Added
 
@@ -19,6 +19,8 @@
 - Bugfix SVG Importer: support for `display: none` style property re-added
 - Bugfix SVG Importer: `<use>` node now includes children of dereferenced node
 - Bugfix SVG Importer: treat line feeds, newlines and tab characters as normal space delimiter in number lists and path data attribute
+- Usability Fix closing a curve: keep geometry in tact by closing a loop via adding a new segment (like before)
+- Usability Fix breaking open a curve: keep geometry in tact by only displacing the newly introduced end point
 
 ## 3.5.1 - Make Unique with Ctrl + U
 
