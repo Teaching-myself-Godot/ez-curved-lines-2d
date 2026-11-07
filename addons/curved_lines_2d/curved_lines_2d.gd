@@ -2579,7 +2579,7 @@ func _break_loop_at(svs : ScalableVectorShape2D, idx : int) -> void:
 	if 0 in new_deformation_map:
 		new_deformation_map[new_idx] = new_deformation_map[0]
 
-	if is_instance_valid(svs.line) and svs.line.width_curve and idx < svs.curve.point_count:
+	if is_instance_valid(svs.line) and svs.line.width_curve and idx < svs.curve.point_count - 1:
 		var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
 			svs.curve.get_point_position(idx), svs.curve, svs.max_stages, svs.tolerance_degrees)
 		var new_width_curve := Curve.new()
