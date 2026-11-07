@@ -2591,11 +2591,8 @@ func _break_loop_at(svs : ScalableVectorShape2D, idx : int) -> void:
 			if p1.y > new_width_curve.max_value:
 				new_width_curve.max_value = p1.y
 			new_width_curve.add_point(p1)
-			print(p1.y)
-			print(new_width_curve.sample(p1.x))
 		new_width_curve.add_point(Vector2(0.0, svs.line.width_curve.sample(progress_ratio)))
-		new_width_curve.add_point(Vector2(0, svs.line.width_curve.sample(progress_ratio)))
-		print(new_width_curve.point_count)
+		new_width_curve.add_point(Vector2(1.0, svs.line.width_curve.sample(progress_ratio)))
 		undo_redo.add_do_property(svs.line, 'width_curve', new_width_curve)
 		undo_redo.add_undo_property(svs.line, 'width_curve', svs.line.width_curve)
 
@@ -2606,7 +2603,6 @@ func _break_loop_at(svs : ScalableVectorShape2D, idx : int) -> void:
 	undo_redo.add_do_property(svs, 'glue_map', new_glue_map)
 	undo_redo.add_undo_property(svs, 'glue_map', svs.glue_map)
 	undo_redo.commit_action()
-	print(svs.line.width_curve.point_count)
 
 
 func _get_vp_h_scroll_bar() -> HScrollBar:
