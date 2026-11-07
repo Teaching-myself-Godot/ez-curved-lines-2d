@@ -4,7 +4,7 @@ class_name WidthCurveTool extends Object
 const WIDTH_CURVE_EDIT_CLAMP_DISTANCE := 20
 static var _hover_closest_point_on_curve : ClosestPointOnCurveMeta = null
 static var _stashed_width_curve : Curve = null
-
+static var _initial_angle_to_line := 0.0
 static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_pos : Vector2,
 		vp_transform : Callable, on_cancel : Callable, is_snapped_to_pixel : bool, snap_resolution : Vector2) -> bool:
 
@@ -27,6 +27,8 @@ static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_
 				on_cancel.call()
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			_stashed_width_curve = svs.line.width_curve.duplicate(true) if svs.line.width_curve else null
+			if _hover_closest_point_on_curve:
+				_initial_angle_to_line = _hover_closest_point_on_curve.point_position.angle_to_point(mouse_pos) - _hover_closest_point_on_curve.segment_rotation
 		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 			_hover_closest_point_on_curve = null
 			var undo_redo := EditorInterface.get_editor_undo_redo()
@@ -146,6 +148,11 @@ static func _change_width_curve(svs : ScalableVectorShape2D, vp_transform : Call
 	if progress_ratio < 0.0:
 		return
 
+
+	var angle_to_line := _hover_closest_point_on_curve.point_position.angle_to_point(mouse_pos) - _hover_closest_point_on_curve.segment_rotation
+	var new_value := md_p.local_point_position.distance_to(svs.to_local(mouse_pos)) / (svs.stroke_width * 0.5)
+	if absf(_initial_angle_to_line - angle_to_line) > 0.5 * PI:
+		new_value = 0.0
 	var width_curve := Curve.new()
 	if svs.line.width_curve == null:
 		width_curve.add_point(Vector2(progress_ratio, 1.0))
@@ -163,18 +170,8 @@ static func _change_width_curve(svs : ScalableVectorShape2D, vp_transform : Call
 				clamped_to_existing = i
 				break
 		if clamped_to_existing > -1:
-
-			var new_value := absf(md_p.local_point_position.distance_to(svs.to_local(mouse_pos))) / (svs.stroke_width * 0.5)
-			if new_value < 0.0:
-				new_value = 0.0
 			width_curve.set_point_value(clamped_to_existing, new_value)
 		else:
-			var new_value := (
-					width_curve.sample(progress_ratio) +
-						absf(md_p.local_point_position.distance_to(svs.to_local(mouse_pos))) / (svs.stroke_width * 0.5)
-			)
-			if new_value < 0.0:
-				new_value = 0.0
 			width_curve.add_point(Vector2(progress_ratio, new_value))
 	match_start_end_point(svs, width_curve)
 	svs.line.width_curve = width_curve

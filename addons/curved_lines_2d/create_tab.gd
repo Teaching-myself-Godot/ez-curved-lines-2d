@@ -939,5 +939,5 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and (event as InputEventKey).pressed:
 		if (event as InputEventKey).is_command_or_control_pressed():
 			return
-		if (event as InputEventKey).keycode == KEY_L and not %WidthCurveButton.disabled:
+		if (event as InputEventKey).keycode == KEY_W and (event as InputEventKey).shift_pressed and not %WidthCurveButton.disabled:
 			%WidthCurveButton.button_pressed = true
