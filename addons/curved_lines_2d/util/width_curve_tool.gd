@@ -5,13 +5,17 @@ const WIDTH_CURVE_EDIT_CLAMP_DISTANCE := 20
 static var _hover_closest_point_on_curve : ClosestPointOnCurveMeta = null
 static var _stashed_width_curve : Curve = null
 static var _clamped_to_existing := -1
+static var _drag_start := Vector2.INF
+
 static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_pos : Vector2,
 		vp_transform : Callable, on_cancel : Callable, is_snapped_to_pixel : bool, snap_resolution : Vector2) -> bool:
 
+	mouse_pos = mouse_pos.snapped(snap_resolution) if is_snapped_to_pixel else mouse_pos
 	var closest_point_on_curve := svs.get_closest_point_on_curve(mouse_pos)
+	var distance_to_mouse : float = vp_transform.call(mouse_pos).distance_to(vp_transform.call(closest_point_on_curve.point_position))
 	if event is InputEventMouseMotion:
 		if closest_point_on_curve.before_segment < svs.curve.point_count:
-			if ((not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and vp_transform.call(mouse_pos).distance_to(vp_transform.call(closest_point_on_curve.point_position)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE)
+			if ((not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and distance_to_mouse < WIDTH_CURVE_EDIT_CLAMP_DISTANCE)
 					or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)):
 				_hover_closest_point_on_curve = closest_point_on_curve
 			else:
@@ -20,23 +24,25 @@ static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_
 		else:
 			_hover_closest_point_on_curve = null
 			_clamped_to_existing = -1
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and _hover_closest_point_on_curve:
-				_change_width_curve(svs, vp_transform, mouse_pos.snapped(snap_resolution) if is_snapped_to_pixel else mouse_pos)
+		if _drag_start != Vector2.INF  and _hover_closest_point_on_curve:
+				_change_width_curve(svs, vp_transform, mouse_pos)
 		return true
 
 	if event is InputEventMouseButton:
 		if event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+			_drag_start = Vector2.INF
 			if  vp_transform.call(mouse_pos).distance_to(vp_transform.call(closest_point_on_curve.point_position)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
 				_remove_width_curve_point(svs, vp_transform)
 			else:
 				on_cancel.call()
 
-		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed and distance_to_mouse < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
 			_stashed_width_curve = svs.line.width_curve.duplicate(true) if svs.line.width_curve else null
 			_clamped_to_existing = _find_clamp_index(svs, vp_transform)
-
+			_drag_start = mouse_pos
 
 		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+			_drag_start = Vector2.INF
 			_hover_closest_point_on_curve = null
 			var undo_redo := EditorInterface.get_editor_undo_redo()
 			undo_redo.create_action("Change width curve")
@@ -62,10 +68,10 @@ static func draw(viewport_control : Control, svs : ScalableVectorShape2D,
 	var clamped_to_existing := false
 	var hint := (
 		"- Drag to make line thicker or thinner"
-			if lmb_down else
+			if lmb_down and _drag_start != Vector2.INF else
 		"- Click and drag to thin/thicken the stroke line"
 	) if _hover_closest_point_on_curve  else (
-		"Hover over a line to make it thicker or thinner"
+		"- Hover over a line to make it thicker or thinner"
 	)
 
 	if svs.line.width_curve:
@@ -82,14 +88,14 @@ static func draw(viewport_control : Control, svs : ScalableVectorShape2D,
 				_draw_change_width_curve_icon(viewport_control, vp_transform.call(cp.point_position * svp_transform), cp.segment_rotation - svp_transform.get_rotation())
 			else:
 				_draw_change_width_curve_icon(viewport_control, vp_transform.call(cp.point_position * svp_transform), cp.segment_rotation - svp_transform.get_rotation(), Color.DIM_GRAY)
-	if clamped_to_existing:
+	if clamped_to_existing and not lmb_down:
 		hint += "\n- Right click to remove this width curve control point"
-	elif _hover_closest_point_on_curve:
+	elif _hover_closest_point_on_curve and not lmb_down:
 		_draw_change_width_curve_icon(viewport_control,
 				vp_transform.call(_hover_closest_point_on_curve.point_position * svp_transform),
 				_hover_closest_point_on_curve.segment_rotation - svp_transform.get_rotation()
 		)
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and _hover_closest_point_on_curve:
+	if _drag_start != Vector2.INF and _hover_closest_point_on_curve:
 		var orig := vp_transform.call(_hover_closest_point_on_curve.point_position * svp_transform)
 		if is_snapped_to_pixel:
 			mouse_pos = mouse_pos.snapped(snap_resolution)
@@ -157,7 +163,6 @@ static func _change_width_curve(svs : ScalableVectorShape2D, vp_transform : Call
 
 
 	var new_value := md_p.local_point_position.distance_to(svs.to_local(mouse_pos)) / (svs.stroke_width * 0.5)
-
 	var width_curve := Curve.new()
 	if svs.line.width_curve == null:
 		width_curve.add_point(Vector2(progress_ratio, 1.0))
