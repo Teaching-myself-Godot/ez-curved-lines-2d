@@ -62,6 +62,8 @@ static func draw(viewport_control : Control, svs : ScalableVectorShape2D,
 	if svs.line.width_curve:
 		for i in svs.line.width_curve.point_count:
 			var p := svs.line.width_curve.get_point_position(i)
+			if svs.is_curve_closed() and is_equal_approx(p.x, 1.0):
+				continue
 			var cp := svs.get_closest_point_on_curve(
 				svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
 						svs.get_deformed_curve(), p.x, svs.max_stages, svs.tolerance_degrees
@@ -122,6 +124,7 @@ static func _remove_width_curve_point(svs : ScalableVectorShape2D, vp_transform 
 	width_curve.remove_point(clamped_to_existing)
 	if width_curve.point_count == 0:
 		width_curve = null
+	match_start_end_point(svs, width_curve)
 	var undo_redo := EditorInterface.get_editor_undo_redo()
 	undo_redo.create_action("remove width curve handle: " + str(svs))
 	undo_redo.add_do_property(svs.line, 'width_curve', width_curve)
@@ -170,5 +173,18 @@ static func _change_width_curve(svs : ScalableVectorShape2D, vp_transform : Call
 			if new_value < 0.0:
 				new_value = 0.0
 			width_curve.add_point(Vector2(progress_ratio, new_value))
+	match_start_end_point(svs, width_curve)
 	svs.line.width_curve = width_curve
 
+
+static func match_start_end_point(svs : ScalableVectorShape2D, width_curve : Curve):
+	if svs.is_curve_closed() and not is_equal_approx(width_curve.sample(0.0), width_curve.sample(1.0)):
+		var end_idx := -1
+		for i in width_curve.point_count:
+			if is_equal_approx(width_curve.get_point_position(i).x, 1.0):
+				end_idx = i
+				break
+		if end_idx > -1:
+			width_curve.set_point_value(end_idx, width_curve.sample(0.0))
+		else:
+			width_curve.add_point(Vector2(1.0, width_curve.sample(0.0)))
