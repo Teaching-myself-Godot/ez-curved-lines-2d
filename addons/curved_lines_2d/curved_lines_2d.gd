@@ -2518,20 +2518,8 @@ func _toggle_loop_if_applies(svs : ScalableVectorShape2D, idx : int) -> void:
 		return
 
 	if idx == 0 or idx == svs.curve.point_count - 1:
-		if svs.curve.point_count == 2:
-			# create a new point over the starting point
-			_add_point_to_curve(svs, svs.curve.get_point_position(0))
-			return
-		# Move the start and end point to the same place
-		var a := svs.curve.get_point_position(0)
-		var b := svs.curve.get_point_position(svs.curve.point_count - 1)
-		var c := (a + b) / 2.0
-		undo_redo.create_action("Close loop")
-		undo_redo.add_do_method(svs.curve, 'set_point_position', 0, c)
-		undo_redo.add_do_method(svs.curve, 'set_point_position', svs.curve.point_count - 1, c)
-		undo_redo.add_undo_method(svs.curve, 'set_point_position', 0, a)
-		undo_redo.add_undo_method(svs.curve, 'set_point_position', svs.curve.point_count - 1, b)
-		undo_redo.commit_action()
+		_add_point_to_curve(svs, svs.curve.get_point_position(0))
+
 
 
 func _break_loop_at(svs : ScalableVectorShape2D, idx : int) -> void:
@@ -2580,8 +2568,8 @@ func _break_loop_at(svs : ScalableVectorShape2D, idx : int) -> void:
 		new_idx += 1
 
 	# Spread out the 2 points evenly from a common center at an angle to the SVS's center
-	var new_pt_pos := svs.curve.get_point_position(idx) + svs.get_center().direction_to(svs.curve.get_point_position(idx)) * 10 / EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale()
-	var orig_pt_pos := svs.curve.get_point_position(idx) + svs.get_center().direction_to(svs.curve.get_point_position(idx)) * -10 / EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale()
+	var new_pt_pos := svs.curve.get_point_position(idx) + svs.get_center().direction_to(svs.curve.get_point_position(idx)) * 20 / EditorInterface.get_editor_viewport_2d().get_final_transform().get_scale()
+	var orig_pt_pos := svs.curve.get_point_position(idx)
 	new_curve.set_point_position(0, orig_pt_pos)
 	new_curve.add_point(new_pt_pos, svs.curve.get_point_in(idx))
 	new_curve.set_point_in(0, Vector2.ZERO)
