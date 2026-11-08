@@ -84,7 +84,7 @@ You can find the rest of the explainer videos on this playlist:
     - [Cutting out an empty shape](#cutting-out-an-empty-shape)
   - [Converting a line segment into an arc-segment](#converting-a-line-segment-into-an-arc-segment)
   - [Editing arc properties](#editing-arc-properties)
-  - [Changing the width curve of a Stroke (`Line2D`-Stroke only)](#changing-the-width-curve-of-a-stroke-line2d-stroke-only)
+  - [The Line Thickness Editor Tool (Line2D based strokes only)](#the-line-thickness-editor-tool-line2d-based-strokes-only)
   - [Setting the pivot of your shape](#setting-the-pivot-of-your-shape)
   - [Sticking two or more shapes together by vertex merge](#sticking-two-or-more-shapes-together-by-vertex-merge)
 - [Useful shortcuts](#useful-shortcuts)
@@ -210,6 +210,7 @@ In the next section all these tools are described in more detail:
 - [Brush tool](#drawing-polygons-using-the-brush-tool) (Shift+B), with which you can paint with an Ellipse/Rectangle shaped brush
 - [Pencil tool](#drawing-strokes-and-outlines-with-the-pencil-tool) (Shift+N) to draw strokes, or outlines
 - [Knife tool](#cutting-shapes-in-half-with-the-knife-tool) (K), to cut slices off of shapes
+- [Line Thickness Tool](#the-line-thickness-editor-tool-line2d-based-strokes-only) (Shift+W), to change the stroke witdth of Line2D based strokes with
 - [Bone Paint](#animating-using-skeleton2d) tool, to assign points of a shape to bones in a Skeleton2D
 - Merge points tool (Shift+M)
 - [Color Tools](#color-tools): find and replace colors for strokes, fills and gradient stops
@@ -580,15 +581,14 @@ Using `Left click` on an arc segment opens a popup form to edit the properties o
 [^3]: Arcs are implemented the same way as specified by the [w3c for scalable vecor graphics](https://www.w3.org/TR/SVG/paths.html#PathDataEllipticalArcCommands).
 
 
-## Changing the width curve of a Stroke (`Line2D`-Stroke only)
+## The Line Thickness Editor Tool (Line2D based strokes only)
 
-Hold `Ctrl+Mousehweel` while hovering over a stroke to change the width. This changes the `ScalableVectorShape2D.line.width_curve` `property
+With this tool (activated using `Ctrl+W`) you change the thickness of a stroke line by clicking and dragging on it.
 
-![width curve edit](./screenshots/width_curve_edit.gif)
+You can remove a width curve control this creates by using `Right click` on it.
 
-Press `Right click` while holding `Ctrl` to remove a width curve control point:
+![width curve editor](./screenshots/width_curve_editor.png)
 
-![width curve point remove ](./screenshots/width_curve_pt_remove.gif)
 
 ## Setting the pivot of your shape
 
