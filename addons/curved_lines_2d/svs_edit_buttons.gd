@@ -157,6 +157,8 @@ func set_edit_mode_toggle_button(mode : CurvedLines2D.SVSEditMode) -> void:
 		CurvedLines2D.SVSEditMode.MERGE:
 			if not %Merge.button_pressed:
 				%Merge.button_pressed = true
+		CurvedLines2D.SVSEditMode.WIDTH_CURVE_TOOL:
+			pass
 		_:
 			for b in find_children("*", "Button"):
 				b.button_pressed = false
