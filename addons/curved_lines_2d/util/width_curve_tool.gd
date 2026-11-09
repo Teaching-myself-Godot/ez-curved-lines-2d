@@ -100,6 +100,7 @@ static func draw(viewport_control : Control, svs : ScalableVectorShape2D,
 	if (_drag_start != Vector2.INF and _hover_closest_point_on_curve and
 			_hover_closest_point_on_curve.before_segment < svs.curve.point_count and
 			_clamped_to_existing > -1 and
+			_clamped_to_existing < svs.line.width_curve.point_count and
 			svs.line.width_curve.get_point_position(_clamped_to_existing).y > 0.0
 	):
 		var orig := vp_transform.call(_hover_closest_point_on_curve.point_position * svp_transform)
@@ -135,17 +136,7 @@ static func _remove_width_curve_point(svs : ScalableVectorShape2D, vp_transform 
 		return
 	if svs.line.width_curve == null:
 		return
-	var md_p : ClosestPointOnCurveMeta = _hover_closest_point_on_curve
-	var clamped_to_existing := -1
-	for i in svs.line.width_curve.point_count:
-		var p := svs.line.width_curve.get_point_position(i)
-		var cp := svs.get_closest_point_on_curve(
-			svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
-					svs.get_deformed_curve(), p.x, svs.max_stages, svs.tolerance_degrees
-		)))
-		if vp_transform.call(cp.point_position).distance_to(vp_transform.call(md_p.point_position)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
-			clamped_to_existing = i
-			break
+	var clamped_to_existing := _find_clamp_index(svs, vp_transform)
 	if clamped_to_existing < 0:
 		return
 	var width_curve : Curve = svs.line.width_curve.duplicate(true)
