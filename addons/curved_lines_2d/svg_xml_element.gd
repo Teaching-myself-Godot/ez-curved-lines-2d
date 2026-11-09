@@ -12,7 +12,9 @@ var attributes : Dictionary[String, String]
 var children : Array[SVGXMLElement]
 var parent : SVGXMLElement
 
-func _init(xml_parser : XMLParser, with_parent : SVGXMLElement = null):
+func _init(xml_parser : XMLParser = null, with_parent : SVGXMLElement = null):
+	if not xml_parser:
+		return
 	name = xml_parser.get_node_name()
 	for i in xml_parser.get_attribute_count():
 		attributes[xml_parser.get_attribute_name(i)] = xml_parser.get_attribute_value(i)

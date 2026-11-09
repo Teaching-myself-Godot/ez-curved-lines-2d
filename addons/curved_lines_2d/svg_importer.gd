@@ -96,9 +96,25 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 	var svg_xml_node : SVGXMLElement = parse_svg_xml_file(xml_parser)
 	if GreasePencilAnimationImporter.detect_animation(svg_xml_node):
 		log_message("TODO: ask for grease pencil animation import gimmick", LogLevel.WARN)
+		import_as_svs = false
+		var blender_frames := GreasePencilAnimationImporter.get_blender_frames_xml(svg_xml_node)
+		for fr in blender_frames:
+			var node := await parse_svg_xml_to_nodes(fr,
+					"BlenderFrame",
+					scene_root, parent_node, selected_nodes
+			)
+		return scene_root
+	var result := await parse_svg_xml_to_nodes(svg_xml_node,
+			file_path.get_file().replace(".svg", "").to_pascal_case(),
+			scene_root, parent_node, selected_nodes,
+	)
+	return result
 
+
+func parse_svg_xml_to_nodes(svg_xml_node : SVGXMLElement, rt_name : String,
+		scene_root : Node, parent_node : Node, selected_nodes : Array[Node]) -> Node2D:
 	var svg_root := Node2D.new()
-	svg_root.name = file_path.get_file().replace(".svg", "").to_pascal_case()
+	svg_root.name = rt_name
 	svg_root.set_meta(SVG_ROOT_META_NAME, true)
 	_managed_add_child_and_set_owner(parent_node, svg_root, scene_root)
 
