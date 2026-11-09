@@ -93,6 +93,10 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 		return
 
 	log_message("Importing SVG file: %s" % file_path, LogLevel.INFO)
+	var svg_xml_node : SVGXMLElement = parse_svg_xml_file(xml_parser)
+	if GreasePencilAnimationImporter.detect_animation(svg_xml_node):
+		log_message("TODO: ask for grease pencil animation import gimmick", LogLevel.WARN)
+
 	var svg_root := Node2D.new()
 	svg_root.name = file_path.get_file().replace(".svg", "").to_pascal_case()
 	svg_root.set_meta(SVG_ROOT_META_NAME, true)
@@ -100,8 +104,6 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 
 	var current_node := svg_root
 	var svg_gradients : Array[Dictionary] = []
-
-	var svg_xml_node : SVGXMLElement = parse_svg_xml_file(xml_parser)
 
 	process_svg_xml_tree(svg_xml_node, scene_root, svg_root, current_node, svg_gradients)
 	# global_position will be used to recenter Node2D so await at least one draw operation
