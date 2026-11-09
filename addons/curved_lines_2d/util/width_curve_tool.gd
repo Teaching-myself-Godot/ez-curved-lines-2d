@@ -80,7 +80,7 @@ static func draw(viewport_control : Control, svs : ScalableVectorShape2D,
 				svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
 						svs.get_deformed_curve(), p.x, svs.max_stages, svs.tolerance_degrees
 			)))
-			if svs.is_curve_closed() and is_equal_approx(p.x, 1.0):
+			if svs.is_curve_closed() and is_equal_approx(p.x, svs.line.width_curve.max_domain):
 				_draw_width_curve_end_point(viewport_control, vp_transform.call(cp.point_position * svp_transform), cp.segment_rotation - svp_transform.get_rotation())
 				continue
 			elif _drag_start != Vector2.INF and _clamped_to_existing == i:
@@ -99,6 +99,7 @@ static func draw(viewport_control : Control, svs : ScalableVectorShape2D,
 		)
 	if (_drag_start != Vector2.INF and _hover_closest_point_on_curve and
 			_hover_closest_point_on_curve.before_segment < svs.curve.point_count and
+			_clamped_to_existing > -1 and
 			svs.line.width_curve.get_point_position(_clamped_to_existing).y > 0.0
 	):
 		var orig := vp_transform.call(_hover_closest_point_on_curve.point_position * svp_transform)
@@ -171,12 +172,12 @@ static func _change_width_curve(svs : ScalableVectorShape2D, vp_transform : Call
 	)
 	if progress_ratio < 0.0:
 		return
-
 	var width_curve := Curve.new()
 	if svs.line.width_curve == null:
 		width_curve.add_point(Vector2(progress_ratio, 1.0))
 	else:
 		width_curve = svs.line.width_curve.duplicate(true)
+		width_curve.max_domain = progress_ratio if progress_ratio > width_curve.max_domain else width_curve.max_domain
 		var new_value := md_p.local_point_position.distance_to(svs.to_local(mouse_pos)) / (svs.stroke_width * 0.5)
 		if absf(_initial_angle_to_mouse - rad_to_deg(Vector2.ONE.rotated(_hover_closest_point_on_curve.segment_rotation).angle_to(_hover_closest_point_on_curve.point_position.direction_to(mouse_pos)))) > 20.0:
 			new_value = 0.0
@@ -205,10 +206,10 @@ static func _change_width_curve(svs : ScalableVectorShape2D, vp_transform : Call
 
 
 static func match_start_end_point(svs : ScalableVectorShape2D, width_curve : Curve):
-	if width_curve and svs.is_curve_closed() and not is_equal_approx(width_curve.sample(0.0), width_curve.sample(1.0)):
+	if width_curve and svs.is_curve_closed() and not is_equal_approx(width_curve.sample(0.0), width_curve.sample(width_curve.max_domain)):
 		var end_idx := -1
 		for i in width_curve.point_count:
-			if is_equal_approx(width_curve.get_point_position(i).x, 1.0):
+			if is_equal_approx(width_curve.get_point_position(i).x, width_curve.max_domain):
 				end_idx = i
 				break
 		if end_idx > -1:
