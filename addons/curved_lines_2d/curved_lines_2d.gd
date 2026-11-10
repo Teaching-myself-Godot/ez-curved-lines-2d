@@ -1248,21 +1248,6 @@ func _draw_crosshair(viewport_control : Control, p : Vector2, orbit := 2.0, oute
 	viewport_control.draw_line(p - line_len * Vector2.LEFT, p - orbit * Vector2.LEFT, color, width)
 
 
-#MOVING
-#func _draw_change_width_curve_icon(viewport_control : Control, p : Vector2, segment_rotation : float,
-		#fill_color := Color.WHITE) -> void:
-	#var triangle := [14 * Vector2.UP, Vector2(10, -4), Vector2(-10, -4)].map(
-			#func(p1 : Vector2): return p + p1.rotated(segment_rotation)
-	#)
-	#var triangle2 := [14 * Vector2.UP, Vector2(10, -4), Vector2(-10, -4)].map(
-			#func(p1 : Vector2): return p + p1.rotated(segment_rotation + PI)
-	#)
-	#viewport_control.draw_polygon(Geometry2D.offset_polygon(triangle, 0.5)[0], [Color.BLACK])
-	#viewport_control.draw_polygon(triangle, [fill_color])
-	#viewport_control.draw_polygon(Geometry2D.offset_polygon(triangle2, 0.5)[0], [Color.BLACK])
-	#viewport_control.draw_polygon(triangle2, [fill_color])
-
-
 func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2D, only_cutout_hints : bool) -> void:
 	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if _is_snapped_to_pixel():
@@ -2186,82 +2171,6 @@ func _set_shape_origin(current_selection : ScalableVectorShape2D, mouse_pos : Ve
 	undo_redo.add_do_method(current_selection, 'set_origin', mouse_pos)
 	undo_redo.add_undo_method(current_selection, 'set_origin', current_selection.global_position)
 	undo_redo.commit_action()
-
-#MOVING
-#func _remove_width_curve_point(svs : ScalableVectorShape2D) -> void:
-	#if not is_instance_valid(svs.line):
-		#return
-	#if svs.line.width_curve == null:
-		#return
-	#var md_p : ClosestPointOnCurveMeta = _hover_closest_point_on_curve
-	#var clamped_to_existing := -1
-	#for i in svs.line.width_curve.point_count:
-		#var p := svs.line.width_curve.get_point_position(i)
-		#var cp := svs.get_closest_point_on_curve(
-			#svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
-					#svs.get_deformed_curve(), p.x, svs.max_stages, svs.tolerance_degrees
-		#)))
-		#if _vp_transform(cp.point_position).distance_to(_vp_transform(md_p.point_position)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
-			#clamped_to_existing = i
-			#break
-	#if clamped_to_existing < 0:
-		#return
-	#var width_curve : Curve = svs.line.width_curve.duplicate(true)
-	#width_curve.remove_point(clamped_to_existing)
-	#if width_curve.point_count == 0:
-		#width_curve = null
-	#undo_redo.create_action("remove width curve handle: " + str(svs))
-	#undo_redo.add_do_property(svs.line, 'width_curve', width_curve)
-	#undo_redo.add_undo_property(svs.line, 'width_curve', svs.line.width_curve.duplicate(true) if svs.line.width_curve else null)
-	#undo_redo.commit_action()
-
-#MOVING
-#func _change_width_curve(svs : ScalableVectorShape2D, make_thicker : bool) -> void:
-	#if not is_instance_valid(svs.line):
-		#return
-	#var md_p : ClosestPointOnCurveMeta = _hover_closest_point_on_curve
-	#if md_p.before_segment >= svs.curve.point_count:
-		#return
-	#var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
-			#md_p.local_point_position, svs.get_deformed_curve(), svs.max_stages, svs.tolerance_degrees
-	#)
-#
-	#var width_curve := Curve.new()
-	#if svs.line.width_curve == null:
-		#width_curve.add_point(Vector2(progress_ratio, 1.0))
-	#else:
-		#width_curve = svs.line.width_curve.duplicate(true)
-		#width_curve.max_value = 2.0
-		#var clamped_to_existing := -1
-		#for i in width_curve.point_count:
-			#var p := width_curve.get_point_position(i)
-			#var cp := svs.get_closest_point_on_curve(
-				#svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
-						#svs.get_deformed_curve(), p.x, svs.max_stages, svs.tolerance_degrees
-			#)))
-			#if _vp_transform(cp.point_position).distance_to(_vp_transform(md_p.point_position)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
-				#clamped_to_existing = i
-				#break
-		#if clamped_to_existing > -1:
-			#var new_value := (
-				#width_curve.get_point_position(clamped_to_existing).y +
-					#(0.1 if make_thicker else -0.1)
-			#)
-			#if new_value < 0.0:
-				#new_value = 0.0
-			#width_curve.set_point_value(clamped_to_existing, new_value)
-		#else:
-			#var new_value := (
-					#width_curve.sample(progress_ratio) +
-						#(0.1 if make_thicker else -0.1)
-			#)
-			#if new_value < 0.0:
-				#new_value = 0.0
-			#width_curve.add_point(Vector2(progress_ratio, new_value))
-	#undo_redo.create_action("Edit width curve: %s " % str(svs))
-	#undo_redo.add_do_property(svs.line, 'width_curve', width_curve)
-	#undo_redo.add_undo_property(svs.line, 'width_curve', svs.line.width_curve.duplicate(true) if svs.line.width_curve else null)
-	#undo_redo.commit_action()
 
 
 func _resize_shape(svs : ScalableVectorShape2D, s : float) -> void:
@@ -3503,15 +3412,6 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			else:
 				_resize_shape(current_selection, 1.01)
 			return true
-
-	#MOVING
-	#if (event is InputEventMouseButton and _is_ctrl_or_cmd_pressed() and
-				#_is_svs_valid(current_selection) and
-				#_hover_closest_point_on_curve and
-				#event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN] and
-				#event.is_pressed()):
-		#_change_width_curve(current_selection, event.button_index == MOUSE_BUTTON_WHEEL_UP)
-		#return true
 
 	if event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and is_instance_valid(current_selection):
