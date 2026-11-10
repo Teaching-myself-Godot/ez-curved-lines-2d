@@ -98,11 +98,29 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 		log_message("TODO: ask for grease pencil animation import gimmick", LogLevel.WARN)
 		import_as_svs = false
 		var blender_frames := GreasePencilAnimationImporter.get_blender_frames_xml(svg_xml_node)
+		var animation := Animation.new()
+		var use_node := svg_xml_node.find_by_id("blender_animation")
+		var anim_node := svg_xml_node.find_by_id("frame-by-frame_animation")
+		var start_frame_id := use_node.get_named_attribute_value_safe("href").replace("#", "").strip_edges()
+		animation.length = float(anim_node.get_named_attribute_value_safe("dur"))
 		for fr in blender_frames:
 			var node := await parse_svg_xml_to_nodes(fr,
 					"BlenderFrame",
-					scene_root, parent_node, selected_nodes
+					scene_root, parent_node, selected_nodes,
+					false
 			)
+			if fr.get_named_attribute_value_safe("frame_id") != start_frame_id:
+				node.hide()
+
+		var animation_player := AnimationPlayer.new()
+		animation_player.add_animation_library("", AnimationLibrary.new())
+		animation_player.get_animation_library("").add_animation("grease_pencil_import", animation)
+		undo_redo.create_action("Add animation player")
+		undo_redo.add_do_method(scene_root, 'add_child', animation_player, true)
+		undo_redo.add_do_property(animation_player, 'owner', scene_root)
+		undo_redo.add_undo_method(scene_root, 'remove_child', animation_player)
+		undo_redo.add_undo_reference(animation_player)
+		undo_redo.commit_action()
 		return scene_root
 	var result := await parse_svg_xml_to_nodes(svg_xml_node,
 			file_path.get_file().replace(".svg", "").to_pascal_case(),
@@ -112,7 +130,8 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 
 
 func parse_svg_xml_to_nodes(svg_xml_node : SVGXMLElement, rt_name : String,
-		scene_root : Node, parent_node : Node, selected_nodes : Array[Node]) -> Node2D:
+		scene_root : Node, parent_node : Node, selected_nodes : Array[Node],
+		return_parent := true) -> Node2D:
 	var svg_root := Node2D.new()
 	svg_root.name = rt_name
 	svg_root.set_meta(SVG_ROOT_META_NAME, true)
@@ -141,7 +160,10 @@ func parse_svg_xml_to_nodes(svg_xml_node : SVGXMLElement, rt_name : String,
 		_recursive_set_owner(final_svg_root, scene_root, scene_root)
 		undo_redo.add_undo_method(parent_node, "remove_child", final_svg_root)
 		undo_redo.commit_action(false)
-		return parent_node
+		if return_parent:
+			return parent_node
+		else:
+			return final_svg_root
 
 	undo_redo.create_action("Import SVG file as Nodes: %s" % svg_root.name)
 	undo_redo.add_do_method(parent_node, "add_child", svg_root, true)
