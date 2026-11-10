@@ -1336,37 +1336,12 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 		else:
 			if Input.is_key_pressed(KEY_ALT):
 				_draw_crosshair(viewport_control, _vp_transform(svs.to_global(svs.get_curve_segment_halfway_point(md_p.before_segment)) * mul), 3.0, 8, Color.ANTIQUE_WHITE, 2)
-			# MOVING
-			#elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line) and md_p.before_segment < svs.curve.point_count and not Input.is_key_pressed(KEY_SHIFT):
-				#var clamped_to_existing := false
-				#if svs.line.width_curve:
-					#for i in svs.line.width_curve.point_count:
-						#var p := svs.line.width_curve.get_point_position(i)
-						#var cp := svs.get_closest_point_on_curve(
-							#svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
-									#svs.get_deformed_curve(), p.x, svs.max_stages, svs.tolerance_degrees
-						#)))
-						#if _vp_transform(cp.point_position * mul).distance_to(_vp_transform(md_p.point_position * mul)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
-							#clamped_to_existing = true
-							#_draw_change_width_curve_icon(viewport_control, _vp_transform(cp.point_position * mul), cp.segment_rotation - mul.get_rotation())
-						#else:
-							#_draw_change_width_curve_icon(viewport_control, _vp_transform(cp.point_position * mul), cp.segment_rotation - mul.get_rotation(), Color.DIM_GRAY)
-				#if not clamped_to_existing:
-					#_draw_change_width_curve_icon(viewport_control,
-							#_vp_transform(md_p.point_position * mul),
-							#md_p.segment_rotation - mul.get_rotation()
-					#)
 			else:
 				_draw_crosshair(viewport_control, _vp_transform(md_p.point_position * mul))
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 				if svs.curve.point_count > 1:
 					if Input.is_key_pressed(KEY_ALT):
 						hint += "\n- Left Click to add point halfway the line (Alt held)"
-					# MOVING
-					#elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line) and not Input.is_key_pressed(KEY_SHIFT):
-						#hint += "\n- Use mousewheel to thin/thicken the stroke line (Ctrl held)"
-						#if clamped_to_existing:
-							#hint += "\n- Right click to remove this width curve control point (Ctrl held)"
 					else:
 						hint = "- Double click to add point on the line"
 						hint += "\n- Alt + Click to add point halfway the line"
