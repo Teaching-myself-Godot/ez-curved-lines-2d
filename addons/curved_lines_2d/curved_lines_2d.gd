@@ -96,7 +96,7 @@ enum SVSEditMode {
 	NONE, TRANSLATE, ROTATE, SCALE,
 	MERGE, BRUSH, PENCIL, PAINT_BONE,
 	KNIFE, CREATE_ELLIPSE, CREATE_RECT,
-	SET_PIVOT, COLOR_TOOL
+	SET_PIVOT, COLOR_TOOL, WIDTH_CURVE_TOOL
 }
 
 const CANCELABLE_MODES : Array[SVSEditMode] = [
@@ -370,7 +370,7 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 	if toggled_on and _is_svs_valid(current_selection):
 		svs_edit_buttons.show()
 		svs_edit_buttons.show_svs_editors()
-		scalable_vector_shapes_2d_dock.create_tab.enable_svs_editors()
+		scalable_vector_shapes_2d_dock.create_tab.enable_svs_editors(current_selection)
 		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
 				_svs_edit_mode in DRAW_MODES) and not Input.is_key_pressed(KEY_Q)):
 					return
@@ -1248,20 +1248,6 @@ func _draw_crosshair(viewport_control : Control, p : Vector2, orbit := 2.0, oute
 	viewport_control.draw_line(p - line_len * Vector2.LEFT, p - orbit * Vector2.LEFT, color, width)
 
 
-func _draw_change_width_curve_icon(viewport_control : Control, p : Vector2, segment_rotation : float,
-		fill_color := Color.WHITE) -> void:
-	var triangle := [14 * Vector2.UP, Vector2(10, -4), Vector2(-10, -4)].map(
-			func(p1 : Vector2): return p + p1.rotated(segment_rotation)
-	)
-	var triangle2 := [14 * Vector2.UP, Vector2(10, -4), Vector2(-10, -4)].map(
-			func(p1 : Vector2): return p + p1.rotated(segment_rotation + PI)
-	)
-	viewport_control.draw_polygon(Geometry2D.offset_polygon(triangle, 0.5)[0], [Color.BLACK])
-	viewport_control.draw_polygon(triangle, [fill_color])
-	viewport_control.draw_polygon(Geometry2D.offset_polygon(triangle2, 0.5)[0], [Color.BLACK])
-	viewport_control.draw_polygon(triangle2, [fill_color])
-
-
 func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2D, only_cutout_hints : bool) -> void:
 	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if _is_snapped_to_pixel():
@@ -1348,37 +1334,14 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 			hint = "- Left click to open arc settings"
 			hint += "\n- Right click to remove arc (straighten this line segment)"
 		else:
-			var clamped_to_existing := false
 			if Input.is_key_pressed(KEY_ALT):
 				_draw_crosshair(viewport_control, _vp_transform(svs.to_global(svs.get_curve_segment_halfway_point(md_p.before_segment)) * mul), 3.0, 8, Color.ANTIQUE_WHITE, 2)
-			elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line) and md_p.before_segment < svs.curve.point_count and not Input.is_key_pressed(KEY_SHIFT):
-				if svs.line.width_curve:
-					for i in svs.line.width_curve.point_count:
-						var p := svs.line.width_curve.get_point_position(i)
-						var cp := svs.get_closest_point_on_curve(
-							svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
-									svs.get_deformed_curve(), p.x, svs.max_stages, svs.tolerance_degrees
-						)))
-						if _vp_transform(cp.point_position * mul).distance_to(_vp_transform(md_p.point_position * mul)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
-							clamped_to_existing = true
-							_draw_change_width_curve_icon(viewport_control, _vp_transform(cp.point_position * mul), cp.segment_rotation - mul.get_rotation())
-						else:
-							_draw_change_width_curve_icon(viewport_control, _vp_transform(cp.point_position * mul), cp.segment_rotation - mul.get_rotation(), Color.DIM_GRAY)
-				if not clamped_to_existing:
-					_draw_change_width_curve_icon(viewport_control,
-							_vp_transform(md_p.point_position * mul),
-							md_p.segment_rotation - mul.get_rotation()
-					)
 			else:
 				_draw_crosshair(viewport_control, _vp_transform(md_p.point_position * mul))
 			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 				if svs.curve.point_count > 1:
 					if Input.is_key_pressed(KEY_ALT):
 						hint += "\n- Left Click to add point halfway the line (Alt held)"
-					elif _is_ctrl_or_cmd_pressed() and is_instance_valid(svs.line) and not Input.is_key_pressed(KEY_SHIFT):
-						hint += "\n- Use mousewheel to thin/thicken the stroke line (Ctrl held)"
-						if clamped_to_existing:
-							hint += "\n- Right click to remove this width curve control point (Ctrl held)"
 					else:
 						hint = "- Double click to add point on the line"
 						hint += "\n- Alt + Click to add point halfway the line"
@@ -1737,14 +1700,6 @@ func _handle_create_rect_preview(viewport_control : Control) -> void:
 		)
 
 
-func _is_editing_width_curve(svs : ScalableVectorShape2D) -> bool:
-	return (
-			(_is_ctrl_or_cmd_pressed() and not Input.is_key_pressed(KEY_SHIFT)) and
-			_hover_closest_point_on_curve and
-			is_instance_valid(svs.line)
-	)
-
-
 func _draw_set_pivot_hints(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
 	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if _is_snapped_to_pixel():
@@ -1781,8 +1736,12 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 	elif _svs_edit_mode == SVSEditMode.COLOR_TOOL:
 		return
 
+
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_svs_valid(current_selection) and _get_select_mode_button().button_pressed:
+		var mouse_pos := _svp_mouse_pos(
+			EditorInterface.get_editor_viewport_2d().get_mouse_position(), current_selection
+		)
 		if _svs_edit_mode == SVSEditMode.TRANSLATE:
 			return _draw_canvas_for_uniform_translate(viewport_control, current_selection)
 		elif _svs_edit_mode == SVSEditMode.SCALE:
@@ -1799,7 +1758,12 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 					_vp_transform, _get_svp_transform(current_selection))
 		elif _svs_edit_mode == SVSEditMode.SET_PIVOT:
 			return _draw_set_pivot_hints(viewport_control, current_selection)
-
+		elif _svs_edit_mode == SVSEditMode.WIDTH_CURVE_TOOL:
+			_draw_curve(viewport_control, current_selection)
+			return WidthCurveTool.draw(viewport_control, current_selection,
+					_draw_hint, _lmb_is_down_inside_viewport, _vp_transform,
+					_get_svp_transform(current_selection), mouse_pos,
+					_is_snapped_to_pixel(), _get_snap_resolution())
 
 	var all_valid_svs_nodes := _find_scalable_vector_shape_2d_nodes().filter(_is_svs_valid)
 	for result : ScalableVectorShape2D in all_valid_svs_nodes:
@@ -1810,8 +1774,7 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 					.map(func(p): return p * mul)
 					.map(_vp_transform), VIEWPORT_ORANGE, 2.0)
 			_draw_curve(viewport_control, result)
-			if not _is_editing_width_curve(result):
-				_draw_handles(viewport_control, result)
+			_draw_handles(viewport_control, result)
 			if (not _handle_has_hover(result)) or (_is_ctrl_or_cmd_pressed() and not Input.is_key_pressed(KEY_SHIFT)):
 				if result.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 					if _hover_closest_point_on_curve:
@@ -2185,82 +2148,6 @@ func _set_shape_origin(current_selection : ScalableVectorShape2D, mouse_pos : Ve
 	undo_redo.commit_action()
 
 
-func _remove_width_curve_point(svs : ScalableVectorShape2D) -> void:
-	if not is_instance_valid(svs.line):
-		return
-	if svs.line.width_curve == null:
-		return
-	var md_p : ClosestPointOnCurveMeta = _hover_closest_point_on_curve
-	var clamped_to_existing := -1
-	for i in svs.line.width_curve.point_count:
-		var p := svs.line.width_curve.get_point_position(i)
-		var cp := svs.get_closest_point_on_curve(
-			svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
-					svs.get_deformed_curve(), p.x, svs.max_stages, svs.tolerance_degrees
-		)))
-		if _vp_transform(cp.point_position).distance_to(_vp_transform(md_p.point_position)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
-			clamped_to_existing = i
-			break
-	if clamped_to_existing < 0:
-		return
-	var width_curve : Curve = svs.line.width_curve.duplicate(true)
-	width_curve.remove_point(clamped_to_existing)
-	if width_curve.point_count == 0:
-		width_curve = null
-	undo_redo.create_action("remove width curve handle: " + str(svs))
-	undo_redo.add_do_property(svs.line, 'width_curve', width_curve)
-	undo_redo.add_undo_property(svs.line, 'width_curve', svs.line.width_curve.duplicate(true) if svs.line.width_curve else null)
-	undo_redo.commit_action()
-
-
-func _change_width_curve(svs : ScalableVectorShape2D, make_thicker : bool) -> void:
-	if not is_instance_valid(svs.line):
-		return
-	var md_p : ClosestPointOnCurveMeta = _hover_closest_point_on_curve
-	if md_p.before_segment >= svs.curve.point_count:
-		return
-	var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
-			md_p.local_point_position, svs.get_deformed_curve(), svs.max_stages, svs.tolerance_degrees
-	)
-
-	var width_curve := Curve.new()
-	if svs.line.width_curve == null:
-		width_curve.add_point(Vector2(progress_ratio, 1.0))
-	else:
-		width_curve = svs.line.width_curve.duplicate(true)
-		width_curve.max_value = 2.0
-		var clamped_to_existing := -1
-		for i in width_curve.point_count:
-			var p := width_curve.get_point_position(i)
-			var cp := svs.get_closest_point_on_curve(
-				svs.to_global(Geometry2DUtil.get_point_on_bezier_at_ratio(
-						svs.get_deformed_curve(), p.x, svs.max_stages, svs.tolerance_degrees
-			)))
-			if _vp_transform(cp.point_position).distance_to(_vp_transform(md_p.point_position)) < WIDTH_CURVE_EDIT_CLAMP_DISTANCE:
-				clamped_to_existing = i
-				break
-		if clamped_to_existing > -1:
-			var new_value := (
-				width_curve.get_point_position(clamped_to_existing).y +
-					(0.1 if make_thicker else -0.1)
-			)
-			if new_value < 0.0:
-				new_value = 0.0
-			width_curve.set_point_value(clamped_to_existing, new_value)
-		else:
-			var new_value := (
-					width_curve.sample(progress_ratio) +
-						(0.1 if make_thicker else -0.1)
-			)
-			if new_value < 0.0:
-				new_value = 0.0
-			width_curve.add_point(Vector2(progress_ratio, new_value))
-	undo_redo.create_action("Edit width curve: %s " % str(svs))
-	undo_redo.add_do_property(svs.line, 'width_curve', width_curve)
-	undo_redo.add_undo_property(svs.line, 'width_curve', svs.line.width_curve.duplicate(true) if svs.line.width_curve else null)
-	undo_redo.commit_action()
-
-
 func _resize_shape(svs : ScalableVectorShape2D, s : float) -> void:
 	if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 		if not in_undo_redo_transaction:
@@ -2516,7 +2403,7 @@ func _toggle_loop_if_applies(svs : ScalableVectorShape2D, idx : int) -> void:
 
 	if idx == 0 or idx == svs.curve.point_count - 1:
 		_add_point_to_curve(svs, svs.curve.get_point_position(0))
-
+		WidthCurveTool.match_start_end_point(svs, svs.line.width_curve)
 
 
 func _break_loop_at(svs : ScalableVectorShape2D, idx : int) -> void:
@@ -2576,18 +2463,23 @@ func _break_loop_at(svs : ScalableVectorShape2D, idx : int) -> void:
 	if 0 in new_deformation_map:
 		new_deformation_map[new_idx] = new_deformation_map[0]
 
-	if is_instance_valid(svs.line) and svs.line.width_curve and idx < svs.curve.point_count:
+	if is_instance_valid(svs.line) and svs.line.width_curve and idx < svs.curve.point_count - 1:
 		var progress_ratio := Geometry2DUtil.get_progress_ratio_for_point_on_curve(
 			svs.curve.get_point_position(idx), svs.curve, svs.max_stages, svs.tolerance_degrees)
+		if progress_ratio < 0.0:
+			progress_ratio = Geometry2DUtil.get_progress_ratio_for_point_on_curve(
+				svs.curve.get_point_position(idx), svs.curve, svs.max_stages, svs.tolerance_degrees, 0.1)
 		var new_width_curve := Curve.new()
 		for i in svs.line.width_curve.point_count:
 			var p := svs.line.width_curve.get_point_position(i)
 			var p1 := Vector2(p.x - progress_ratio, p.y)
 			if p1.x < 0.0:
 				p1.x += 1.0
+			if p1.y > new_width_curve.max_value:
+				new_width_curve.max_value = p1.y
 			new_width_curve.add_point(p1)
 		new_width_curve.add_point(Vector2(0.0, svs.line.width_curve.sample(progress_ratio)))
-		new_width_curve.add_point(Vector2(0, svs.line.width_curve.sample(progress_ratio)))
+		new_width_curve.add_point(Vector2(1.0, svs.line.width_curve.sample(progress_ratio)))
 		undo_redo.add_do_property(svs.line, 'width_curve', new_width_curve)
 		undo_redo.add_undo_property(svs.line, 'width_curve', svs.line.width_curve)
 
@@ -3323,6 +3215,13 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				update_overlays()
 				return true
 			return false
+		elif _svs_edit_mode == SVSEditMode.WIDTH_CURVE_TOOL:
+			if WidthCurveTool.handle_input(event, current_selection, mouse_pos,
+					_vp_transform, _on_svs_edit_mode_changed.bind(SVSEditMode.NONE),
+					_is_snapped_to_pixel(), _get_snap_resolution()):
+				update_overlays()
+				return true
+			return false
 
 		if MultiSelectHandler.is_selecting(event, current_selection,
 				_handle_has_hover(current_selection), _hover_point_idx):
@@ -3448,8 +3347,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		if Input.is_key_pressed(KEY_ALT) and _hover_point_idx > -1 and not event.is_pressed():
 			_toggle_loop_if_applies(current_selection, _hover_point_idx)
 			return true
-		if _is_svs_valid(current_selection) and _handle_has_hover(current_selection) and not _is_editing_width_curve(current_selection):
-			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not _is_ctrl_or_cmd_pressed():
+		if _is_svs_valid(current_selection) and _handle_has_hover(current_selection):
+			if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not _is_ctrl_or_cmd_pressed():
 				if _hover_point_idx > -1 and current_selection.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 					_remove_point_from_curve(current_selection, _hover_point_idx)
 				elif _hover_cp_in_idx > -1:
@@ -3466,15 +3365,12 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 					_remove_color_stop(current_selection, _hover_gradient_color_stop_idx)
 			return true
 		if _is_svs_valid(current_selection) and _hover_closest_point_on_curve:
-			if not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
-				if _is_ctrl_or_cmd_pressed():
-					_remove_width_curve_point(current_selection)
+			if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+				var cp_md = _hover_closest_point_on_curve
+				if current_selection.is_arc_start(cp_md.before_segment - 1):
+					_remove_arc(current_selection, cp_md.before_segment - 1)
 				else:
-					var cp_md = _hover_closest_point_on_curve
-					if current_selection.is_arc_start(cp_md.before_segment - 1):
-						_remove_arc(current_selection, cp_md.before_segment - 1)
-					else:
-						_create_arc(current_selection, cp_md.before_segment - 1)
+					_create_arc(current_selection, cp_md.before_segment - 1)
 			return true
 
 	if (event is InputEventMouseButton and Input.is_key_pressed(KEY_SHIFT) and
@@ -3491,14 +3387,6 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			else:
 				_resize_shape(current_selection, 1.01)
 			return true
-
-	if (event is InputEventMouseButton and _is_ctrl_or_cmd_pressed() and
-				_is_svs_valid(current_selection) and
-				_hover_closest_point_on_curve and
-				event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN] and
-				event.is_pressed()):
-		_change_width_curve(current_selection, event.button_index == MOUSE_BUTTON_WHEEL_UP)
-		return true
 
 	if event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and is_instance_valid(current_selection):
@@ -3854,6 +3742,15 @@ static func _get_brush_fill_in_parent_shape() -> bool:
 	if ProjectSettings.has_setting(SETTING_NAME_BRUSH_FILL_IN_PARENT_SHAPE):
 		return ProjectSettings.get_setting(SETTING_NAME_BRUSH_FILL_IN_PARENT_SHAPE)
 	return false
+
+
+static func print_trace() -> void:
+	var st := get_stack()
+	print("Stacktrace requested:")
+	for l in st:
+		print("   at ", l["function"], " (", l["source"].replace("res://addons/curved_lines_2d/", ""), ":", l["line"], ")")
+	print("--")
+
 
 func _exit_tree():
 	if _get_select_mode_button().toggled.is_connected(_on_select_mode_toggled):

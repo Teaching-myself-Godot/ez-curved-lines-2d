@@ -75,6 +75,7 @@ func _ready() -> void:
 	%BonePaintButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.PAINT_BONE))
 	%MergeButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.MERGE))
 	%ColorToolButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.COLOR_TOOL))
+	%WidthCurveButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.WIDTH_CURVE_TOOL))
 	%FlipHorizontalButton.pressed.connect(flip_horizontal.emit)
 	%FlipVerticalButton.pressed.connect(flip_vertical.emit)
 
@@ -239,6 +240,9 @@ func set_edit_mode_toggle_button(mode : CurvedLines2D.SVSEditMode) -> void:
 		CurvedLines2D.SVSEditMode.COLOR_TOOL:
 			if not %ColorToolButton.button_pressed:
 				%ColorToolButton.button_pressed = true
+		CurvedLines2D.SVSEditMode.WIDTH_CURVE_TOOL:
+			if not %WidthCurveButton.button_pressed:
+				%WidthCurveButton.button_pressed = true
 		_:
 			if not %EditButton.button_pressed:
 				%EditButton.button_pressed = true
@@ -276,7 +280,7 @@ func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
 			%ColorToolContainer.show()
 
 
-func enable_svs_editors() -> void:
+func enable_svs_editors(svs : ScalableVectorShape2D) -> void:
 	%RotateButton.disabled = false
 	%TranslateButton.disabled = false
 	%ResizeButton.disabled = false
@@ -291,6 +295,10 @@ func enable_svs_editors() -> void:
 	%CircleButton.disabled = false
 	%RectangleButton.disabled = false
 	%SetPivotButton.disabled = false
+	if is_instance_valid(svs.line):
+		%WidthCurveButton.disabled = false
+	else:
+		%WidthCurveButton.disabled = true
 
 
 func set_default_mode() -> void:
@@ -311,6 +319,7 @@ func disable_svs_editors(disable_all := false) -> void:
 	_disable_and_toggle_off(%BonePaintButton)
 	_disable_and_toggle_off(%SetPivotButton)
 	_disable_and_toggle_off(%KnifeButton)
+	_disable_and_toggle_off(%WidthCurveButton)
 	if disable_all:
 		_disable_and_toggle_off(%BrushButton)
 		_disable_and_toggle_off(%MergeButton)
@@ -922,3 +931,13 @@ func _on_paste_styles_button_pressed() -> void:
 	for svs in _find_shapes_in_open_scene().filter(func(x): return x in sel):
 		StyleCopier.paste_style_to_svs(svs, false)
 	undo_redo.commit_action()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible:
+		return
+	if event is InputEventKey and (event as InputEventKey).pressed:
+		if (event as InputEventKey).is_command_or_control_pressed():
+			return
+		if (event as InputEventKey).keycode == KEY_W and (event as InputEventKey).shift_pressed and not %WidthCurveButton.disabled:
+			%WidthCurveButton.button_pressed = true
