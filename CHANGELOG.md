@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.7.0 - Dedicated Width Curve Tool
+
+### Added
+
+- Dedicated width curve (line thickness) editing tool in create tab (shortcut: Shift + W when in edit mode)
+- Width curve handles can now move perpendicular to the line being edited
+- Start and end point of a looped curve now match thickness (best effort)
+
+### Removed
+
+- ⚠️ Using ctrl + mousewheel to edit the width curve has been removed
+
 ## 3.6.1 - Select Multiple Points
 
 ### Added
