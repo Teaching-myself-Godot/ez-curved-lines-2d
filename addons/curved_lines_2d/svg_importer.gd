@@ -135,17 +135,16 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 		var anim_frames := anim_node.get_named_attribute_value_safe("values").replace("#", "").split(";", false)
 		var step := animation.length / float(anim_frames.size())
 		var pos := 0.0
-
-
+		var maximums : Dictionary[int, Array] = {}
+		var per_frame : Dictionary[int, Array] = {}
+		var track_to_poly_map : Dictionary[int, Node] = {}
 		for frame_id in anim_frames:
-			print("--")
 			var target_node := frame_nodes[start_frame_id]
 			var src_node := frame_nodes[frame_id]
 			var track_idx := add_anim_track_if_absent(animation, "%s:transform" %
 				scene_root.get_path_to(target_node))
 			animation.track_insert_key(track_idx, pos, src_node.transform)
 			var child_list := src_node.get_children()
-			var npos : Array[int] = []
 			while child_list.size() > 0:
 				var child : Node = child_list.pop_back()
 				child_list.append_array(child.get_children())
@@ -163,7 +162,7 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 					animation.track_insert_key(t_idx, pos, transform)
 				if child is Polygon2D:
 					var points : PackedVector2Array = child.polygon
-					var polygons : PackedInt32Array = child.polygons
+					var polygons : Array = child.polygons
 					var indices : Array[int] = [child.get_index()]
 					while child.get_parent() != src_node:
 						child = child.get_parent()
@@ -173,9 +172,63 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 						target_desc = target_desc.get_child(n_idx)
 					var t_idx := add_anim_track_if_absent(animation, "%s:polygon" %
 						scene_root.get_path_to(target_desc))
+					if t_idx not in track_to_poly_map:
+						track_to_poly_map[t_idx] = target_desc
 					animation.track_insert_key(t_idx, pos, points.duplicate())
-					print(points.size())
+					if polygons.is_empty():
+						if t_idx not in per_frame:
+							per_frame[t_idx] = []
+						per_frame[t_idx].append([points.size()])
+						if t_idx not in maximums:
+							maximums[t_idx] = [points.size()]
+						if points.size() > maximums[t_idx][0]:
+							maximums[t_idx][0] = points.size()
+					else:
+						var p_sizes := Array(polygons).map(func(x): return x.size())
+						if t_idx not in per_frame:
+							per_frame[t_idx] = []
+						per_frame[t_idx].append(p_sizes.duplicate(true))
+						if t_idx not in maximums:
+							maximums[t_idx] = p_sizes
+						for i in polygons.size():
+							if polygons[i].size() > maximums[t_idx][i]:
+								maximums[t_idx][i] = polygons[i].size()
 			pos += step
+
+		for track_idx in maximums:
+			var max_pts_per_poly = maximums[track_idx]
+			for i in animation.track_get_key_count(track_idx):
+				var pts : PackedVector2Array = animation.track_get_key_value(track_idx, i)
+				var new_pts : Array[PackedVector2Array] = []
+				var tot : int = 0
+				var j : int = 0
+				for n in per_frame[track_idx][i]:
+					var new_pt_ary := Array(pts.slice(tot, tot + n))
+					var idx := 0
+					while new_pt_ary.size() < maximums[track_idx][j]:
+						new_pt_ary.insert(idx + idx + 1, (pts[tot+idx] + pts[tot+idx+1]) / 2.0)
+						idx += 1
+						if idx >= per_frame[track_idx][i][j] - 2:
+							idx = 0
+							print("round we wenrt!")
+					new_pts.append(PackedVector2Array(new_pt_ary))
+					tot += n
+					j += 1
+				var copied := PackedVector2Array()
+				for ptsd in new_pts:
+					copied.append_array(ptsd)
+				animation.track_set_key_value(track_idx, i, copied)
+				if i == 0:
+					track_to_poly_map[track_idx].polygon = copied
+			track_to_poly_map[track_idx].polygons = []
+			var k : int = 0
+			for i in maximums[track_idx].size():
+				track_to_poly_map[track_idx].polygons.append(PackedInt32Array())
+				for j in maximums[track_idx][i]:
+					track_to_poly_map[track_idx].polygons[i].append(k)
+					k += 1
+
+
 		for frame_id in frame_nodes:
 			if frame_id == start_frame_id:
 				continue
