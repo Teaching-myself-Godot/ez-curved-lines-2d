@@ -116,7 +116,7 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 					false
 			)
 			if fr.get_named_attribute_value_safe("frame_id") != start_frame_id:
-				node.hide()
+				scene_root.remove_child(node)
 			var n_idx := node.get_children().find_custom(func(n):
 				return (n.has_meta(SVG_GROUP_ID_META_NAME) and
 					n.get_meta(SVG_GROUP_ID_META_NAME) == fr.get_named_attribute_value_safe("frame_id")
@@ -135,14 +135,51 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 		var anim_frames := anim_node.get_named_attribute_value_safe("values").replace("#", "").split(";", false)
 		var step := animation.length / float(anim_frames.size())
 		var pos := 0.0
+
+
 		for frame_id in anim_frames:
+			print("--")
 			var target_node := frame_nodes[start_frame_id]
 			var src_node := frame_nodes[frame_id]
-
 			var track_idx := add_anim_track_if_absent(animation, "%s:transform" %
 				scene_root.get_path_to(target_node))
 			animation.track_insert_key(track_idx, pos, src_node.transform)
+			var child_list := src_node.get_children()
+			var npos : Array[int] = []
+			while child_list.size() > 0:
+				var child : Node = child_list.pop_back()
+				child_list.append_array(child.get_children())
+				if child is Node2D and child.transform != Transform2D.IDENTITY:
+					var transform : Transform2D = child.transform
+					var indices : Array[int] = [child.get_index()]
+					while child.get_parent() != src_node:
+						child = child.get_parent()
+						indices.push_front(child.get_index())
+					var target_desc : Node = target_node
+					for n_idx in indices:
+						target_desc = target_desc.get_child(n_idx)
+					var t_idx := add_anim_track_if_absent(animation, "%s:transform" %
+						scene_root.get_path_to(target_desc))
+					animation.track_insert_key(t_idx, pos, transform)
+				if child is Polygon2D:
+					var points : PackedVector2Array = child.polygon
+					var polygons : PackedInt32Array = child.polygons
+					var indices : Array[int] = [child.get_index()]
+					while child.get_parent() != src_node:
+						child = child.get_parent()
+						indices.push_front(child.get_index())
+					var target_desc : Node = target_node
+					for n_idx in indices:
+						target_desc = target_desc.get_child(n_idx)
+					var t_idx := add_anim_track_if_absent(animation, "%s:polygon" %
+						scene_root.get_path_to(target_desc))
+					animation.track_insert_key(t_idx, pos, points.duplicate())
+					print(points.size())
 			pos += step
+		for frame_id in frame_nodes:
+			if frame_id == start_frame_id:
+				continue
+			frame_nodes[frame_id].free()
 		return scene_root
 
 
