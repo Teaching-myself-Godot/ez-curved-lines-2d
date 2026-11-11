@@ -62,6 +62,22 @@ func find_child_by_id(id : String, n := self) -> SVGXMLElement:
 	return null
 
 
+func find_by_node_name(nm : String) -> SVGXMLElement:
+	var ancestor = self
+	while ancestor.parent != null:
+		ancestor = ancestor.parent
+	return find_child_by_node_name(nm, ancestor)
+
+
+func find_child_by_node_name(nm : String, n := self) -> SVGXMLElement:
+	if n.name == nm:
+		return n
+	for nn in n.children:
+		var result := find_child_by_node_name(nm, nn)
+		if result:
+			return result
+	return null
+
 
 func is_empty() -> bool:
 	return children.is_empty()

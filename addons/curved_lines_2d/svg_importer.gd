@@ -8,6 +8,7 @@ const PLC_EXP = "__PLC_EXP__"
 const SVG_ROOT_META_NAME := "svg_root"
 const SVG_STYLE_META_NAME := "svg_style"
 const IS_SVG_GROUP_META_NAME := "is_svg_group"
+const SVG_GROUP_ID_META_NAME := "svg_group_id"
 const INKSCAPE_TRANSFORM_CENTER_META_NAME := "transform_center"
 const INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME := "inkscape:transform-center-x"
 const INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME := "inkscape:transform-center-y"
@@ -94,15 +95,20 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 
 	log_message("Importing SVG file: %s" % file_path, LogLevel.INFO)
 	var svg_xml_node : SVGXMLElement = parse_svg_xml_file(xml_parser)
+
 	if GreasePencilAnimationImporter.detect_animation(svg_xml_node):
 		log_message("TODO: ask for grease pencil animation import gimmick", LogLevel.WARN)
+		# TODO: move logic to util class GreasePencilAnimationImporter
 		import_as_svs = false
 		var blender_frames := GreasePencilAnimationImporter.get_blender_frames_xml(svg_xml_node)
 		var animation := Animation.new()
 		var use_node := svg_xml_node.find_by_id("blender_animation")
-		var anim_node := svg_xml_node.find_by_id("frame-by-frame_animation")
+		var anim_node := svg_xml_node.find_by_node_name("animate")
 		var start_frame_id := use_node.get_named_attribute_value_safe("href").replace("#", "").strip_edges()
 		animation.length = float(anim_node.get_named_attribute_value_safe("dur"))
+		if anim_node.get_named_attribute_value_safe("repeatCount") == "indefinite":
+			animation.loop_mode = Animation.LOOP_LINEAR
+		var frame_nodes : Dictionary[String, Node2D] = {}
 		for fr in blender_frames:
 			var node := await parse_svg_xml_to_nodes(fr,
 					"BlenderFrame",
@@ -111,7 +117,12 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 			)
 			if fr.get_named_attribute_value_safe("frame_id") != start_frame_id:
 				node.hide()
-
+			var n_idx := node.get_children().find_custom(func(n):
+				return (n.has_meta(SVG_GROUP_ID_META_NAME) and
+					n.get_meta(SVG_GROUP_ID_META_NAME) == fr.get_named_attribute_value_safe("frame_id")
+				)
+			)
+			frame_nodes[fr.get_named_attribute_value_safe("frame_id")] = node.get_child(n_idx)
 		var animation_player := AnimationPlayer.new()
 		animation_player.add_animation_library("", AnimationLibrary.new())
 		animation_player.get_animation_library("").add_animation("grease_pencil_import", animation)
@@ -121,12 +132,33 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 		undo_redo.add_undo_method(scene_root, 'remove_child', animation_player)
 		undo_redo.add_undo_reference(animation_player)
 		undo_redo.commit_action()
+		var anim_frames := anim_node.get_named_attribute_value_safe("values").replace("#", "").split(";", false)
+		var step := animation.length / float(anim_frames.size())
+		var pos := 0.0
+		for frame_id in anim_frames:
+			var target_node := frame_nodes[start_frame_id]
+			var src_node := frame_nodes[frame_id]
+
+			var track_idx := add_anim_track_if_absent(animation, "%s:transform" %
+				scene_root.get_path_to(target_node))
+			animation.track_insert_key(track_idx, pos, src_node.transform)
+			pos += step
 		return scene_root
+
+
 	var result := await parse_svg_xml_to_nodes(svg_xml_node,
 			file_path.get_file().replace(".svg", "").to_pascal_case(),
 			scene_root, parent_node, selected_nodes,
 	)
 	return result
+
+
+func add_anim_track_if_absent(animation : Animation, node_path : NodePath) -> int:
+	var t_idx := animation.find_track(node_path, Animation.TrackType.TYPE_VALUE)
+	if t_idx < 0:
+		t_idx = animation.add_track(Animation.TrackType.TYPE_VALUE)
+		animation.track_set_path(t_idx, node_path)
+	return t_idx
 
 
 func parse_svg_xml_to_nodes(svg_xml_node : SVGXMLElement, rt_name : String,
@@ -396,6 +428,8 @@ func process_group(element:SVGXMLElement, current_node : Node2D, scene_root : No
 	var style := element.get_merged_styles(css_classes, log_message)
 	new_group.set_meta(SVG_STYLE_META_NAME, style)
 	new_group.set_meta(IS_SVG_GROUP_META_NAME, true)
+	if element.get_named_attribute_value_safe("id"):
+		new_group.set_meta(SVG_GROUP_ID_META_NAME, element.get_named_attribute_value_safe("id"))
 	store_inkscape_transform_center_md(element, new_group)
 	if style.has("display") and style['display'] == "none":
 		new_group.visible = false
