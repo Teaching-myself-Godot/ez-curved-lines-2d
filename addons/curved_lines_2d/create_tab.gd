@@ -35,6 +35,9 @@ var tab_default_min_height : int
 var granularity_inputs : Array[EditorSpinSlider] = []
 
 var _prev_value_map : Dictionary[ScalableVectorShape2D, Variant] = {}
+var _key_hold_start_time : int = -1
+var _last_pressed_button : BaseButton = null
+var _held_keycode : int = -1
 
 @onready var mode_containers : Array[Control] = [
 	%CreateEllipseContainer, %CreateRectContainer,
@@ -933,27 +936,53 @@ func _on_paste_styles_button_pressed() -> void:
 	undo_redo.commit_action()
 
 
+func _record_shortcut_hold_time(keycode : int) -> void:
+	if _key_hold_start_time < 0:
+		_last_pressed_button = tool_mode_button_group.get_pressed_button()
+		_key_hold_start_time = Time.get_ticks_msec()
+		_held_keycode = keycode
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed:
 		if event.is_command_or_control_pressed():
 			return
 		if event.keycode == KEY_W and event.shift_pressed and not %WidthCurveButton.disabled:
+			_record_shortcut_hold_time(KEY_W)
 			%WidthCurveButton.button_pressed = true
 		if event.keycode == KEY_Z and not %TranslateButton.disabled:
+			_record_shortcut_hold_time(KEY_Z)
 			%TranslateButton.button_pressed = true
 		if event.keycode == KEY_X and not %RotateButton.disabled:
+			_record_shortcut_hold_time(KEY_X)
 			%RotateButton.button_pressed = true
 		if event.keycode == KEY_C and not %ResizeButton.disabled:
+			_record_shortcut_hold_time(KEY_C)
 			%ResizeButton.button_pressed = true
 		if event.keycode == KEY_M and Input.is_key_pressed(KEY_SHIFT) and not %MergeButton.disabled:
+			_record_shortcut_hold_time(KEY_M)
 			%MergeButton.button_pressed = true
 		if event.keycode == KEY_N and Input.is_key_pressed(KEY_SHIFT) and not %PencilButton.disabled:
+			_record_shortcut_hold_time(KEY_N)
 			%PencilButton.button_pressed = true
 		if event.keycode == KEY_B and Input.is_key_pressed(KEY_SHIFT) and not %BrushButton.disabled:
+			_record_shortcut_hold_time(KEY_B)
 			%BrushButton.button_pressed = true
 		if event.keycode == KEY_K and not %KnifeButton.disabled:
+			_record_shortcut_hold_time(KEY_K)
 			%KnifeButton.button_pressed = true
 		if event.keycode == KEY_O and not %CircleButton.disabled:
+			_record_shortcut_hold_time(KEY_O)
 			%CircleButton.button_pressed = true
+		if event.keycode == KEY_A and not %SetPivotButton.disabled:
+			_record_shortcut_hold_time(KEY_A)
+			%SetPivotButton.button_pressed = true
 		if event.keycode == KEY_R and event.shift_pressed and not %RectangleButton.disabled:
+			_record_shortcut_hold_time(KEY_R)
 			%RectangleButton.button_pressed = true
+
+	if event is InputEventKey and not event.pressed and _key_hold_start_time > -1 and event.keycode == _held_keycode:
+		if Time.get_ticks_msec() - _key_hold_start_time > 500 and _last_pressed_button and not _last_pressed_button.disabled:
+			_last_pressed_button.button_pressed = true
+		_key_hold_start_time = -1
+		_last_pressed_button = null

@@ -3191,12 +3191,6 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		var mouse_pos := _svp_mouse_pos(
 			EditorInterface.get_editor_viewport_2d().get_mouse_position(), current_selection
 		)
-		if event is InputEventKey and (event as InputEventKey).keycode == KEY_A and (
-				not (event as InputEventKey).is_command_or_control_pressed() and
-				not (event as InputEventKey).shift_pressed and
-				not (event as InputEventKey).alt_pressed
-		):
-			_on_svs_edit_mode_changed(SVSEditMode.SET_PIVOT)
 		if _svs_edit_mode == SVSEditMode.TRANSLATE:
 			return _handle_input_for_uniform_translate(event, current_selection)
 		elif _svs_edit_mode == SVSEditMode.SCALE:
