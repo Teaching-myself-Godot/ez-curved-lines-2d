@@ -96,10 +96,11 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 	log_message("Importing SVG file: %s" % file_path, LogLevel.INFO)
 	var svg_xml_node : SVGXMLElement = parse_svg_xml_file(xml_parser)
 
-	if GreasePencilAnimationImporter.detect_animation(svg_xml_node):
+	if false: # GreasePencilAnimationImporter.detect_animation(svg_xml_node):
 		log_message("TODO: ask for grease pencil animation import gimmick", LogLevel.WARN)
 		# TODO: move logic to util class GreasePencilAnimationImporter
 		import_as_svs = false
+		import_stroke_as_line_2d = false
 		undo_redo = get_runtime_handler()
 		var ur := EditorInterface.get_editor_undo_redo()
 		ur.create_action("Import Grease Pencil SVG animation")
@@ -162,12 +163,21 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 				if child is Node2D and child.transform != Transform2D.IDENTITY:
 					var transform : Transform2D = child.transform
 					var indices : Array[int] = [child.get_index()]
+					var cpy_ref := child
 					while child.get_parent() != src_node:
 						child = child.get_parent()
 						indices.push_front(child.get_index())
 					var target_desc : Node = target_node
 					for n_idx in indices:
-						target_desc = target_desc.get_child(n_idx)
+						if n_idx >= target_desc.get_child_count() - 1:
+							var cpy := cpy_ref.duplicate()
+							ur.add_do_method(target_desc, 'add_child', cpy, true)
+							ur.add_undo_method(target_desc, 'remove_child', cpy)
+							_recursive_set_owner(cpy, scene_root, scene_root, ur)
+							target_desc = target_desc.get_child(n_idx)
+
+						else:
+							target_desc = target_desc.get_child(n_idx)
 					var t_idx := add_anim_track_if_absent(animation, "%s:transform" %
 						scene_root.get_path_to(target_desc))
 					animation.track_insert_key(t_idx, pos, transform)
@@ -181,13 +191,13 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 						indices.push_front(child.get_index())
 					var target_desc : Node = target_node
 					for n_idx in indices:
-						target_desc = target_desc.get_child(n_idx)
+						if n_idx < target_desc.get_child_count():
+							target_desc = target_desc.get_child(n_idx)
 					var t_idx := add_anim_track_if_absent(animation, "%s:color" %
 						scene_root.get_path_to(target_desc))
 					animation.track_insert_key(t_idx, pos, color)
 					t_idx = add_anim_track_if_absent(animation, "%s:polygon" %
 						scene_root.get_path_to(target_desc))
-					animation.value_track_set_update_mode(t_idx, Animation.UPDATE_DISCRETE)
 					if t_idx not in track_to_poly_map:
 						track_to_poly_map[t_idx] = target_desc
 					animation.track_insert_key(t_idx, pos, points.duplicate())
@@ -212,7 +222,6 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 								#maximums[t_idx][i] = polygons[i].size()
 					t_idx = add_anim_track_if_absent(animation, "%s:polygons" %
 						scene_root.get_path_to(target_desc))
-					animation.value_track_set_update_mode(t_idx, Animation.UPDATE_DISCRETE)
 					animation.track_insert_key(t_idx, pos, polygons.duplicate(true))
 
 			pos += step
@@ -269,6 +278,7 @@ func add_anim_track_if_absent(animation : Animation, node_path : NodePath) -> in
 	if t_idx < 0:
 		t_idx = animation.add_track(Animation.TrackType.TYPE_VALUE)
 		animation.track_set_path(t_idx, node_path)
+		animation.value_track_set_update_mode(t_idx, Animation.UPDATE_DISCRETE)
 	return t_idx
 
 
@@ -484,9 +494,10 @@ func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root 
 			pass
 		_: log_message("⚠️ Skipping  unsupported node: <%s>" % xml_data.name, LogLevel.DEBUG)
 
-	var defs := xml_data.children.filter(func(ch): return ch.name == "defs")
-	var clip_paths := xml_data.children.filter(func(ch): return ch.name == "clipPath")
-	var remainder := xml_data.children.filter(func(ch): return ch.name != "defs" and ch.name != "clipPath")
+	var children = xml_data.children if xml_data.children else []
+	var defs := children.filter(func(ch): return ch.name == "defs")
+	var clip_paths := children.filter(func(ch): return ch.name == "clipPath")
+	var remainder := children.filter(func(ch): return ch.name != "defs" and ch.name != "clipPath")
 	for ch in defs + clip_paths + remainder:
 		process_svg_xml_tree(ch, scene_root, svg_root, current_node, svg_gradients)
 
@@ -945,7 +956,7 @@ func create_path2d(path_name: String, parent: Node, curve: Curve2D, arcs: Array[
 
 
 func _apply_clip_path_by_href(href : String, svs : ScalableVectorShape2D, scene_root : Node):
-	var clip_path_node := scene_root.find_child(href.replace("url(#", "").replace(")", "").replace(".", "_"))
+	var clip_path_node := scene_root.find_child(href.replace("url(", "").replace(")", "").replace("#", "").replace(".", "_"))
 	var new_clip_paths : Array[ScalableVectorShape2D] = []
 	for clip_path : ScalableVectorShape2D in clip_path_node.find_children("*", "ScalableVectorShape2D"):
 		clip_path.use_interect_when_clipping = true

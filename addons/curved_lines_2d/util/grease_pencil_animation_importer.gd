@@ -25,7 +25,7 @@ static func get_blender_frames_xml(xml : SVGXMLElement) -> Array[SVGXMLElement]:
 		rt.attributes = xml.attributes.duplicate(true)
 		rt.attributes["frame_id"] = fr.get_named_attribute_value_safe("id")
 		if fr.get_named_attribute_value_safe("clip-path"):
-			rt.add_child(xml.find_by_id(fr.get_named_attribute_value_safe("clip-path").replace("url(#", "").replace(")", "")))
+			rt.add_child(xml.find_by_id(fr.get_named_attribute_value_safe("clip-path").replace("#", "").replace("url(", "").replace(")", "")))
 		rt.add_child(fr)
 		result.append(rt)
 		i += 1
