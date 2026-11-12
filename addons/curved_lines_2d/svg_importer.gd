@@ -100,6 +100,9 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 		log_message("TODO: ask for grease pencil animation import gimmick", LogLevel.WARN)
 		# TODO: move logic to util class GreasePencilAnimationImporter
 		import_as_svs = false
+		undo_redo = get_runtime_handler()
+		var ur := EditorInterface.get_editor_undo_redo()
+		ur.create_action("Import Grease Pencil SVG animation")
 		var blender_frames := GreasePencilAnimationImporter.get_blender_frames_xml(svg_xml_node)
 		var animation := Animation.new()
 		var use_node := svg_xml_node.find_by_id("blender_animation")
@@ -112,10 +115,16 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 		for fr in blender_frames:
 			var node := await parse_svg_xml_to_nodes(fr,
 					"BlenderFrame",
-					scene_root, parent_node, selected_nodes,
+					scene_root, parent_node, [],
 					false
 			)
-			if fr.get_named_attribute_value_safe("frame_id") != start_frame_id:
+			if fr.get_named_attribute_value_safe("frame_id") == start_frame_id:
+				ur.add_do_method(scene_root, 'add_child', node, true)
+				ur.add_do_property(node, 'owner', scene_root)
+				_recursive_set_owner(node, scene_root, scene_root, ur)
+				ur.add_undo_method(scene_root, 'remove_child', node)
+				ur.add_undo_reference(node)
+			else:
 				scene_root.remove_child(node)
 			var n_idx := node.get_children().find_custom(func(n):
 				return (n.has_meta(SVG_GROUP_ID_META_NAME) and
@@ -126,12 +135,14 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 		var animation_player := AnimationPlayer.new()
 		animation_player.add_animation_library("", AnimationLibrary.new())
 		animation_player.get_animation_library("").add_animation("grease_pencil_import", animation)
-		undo_redo.create_action("Add animation player")
-		undo_redo.add_do_method(scene_root, 'add_child', animation_player, true)
-		undo_redo.add_do_property(animation_player, 'owner', scene_root)
-		undo_redo.add_undo_method(scene_root, 'remove_child', animation_player)
-		undo_redo.add_undo_reference(animation_player)
-		undo_redo.commit_action()
+		animation_player.autoplay = "grease_pencil_import"
+		ur.add_do_method(scene_root, 'add_child', animation_player, true)
+		ur.add_do_property(animation_player, 'owner', scene_root)
+		ur.add_undo_method(scene_root, 'remove_child', animation_player)
+		ur.add_undo_reference(animation_player)
+		scene_root.add_child(animation_player, true)
+		animation_player.owner = scene_root
+		ur.commit_action(false)
 		var anim_frames := anim_node.get_named_attribute_value_safe("values").replace("#", "").split(";", false)
 		var step := animation.length / float(anim_frames.size())
 		var pos := 0.0
@@ -164,69 +175,79 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 					var points : PackedVector2Array = child.polygon
 					var polygons : Array = child.polygons
 					var indices : Array[int] = [child.get_index()]
+					var color : Color = child.color
 					while child.get_parent() != src_node:
 						child = child.get_parent()
 						indices.push_front(child.get_index())
 					var target_desc : Node = target_node
 					for n_idx in indices:
 						target_desc = target_desc.get_child(n_idx)
-					var t_idx := add_anim_track_if_absent(animation, "%s:polygon" %
+					var t_idx := add_anim_track_if_absent(animation, "%s:color" %
 						scene_root.get_path_to(target_desc))
+					animation.track_insert_key(t_idx, pos, color)
+					t_idx = add_anim_track_if_absent(animation, "%s:polygon" %
+						scene_root.get_path_to(target_desc))
+					animation.value_track_set_update_mode(t_idx, Animation.UPDATE_DISCRETE)
 					if t_idx not in track_to_poly_map:
 						track_to_poly_map[t_idx] = target_desc
 					animation.track_insert_key(t_idx, pos, points.duplicate())
-					if polygons.is_empty():
-						if t_idx not in per_frame:
-							per_frame[t_idx] = []
-						per_frame[t_idx].append([points.size()])
-						if t_idx not in maximums:
-							maximums[t_idx] = [points.size()]
-						if points.size() > maximums[t_idx][0]:
-							maximums[t_idx][0] = points.size()
-					else:
-						var p_sizes := Array(polygons).map(func(x): return x.size())
-						if t_idx not in per_frame:
-							per_frame[t_idx] = []
-						per_frame[t_idx].append(p_sizes.duplicate(true))
-						if t_idx not in maximums:
-							maximums[t_idx] = p_sizes
-						for i in polygons.size():
-							if polygons[i].size() > maximums[t_idx][i]:
-								maximums[t_idx][i] = polygons[i].size()
-			pos += step
+					# TODO: make experimental interpolation optional
+					#if polygons.is_empty():
+						#if t_idx not in per_frame:
+							#per_frame[t_idx] = []
+						#per_frame[t_idx].append([points.size()])
+						#if t_idx not in maximums:
+							#maximums[t_idx] = [points.size()]
+						#if points.size() > maximums[t_idx][0]:
+							#maximums[t_idx][0] = points.size()
+					#else:
+						#var p_sizes := Array(polygons).map(func(x): return x.size())
+						#if t_idx not in per_frame:
+							#per_frame[t_idx] = []
+						#per_frame[t_idx].append(p_sizes.duplicate(true))
+						#if t_idx not in maximums:
+							#maximums[t_idx] = p_sizes
+						#for i in polygons.size():
+							#if polygons[i].size() > maximums[t_idx][i]:
+								#maximums[t_idx][i] = polygons[i].size()
+					t_idx = add_anim_track_if_absent(animation, "%s:polygons" %
+						scene_root.get_path_to(target_desc))
+					animation.value_track_set_update_mode(t_idx, Animation.UPDATE_DISCRETE)
+					animation.track_insert_key(t_idx, pos, polygons.duplicate(true))
 
-		for track_idx in maximums:
-			var max_pts_per_poly = maximums[track_idx]
-			for i in animation.track_get_key_count(track_idx):
-				var pts : PackedVector2Array = animation.track_get_key_value(track_idx, i)
-				var new_pts : Array[PackedVector2Array] = []
-				var tot : int = 0
-				var j : int = 0
-				for n in per_frame[track_idx][i]:
-					var new_pt_ary := Array(pts.slice(tot, tot + n))
-					var idx := 0
-					while new_pt_ary.size() < maximums[track_idx][j]:
-						new_pt_ary.insert(idx + idx + 1, (pts[tot+idx] + pts[tot+idx+1]) / 2.0)
-						idx += 1
-						if idx >= per_frame[track_idx][i][j] - 2:
-							idx = 0
-							print("round we wenrt!")
-					new_pts.append(PackedVector2Array(new_pt_ary))
-					tot += n
-					j += 1
-				var copied := PackedVector2Array()
-				for ptsd in new_pts:
-					copied.append_array(ptsd)
-				animation.track_set_key_value(track_idx, i, copied)
-				if i == 0:
-					track_to_poly_map[track_idx].polygon = copied
-			track_to_poly_map[track_idx].polygons = []
-			var k : int = 0
-			for i in maximums[track_idx].size():
-				track_to_poly_map[track_idx].polygons.append(PackedInt32Array())
-				for j in maximums[track_idx][i]:
-					track_to_poly_map[track_idx].polygons[i].append(k)
-					k += 1
+			pos += step
+		# TODO: make experimental interpolation optional
+		#for track_idx in maximums:
+			#var max_pts_per_poly = maximums[track_idx]
+			#for i in animation.track_get_key_count(track_idx):
+				#var pts : PackedVector2Array = animation.track_get_key_value(track_idx, i)
+				#var new_pts : Array[PackedVector2Array] = []
+				#var tot : int = 0
+				#var j : int = 0
+				#for n in per_frame[track_idx][i]:
+					#var new_pt_ary := Array(pts.slice(tot, tot + n))
+					#var idx := 0
+					#while new_pt_ary.size() < maximums[track_idx][j]:
+						#new_pt_ary.insert(idx + idx + 1, (pts[tot+idx] + pts[tot+idx+1]) / 2.0)
+						#idx += 1
+						#if idx >= per_frame[track_idx][i][j] - 2:
+							#idx = 0
+					#new_pts.append(PackedVector2Array(new_pt_ary))
+					#tot += n
+					#j += 1
+				#var copied := PackedVector2Array()
+				#for ptsd in new_pts:
+					#copied.append_array(ptsd)
+				#animation.track_set_key_value(track_idx, i, copied)
+				#if i == 0:
+					#track_to_poly_map[track_idx].polygon = copied
+			#track_to_poly_map[track_idx].polygons = []
+			#var k : int = 0
+			#for i in maximums[track_idx].size():
+				#track_to_poly_map[track_idx].polygons.append(PackedInt32Array())
+				#for j in maximums[track_idx][i]:
+					#track_to_poly_map[track_idx].polygons[i].append(k)
+					#k += 1
 
 
 		for frame_id in frame_nodes:
@@ -295,13 +316,13 @@ func parse_svg_xml_to_nodes(svg_xml_node : SVGXMLElement, rt_name : String,
 	return svg_root
 
 
-func _recursive_set_owner(node : Node, new_owner : Node, root : Node) -> void:
+func _recursive_set_owner(node : Node, new_owner : Node, root : Node, ur : Variant = undo_redo) -> void:
 	if node.owner != root:
 		return
-	undo_redo.add_do_property(node, 'owner', new_owner)
-	undo_redo.add_undo_reference(node)
+	ur.add_do_property(node, 'owner', new_owner)
+	ur.add_undo_reference(node)
 	for child in node.get_children():
-		_recursive_set_owner(child, new_owner, root)
+		_recursive_set_owner(child, new_owner, root, ur)
 
 
 func get_extent(g : Node2D) -> Rect2:
