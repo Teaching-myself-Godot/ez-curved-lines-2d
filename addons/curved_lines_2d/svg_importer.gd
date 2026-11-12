@@ -127,6 +127,7 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 			ResourceSaver.save(scene, "res://experiment/%s.scn" %  fr.get_named_attribute_value_safe("frame_id"), ResourceSaver.FLAG_NONE)
 			scene_root.remove_child(src)
 			src.free()
+			scene = ResourceLoader.load("res://experiment/%s.scn" %  fr.get_named_attribute_value_safe("frame_id"))
 			var imported_scene : Node2D = scene.instantiate()
 			if fr.get_named_attribute_value_safe("frame_id") != start_frame_id:
 				imported_scene.visible = false
