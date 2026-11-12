@@ -934,10 +934,26 @@ func _on_paste_styles_button_pressed() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not visible:
-		return
-	if event is InputEventKey and (event as InputEventKey).pressed:
-		if (event as InputEventKey).is_command_or_control_pressed():
+	if event is InputEventKey and event.pressed:
+		if event.is_command_or_control_pressed():
 			return
-		if (event as InputEventKey).keycode == KEY_W and (event as InputEventKey).shift_pressed and not %WidthCurveButton.disabled:
+		if event.keycode == KEY_W and event.shift_pressed and not %WidthCurveButton.disabled:
 			%WidthCurveButton.button_pressed = true
+		if event.keycode == KEY_Z and not %TranslateButton.disabled:
+			%TranslateButton.button_pressed = true
+		if event.keycode == KEY_X and not %RotateButton.disabled:
+			%RotateButton.button_pressed = true
+		if event.keycode == KEY_C and not %ResizeButton.disabled:
+			%ResizeButton.button_pressed = true
+		if event.keycode == KEY_M and Input.is_key_pressed(KEY_SHIFT) and not %MergeButton.disabled:
+			%MergeButton.button_pressed = true
+		if event.keycode == KEY_N and Input.is_key_pressed(KEY_SHIFT) and not %PencilButton.disabled:
+			%PencilButton.button_pressed = true
+		if event.keycode == KEY_B and Input.is_key_pressed(KEY_SHIFT) and not %BrushButton.disabled:
+			%BrushButton.button_pressed = true
+		if event.keycode == KEY_K and not %KnifeButton.disabled:
+			%KnifeButton.button_pressed = true
+		if event.keycode == KEY_O and not %CircleButton.disabled:
+			%CircleButton.button_pressed = true
+		if event.keycode == KEY_R and event.shift_pressed and not %RectangleButton.disabled:
+			%RectangleButton.button_pressed = true
