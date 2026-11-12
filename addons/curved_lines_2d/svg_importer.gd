@@ -112,6 +112,9 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 		if anim_node.get_named_attribute_value_safe("repeatCount") == "indefinite":
 			animation.loop_mode = Animation.LOOP_LINEAR
 		var frame_nodes : Dictionary[String, Node2D] = {}
+		var frame_dir_name := file_path.get_file().replace(".svg", "").to_snake_case()
+		DirAccess.make_dir_absolute("res://" + frame_dir_name)
+
 		for fr in blender_frames:
 			var src := await parse_svg_xml_to_nodes(fr,
 					"BlenderFrame",
@@ -124,10 +127,14 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 				_recursive_set_owner_direct(node, cpy)
 			var scene := PackedScene.new()
 			scene.pack(cpy)
-			ResourceSaver.save(scene, "res://experiment/%s.scn" %  fr.get_named_attribute_value_safe("frame_id"), ResourceSaver.FLAG_NONE)
+			ResourceSaver.save(scene, "res://%s/%s.scn" % [
+				frame_dir_name,
+				fr.get_named_attribute_value_safe("frame_id")], ResourceSaver.FLAG_NONE)
 			scene_root.remove_child(src)
 			src.free()
-			scene = ResourceLoader.load("res://experiment/%s.scn" %  fr.get_named_attribute_value_safe("frame_id"))
+			scene = ResourceLoader.load("res://%s/%s.scn" % [
+				frame_dir_name,
+				fr.get_named_attribute_value_safe("frame_id")])
 			var imported_scene : Node2D = scene.instantiate()
 			if fr.get_named_attribute_value_safe("frame_id") != start_frame_id:
 				imported_scene.visible = false
@@ -158,6 +165,7 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 				animation.track_insert_key(track_idx, pos, true)
 			animation.track_insert_key(track_idx, pos + step, false)
 			pos += step
+		EditorInterface.get_resource_filesystem().scan()
 		return scene_root
 
 
