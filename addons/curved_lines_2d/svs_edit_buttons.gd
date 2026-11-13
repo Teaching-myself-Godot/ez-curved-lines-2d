@@ -106,28 +106,6 @@ func _on_convert_to_svs_pressed() -> void:
 	convert_to_svs.emit()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if not visible:
-		return
-	if event is InputEventKey and (event as InputEventKey).pressed:
-		if (event as InputEventKey).is_command_or_control_pressed():
-			return
-		if (event as InputEventKey).keycode == KEY_Z:
-			%UniformTranslate.button_pressed = true
-		if (event as InputEventKey).keycode == KEY_X:
-			%UniformRotate.button_pressed = true
-		if (event as InputEventKey).keycode == KEY_C:
-			%UniformScale.button_pressed = true
-		if (event as InputEventKey).keycode == KEY_M and Input.is_key_pressed(KEY_SHIFT):
-			%Merge.button_pressed = true
-		if (event as InputEventKey).keycode == KEY_N and Input.is_key_pressed(KEY_SHIFT):
-			%Pencil.button_pressed = true
-		if (event as InputEventKey).keycode == KEY_B and Input.is_key_pressed(KEY_SHIFT):
-			%Brush.button_pressed = true
-		if (event as InputEventKey).keycode == KEY_K and %Knife.visible:
-			%Knife.button_pressed = true
-
-
 func set_edit_mode_toggle_button(mode : CurvedLines2D.SVSEditMode) -> void:
 	match mode:
 		CurvedLines2D.SVSEditMode.NONE:

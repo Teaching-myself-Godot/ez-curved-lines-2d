@@ -3128,7 +3128,8 @@ func _handle_create_primitive_input(event) -> bool:
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-
+	if (event is InputEventKey and (event as InputEventKey).keycode == KEY_Q):
+		scalable_vector_shapes_2d_dock.create_tab._unhandled_input(event)
 	if (
 			event is InputEventMouseButton and
 			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT
@@ -3191,12 +3192,6 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		var mouse_pos := _svp_mouse_pos(
 			EditorInterface.get_editor_viewport_2d().get_mouse_position(), current_selection
 		)
-		if event is InputEventKey and (event as InputEventKey).keycode == KEY_A and (
-				not (event as InputEventKey).is_command_or_control_pressed() and
-				not (event as InputEventKey).shift_pressed and
-				not (event as InputEventKey).alt_pressed
-		):
-			_on_svs_edit_mode_changed(SVSEditMode.SET_PIVOT)
 		if _svs_edit_mode == SVSEditMode.TRANSLATE:
 			return _handle_input_for_uniform_translate(event, current_selection)
 		elif _svs_edit_mode == SVSEditMode.SCALE:
