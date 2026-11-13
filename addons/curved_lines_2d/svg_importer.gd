@@ -99,6 +99,7 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 	if GreasePencilAnimationImporter.detect_animation(svg_xml_node):
 		log_message("TODO: ask for grease pencil animation import gimmick", LogLevel.WARN)
 		# TODO: move logic to util class GreasePencilAnimationImporter
+		import_as_svs = false
 		var ur := undo_redo
 		undo_redo = get_runtime_handler()
 		ur.create_action("Import Grease Pencil SVG animation")
