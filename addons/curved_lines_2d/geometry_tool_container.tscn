@@ -1,0 +1,121 @@
+[gd_scene format=3 uid="uid://cbi57evawwbed"]
+
+[ext_resource type="Script" uid="uid://cgfoja6o7wipy" path="res://addons/curved_lines_2d/geometry_tool_container.gd" id="1_6aeu8"]
+[ext_resource type="StyleBox" uid="uid://hjtwi4stcxmu" path="res://addons/curved_lines_2d/styleboxes/button_default_stylebox.tres" id="1_fe3v0"]
+[ext_resource type="StyleBox" uid="uid://ddx1ye7r3r4lf" path="res://addons/curved_lines_2d/styleboxes/button_pressed_stylebox.tres" id="2_6aeu8"]
+[ext_resource type="StyleBox" uid="uid://bo0x8scw4k70k" path="res://addons/curved_lines_2d/styleboxes/button_hover_stylebox.tres" id="3_ggq6l"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_6aeu8"]
+load_path = "res://.godot/imported/IconAtlas.svg-ec7aef7a8671ec861cc9efe9b0a4f9e4.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ooypj"]
+atlas = SubResource("CompressedTexture2D_6aeu8")
+region = Rect2(0, 192, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ggq6l"]
+load_path = "res://.godot/imported/IconAtlas.svg-ec7aef7a8671ec861cc9efe9b0a4f9e4.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0t3gd"]
+atlas = SubResource("CompressedTexture2D_ggq6l")
+region = Rect2(16, 192, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_slq2p"]
+load_path = "res://.godot/imported/IconAtlas.svg-ec7aef7a8671ec861cc9efe9b0a4f9e4.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3qm2b"]
+atlas = SubResource("CompressedTexture2D_slq2p")
+region = Rect2(32, 192, 16, 16)
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_4mrje"]
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+color = Color(0.22352941, 0.22352941, 0.22352941, 1)
+grow_begin = -2.0
+grow_end = -2.0
+vertical = true
+
+[node name="GeometryToolContainer" type="ScrollContainer" unique_id=1403514017]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_6aeu8")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=43182460]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=1472825396]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer" unique_id=684476387]
+layout_mode = 2
+text = "Geometry Operations"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer" unique_id=138842401]
+layout_mode = 2
+
+[node name="MergeShapesButton" type="Button" parent="HBoxContainer/VBoxContainer/HBoxContainer" unique_id=1944970197]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Merge shapes (Ctrl + Shift + =)
+Operates on the farthest shape in the draw order (more precisely: the topmost in the scene tree)"
+theme_override_styles/normal = ExtResource("1_fe3v0")
+theme_override_styles/pressed = ExtResource("2_6aeu8")
+theme_override_styles/hover = ExtResource("3_ggq6l")
+disabled = true
+icon = SubResource("AtlasTexture_ooypj")
+expand_icon = true
+
+[node name="CutOutShapesButton" type="Button" parent="HBoxContainer/VBoxContainer/HBoxContainer" unique_id=2008783860]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Cut out shapes (Ctrl + Shift + -)
+Operates on the farthest shape in the draw order (more precisely: the topmost in the scene tree)"
+theme_override_styles/normal = ExtResource("1_fe3v0")
+theme_override_styles/pressed = ExtResource("2_6aeu8")
+theme_override_styles/hover = ExtResource("3_ggq6l")
+disabled = true
+icon = SubResource("AtlasTexture_0t3gd")
+expand_icon = true
+
+[node name="ClipOffShapesButton" type="Button" parent="HBoxContainer/VBoxContainer/HBoxContainer" unique_id=1162642712]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Clip off shapes  (Ctrl + Shift + 0)
+Operates on the farthest shape in the draw order (more precisely: the topmost in the scene tree)"
+theme_override_styles/normal = ExtResource("1_fe3v0")
+theme_override_styles/pressed = ExtResource("2_6aeu8")
+theme_override_styles/hover = ExtResource("3_ggq6l")
+disabled = true
+icon = SubResource("AtlasTexture_3qm2b")
+expand_icon = true
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer" unique_id=493513646]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_4mrje")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer" unique_id=684459565]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AssignmentList" type="VBoxContainer" parent="HBoxContainer/ScrollContainer" unique_id=1456902605]
+unique_name_in_owner = true
+custom_maximum_size = Vector2(300, -1)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8

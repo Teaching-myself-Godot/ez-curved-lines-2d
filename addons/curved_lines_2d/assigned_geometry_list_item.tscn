@@ -1,0 +1,100 @@
+[gd_scene format=3 uid="uid://c581copoayhlj"]
+
+[ext_resource type="Script" uid="uid://rfqao6diql0o" path="res://addons/curved_lines_2d/assigned_geometry_list_item.gd" id="1_6b0nk"]
+[ext_resource type="Texture2D" uid="uid://c4iwjwirkh4qi" path="res://addons/curved_lines_2d/DrawablePath2D.svg" id="1_qs4im"]
+[ext_resource type="StyleBox" uid="uid://hjtwi4stcxmu" path="res://addons/curved_lines_2d/styleboxes/button_default_stylebox.tres" id="2_6b0nk"]
+[ext_resource type="StyleBox" uid="uid://ddx1ye7r3r4lf" path="res://addons/curved_lines_2d/styleboxes/button_pressed_stylebox.tres" id="3_8tbgw"]
+[ext_resource type="StyleBox" uid="uid://bo0x8scw4k70k" path="res://addons/curved_lines_2d/styleboxes/button_hover_stylebox.tres" id="4_h0x2l"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_dsrm6"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_4nv23"]
+load_path = "res://.godot/imported/IconAtlas.svg-ec7aef7a8671ec861cc9efe9b0a4f9e4.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_clqqy"]
+atlas = SubResource("CompressedTexture2D_4nv23")
+region = Rect2(0, 192, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_7q37t"]
+load_path = "res://.godot/imported/IconAtlas.svg-ec7aef7a8671ec861cc9efe9b0a4f9e4.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pvika"]
+atlas = SubResource("CompressedTexture2D_7q37t")
+region = Rect2(16, 192, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_mpw58"]
+load_path = "res://.godot/imported/IconAtlas.svg-ec7aef7a8671ec861cc9efe9b0a4f9e4.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3xghs"]
+atlas = SubResource("CompressedTexture2D_mpw58")
+region = Rect2(32, 192, 16, 16)
+
+[node name="AssignedGeometryListItem" type="HBoxContainer" unique_id=1575954555]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 32.0
+grow_horizontal = 2
+theme_override_constants/separation = 8
+script = ExtResource("1_6b0nk")
+
+[node name="Button" type="Button" parent="." unique_id=246000053]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Select assigned node"
+theme_override_styles/normal = ExtResource("2_6b0nk")
+theme_override_styles/pressed = ExtResource("3_8tbgw")
+theme_override_styles/hover = ExtResource("4_h0x2l")
+text = "NodeName"
+icon = ExtResource("1_qs4im")
+alignment = 0
+
+[node name="MergeShapesButton" type="Button" parent="." unique_id=1667214436]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+tooltip_text = "Merge Mode"
+theme_override_styles/normal = ExtResource("2_6b0nk")
+theme_override_styles/pressed = ExtResource("3_8tbgw")
+theme_override_styles/hover = ExtResource("4_h0x2l")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = SubResource("AtlasTexture_clqqy")
+expand_icon = true
+
+[node name="CutOutShapesButton" type="Button" parent="." unique_id=221970645]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+tooltip_text = "Cut Out Mode"
+theme_override_styles/normal = ExtResource("2_6b0nk")
+theme_override_styles/pressed = ExtResource("3_8tbgw")
+theme_override_styles/hover = ExtResource("4_h0x2l")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = SubResource("AtlasTexture_pvika")
+expand_icon = true
+
+[node name="ClipOffShapesButton" type="Button" parent="." unique_id=1469716805]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+tooltip_text = "Clip Off Mode"
+theme_override_styles/normal = ExtResource("2_6b0nk")
+theme_override_styles/pressed = ExtResource("3_8tbgw")
+theme_override_styles/hover = ExtResource("4_h0x2l")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = SubResource("AtlasTexture_3xghs")
+expand_icon = true
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="toggled" from="MergeShapesButton" to="." method="_on_merge_shapes_button_toggled"]
+[connection signal="toggled" from="CutOutShapesButton" to="." method="_on_cut_out_shapes_button_toggled"]
+[connection signal="toggled" from="ClipOffShapesButton" to="." method="_on_clip_off_shapes_button_toggled"]
