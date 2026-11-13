@@ -3128,7 +3128,8 @@ func _handle_create_primitive_input(event) -> bool:
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-
+	if (event is InputEventKey and (event as InputEventKey).keycode == KEY_Q):
+		scalable_vector_shapes_2d_dock.create_tab._unhandled_input(event)
 	if (
 			event is InputEventMouseButton and
 			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT
