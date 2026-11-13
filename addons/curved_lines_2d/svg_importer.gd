@@ -99,9 +99,8 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 	if GreasePencilAnimationImporter.detect_animation(svg_xml_node):
 		log_message("TODO: ask for grease pencil animation import gimmick", LogLevel.WARN)
 		# TODO: move logic to util class GreasePencilAnimationImporter
-		import_as_svs = false
+		var ur := undo_redo
 		undo_redo = get_runtime_handler()
-		var ur := EditorInterface.get_editor_undo_redo()
 		ur.create_action("Import Grease Pencil SVG animation")
 		var blender_frames := GreasePencilAnimationImporter.get_blender_frames_xml(svg_xml_node)
 		var animation := Animation.new()
@@ -165,7 +164,6 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 				animation.track_insert_key(track_idx, pos, true)
 			animation.track_insert_key(track_idx, pos + step, false)
 			pos += step
-		EditorInterface.get_resource_filesystem().scan()
 		return scene_root
 
 
