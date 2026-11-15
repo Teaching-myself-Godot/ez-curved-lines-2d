@@ -944,6 +944,8 @@ func record_shortcut_hold_time(keycode : int) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		return
 	if event is InputEventKey and event.pressed:
 		if event.is_command_or_control_pressed():
 			return
