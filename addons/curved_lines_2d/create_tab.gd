@@ -357,9 +357,9 @@ func sync_draw_settings() -> void:
 
 func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
 	var sel := EditorInterface.get_selection().get_selected_nodes()
-	%GeometryToolContainer.sync_svs_settings(svs, _find_shapes_in_open_scene().filter(func(x): return x in sel))
 	if svs not in EditorInterface.get_selection().get_selected_nodes():
 		return
+	%GeometryToolContainer.sync_svs_settings(svs, _find_shapes_in_open_scene().filter(func(x): return x in sel))
 	%SelectModeContainer.sync_svs_settings(svs)
 	%OriginInput.set_value_no_signal(svs.global_position)
 	%FillPickerButton.color = svs.fill_color

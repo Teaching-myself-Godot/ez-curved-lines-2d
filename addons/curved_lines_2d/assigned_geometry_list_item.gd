@@ -1,6 +1,8 @@
 @tool
 extends HBoxContainer
 
+signal remove_from_clip_paths()
+
 var svs : ScalableVectorShape2D: set = _on_svs_assigned
 
 func _on_svs_assigned(s : ScalableVectorShape2D) -> void:
@@ -36,3 +38,7 @@ func _on_clip_off_shapes_button_toggled(toggled_on: bool) -> void:
 func _on_button_pressed() -> void:
 	if is_instance_valid(svs):
 		EditorInterface.edit_node(svs)
+
+
+func _on_disconnect_shape_button_pressed() -> void:
+	remove_from_clip_paths.emit()
