@@ -8,6 +8,13 @@
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_dsrm6"]
 
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_mpw58"]
+load_path = "res://.godot/imported/IconAtlas.svg-ec7aef7a8671ec861cc9efe9b0a4f9e4.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6b0nk"]
+atlas = SubResource("CompressedTexture2D_mpw58")
+region = Rect2(48, 176, 16, 16)
+
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_4nv23"]
 load_path = "res://.godot/imported/IconAtlas.svg-ec7aef7a8671ec861cc9efe9b0a4f9e4.ctex"
 
@@ -22,9 +29,6 @@ load_path = "res://.godot/imported/IconAtlas.svg-ec7aef7a8671ec861cc9efe9b0a4f9e
 atlas = SubResource("CompressedTexture2D_7q37t")
 region = Rect2(16, 192, 16, 16)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_mpw58"]
-load_path = "res://.godot/imported/IconAtlas.svg-ec7aef7a8671ec861cc9efe9b0a4f9e4.ctex"
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_3xghs"]
 atlas = SubResource("CompressedTexture2D_mpw58")
 region = Rect2(32, 192, 16, 16)
@@ -37,10 +41,25 @@ grow_horizontal = 2
 theme_override_constants/separation = 8
 script = ExtResource("1_6b0nk")
 
+[node name="DisconnectShapesButton" type="Button" parent="." unique_id=250045371]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+tooltip_text = "Disconnect Shape"
+theme_override_styles/normal = ExtResource("2_6b0nk")
+theme_override_styles/pressed = ExtResource("3_8tbgw")
+theme_override_styles/hover = ExtResource("4_h0x2l")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_dsrm6")
+icon = SubResource("AtlasTexture_6b0nk")
+expand_icon = true
+
 [node name="Button" type="Button" parent="." unique_id=246000053]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-size_flags_horizontal = 3
 tooltip_text = "Select assigned node"
 theme_override_styles/normal = ExtResource("2_6b0nk")
 theme_override_styles/pressed = ExtResource("3_8tbgw")
@@ -48,6 +67,8 @@ theme_override_styles/hover = ExtResource("4_h0x2l")
 text = "NodeName"
 icon = ExtResource("1_qs4im")
 alignment = 0
+text_overrun_behavior = 3
+clip_text = true
 
 [node name="MergeShapesButton" type="Button" parent="." unique_id=1667214436]
 unique_name_in_owner = true
