@@ -1387,12 +1387,19 @@ func _draw_temp_pivot(viewport_control : Control, svs : ScalableVectorShape2D, m
 
 	if _svs_edit_mode in [SVSEditMode.ROTATE, SVSEditMode.SCALE]:
 		var temp_pivot := svs.to_global(svs.get_center())
+		var hovered := false
 		if _svs_edit_mode == SVSEditMode.ROTATE and UniformRotateHandler.temp_pivot != Vector2.INF:
 			temp_pivot = UniformRotateHandler.temp_pivot
+			hovered = UniformRotateHandler.temp_pivot_is_hovered
 		if _svs_edit_mode == SVSEditMode.SCALE and UniformResizeHandler.temp_pivot != Vector2.INF:
 			temp_pivot = UniformResizeHandler.temp_pivot
-		_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 5.0, Color.WHITE, 3)
-		_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 5.0, Color.ROYAL_BLUE)
+			hovered = UniformResizeHandler.temp_pivot_is_hovered
+		if hovered:
+			_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 7.0, Color.WHITE, 5)
+			_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 7.0, Color.ROYAL_BLUE, 2)
+		else:
+			_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 5.0, Color.WHITE, 3)
+			_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 5.0, Color.ROYAL_BLUE)
 
 
 func _draw_canvas_for_uniform_translate(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
@@ -3208,7 +3215,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		elif _svs_edit_mode == SVSEditMode.SCALE:
 			if UniformResizeHandler.handle_input(
 					event, current_selection, mouse_pos,
-					_is_snapped_to_pixel(), _get_snap_resolution()
+					_is_snapped_to_pixel(), _get_snap_resolution(),
+					_vp_transform
 			):
 				update_overlays()
 				return true
@@ -3216,7 +3224,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		elif _svs_edit_mode == SVSEditMode.ROTATE:
 			if UniformRotateHandler.handle_input(
 					event, current_selection, mouse_pos,
-					_is_snapped_to_pixel(), _get_snap_resolution()
+					_is_snapped_to_pixel(), _get_snap_resolution(),
+					_vp_transform
 			):
 				update_overlays()
 				return true

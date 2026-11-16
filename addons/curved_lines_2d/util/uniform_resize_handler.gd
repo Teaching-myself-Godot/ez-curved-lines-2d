@@ -1,9 +1,11 @@
 class_name UniformResizeHandler extends Object
 
 static var _drag_start := Vector2.INF
-static var temp_pivot := Vector2.INF
 static var _stashed_curve : Curve2D = null
 static var _svs_under_edit : ScalableVectorShape2D = null
+
+static var temp_pivot_is_hovered := false
+static var temp_pivot := Vector2.INF
 static var temp_pivot_hint := Vector2.INF
 
 static func clear_settings() -> void:
@@ -31,7 +33,7 @@ static func commit_changes(svs : ScalableVectorShape2D) -> void:
 
 
 static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_pos : Vector2,
-			is_snapped_to_pixel : bool, snap_resolution : Vector2) -> bool:
+			is_snapped_to_pixel : bool, snap_resolution : Vector2, vp_transform : Callable) -> bool:
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		if (event as InputEventMouseButton).pressed:
 			if (event as InputEventMouseButton).alt_pressed:
@@ -47,6 +49,9 @@ static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_
 
 	if event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			if temp_pivot_is_hovered:
+				temp_pivot = mouse_pos.snapped(snap_resolution) if is_snapped_to_pixel else mouse_pos
+				return true
 			if _stashed_curve == null:
 				_stashed_curve = svs.curve.duplicate(true)
 				_svs_under_edit = svs
@@ -67,6 +72,10 @@ static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_
 		elif (event as InputEventMouseMotion).alt_pressed:
 			temp_pivot_hint = mouse_pos.snapped(snap_resolution) if is_snapped_to_pixel else mouse_pos
 		else:
+			var piv := svs.to_global(svs.get_center())
+			if temp_pivot != Vector2.INF:
+				piv = temp_pivot
+			temp_pivot_is_hovered = vp_transform.call(mouse_pos).distance_to(vp_transform.call(piv)) < 10.0
 			temp_pivot_hint = Vector2.INF
 		return true
 	return false
@@ -75,6 +84,9 @@ static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_
 static func draw(viewport_control : Control, svs : ScalableVectorShape2D,
 		draw_hint : Callable, lmb_down : bool, _ctrl_pressed : bool,
 		vp_transform : Callable, svp_transform : Transform2D) -> void:
+	if temp_pivot_is_hovered:
+		draw_hint.call(viewport_control, "- Drag to move temporary pivot")
+		return
 	if lmb_down:
 		var hint_text := "- Drag to resize points (left mouse button held)"
 		if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
