@@ -374,8 +374,9 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
 				_svs_edit_mode in DRAW_MODES) and not Input.is_key_pressed(KEY_Q)):
 					return
-		svs_edit_buttons.set_default_mode()
-		scalable_vector_shapes_2d_dock.create_tab.set_default_mode()
+		# TODO: regression test this!
+		# svs_edit_buttons.set_default_mode()
+		# scalable_vector_shapes_2d_dock.create_tab.set_default_mode()
 	elif toggled_on and current_selection:
 		svs_edit_buttons.show()
 		svs_edit_buttons.hide_svs_editors()
