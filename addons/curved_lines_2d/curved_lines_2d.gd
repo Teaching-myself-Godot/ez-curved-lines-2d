@@ -1386,7 +1386,7 @@ func _draw_temp_pivot(viewport_control : Control, svs : ScalableVectorShape2D, m
 		_draw_crosshair(viewport_control, _vp_transform(UniformResizeHandler.temp_pivot_hint * mul), 2.0, 5.0, Color.ROYAL_BLUE)
 
 	if _svs_edit_mode in [SVSEditMode.ROTATE, SVSEditMode.SCALE]:
-		var temp_pivot := svs.to_global(svs.get_center())
+		var temp_pivot := svs.to_global(svs.get_center(MultiSelectHandler.selection(svs)))
 		var hovered := false
 		if _svs_edit_mode == SVSEditMode.ROTATE and UniformRotateHandler.temp_pivot != Vector2.INF:
 			temp_pivot = UniformRotateHandler.temp_pivot

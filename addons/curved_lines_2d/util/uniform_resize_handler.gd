@@ -40,7 +40,7 @@ static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_
 				temp_pivot = mouse_pos.snapped(snap_resolution) if is_snapped_to_pixel else mouse_pos
 			else:
 				_drag_start = mouse_pos
-				temp_pivot = svs.to_global(svs.get_center()) if temp_pivot == Vector2.INF else temp_pivot
+				temp_pivot = svs.to_global(svs.get_center(MultiSelectHandler.selection(svs))) if temp_pivot == Vector2.INF else temp_pivot
 				_stashed_curve = svs.curve.duplicate(true)
 				_svs_under_edit = svs
 		else:
@@ -72,7 +72,7 @@ static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_
 		elif (event as InputEventMouseMotion).alt_pressed:
 			temp_pivot_hint = mouse_pos.snapped(snap_resolution) if is_snapped_to_pixel else mouse_pos
 		else:
-			var piv := svs.to_global(svs.get_center())
+			var piv := svs.to_global(svs.get_center(MultiSelectHandler.selection(svs)))
 			if temp_pivot != Vector2.INF:
 				piv = temp_pivot
 			temp_pivot_is_hovered = vp_transform.call(mouse_pos).distance_to(vp_transform.call(piv)) < 10.0
