@@ -392,6 +392,10 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 
 
 func _on_svs_edit_mode_changed(new_mode : SVSEditMode) -> void:
+	if _svs_edit_mode == SVSEditMode.ROTATE:
+		UniformRotateHandler.clear_settings()
+	if _svs_edit_mode == SVSEditMode.SCALE:
+		UniformResizeHandler.clear_settings()
 	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if new_mode not in DRAW_MODES and _is_svs_valid(sel):
 		scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings(sel)
@@ -1370,18 +1374,25 @@ func _draw_outline_for_uniform_transforms(viewport_control : Control, svs : Scal
 			viewport_control.draw_circle(_vp_transform(p * mul), 6, VIEWPORT_ORANGE, false, 4)
 		else:
 			_draw_crosshair(viewport_control, _vp_transform(p * mul), 2.0, 4.0, Color.WHITE)
+	_draw_temp_pivot(viewport_control, svs, mul)
+
+
+func _draw_temp_pivot(viewport_control : Control, svs : ScalableVectorShape2D, mul : Transform2D) -> void:
+	if svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:
+		return
 	if _svs_edit_mode == SVSEditMode.ROTATE and UniformRotateHandler.temp_pivot_hint != Vector2.INF:
 		_draw_crosshair(viewport_control, _vp_transform(UniformRotateHandler.temp_pivot_hint * mul), 2.0, 5.0, Color.ROYAL_BLUE)
 	elif _svs_edit_mode == SVSEditMode.SCALE and UniformResizeHandler.temp_pivot_hint != Vector2.INF:
 		_draw_crosshair(viewport_control, _vp_transform(UniformResizeHandler.temp_pivot_hint * mul), 2.0, 5.0, Color.ROYAL_BLUE)
-	var temp_pivot := svs.to_global(svs.get_center())
-	if _svs_edit_mode == SVSEditMode.ROTATE and UniformRotateHandler.temp_pivot != Vector2.INF:
-		temp_pivot = UniformRotateHandler.temp_pivot
-	if _svs_edit_mode == SVSEditMode.SCALE and UniformResizeHandler.temp_pivot != Vector2.INF:
-		temp_pivot = UniformResizeHandler.temp_pivot
 
-	_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 5.0, Color.WHITE, 3)
-	_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 5.0, Color.ROYAL_BLUE)
+	if _svs_edit_mode in [SVSEditMode.ROTATE, SVSEditMode.SCALE]:
+		var temp_pivot := svs.to_global(svs.get_center())
+		if _svs_edit_mode == SVSEditMode.ROTATE and UniformRotateHandler.temp_pivot != Vector2.INF:
+			temp_pivot = UniformRotateHandler.temp_pivot
+		if _svs_edit_mode == SVSEditMode.SCALE and UniformResizeHandler.temp_pivot != Vector2.INF:
+			temp_pivot = UniformResizeHandler.temp_pivot
+		_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 5.0, Color.WHITE, 3)
+		_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 5.0, Color.ROYAL_BLUE)
 
 
 func _draw_canvas_for_uniform_translate(viewport_control : Control, svs : ScalableVectorShape2D) -> void:

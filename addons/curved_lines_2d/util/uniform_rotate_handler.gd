@@ -4,14 +4,33 @@ static var _drag_start := Vector2.INF
 static var _prev_uniform_rotate_angle := 0.0
 static var temp_pivot := Vector2.INF
 static var _stashed_curve : Curve2D = null
+static var _svs_under_edit : ScalableVectorShape2D = null
 static var temp_pivot_hint := Vector2.INF
 
 static func clear_settings() -> void:
+	commit_changes(_svs_under_edit)
 	_drag_start = Vector2.INF
 	_prev_uniform_rotate_angle = 0.0
 	temp_pivot = Vector2.INF
 	_stashed_curve = null
+	_svs_under_edit = null
 	temp_pivot_hint = Vector2.INF
+
+
+static func commit_changes(svs : ScalableVectorShape2D) -> void:
+	if not is_instance_valid(svs):
+		return
+	if _drag_start != Vector2.INF:
+		_prev_uniform_rotate_angle = 0.0
+		_drag_start = Vector2.INF
+		if _stashed_curve != null:
+			var undo_redo := EditorInterface.get_editor_undo_redo()
+			undo_redo.create_action("Rotate points")
+			undo_redo.add_do_property(svs, "curve", svs.curve.duplicate(true))
+			undo_redo.add_undo_property(svs, "curve", _stashed_curve)
+			undo_redo.commit_action(false)
+			_stashed_curve = null
+			_svs_under_edit = null
 
 
 static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_pos : Vector2,
@@ -25,23 +44,16 @@ static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_
 				_prev_uniform_rotate_angle = 0.0
 				temp_pivot = svs.to_global(svs.get_center()) if temp_pivot == Vector2.INF else temp_pivot
 				_stashed_curve = svs.curve.duplicate(true)
+				_svs_under_edit = svs
 		else:
-			if _drag_start != Vector2.INF:
-				_prev_uniform_rotate_angle = 0.0
-				_drag_start = Vector2.INF
-				if _stashed_curve != null:
-					var undo_redo := EditorInterface.get_editor_undo_redo()
-					undo_redo.create_action("Rotate points")
-					undo_redo.add_do_property(svs, "curve", svs.curve.duplicate(true))
-					undo_redo.add_undo_property(svs, "curve", _stashed_curve)
-					undo_redo.commit_action(false)
-					_stashed_curve = null
+			commit_changes(_svs_under_edit)
 		return true
 
 	if event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			if _stashed_curve == null:
 				_stashed_curve = svs.curve.duplicate(true)
+				_svs_under_edit = svs
 			var use_temp_pivot := Input.is_key_pressed(KEY_SHIFT) or svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
 			var rotation_origin = (
 					temp_pivot
