@@ -3312,13 +3312,14 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				return true
 			elif Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 				var results := _find_scalable_vector_shape_2d_nodes_at(mouse_pos)
-				var refined_result := results.rfind_custom(func(x): return x.has_fine_point(_svp_mouse_pos(mouse_pos, x)))
-				if refined_result > -1 and results[refined_result]:
-					EditorInterface.edit_node(results[refined_result])
+				var refined_result := results.filter(func(x):
+					return x.has_fine_point(_svp_mouse_pos(mouse_pos, x))
+				)
+				if not refined_result.is_empty():
+					EditorInterface.edit_node(refined_result.pop_back())
 					return true
-				var result = results.pop_back()
-				if is_instance_valid(result):
-					EditorInterface.edit_node(result)
+				elif not results.is_empty():
+					EditorInterface.edit_node(results.pop_back())
 					return true
 		return false
 
