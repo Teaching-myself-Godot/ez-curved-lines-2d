@@ -49,6 +49,8 @@ static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_
 
 	if event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			if _drag_start == Vector2.INF:
+				_drag_start = mouse_pos
 			if temp_pivot_is_hovered:
 				temp_pivot = mouse_pos.snapped(snap_resolution) if is_snapped_to_pixel else mouse_pos
 				return true
@@ -107,10 +109,10 @@ static func draw(viewport_control : Control, svs : ScalableVectorShape2D,
 
 	if lmb_down:
 		var origin = temp_pivot if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH else svs.global_position
-		if (Input.is_key_pressed(KEY_SHIFT) or
+		if (origin == Vector2.INF or Input.is_key_pressed(KEY_SHIFT) or
 				svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
 		):
-			origin = svs.global_position
+			origin = svs.global_position if ScalableVectorShape2D.ShapeType.PATH else svs.to_global(svs.offset)
 		var target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		viewport_control.draw_line(vp_transform.call(origin * svp_transform), vp_transform.call(target),
 				svs.shape_hint_color, 1, true)

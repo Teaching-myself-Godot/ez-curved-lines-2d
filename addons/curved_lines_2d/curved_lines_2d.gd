@@ -181,6 +181,8 @@ var _current_brush_stroke := PackedVector2Array()
 var _brush_start_pos := Vector2.ZERO
 var _last_brush_pos := Vector2.ZERO
 
+# Draw mode helpers
+var _last_drawn_svs : ScalableVectorShape2D = null
 
 # Bone Paint helper vars
 var _current_bone_idx := 0
@@ -366,7 +368,7 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _drawing_pencil_line:
 		return
-	if toggled_on and _is_svs_valid(current_selection):
+	if toggled_on and (_is_svs_valid(current_selection) or _svs_edit_mode in DRAW_MODES):
 		svs_edit_buttons.show()
 		svs_edit_buttons.show_svs_editors()
 		scalable_vector_shapes_2d_dock.create_tab.enable_svs_editors(current_selection)
@@ -399,6 +401,11 @@ func _on_svs_edit_mode_changed(new_mode : SVSEditMode) -> void:
 	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if new_mode not in DRAW_MODES and _is_svs_valid(sel):
 		scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings(sel)
+	if new_mode in DRAW_MODES and new_mode != SVSEditMode.KNIFE:
+		scalable_vector_shapes_2d_dock.create_tab.enable_svs_editors()
+	elif _svs_edit_mode in DRAW_MODES and _svs_edit_mode != SVSEditMode.KNIFE:
+		if _last_drawn_svs and _is_svs_valid(_last_drawn_svs):
+			select_node_reversibly(_last_drawn_svs)
 	if _svs_edit_mode == SVSEditMode.MERGE and new_mode != SVSEditMode.MERGE:
 		_merge_box_rect.size = Vector2.ZERO
 	if new_mode != SVSEditMode.PENCIL:
@@ -2735,6 +2742,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 					svs.curve = _polyline_to_curve(poly)
 					if _get_close_pencil_path() and _pencil_stroke.size() > 1:
 						svs.curve.add_point(svs.to_local(_pencil_stroke[0]))
+					_last_drawn_svs = svs
 					if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 						select_node_reversibly(svs.get_parent())
 					else:
@@ -2833,6 +2841,7 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 				var svs := _create_freehand_shape("BrushStroke")
 				_set_curve_from_brush_stroke(svs, _current_brush_stroke)
 				_current_brush_stroke.clear()
+				_last_drawn_svs = svs
 				if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 					select_node_reversibly(svs.get_parent())
 				else:
@@ -3132,6 +3141,7 @@ func _handle_create_primitive_input(event) -> bool:
 				), null, true)
 
 			svs.global_position = _drag_start * _get_svp_transform(svs).affine_inverse()
+			_last_drawn_svs = svs
 			if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 				select_node_reversibly(svs.get_parent())
 			else:

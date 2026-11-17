@@ -283,7 +283,7 @@ func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
 			%ColorToolContainer.show()
 
 
-func enable_svs_editors(svs : ScalableVectorShape2D) -> void:
+func enable_svs_editors(svs : Node = null) -> void:
 	%RotateButton.disabled = false
 	%TranslateButton.disabled = false
 	%ResizeButton.disabled = false
@@ -298,7 +298,7 @@ func enable_svs_editors(svs : ScalableVectorShape2D) -> void:
 	%CircleButton.disabled = false
 	%RectangleButton.disabled = false
 	%SetPivotButton.disabled = false
-	if is_instance_valid(svs.line):
+	if is_instance_valid(svs) and svs is ScalableVectorShape2D and is_instance_valid(svs.line):
 		%WidthCurveButton.disabled = false
 	else:
 		%WidthCurveButton.disabled = true
