@@ -55,10 +55,10 @@ static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_
 			if _stashed_curve == null:
 				_stashed_curve = svs.curve.duplicate(true)
 				_svs_under_edit = svs
-			var use_temp_pivot := Input.is_key_pressed(KEY_SHIFT) or svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
+			var use_temp_pivot := (not Input.is_key_pressed(KEY_SHIFT)) or svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
 			var origin = (
 					temp_pivot
-						if use_temp_pivot else
+						if use_temp_pivot and not temp_pivot == Vector2.INF else
 					svs.global_position
 			)
 			var drag_delta := mouse_pos - _drag_start
@@ -91,9 +91,9 @@ static func draw(viewport_control : Control, svs : ScalableVectorShape2D,
 		var hint_text := "- Drag to resize points (left mouse button held)"
 		if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 			if Input.is_key_pressed(KEY_SHIFT):
-				hint_text += "\n- Scaling out from the temporary pivot (Shift held)"
+				hint_text += "\n- Scaling out from origin (Shift held)"
 			else:
-				hint_text += "\n- Hold Shift to scale out from the temporary pivot"
+				hint_text += "\n- Hold Shift to scale out from origin in stead of pivot"
 
 		draw_hint.call(viewport_control, hint_text)
 	else:
@@ -106,11 +106,11 @@ static func draw(viewport_control : Control, svs : ScalableVectorShape2D,
 				"\n- Press Q to return to normal editing")
 
 	if lmb_down:
-		var origin = svs.global_position
+		var origin = temp_pivot if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH else svs.global_position
 		if (Input.is_key_pressed(KEY_SHIFT) or
 				svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
 		):
-			origin = temp_pivot
+			origin = svs.global_position
 		var target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		viewport_control.draw_line(vp_transform.call(origin * svp_transform), vp_transform.call(target),
 				svs.shape_hint_color, 1, true)

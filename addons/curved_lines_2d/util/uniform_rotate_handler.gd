@@ -60,10 +60,10 @@ static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_
 			if _stashed_curve == null:
 				_stashed_curve = svs.curve.duplicate(true)
 				_svs_under_edit = svs
-			var use_temp_pivot := Input.is_key_pressed(KEY_SHIFT) or svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
+			var use_temp_pivot := (not Input.is_key_pressed(KEY_SHIFT)) or svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
 			var rotation_origin = (
 					temp_pivot
-						if use_temp_pivot else
+						if use_temp_pivot and not temp_pivot == Vector2.INF else
 					svs.global_position
 			)
 			var rotation_target := mouse_pos
@@ -100,9 +100,9 @@ static func draw(viewport_control : Control, svs : ScalableVectorShape2D,
 		var hint_text := "- Drag to rotate all points (left mouse button held)"
 		if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 			if Input.is_key_pressed(KEY_SHIFT):
-				hint_text += "\n- Rotating around the temporary pivot (Shift held)"
+				hint_text += "\n- Rotating around the origin (Shift held)"
 			else:
-				hint_text += "\n- Hold Shift to rotate around the temporary pivot"
+				hint_text += "\n- Hold Shift to rotate around origin in stead of pivot"
 		if ctrl_pressed:
 			hint_text += "\n- Rotating in steps of 5° (Ctrl held)"
 		else:
@@ -117,11 +117,11 @@ static func draw(viewport_control : Control, svs : ScalableVectorShape2D,
 		draw_hint.call(viewport_control, hint_text +
 				"\n- Press Q to return to normal editing")
 	if lmb_down:
-		var rotation_origin = svs.global_position
+		var rotation_origin = temp_pivot if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH else svs.global_position
 		if (Input.is_key_pressed(KEY_SHIFT) or
 				svs.shape_type != ScalableVectorShape2D.ShapeType.PATH
 		):
-			rotation_origin = UniformRotateHandler.temp_pivot
+			rotation_origin = svs.global_position
 		var rotation_target := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 		if ctrl_pressed:
 			var ang := snapped(rotation_origin.angle_to_point(rotation_target), deg_to_rad(5.0))
