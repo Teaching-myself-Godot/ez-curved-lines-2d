@@ -2425,7 +2425,8 @@ func _toggle_loop_if_applies(svs : ScalableVectorShape2D, idx : int) -> void:
 
 	if idx == 0 or idx == svs.curve.point_count - 1:
 		_add_point_to_curve(svs, svs.curve.get_point_position(0))
-		WidthCurveTool.match_start_end_point(svs, svs.line.width_curve)
+		if is_instance_valid(svs.line):
+			WidthCurveTool.match_start_end_point(svs, svs.line.width_curve)
 
 
 func _break_loop_at(svs : ScalableVectorShape2D, idx : int) -> void:
