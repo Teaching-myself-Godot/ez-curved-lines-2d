@@ -282,6 +282,10 @@ Please refer to the script in this example to accomplish that:
 
 [`res://addons/curved_lines_2d/examples/import_svg_at_runtime/`](./examples/import_svg_at_runtime/)
 
+**Important**: when reading resource files from your production build (from the `.pck` or executable) they need to be imported into your project as actual files and _not_ as a Texture2D (which is the default for svg):
+
+![keep file on import](./screenshots/keep-file-on-import.png)
+
 ## Synchronize with external SGV files automatically using `SyncedSVGRoot`
 
 As of release `2.34` the `SyncedSVGRoot` tool node helps keep your imported version of the SVG file synchronized with an external file by reimporting all the nodes. 
