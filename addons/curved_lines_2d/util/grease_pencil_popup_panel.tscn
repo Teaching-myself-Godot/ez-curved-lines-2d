@@ -15,14 +15,15 @@ font_size = 18
 [node name="PopupPanel" type="PopupPanel" unique_id=633591545]
 oversampling_override = 1.0
 initial_position = 4
-size = Vector2i(447, 200)
+size = Vector2i(447, 347)
+visible = true
 script = ExtResource("1_sd3sc")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=33807166]
 offset_left = 4.0
 offset_top = 4.0
 offset_right = 443.0
-offset_bottom = 196.0
+offset_bottom = 343.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
@@ -37,23 +38,58 @@ text = "Grease Pencil SVG Animation Detected!"
 label_settings = SubResource("LabelSettings_dsrm6")
 horizontal_alignment = 1
 
-[node name="ConfirmCheckBox" type="CheckBox" parent="VBoxContainer" unique_id=825262578]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer" unique_id=329313770]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="ConfirmCheckBox" type="CheckBox" parent="VBoxContainer/VBoxContainer" unique_id=825262578]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 text = "Import this image as a flipbook animation"
 
-[node name="BottomCenterOriginCheckBox" type="CheckBox" parent="VBoxContainer" unique_id=21032568]
+[node name="BottomCenterOriginCheckBox" type="CheckBox" parent="VBoxContainer/VBoxContainer" unique_id=21032568]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Set image origin to bottom center"
 
-[node name="ReuseExistingAnimationPlayerCheckBox" type="CheckBox" parent="VBoxContainer" unique_id=794309115]
+[node name="ReuseExistingAnimationPlayerCheckBox" type="CheckBox" parent="VBoxContainer/VBoxContainer" unique_id=794309115]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Reuse any pre-existing animation player in this scene"
 
-[node name="ImportingNormallyLabel" type="Label" parent="VBoxContainer" unique_id=827677070]
+[node name="ResourceDirContainer" type="VBoxContainer" parent="VBoxContainer/VBoxContainer" unique_id=117759018]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ResourceDirLabel" type="Label" parent="VBoxContainer/VBoxContainer/ResourceDirContainer" unique_id=441452089]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Resource Directory for Imported Scenes:"
+
+[node name="ResourceDirLineEdit" type="LineEdit" parent="VBoxContainer/VBoxContainer/ResourceDirContainer" unique_id=1708669146]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Resource Dir"
+
+[node name="AnimationNameContainer" type="VBoxContainer" parent="VBoxContainer/VBoxContainer" unique_id=1929692902]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="AnimationNameLabel" type="Label" parent="VBoxContainer/VBoxContainer/AnimationNameContainer" unique_id=759148339]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Animation Name:"
+
+[node name="AnimationNameLineEdit" type="LineEdit" parent="VBoxContainer/VBoxContainer/AnimationNameContainer" unique_id=835317485]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_vertical = 6
+placeholder_text = "Animation Name"
+
+[node name="ImportingNormallyLabel" type="Label" parent="VBoxContainer/VBoxContainer" unique_id=827677070]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -62,12 +98,15 @@ text = "- Importing Normally -"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="OkButton" type="Button" parent="VBoxContainer" unique_id=1089822773]
+[node name="OkButton" type="Button" parent="VBoxContainer/VBoxContainer" unique_id=1089822773]
 layout_mode = 2
 size_flags_vertical = 10
 size_flags_stretch_ratio = 0.2
 text = "Ok"
 
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/VBoxContainer" unique_id=1748586342]
+layout_mode = 2
+
 [connection signal="gui_input" from="VBoxContainer/PanelContainer/Label" to="." method="_on_panel_container_gui_input"]
-[connection signal="toggled" from="VBoxContainer/ConfirmCheckBox" to="." method="_on_confirm_check_box_toggled"]
-[connection signal="pressed" from="VBoxContainer/OkButton" to="." method="_on_ok_button_pressed"]
+[connection signal="toggled" from="VBoxContainer/VBoxContainer/ConfirmCheckBox" to="." method="_on_confirm_check_box_toggled"]
+[connection signal="pressed" from="VBoxContainer/VBoxContainer/OkButton" to="." method="_on_ok_button_pressed"]

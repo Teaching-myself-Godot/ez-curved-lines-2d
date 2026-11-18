@@ -35,7 +35,10 @@ static func get_blender_frames_xml(xml : SVGXMLElement) -> Array[SVGXMLElement]:
 	return result
 
 
-static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXMLElement, file_path : String) -> Node:
+static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXMLElement, file_path : String,
+			resource_dir : String, animation_name : String) -> Node:
+	if animation_name.is_empty():
+		animation_name = "grease_pencil_import"
 	var scene_root := EditorInterface.get_edited_scene_root()
 	var ur := EditorInterface.get_editor_undo_redo()
 	svg_importer.undo_redo = SVGImporter.get_runtime_handler()
@@ -49,9 +52,13 @@ static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXML
 	if anim_node.get_named_attribute_value_safe("repeatCount") == "indefinite":
 		animation.loop_mode = Animation.LOOP_LINEAR
 	var frame_nodes : Dictionary[String, Node2D] = {}
-	var frame_dir_name := file_path.get_file().replace(".svg", "").to_snake_case()
 	svg_importer.import_as_svs = false
-	DirAccess.make_dir_absolute("res://" + frame_dir_name)
+
+	if not DirAccess.dir_exists_absolute(resource_dir):
+		var error := DirAccess.make_dir_recursive_absolute(resource_dir)
+		if error != OK:
+			push_error(error)
+		EditorInterface.get_resource_filesystem().scan()
 
 	for fr in blender_frames:
 		var src := await svg_importer.parse_svg_xml_to_nodes(fr,
@@ -65,13 +72,13 @@ static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXML
 			svg_importer._recursive_set_owner_direct(node, cpy)
 		var scene := PackedScene.new()
 		scene.pack(cpy)
-		ResourceSaver.save(scene, "res://%s/%s.scn" % [
-			frame_dir_name,
+		ResourceSaver.save(scene, "%s/%s.scn" % [
+			resource_dir.rstrip("/"),
 			fr.get_named_attribute_value_safe("frame_id")], ResourceSaver.FLAG_NONE)
 		scene_root.remove_child(src)
 		src.free()
-		scene = ResourceLoader.load("res://%s/%s.scn" % [
-			frame_dir_name,
+		scene = ResourceLoader.load("%s/%s.scn" % [
+			resource_dir.rstrip("/"),
 			fr.get_named_attribute_value_safe("frame_id")])
 		var imported_scene : Node2D = scene.instantiate()
 		if fr.get_named_attribute_value_safe("frame_id") != start_frame_id:
@@ -83,7 +90,7 @@ static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXML
 		frame_nodes[fr.get_named_attribute_value_safe("frame_id")] = imported_scene
 	var animation_player := AnimationPlayer.new()
 	animation_player.add_animation_library("", AnimationLibrary.new())
-	animation_player.get_animation_library("").add_animation("grease_pencil_import", animation)
+	animation_player.get_animation_library("").add_animation(animation_name, animation)
 	animation_player.autoplay = "grease_pencil_import"
 	ur.add_do_method(scene_root, 'add_child', animation_player, true)
 	ur.add_do_property(animation_player, 'owner', scene_root)
@@ -103,7 +110,7 @@ static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXML
 			animation.track_insert_key(track_idx, pos, true)
 		animation.track_insert_key(track_idx, pos + step, false)
 		pos += step
-	return scene_root
+	return animation_player
 
 
 static func add_anim_track_if_absent(animation : Animation, node_path : NodePath) -> int:

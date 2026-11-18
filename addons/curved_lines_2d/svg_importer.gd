@@ -99,12 +99,19 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(),
 	var svg_xml_node : SVGXMLElement = parse_svg_xml_file(xml_parser)
 
 	if GreasePencilAnimationImporter.detect_animation(svg_xml_node):
+		var proposed_anim_name : String = (Array(file_path.split("/", false))
+				.pop_back().replacen(".svg", "").to_snake_case())
+		grease_pencil_popup_dialog.set_animation_name(proposed_anim_name)
+		grease_pencil_popup_dialog.set_resource_dir(
+			"res://%s" % proposed_anim_name
+		)
 		grease_pencil_popup_dialog.popup()
 		await grease_pencil_popup_dialog.choice_confirmed
 		if grease_pencil_popup_dialog.is_confirmed():
-
 			return await GreasePencilAnimationImporter.import_blender_svg(
-				self, svg_xml_node, file_path
+				self, svg_xml_node, file_path,
+				grease_pencil_popup_dialog.get_resource_dir(),
+				grease_pencil_popup_dialog.get_animation_name()
 			)
 
 	var result := await parse_svg_xml_to_nodes(svg_xml_node,
