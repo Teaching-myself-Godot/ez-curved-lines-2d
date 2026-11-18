@@ -669,8 +669,8 @@ func _scene_can_export_animations() -> bool:
 
 func _on_selection_changed():
 	MultiSelectHandler.clear_selection()
-	UniformRotateHandler.clear_settings()
-	UniformResizeHandler.clear_settings()
+	UniformRotateHandler.clear_settings(true)
+	UniformResizeHandler.clear_settings(true)
 	var scene_root := EditorInterface.get_edited_scene_root()
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_editing_enabled() and is_instance_valid(scene_root):
@@ -678,7 +678,8 @@ func _on_selection_changed():
 		# _forward_canvas_gui_input will still be called upon losing focus
 		if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
 				and EditorInterface.get_selection().get_selected_nodes().is_empty()
-				and not scene_root is Control):
+				and not scene_root is Control
+				and not scene_root is Node3D):
 			EditorInterface.edit_node(scene_root)
 	if current_selection is AnimationPlayer and _scene_can_export_animations():
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(current_selection)
@@ -1387,20 +1388,16 @@ func _draw_outline_for_uniform_transforms(viewport_control : Control, svs : Scal
 func _draw_temp_pivot(viewport_control : Control, svs : ScalableVectorShape2D, mul : Transform2D) -> void:
 	if svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:
 		return
-	if _svs_edit_mode == SVSEditMode.ROTATE and UniformRotateHandler.temp_pivot_hint != Vector2.INF:
-		_draw_crosshair(viewport_control, _vp_transform(UniformRotateHandler.temp_pivot_hint * mul), 2.0, 5.0, Color.ROYAL_BLUE)
-	elif _svs_edit_mode == SVSEditMode.SCALE and UniformResizeHandler.temp_pivot_hint != Vector2.INF:
-		_draw_crosshair(viewport_control, _vp_transform(UniformResizeHandler.temp_pivot_hint * mul), 2.0, 5.0, Color.ROYAL_BLUE)
+	if (_svs_edit_mode == SVSEditMode.ROTATE or _svs_edit_mode == SVSEditMode.SCALE) and UniformTransformUtil.temp_pivot_hint != Vector2.INF:
+		_draw_crosshair(viewport_control, _vp_transform(UniformTransformUtil.temp_pivot_hint * mul), 2.0, 5.0, Color.ROYAL_BLUE)
 
 	if _svs_edit_mode in [SVSEditMode.ROTATE, SVSEditMode.SCALE]:
 		var temp_pivot := svs.to_global(svs.get_center(MultiSelectHandler.selection(svs)))
 		var hovered := false
-		if _svs_edit_mode == SVSEditMode.ROTATE and UniformRotateHandler.temp_pivot != Vector2.INF:
-			temp_pivot = UniformRotateHandler.temp_pivot
-			hovered = UniformRotateHandler.temp_pivot_is_hovered
-		if _svs_edit_mode == SVSEditMode.SCALE and UniformResizeHandler.temp_pivot != Vector2.INF:
-			temp_pivot = UniformResizeHandler.temp_pivot
-			hovered = UniformResizeHandler.temp_pivot_is_hovered
+		if (_svs_edit_mode == SVSEditMode.ROTATE or _svs_edit_mode == SVSEditMode.SCALE) and UniformTransformUtil.temp_pivot != Vector2.INF:
+			temp_pivot = UniformTransformUtil.temp_pivot
+			hovered = UniformTransformUtil.temp_pivot_is_hovered
+
 		if hovered:
 			_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 7.0, Color.WHITE, 5)
 			_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 7.0, Color.ROYAL_BLUE, 2)
