@@ -11,6 +11,8 @@ static var _initial_angle_to_mouse := 0.0
 static func handle_input(event : InputEvent, svs : ScalableVectorShape2D, mouse_pos : Vector2,
 		vp_transform : Callable, on_cancel : Callable, is_snapped_to_pixel : bool, snap_resolution : Vector2) -> bool:
 
+	if not is_instance_valid(svs.line):
+		return true
 	mouse_pos = mouse_pos.snapped(snap_resolution) if is_snapped_to_pixel else mouse_pos
 	var closest_point_on_curve := svs.get_closest_point_on_curve(mouse_pos)
 	var distance_to_mouse : float = vp_transform.call(mouse_pos).distance_to(vp_transform.call(closest_point_on_curve.point_position))
@@ -63,6 +65,9 @@ static func draw(viewport_control : Control, svs : ScalableVectorShape2D,
 		draw_hint : Callable, lmb_down : bool,
 		vp_transform : Callable, svp_transform : Transform2D, mouse_pos : Vector2,
 		is_snapped_to_pixel : bool, snap_resolution : Vector2) -> void:
+	if not is_instance_valid(svs.line):
+		draw_hint.call(viewport_control, "* Add a Line2D Stroke to use the width curve editor *")
+		return
 
 	var clamped_to_existing := false
 	var hint := (
@@ -73,7 +78,7 @@ static func draw(viewport_control : Control, svs : ScalableVectorShape2D,
 		"- Hover over a line to make it thicker or thinner"
 	)
 
-	if svs.line.width_curve:
+	if is_instance_valid(svs.line) and svs.line.width_curve:
 		for i in svs.line.width_curve.point_count:
 			var p := svs.line.width_curve.get_point_position(i)
 			var cp := svs.get_closest_point_on_curve(

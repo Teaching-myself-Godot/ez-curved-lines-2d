@@ -371,7 +371,7 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 	if toggled_on and (_is_svs_valid(current_selection) or _svs_edit_mode in DRAW_MODES):
 		svs_edit_buttons.show()
 		svs_edit_buttons.show_svs_editors()
-		scalable_vector_shapes_2d_dock.create_tab.enable_svs_editors(current_selection)
+		scalable_vector_shapes_2d_dock.create_tab.enable_svs_editors()
 		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
 				_svs_edit_mode in DRAW_MODES) and not Input.is_key_pressed(KEY_Q)):
 					return
@@ -3241,13 +3241,15 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				return true
 			return false
 		elif _svs_edit_mode == SVSEditMode.WIDTH_CURVE_TOOL:
-			if WidthCurveTool.handle_input(event, current_selection, mouse_pos,
-					_vp_transform, _on_svs_edit_mode_changed.bind(SVSEditMode.NONE),
-					_is_snapped_to_pixel(), _get_snap_resolution()):
+			if is_instance_valid(current_selection.line):
+				if WidthCurveTool.handle_input(event, current_selection, mouse_pos,
+						_vp_transform, _on_svs_edit_mode_changed.bind(SVSEditMode.NONE),
+						_is_snapped_to_pixel(), _get_snap_resolution()):
+					update_overlays()
+					return true
+				return false
+			else:
 				update_overlays()
-				return true
-			return false
-
 		if MultiSelectHandler.is_selecting(event, current_selection,
 				_handle_has_hover(current_selection), _hover_point_idx):
 			MultiSelectHandler.handle_selecting(event, current_selection,
