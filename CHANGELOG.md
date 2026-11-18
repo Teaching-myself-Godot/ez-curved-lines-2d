@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.7.1 - Dedicated Width Curve Tool
+## 3.7.2 - Dedicated Width Curve Tool
 
 ### Added
 
@@ -12,6 +12,7 @@
 
 - The Import SVG at runtime example script now uses "Keep File" mode for its example svg
 - This is also better documented in the readme now
+- Bugfix: prevent error message when missing a Line2D upon closing the curve
 
 ### Removed
 
