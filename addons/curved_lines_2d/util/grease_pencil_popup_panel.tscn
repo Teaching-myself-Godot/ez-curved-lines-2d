@@ -15,15 +15,15 @@ font_size = 18
 [node name="PopupPanel" type="PopupPanel" unique_id=633591545]
 oversampling_override = 1.0
 initial_position = 4
-size = Vector2i(447, 347)
+size = Vector2i(359, 296)
 visible = true
 script = ExtResource("1_sd3sc")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=33807166]
 offset_left = 4.0
 offset_top = 4.0
-offset_right = 443.0
-offset_bottom = 343.0
+offset_right = 355.0
+offset_bottom = 292.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
@@ -53,11 +53,6 @@ text = "Import this image as a flipbook animation"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Set image origin to bottom center"
-
-[node name="ReuseExistingAnimationPlayerCheckBox" type="CheckBox" parent="VBoxContainer/VBoxContainer" unique_id=794309115]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Reuse any pre-existing animation player in this scene"
 
 [node name="ResourceDirContainer" type="VBoxContainer" parent="VBoxContainer/VBoxContainer" unique_id=117759018]
 unique_name_in_owner = true

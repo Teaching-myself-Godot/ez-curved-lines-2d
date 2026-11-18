@@ -1,5 +1,7 @@
 class_name GreasePencilAnimationImporter extends Object
 
+const BLENDER_ANIM_ROOT_META_NAME := "blender_anim_root"
+
 static func detect_animation(xml : SVGXMLElement) -> bool:
 	if not Engine.is_editor_hint():
 		return false
@@ -37,12 +39,10 @@ static func get_blender_frames_xml(xml : SVGXMLElement) -> Array[SVGXMLElement]:
 
 static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXMLElement, file_path : String,
 			resource_dir : String, animation_name : String) -> Node:
+	svg_importer.undo_redo = SVGImporter.get_runtime_handler()
 	if animation_name.is_empty():
 		animation_name = "grease_pencil_import"
 	var scene_root := EditorInterface.get_edited_scene_root()
-	var ur := EditorInterface.get_editor_undo_redo()
-	svg_importer.undo_redo = SVGImporter.get_runtime_handler()
-	ur.create_action("Import Grease Pencil SVG animation")
 	var blender_frames := GreasePencilAnimationImporter.get_blender_frames_xml(svg_xml_node)
 	var animation := Animation.new()
 	var use_node := svg_xml_node.find_by_id("blender_animation")
@@ -60,9 +60,24 @@ static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXML
 			push_error(error)
 		EditorInterface.get_resource_filesystem().scan()
 
+	var parent : Node2D = scene_root.get_children().filter(
+			func(n): return n is Node2D and n.has_meta(BLENDER_ANIM_ROOT_META_NAME)
+		).pop_back()
+	var ur := EditorInterface.get_editor_undo_redo()
+	if not is_instance_valid(parent):
+		ur.create_action("Create root for Grease Pencil SVG Import")
+		parent = Node2D.new()
+		parent.set_meta(BLENDER_ANIM_ROOT_META_NAME, true)
+		ur.add_do_method(scene_root, 'add_child', parent, true)
+		ur.add_do_property(parent, 'owner', scene_root)
+		ur.add_undo_method(scene_root, 'remove_child', parent)
+		ur.add_undo_reference(parent)
+		ur.commit_action(true)
+
+	ur.create_action("Import Grease Pencil SVG animation")
 	for fr in blender_frames:
 		var src := await svg_importer.parse_svg_xml_to_nodes(fr,
-				"BlenderFrame",
+				animation_name.to_pascal_case(),
 				scene_root, scene_root, [],
 				false
 		)
@@ -83,19 +98,27 @@ static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXML
 		var imported_scene : Node2D = scene.instantiate()
 		if fr.get_named_attribute_value_safe("frame_id") != start_frame_id:
 			imported_scene.visible = false
-		ur.add_do_method(scene_root, "add_child", imported_scene, true)
+		ur.add_do_method(parent, "add_child", imported_scene, true)
 		ur.add_do_property(imported_scene, "owner", scene_root)
-		ur.add_undo_method(scene_root, "remove_child", imported_scene)
+		ur.add_undo_method(parent, "remove_child", imported_scene)
 		ur.add_undo_reference(imported_scene)
 		frame_nodes[fr.get_named_attribute_value_safe("frame_id")] = imported_scene
-	var animation_player := AnimationPlayer.new()
-	animation_player.add_animation_library("", AnimationLibrary.new())
-	animation_player.get_animation_library("").add_animation(animation_name, animation)
-	animation_player.autoplay = "grease_pencil_import"
-	ur.add_do_method(scene_root, 'add_child', animation_player, true)
-	ur.add_do_property(animation_player, 'owner', scene_root)
-	ur.add_undo_method(scene_root, 'remove_child', animation_player)
-	ur.add_undo_reference(animation_player)
+
+	var animation_player := scene_root.get_children().filter(func(n):
+		return n is AnimationPlayer and n.has_meta(BLENDER_ANIM_ROOT_META_NAME)).pop_back()
+	if not is_instance_valid(animation_player):
+		animation_player = AnimationPlayer.new()
+		animation_player.set_meta(BLENDER_ANIM_ROOT_META_NAME, true)
+		animation_player.add_animation_library("", AnimationLibrary.new())
+		animation_player.autoplay = animation_name
+		animation_player.deterministic = true
+		ur.add_do_method(scene_root, 'add_child', animation_player, true)
+		ur.add_do_property(animation_player, 'owner', scene_root)
+		ur.add_undo_method(scene_root, 'remove_child', animation_player)
+		ur.add_undo_reference(animation_player)
+	var anim_lib : AnimationLibrary = animation_player.get_animation_library("")
+	ur.add_do_method(anim_lib, 'add_animation', animation_name, animation)
+	ur.add_undo_method(anim_lib, 'remove_animation', animation_name)
 	ur.commit_action()
 
 	var anim_frames := anim_node.get_named_attribute_value_safe("values").replace("#", "").split(";", false)

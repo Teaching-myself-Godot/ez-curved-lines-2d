@@ -11,13 +11,11 @@ func _on_confirm_check_box_toggled(toggled_on: bool) -> void:
 	if toggled_on:
 		%ImportingNormallyLabel.hide()
 		%BottomCenterOriginCheckBox.show()
-		%ReuseExistingAnimationPlayerCheckBox.show()
 		%AnimationNameContainer.show()
 		%ResourceDirContainer.show()
 	else:
 		%ImportingNormallyLabel.show()
 		%BottomCenterOriginCheckBox.hide()
-		%ReuseExistingAnimationPlayerCheckBox.hide()
 		%AnimationNameContainer.hide()
 		%ResourceDirContainer.hide()
 
