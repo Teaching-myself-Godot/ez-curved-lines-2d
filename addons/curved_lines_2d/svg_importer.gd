@@ -83,7 +83,9 @@ func log_message(msg : String, log_level : LogLevel = LogLevel.INFO) -> void:
 	log_consumer.call(msg, log_level)
 
 
-func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nodes : Array[Node] = []) -> Node:
+func load_svg(file_path : String, scene_root : Node = Node2D.new(),
+		selected_nodes : Array[Node] = [],
+		grease_pencil_popup_dialog : PopupPanel = null) -> Node:
 	var xml_parser = XMLParser.new()
 	var parent_node := scene_root if selected_nodes.is_empty() else selected_nodes[0]
 	if not scene_root is Node:
@@ -97,76 +99,77 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 	var svg_xml_node : SVGXMLElement = parse_svg_xml_file(xml_parser)
 
 	if GreasePencilAnimationImporter.detect_animation(svg_xml_node):
-		log_message("TODO: ask for grease pencil animation import gimmick", LogLevel.WARN)
-		# TODO: move logic to util class GreasePencilAnimationImporter
-		import_as_svs = false
-		var ur := undo_redo
-		undo_redo = get_runtime_handler()
-		ur.create_action("Import Grease Pencil SVG animation")
-		var blender_frames := GreasePencilAnimationImporter.get_blender_frames_xml(svg_xml_node)
-		var animation := Animation.new()
-		var use_node := svg_xml_node.find_by_id("blender_animation")
-		var anim_node := svg_xml_node.find_by_node_name("animate")
-		var start_frame_id := use_node.get_named_attribute_value_safe("href").replace("#", "").strip_edges()
-		animation.length = float(anim_node.get_named_attribute_value_safe("dur"))
-		if anim_node.get_named_attribute_value_safe("repeatCount") == "indefinite":
-			animation.loop_mode = Animation.LOOP_LINEAR
-		var frame_nodes : Dictionary[String, Node2D] = {}
-		var frame_dir_name := file_path.get_file().replace(".svg", "").to_snake_case()
-		DirAccess.make_dir_absolute("res://" + frame_dir_name)
+		grease_pencil_popup_dialog.popup()
+		await grease_pencil_popup_dialog.choice_confirmed
+		if grease_pencil_popup_dialog.is_confirmed():
+			# TODO: move logic to util class GreasePencilAnimationImporter
+			import_as_svs = false
+			var ur := undo_redo
+			undo_redo = get_runtime_handler()
+			ur.create_action("Import Grease Pencil SVG animation")
+			var blender_frames := GreasePencilAnimationImporter.get_blender_frames_xml(svg_xml_node)
+			var animation := Animation.new()
+			var use_node := svg_xml_node.find_by_id("blender_animation")
+			var anim_node := svg_xml_node.find_by_node_name("animate")
+			var start_frame_id := use_node.get_named_attribute_value_safe("href").replace("#", "").strip_edges()
+			animation.length = float(anim_node.get_named_attribute_value_safe("dur"))
+			if anim_node.get_named_attribute_value_safe("repeatCount") == "indefinite":
+				animation.loop_mode = Animation.LOOP_LINEAR
+			var frame_nodes : Dictionary[String, Node2D] = {}
+			var frame_dir_name := file_path.get_file().replace(".svg", "").to_snake_case()
+			DirAccess.make_dir_absolute("res://" + frame_dir_name)
 
-		for fr in blender_frames:
-			var src := await parse_svg_xml_to_nodes(fr,
-					"BlenderFrame",
-					scene_root, parent_node, [],
-					false
-			)
-			var cpy := src.duplicate()
-			cpy.owner = null
-			for node in cpy.get_children():
-				_recursive_set_owner_direct(node, cpy)
-			var scene := PackedScene.new()
-			scene.pack(cpy)
-			ResourceSaver.save(scene, "res://%s/%s.scn" % [
-				frame_dir_name,
-				fr.get_named_attribute_value_safe("frame_id")], ResourceSaver.FLAG_NONE)
-			scene_root.remove_child(src)
-			src.free()
-			scene = ResourceLoader.load("res://%s/%s.scn" % [
-				frame_dir_name,
-				fr.get_named_attribute_value_safe("frame_id")])
-			var imported_scene : Node2D = scene.instantiate()
-			if fr.get_named_attribute_value_safe("frame_id") != start_frame_id:
-				imported_scene.visible = false
-			ur.add_do_method(scene_root, "add_child", imported_scene, true)
-			ur.add_do_property(imported_scene, "owner", scene_root)
-			ur.add_undo_method(scene_root, "remove_child", imported_scene)
-			ur.add_undo_reference(imported_scene)
-			frame_nodes[fr.get_named_attribute_value_safe("frame_id")] = imported_scene
-		var animation_player := AnimationPlayer.new()
-		animation_player.add_animation_library("", AnimationLibrary.new())
-		animation_player.get_animation_library("").add_animation("grease_pencil_import", animation)
-		animation_player.autoplay = "grease_pencil_import"
-		ur.add_do_method(scene_root, 'add_child', animation_player, true)
-		ur.add_do_property(animation_player, 'owner', scene_root)
-		ur.add_undo_method(scene_root, 'remove_child', animation_player)
-		ur.add_undo_reference(animation_player)
-		ur.commit_action()
+			for fr in blender_frames:
+				var src := await parse_svg_xml_to_nodes(fr,
+						"BlenderFrame",
+						scene_root, parent_node, [],
+						false
+				)
+				var cpy := src.duplicate()
+				cpy.owner = null
+				for node in cpy.get_children():
+					_recursive_set_owner_direct(node, cpy)
+				var scene := PackedScene.new()
+				scene.pack(cpy)
+				ResourceSaver.save(scene, "res://%s/%s.scn" % [
+					frame_dir_name,
+					fr.get_named_attribute_value_safe("frame_id")], ResourceSaver.FLAG_NONE)
+				scene_root.remove_child(src)
+				src.free()
+				scene = ResourceLoader.load("res://%s/%s.scn" % [
+					frame_dir_name,
+					fr.get_named_attribute_value_safe("frame_id")])
+				var imported_scene : Node2D = scene.instantiate()
+				if fr.get_named_attribute_value_safe("frame_id") != start_frame_id:
+					imported_scene.visible = false
+				ur.add_do_method(scene_root, "add_child", imported_scene, true)
+				ur.add_do_property(imported_scene, "owner", scene_root)
+				ur.add_undo_method(scene_root, "remove_child", imported_scene)
+				ur.add_undo_reference(imported_scene)
+				frame_nodes[fr.get_named_attribute_value_safe("frame_id")] = imported_scene
+			var animation_player := AnimationPlayer.new()
+			animation_player.add_animation_library("", AnimationLibrary.new())
+			animation_player.get_animation_library("").add_animation("grease_pencil_import", animation)
+			animation_player.autoplay = "grease_pencil_import"
+			ur.add_do_method(scene_root, 'add_child', animation_player, true)
+			ur.add_do_property(animation_player, 'owner', scene_root)
+			ur.add_undo_method(scene_root, 'remove_child', animation_player)
+			ur.add_undo_reference(animation_player)
+			ur.commit_action()
 
-		var anim_frames := anim_node.get_named_attribute_value_safe("values").replace("#", "").split(";", false)
-		var step := animation.length / float(anim_frames.size())
-		var pos := 0.0
-		for frame_id in anim_frames:
-			var node := frame_nodes[frame_id]
-			var track_idx := add_anim_track_if_absent(animation, "%s:%s" % [
-					scene_root.get_path_to(node), "visible"])
-			animation.track_insert_key(track_idx, 0.0, frame_id == start_frame_id)
-			if frame_id != start_frame_id:
-				animation.track_insert_key(track_idx, pos, true)
-			animation.track_insert_key(track_idx, pos + step, false)
-			pos += step
-		return scene_root
-
+			var anim_frames := anim_node.get_named_attribute_value_safe("values").replace("#", "").split(";", false)
+			var step := animation.length / float(anim_frames.size())
+			var pos := 0.0
+			for frame_id in anim_frames:
+				var node := frame_nodes[frame_id]
+				var track_idx := add_anim_track_if_absent(animation, "%s:%s" % [
+						scene_root.get_path_to(node), "visible"])
+				animation.track_insert_key(track_idx, 0.0, frame_id == start_frame_id)
+				if frame_id != start_frame_id:
+					animation.track_insert_key(track_idx, pos, true)
+				animation.track_insert_key(track_idx, pos + step, false)
+				pos += step
+			return scene_root
 
 	var result := await parse_svg_xml_to_nodes(svg_xml_node,
 			file_path.get_file().replace(".svg", "").to_pascal_case(),

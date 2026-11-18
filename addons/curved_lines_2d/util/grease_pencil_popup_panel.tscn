@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://bdrba5b7edss3"]
+
+[ext_resource type="Script" uid="uid://com207kco64qq" path="res://addons/curved_lines_2d/util/grease_pencil_popup_panel.gd" id="1_sd3sc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2iwgp"]
+bg_color = Color(0.155, 0.25274998, 0.5, 1)
+expand_margin_left = 4.0
+expand_margin_top = 4.0
+expand_margin_right = 4.0
+expand_margin_bottom = 4.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_dsrm6"]
+font_size = 18
+
+[node name="PopupPanel" type="PopupPanel" unique_id=633591545]
+oversampling_override = 1.0
+initial_position = 4
+size = Vector2i(447, 200)
+script = ExtResource("1_sd3sc")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=33807166]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 443.0
+offset_bottom = 196.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer" unique_id=1060762385]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_2iwgp")
+
+[node name="Label" type="Label" parent="VBoxContainer/PanelContainer" unique_id=929421352]
+layout_mode = 2
+mouse_filter = 0
+text = "Grease Pencil SVG Animation Detected!"
+label_settings = SubResource("LabelSettings_dsrm6")
+horizontal_alignment = 1
+
+[node name="ConfirmCheckBox" type="CheckBox" parent="VBoxContainer" unique_id=825262578]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Import this image as a flipbook animation"
+
+[node name="BottomCenterOriginCheckBox" type="CheckBox" parent="VBoxContainer" unique_id=21032568]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Set image origin to bottom center"
+
+[node name="ReuseExistingAnimationPlayerCheckBox" type="CheckBox" parent="VBoxContainer" unique_id=794309115]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Reuse any pre-existing animation player in this scene"
+
+[node name="ImportingNormallyLabel" type="Label" parent="VBoxContainer" unique_id=827677070]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+text = "- Importing Normally -"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OkButton" type="Button" parent="VBoxContainer" unique_id=1089822773]
+layout_mode = 2
+size_flags_vertical = 10
+size_flags_stretch_ratio = 0.2
+text = "Ok"
+
+[connection signal="gui_input" from="VBoxContainer/PanelContainer/Label" to="." method="_on_panel_container_gui_input"]
+[connection signal="toggled" from="VBoxContainer/ConfirmCheckBox" to="." method="_on_confirm_check_box_toggled"]
+[connection signal="pressed" from="VBoxContainer/OkButton" to="." method="_on_ok_button_pressed"]
