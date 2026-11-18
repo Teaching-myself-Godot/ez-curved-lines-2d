@@ -1,12 +1,18 @@
 # Changelog
 
-## 3.7.0 - Dedicated Width Curve Tool
+## 3.7.2 - Dedicated Width Curve Tool
 
 ### Added
 
 - Dedicated width curve (line thickness) editing tool in create tab (shortcut: Shift + W when in edit mode)
 - Width curve handles can now move perpendicular to the line being edited
 - Start and end point of a looped curve now match thickness (best effort)
+
+### Changed
+
+- The Import SVG at runtime example script now uses "Keep File" mode for its example svg
+- This is also better documented in the readme now
+- Bugfix: prevent error message when missing a Line2D upon closing the curve
 
 ### Removed
 
