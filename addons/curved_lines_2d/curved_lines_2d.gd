@@ -249,6 +249,7 @@ func _enter_tree():
 		scalable_vector_shapes_2d_dock.create_tab.ellipse_created.connect(_on_ellipse_created)
 	if not scalable_vector_shapes_2d_dock.create_tab.rect_created.is_connected(_on_rect_created):
 		scalable_vector_shapes_2d_dock.create_tab.rect_created.connect(_on_rect_created)
+	scalable_vector_shapes_2d_dock.create_tab.on_hotkey_released_to_draw_mode.connect(_on_hotkey_released_to_draw_mode)
 	scalable_vector_shapes_2d_dock.create_tab.flip_horizontal.connect(_flip_svs_horizontal)
 	scalable_vector_shapes_2d_dock.create_tab.flip_vertical.connect(_flip_svs_vertical)
 	scene_changed.connect(_on_scene_changed)
@@ -391,6 +392,11 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 		svs_edit_buttons.set_default_mode()
 		svs_edit_buttons.hide()
 		scalable_vector_shapes_2d_dock.create_tab.disable_all_editors()
+
+
+func _on_hotkey_released_to_draw_mode() -> void:
+	if _last_drawn_svs and is_instance_valid(_last_drawn_svs):
+		select_node_reversibly(_last_drawn_svs.get_parent())
 
 
 func _on_svs_edit_mode_changed(new_mode : SVSEditMode) -> void:
