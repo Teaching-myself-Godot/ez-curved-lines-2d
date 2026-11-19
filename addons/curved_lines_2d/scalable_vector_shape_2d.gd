@@ -1040,11 +1040,17 @@ func _clip_path_to_local(clip_path : ScalableVectorShape2D) -> PackedVector2Arra
 	return self.global_transform.affine_inverse() * pts
 
 
-func get_center() -> Vector2:
+func get_center(selected_points := []) -> Vector2:
 	if shape_type != ShapeType.PATH:
 		return offset
-	return get_bounding_rect().get_center()
-
+	if selected_points.is_empty():
+		return get_bounding_rect().get_center()
+	else:
+		var sel_p := PackedVector2Array()
+		for i in curve.point_count:
+			if i in selected_points:
+				sel_p.append(curve.get_point_position(i))
+		return Geometry2DUtil.get_polygon_center(sel_p)
 
 ## Calculate and return the bounding rect in local space
 func get_bounding_rect(as_global := false) -> Rect2:
