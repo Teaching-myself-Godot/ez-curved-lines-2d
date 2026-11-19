@@ -5,7 +5,7 @@ signal shape_created(curve : Curve2D, scene_root : Node2D, node_name : String)
 signal rect_created(scene_root : Node2D)
 signal ellipse_created(scene_root : Node2D)
 signal set_shape_preview(curve : Curve2D)
-
+signal on_hotkey_released_to_draw_mode()
 signal mode_changed(new_mode : CurvedLines2D.SVSEditMode)
 signal flip_horizontal()
 signal flip_vertical()
@@ -983,7 +983,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			record_shortcut_hold_time(KEY_Q)
 
 	if event is InputEventKey and not event.pressed and _key_hold_start_time > -1 and event.keycode == _held_keycode:
+
 		if Time.get_ticks_msec() - _key_hold_start_time > 500 and _last_pressed_button and not _last_pressed_button.disabled:
+			if _last_pressed_button in [%BrushButton, %PencilButton, %RectangleButton, %CircleButton] and CurvedLines2D._get_keep_drawing_behavior() == CurvedLines2D.KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
+				on_hotkey_released_to_draw_mode.emit()
 			_last_pressed_button.button_pressed = true
 		_key_hold_start_time = -1
 		_last_pressed_button = null

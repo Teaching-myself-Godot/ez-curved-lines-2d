@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.8.0 - Hold Toggling
+## 3.8.1 - Hold Toggling
 
 ### Added
 
