@@ -1,0 +1,130 @@
+[gd_scene format=3 uid="uid://bdrba5b7edss3"]
+
+[ext_resource type="Script" uid="uid://com207kco64qq" path="res://addons/curved_lines_2d/util/grease_pencil_import_form.gd" id="1_jk084"]
+[ext_resource type="Texture2D" uid="uid://ulvclg7al5cu" path="res://addons/curved_lines_2d/IconAtlas.svg" id="2_o5q0w"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2iwgp"]
+bg_color = Color(0.155, 0.25274998, 0.5, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_dsrm6"]
+font_size = 18
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dsrm6"]
+atlas = ExtResource("2_o5q0w")
+region = Rect2(48, 160, 16, 16)
+
+[node name="GreasePencilImportForm" type="VBoxContainer" unique_id=33807166]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 379.0
+offset_bottom = 313.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_jk084")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1060762385]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_2iwgp")
+
+[node name="Label" type="Label" parent="PanelContainer" unique_id=929421352]
+layout_mode = 2
+mouse_filter = 0
+text = "Grease Pencil SVG Animation Detected!"
+label_settings = SubResource("LabelSettings_dsrm6")
+horizontal_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1373691338]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=329313770]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="ConfirmCheckBox" type="CheckBox" parent="MarginContainer/VBoxContainer" unique_id=825262578]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Import this image as a flipbook animation"
+
+[node name="ResourceDirContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=117759018]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/ResourceDirContainer" unique_id=1445861146]
+layout_mode = 2
+
+[node name="ResourceDirLabel" type="Label" parent="MarginContainer/VBoxContainer/ResourceDirContainer/HBoxContainer" unique_id=441452089]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Resource Directory for Imported Scenes"
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/ResourceDirContainer/HBoxContainer" unique_id=666586237]
+layout_mode = 2
+tooltip_text = "The frames of the animation are stored in separate packed scenes. Pick a directory to store them in here."
+texture = SubResource("AtlasTexture_dsrm6")
+stretch_mode = 3
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer/ResourceDirContainer" unique_id=15067174]
+layout_mode = 2
+
+[node name="ResourceDirLineEdit" type="LineEdit" parent="MarginContainer/VBoxContainer/ResourceDirContainer/HBoxContainer2" unique_id=1708669146]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Resource Dir"
+
+[node name="DirPickerButton" type="Button" parent="MarginContainer/VBoxContainer/ResourceDirContainer/HBoxContainer2" unique_id=983721297]
+layout_mode = 2
+text = "Pick a Directory"
+
+[node name="AnimationNameContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1929692902]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="AnimationNameLabel" type="Label" parent="MarginContainer/VBoxContainer/AnimationNameContainer" unique_id=759148339]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Animation Name:"
+
+[node name="AnimationNameLineEdit" type="LineEdit" parent="MarginContainer/VBoxContainer/AnimationNameContainer" unique_id=835317485]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_vertical = 6
+placeholder_text = "Animation Name"
+
+[node name="ImportingNormallyLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=827677070]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+text = "- Importing Normally -"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OkButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1089822773]
+layout_mode = 2
+size_flags_vertical = 10
+size_flags_stretch_ratio = 0.2
+text = "Ok"
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer" unique_id=1748586342]
+layout_mode = 2
+
+[node name="DirPickerEditorFileDialog" type="EditorFileDialog" parent="." unique_id=394626767]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = "Open a Directory"
+position = Vector2i(0, 36)
+file_mode = 2
+
+[connection signal="toggled" from="MarginContainer/VBoxContainer/ConfirmCheckBox" to="." method="_on_confirm_check_box_toggled"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ResourceDirContainer/HBoxContainer2/DirPickerButton" to="." method="_on_dir_picker_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/OkButton" to="." method="_on_ok_button_pressed"]
+[connection signal="dir_selected" from="DirPickerEditorFileDialog" to="." method="_on_dir_picker_editor_file_dialog_dir_selected"]

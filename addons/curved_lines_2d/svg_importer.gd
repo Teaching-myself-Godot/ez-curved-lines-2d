@@ -85,7 +85,7 @@ func log_message(msg : String, log_level : LogLevel = LogLevel.INFO) -> void:
 
 func load_svg(file_path : String, scene_root : Node = Node2D.new(),
 		selected_nodes : Array[Node] = [],
-		grease_pencil_popup_dialog : PopupPanel = null) -> Node:
+		grease_pencil_import_form : Control = null) -> Node:
 	var xml_parser = XMLParser.new()
 	var parent_node := scene_root if selected_nodes.is_empty() else selected_nodes[0]
 	if not scene_root is Node:
@@ -101,17 +101,18 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(),
 	if GreasePencilAnimationImporter.detect_animation(svg_xml_node):
 		var proposed_anim_name : String = (Array(file_path.split("/", false))
 				.pop_back().replacen(".svg", "").to_snake_case())
-		grease_pencil_popup_dialog.set_animation_name(proposed_anim_name)
-		grease_pencil_popup_dialog.set_resource_dir(
+		grease_pencil_import_form.set_animation_name(proposed_anim_name)
+		grease_pencil_import_form.set_resource_dir(
 			"res://%s" % proposed_anim_name
 		)
-		grease_pencil_popup_dialog.popup()
-		await grease_pencil_popup_dialog.choice_confirmed
-		if grease_pencil_popup_dialog.is_confirmed():
+		grease_pencil_import_form.show()
+		await grease_pencil_import_form.choice_confirmed
+		grease_pencil_import_form.hide()
+		if grease_pencil_import_form.is_confirmed():
 			return await GreasePencilAnimationImporter.import_blender_svg(
 				self, svg_xml_node, file_path,
-				grease_pencil_popup_dialog.get_resource_dir(),
-				grease_pencil_popup_dialog.get_animation_name()
+				grease_pencil_import_form.get_resource_dir(),
+				grease_pencil_import_form.get_animation_name()
 			)
 
 	var result := await parse_svg_xml_to_nodes(svg_xml_node,

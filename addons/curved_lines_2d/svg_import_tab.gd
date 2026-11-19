@@ -10,11 +10,9 @@ var debug_label_settings : LabelSettings = null
 var collision_object_type := ScalableVectorShape2D.CollisionObjectType.NONE
 var import_as_svs := true
 var import_file_dialog : EditorFileDialog = null
-var grease_pencil_popup_scene : PopupPanel = null
 var warning_dialog : AcceptDialog = null
 var undo_redo : EditorUndoRedoManager = null
 var LinkButtonScene : PackedScene = null
-var GreasePencilPopupScene : PackedScene = null
 
 func _enter_tree() -> void:
 	error_label_settings = preload("res://addons/curved_lines_2d/error_label_settings.tres")
@@ -22,16 +20,12 @@ func _enter_tree() -> void:
 	info_label_settings = preload("res://addons/curved_lines_2d/info_label_settings.tres")
 	debug_label_settings = preload("res://addons/curved_lines_2d/debug_label_settings.tres")
 	LinkButtonScene = preload("res://addons/curved_lines_2d/link_button_with_copy_hint.tscn")
-	GreasePencilPopupScene = preload("res://addons/curved_lines_2d/util/grease_pencil_popup_panel.tscn")
 	%LogScrollContainer.get_v_scroll_bar().connect("changed", func(): %LogScrollContainer.scroll_vertical = %LogScrollContainer.get_v_scroll_bar().max_value )
 	import_file_dialog = EditorFileDialog.new()
 	import_file_dialog.add_filter("*.svg", "SVG image")
 	import_file_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
 	import_file_dialog.file_selected.connect(_load_svg)
 	EditorInterface.get_base_control().add_child(import_file_dialog)
-	grease_pencil_popup_scene = GreasePencilPopupScene.instantiate()
-	grease_pencil_popup_scene.hide()
-	EditorInterface.get_base_control().add_child(grease_pencil_popup_scene)
 	undo_redo = EditorInterface.get_editor_undo_redo()
 
 
@@ -105,7 +99,7 @@ func _load_svg(svg_file_path : String) -> void:
 
 	var svg_root := await svg_importer.load_svg(svg_file_path,
 		EditorInterface.get_edited_scene_root(),
-		selection, grease_pencil_popup_scene
+		selection, %GreasePencilImportForm
 	)
 
 	log_message("Import finished.\n\nThe SVG importer is still incrementally improving (slowly).")
