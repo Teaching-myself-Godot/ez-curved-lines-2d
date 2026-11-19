@@ -199,8 +199,8 @@ On the left side of the panel are a set of tool buttons, which are enabled the m
 
 In the next section all these tools are described in more detail:
 
-- [Create Ellipse](#the-create-ellipse-tool)
-- [Create Rectangle](#the-create-rectangle-tool)
+- [Create Ellipse](#the-create-ellipse-tool) (O)
+- [Create Rectangle](#the-create-rectangle-tool) (Shift+R)
 - [Selection Tool](#manipulating-shapes) (Q), used for manipulating shapes
 - [Unform Translate](#moving-translating-all-the-points) (Z), which moves the points of the shape without moving the entire godot node
 - [Uniform Rotate](#rotating-all-the-points) (X), which rotates only the points and not the node
@@ -359,6 +359,8 @@ And as a so called 'primitive shape', which is easier to resize and, in the case
 
 ## The Create Ellipse Tool
 
+Can be activated using shortcut O.
+
 While this tool is active, you can create ellipses anywhere on top of a selected `Node2D` or `Control` node by clicking and dragging.
 
 You can also create the ellipse using the form fields and button in the bottom dock.
@@ -375,6 +377,7 @@ When `Keep creating` is checked, you can continue adding more ellipses after add
 
 ## The Create Rectangle Tool
 
+Can be activated using shortcut Shift + R.
 
 While this tool is active, you can create rectangles anywhere on top of a selected `Node2D` or `Control` node by clicking and dragging.
 
@@ -638,6 +641,8 @@ Aside from the curve editing features there is a growing list of common shortcut
 |--------|----------|-------|
 | Edit Points                                                    | Q                                                   | Design apps usually use hotkey (A), but (Q) goes well with Godot's Select Mode default hotkey.                                                                                                    |
 | Move, Rotate, Scale All Points                                 | Z, X, C                                             | In most design apps, the move, rotate, shear, and  scale points features are combined into one Move Tool with the hotkey (V). Depending on what handle is dragged activates the desired function. |
+| Rectangle Tool                                                 | Shift + R                                           |                                                                                                                                                                                                   |
+| Ellipse Tool                                                   | O                                                   |                                                                                                                                                                                                   |
 | Pencil Tool                                                    | Shift + N                                           |                                                                                                                                                                                                   |
 | Polygon Brush Tool                                             | Shift + B                                           |                                                                                                                                                                                                   |
 | Knife Tool                                                     | K                                                   |                                                                                                                                                                                                   |

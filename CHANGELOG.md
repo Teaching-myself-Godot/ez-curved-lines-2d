@@ -1,5 +1,29 @@
 # Changelog
 
+## 3.8.1 - Hold Toggling
+
+### Added
+
+- After holding the shortcut of an edit mode for 500ms it automatically toggles back to the previous mode you were using.
+- Shortcut 'Shift + R' to open the rectangle tool
+- Shortcut 'O' (not zero, but "letter o") to open the ellipse tool
+- Dragging the temporary pivot with mouse when using rotate and resize tool
+
+
+### Changed
+
+- Selecting by click is easier: topmost shape in draw order is now selected by default
+- Small performance improvent when selecting via click
+- Temporary pivot is only shown for rotate and resize tool
+- Rotate and Resize tool share the same temporary pivot
+- Using shift while rotating and resizing now uses the origin of the shape, while the temporary pivot is the default
+- When multiple points are selected, the temporary automatically centers inside the subselection by default
+- When using one of the drawing tools (rectangle, ellipse, brush, and pencil), the other tools are not disabled, even while the selected shape being drawn on is not a ScalableVectorShape2D
+- When "keep drawing" / "create another" is checked in the draw modes, upon toggling to another mode, the last drawn shape is now selected automatically
+- Width curve tool is always enabled, even if the shape has no Line2D stroke. A hint message is shown next to the cursor in stead
+- Regression bugfix: the "Create empty shape" button is reconnected so it works again
+
+
 ## 3.7.2 - Dedicated Width Curve Tool
 
 ### Added
