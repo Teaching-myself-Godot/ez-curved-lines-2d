@@ -1,6 +1,7 @@
 class_name GreasePencilAnimationImporter extends Object
 
 const BLENDER_ANIM_ROOT_META_NAME := "blender_anim_root"
+const BLENDER_ANIM_NODE_META_NAME := "blender_anim_node"
 
 static func detect_animation(xml : SVGXMLElement) -> bool:
 	if not Engine.is_editor_hint():
@@ -44,13 +45,9 @@ static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXML
 		animation_name = "grease_pencil_import"
 	var scene_root := EditorInterface.get_edited_scene_root()
 	var blender_frames := GreasePencilAnimationImporter.get_blender_frames_xml(svg_xml_node)
-	var animation := Animation.new()
 	var use_node := svg_xml_node.find_by_id("blender_animation")
 	var anim_node := svg_xml_node.find_by_node_name("animate")
 	var start_frame_id := use_node.get_named_attribute_value_safe("href").replace("#", "").strip_edges()
-	animation.length = float(anim_node.get_named_attribute_value_safe("dur"))
-	if anim_node.get_named_attribute_value_safe("repeatCount") == "indefinite":
-		animation.loop_mode = Animation.LOOP_LINEAR
 	var frame_nodes : Dictionary[String, Node2D] = {}
 	svg_importer.import_as_svs = false
 
@@ -60,22 +57,30 @@ static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXML
 			push_error(error)
 		EditorInterface.get_resource_filesystem().scan()
 
-	var parent : Node2D = scene_root.get_children().filter(
+	var ur := NonCommittalUndoRedo.new()
+	ur.create_action("Import Grease Pencil SVG animation")
+	var anim_root : Node2D = scene_root.get_children().filter(
 			func(n): return n is Node2D and n.has_meta(BLENDER_ANIM_ROOT_META_NAME)
 		).pop_back()
-	var ur := EditorInterface.get_editor_undo_redo()
-	if not is_instance_valid(parent):
-		ur.create_action("Create root for Grease Pencil SVG Import")
-		parent = Node2D.new()
-		parent.set_meta(BLENDER_ANIM_ROOT_META_NAME, true)
-		ur.add_do_method(scene_root, 'add_child', parent, true)
-		ur.add_do_property(parent, 'owner', scene_root)
-		ur.add_undo_method(scene_root, 'remove_child', parent)
-		ur.add_undo_reference(parent)
-		ur.commit_action(true)
+	if not is_instance_valid(anim_root):
+		anim_root = Node2D.new()
+		anim_root.name = "AnimationRoot"
+		anim_root.set_meta(BLENDER_ANIM_ROOT_META_NAME, true)
+		ur.add_do_method(scene_root, 'add_child', anim_root, true)
+		ur.add_do_property(anim_root, 'owner', scene_root)
+		ur.add_undo_method(scene_root, 'remove_child', anim_root)
+		ur.add_undo_reference(anim_root)
+	var parent := Node2D.new()
+	parent.name = animation_name.to_pascal_case()
+	parent.set_meta(BLENDER_ANIM_NODE_META_NAME, true)
+	ur.add_do_method(anim_root, 'add_child', parent, true)
+	ur.add_do_property(parent, 'owner', scene_root)
+	ur.add_undo_method(anim_root, 'remove_child', parent)
+	ur.add_undo_reference(parent)
 
-	ur.create_action("Import Grease Pencil SVG animation")
+	var cnt : int = 0
 	for fr in blender_frames:
+		cnt += 1
 		var src := await svg_importer.parse_svg_xml_to_nodes(fr,
 				animation_name.to_pascal_case(),
 				scene_root, scene_root, [],
@@ -83,6 +88,7 @@ static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXML
 		)
 		var cpy := src.duplicate()
 		cpy.owner = null
+		cpy.name = "BlenderFrame%d" % cnt
 		for node in cpy.get_children():
 			svg_importer._recursive_set_owner_direct(node, cpy)
 		var scene := PackedScene.new()
@@ -116,7 +122,12 @@ static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXML
 		ur.add_do_property(animation_player, 'owner', scene_root)
 		ur.add_undo_method(scene_root, 'remove_child', animation_player)
 		ur.add_undo_reference(animation_player)
+
 	var anim_lib : AnimationLibrary = animation_player.get_animation_library("")
+	var animation := Animation.new()
+	animation.length = float(anim_node.get_named_attribute_value_safe("dur"))
+	if anim_node.get_named_attribute_value_safe("repeatCount") == "indefinite":
+		animation.loop_mode = Animation.LOOP_LINEAR
 	ur.add_do_method(anim_lib, 'add_animation', animation_name, animation)
 	ur.add_undo_method(anim_lib, 'remove_animation', animation_name)
 	ur.commit_action()
@@ -124,6 +135,11 @@ static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXML
 	var anim_frames := anim_node.get_named_attribute_value_safe("values").replace("#", "").split(";", false)
 	var step := animation.length / float(anim_frames.size())
 	var pos := 0.0
+
+	var track_index := add_anim_track_if_absent(animation, "%s:%s" % [
+			scene_root.get_path_to(parent), "visible"])
+	animation.track_insert_key(track_index, 0.0, true)
+
 	for frame_id in anim_frames:
 		var node := frame_nodes[frame_id]
 		var track_idx := add_anim_track_if_absent(animation, "%s:%s" % [
@@ -132,7 +148,12 @@ static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXML
 		if frame_id != start_frame_id:
 			animation.track_insert_key(track_idx, pos, true)
 		animation.track_insert_key(track_idx, pos + step, false)
+		if frame_id == start_frame_id:
+			animation.track_insert_key(track_idx, animation.length - step, false)
+		else:
+			animation.track_insert_key(track_idx, pos - step, false)
 		pos += step
+
 	return animation_player
 
 
@@ -143,3 +164,65 @@ static func add_anim_track_if_absent(animation : Animation, node_path : NodePath
 		animation.track_set_path(t_idx, node_path)
 		animation.value_track_set_update_mode(t_idx, Animation.UPDATE_DISCRETE)
 	return t_idx
+
+
+
+
+class NonCommittalUndoRedo extends SVGImporter.UndoRedoHandler:
+	var undo_redo : EditorUndoRedoManager
+	func _init() -> void:
+		undo_redo = EditorInterface.get_editor_undo_redo()
+
+	func add_do_method(thing : Object, meth : String,
+				arg0 : Variant = null, arg1 : Variant = null, arg2 : Variant = null, arg3 : Variant = null) -> void:
+		super.add_do_method(thing, meth, arg0, arg1, arg2, arg3)
+		if arg3 != null:
+			undo_redo.add_do_method(thing, meth, arg0, arg1, arg2, arg3)
+		elif arg2 != null:
+			undo_redo.add_do_method(thing, meth, arg0, arg1, arg2)
+		elif arg1 != null:
+			undo_redo.add_do_method(thing, meth, arg0, arg1)
+		elif arg0 != null:
+			undo_redo.add_do_method(thing, meth, arg0)
+		else:
+			undo_redo.add_do_method(thing, meth)
+
+
+	func add_undo_method(thing : Object, meth : String,
+				arg0 : Variant = null, arg1 : Variant = null, arg2 : Variant = null, arg3 : Variant = null) -> void:
+		if arg3 != null:
+			undo_redo.add_undo_method(thing, meth, arg0, arg1, arg2, arg3)
+		elif arg2 != null:
+			undo_redo.add_undo_method(thing, meth, arg0, arg1, arg2)
+		elif arg1 != null:
+			undo_redo.add_undo_method(thing, meth, arg0, arg1)
+		elif arg0 != null:
+			undo_redo.add_undo_method(thing, meth, arg0)
+		else:
+			undo_redo.add_undo_method(thing, meth)
+
+
+	func add_do_property(thing : Object, prop_name : String, prop_value : Variant) -> void:
+		thing[prop_name] = prop_value
+		undo_redo.add_do_property(thing, prop_name, prop_value)
+
+
+	func add_undo_property(thing : Object, prop_name : String, prop_value : Variant) -> void:
+		undo_redo.add_undo_property(thing, prop_name, prop_value)
+
+
+	func add_do_reference(thing : Object) -> void:
+		undo_redo.add_do_reference(thing)
+
+
+	func create_action(action_name : String) -> void:
+		undo_redo.create_action(action_name)
+
+
+	func commit_action(_apply : bool = false) -> void:
+		undo_redo.commit_action(false)
+
+
+	func add_undo_reference(thing : Object) -> void:
+		undo_redo.add_undo_reference(thing)
+
