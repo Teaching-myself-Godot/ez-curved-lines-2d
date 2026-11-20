@@ -75,8 +75,6 @@ static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXML
 	parent.set_meta(BLENDER_ANIM_NODE_META_NAME, true)
 	ur.add_do_method(anim_root, 'add_child', parent, true)
 	ur.add_do_property(parent, 'owner', scene_root)
-	ur.add_undo_method(anim_root, 'remove_child', parent)
-	ur.add_undo_reference(parent)
 
 	var cnt : int = 0
 	for fr in blender_frames:
@@ -117,20 +115,24 @@ static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXML
 		animation_player.set_meta(BLENDER_ANIM_ROOT_META_NAME, true)
 		animation_player.add_animation_library("", AnimationLibrary.new())
 		animation_player.autoplay = animation_name
-		animation_player.deterministic = true
 		ur.add_do_method(scene_root, 'add_child', animation_player, true)
 		ur.add_do_property(animation_player, 'owner', scene_root)
 		ur.add_undo_method(scene_root, 'remove_child', animation_player)
 		ur.add_undo_reference(animation_player)
 
 	var anim_lib : AnimationLibrary = animation_player.get_animation_library("")
+	for anim in anim_lib.get_animation_list():
+		var animation := anim_lib.get_animation(anim)
+		var t_idx := add_anim_track_if_absent(animation, "%s:%s" % [
+			scene_root.get_path_to(parent), "visible"])
+		ur.add_do_method(animation, 'track_insert_key', t_idx, 0.0, false)
+		ur.add_undo_method(animation, 'track_remove_key', t_idx, 0)
 	var animation := Animation.new()
 	animation.length = float(anim_node.get_named_attribute_value_safe("dur"))
 	if anim_node.get_named_attribute_value_safe("repeatCount") == "indefinite":
 		animation.loop_mode = Animation.LOOP_LINEAR
 	ur.add_do_method(anim_lib, 'add_animation', animation_name, animation)
 	ur.add_undo_method(anim_lib, 'remove_animation', animation_name)
-	ur.commit_action()
 
 	var anim_frames := anim_node.get_named_attribute_value_safe("values").replace("#", "").split(";", false)
 	var step := animation.length / float(anim_frames.size())
@@ -153,7 +155,17 @@ static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXML
 		else:
 			animation.track_insert_key(track_idx, pos - step, false)
 		pos += step
-
+	for n in anim_root.get_children().filter(func(n): return n.has_meta(BLENDER_ANIM_NODE_META_NAME)):
+		if n == parent:
+			continue
+		var t_idx := add_anim_track_if_absent(animation, "%s:%s" % [
+				scene_root.get_path_to(n), "visible"])
+		ur.add_do_method(animation, 'track_insert_key', t_idx, 0.0, false)
+		ur.add_undo_method(animation, 'track_remove_key', t_idx, 0)
+	ur.add_undo_method(anim_root, 'remove_child', parent)
+	ur.add_undo_reference(parent)
+	ur.commit_action()
+	animation_player.current_animation = animation_name
 	return animation_player
 
 
