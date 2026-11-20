@@ -2,6 +2,7 @@
 extends Control
 
 signal choice_confirmed()
+signal opened()
 
 var _dragging := false
 var _drag_start := Vector2.ZERO
@@ -21,6 +22,11 @@ func _on_confirm_check_box_toggled(toggled_on: bool) -> void:
 func _on_ok_button_pressed() -> void:
 	choice_confirmed.emit()
 	hide()
+
+func show_form() -> void:
+	opened.emit()
+	show()
+
 
 
 func get_animation_name() -> String:

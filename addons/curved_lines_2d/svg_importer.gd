@@ -105,16 +105,15 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(),
 		grease_pencil_import_form.set_resource_dir(
 			"res://%s" % proposed_anim_name
 		)
-		grease_pencil_import_form.show()
+		grease_pencil_import_form.show_form()
 		await grease_pencil_import_form.choice_confirmed
-		grease_pencil_import_form.hide()
 		if grease_pencil_import_form.is_confirmed():
-			return await GreasePencilAnimationImporter.import_blender_svg(
+			var result := await GreasePencilAnimationImporter.import_blender_svg(
 				self, svg_xml_node, file_path,
 				grease_pencil_import_form.get_resource_dir(),
 				grease_pencil_import_form.get_animation_name()
 			)
-
+			return result
 	var result := await parse_svg_xml_to_nodes(svg_xml_node,
 			file_path.get_file().replace(".svg", "").to_pascal_case(),
 			scene_root, parent_node, selected_nodes,

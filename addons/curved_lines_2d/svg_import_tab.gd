@@ -135,3 +135,11 @@ func _on_keep_drawable_path_2d_node_check_box_toggled(toggled_on: bool) -> void:
 
 func _on_open_file_dialog_button_pressed() -> void:
 	import_file_dialog.popup_file_dialog()
+
+
+func _on_grease_pencil_import_form_choice_confirmed() -> void:
+	%LogScrollContainer.show()
+
+
+func _on_grease_pencil_import_form_opened() -> void:
+	%LogScrollContainer.hide()
