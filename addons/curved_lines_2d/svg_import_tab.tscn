@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://hkpwhymy8yax" path="res://addons/curved_lines_2d/Group.svg" id="3_v8p2q"]
 [ext_resource type="LabelSettings" uid="uid://bspk1rkq1cmhx" path="res://addons/curved_lines_2d/info_label_settings.tres" id="4_4seqe"]
 [ext_resource type="PackedScene" uid="uid://cmoxkoulpd7so" path="res://addons/curved_lines_2d/link_button_with_copy_hint.tscn" id="5_wpk81"]
+[ext_resource type="PackedScene" uid="uid://bdrba5b7edss3" path="res://addons/curved_lines_2d/util/grease_pencil_import_form.tscn" id="7_tqnmm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rycm0"]
 content_margin_left = 10.0
@@ -147,6 +148,13 @@ Right click to copy this link"
 text = "Ask Questions on Discord"
 uri = "https://discord.com/invite/CDdkVvT2Ff"
 
+[node name="GreasePencilImportForm" parent="VBoxContainer" unique_id=33807166 instance=ExtResource("7_tqnmm")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 1
+size_flags_vertical = 3
+
 [node name="LogScrollContainer" type="ScrollContainer" parent="VBoxContainer" unique_id=270661504]
 unique_name_in_owner = true
 layout_mode = 2
@@ -179,3 +187,5 @@ uri = "https://youtu.be/5PIVoQcm8QE"
 [connection signal="toggled" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/KeepDrawablePath2DNodeCheckBox" to="." method="_on_keep_drawable_path_2d_node_check_box_toggled"]
 [connection signal="type_selected" from="VBoxContainer2/PanelContainer/VBoxContainer2/SettingsScrollContainer/VBoxContainer/CollisionObjectTypeOptionButton" to="." method="_on_collision_object_type_option_button_type_selected"]
 [connection signal="pressed" from="VBoxContainer2/PanelContainer/VBoxContainer2/OpenFileDialogButton" to="." method="_on_open_file_dialog_button_pressed"]
+[connection signal="choice_confirmed" from="VBoxContainer/GreasePencilImportForm" to="." method="_on_grease_pencil_import_form_choice_confirmed"]
+[connection signal="opened" from="VBoxContainer/GreasePencilImportForm" to="." method="_on_grease_pencil_import_form_opened"]

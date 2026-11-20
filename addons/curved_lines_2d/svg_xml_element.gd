@@ -12,7 +12,9 @@ var attributes : Dictionary[String, String]
 var children : Array[SVGXMLElement]
 var parent : SVGXMLElement
 
-func _init(xml_parser : XMLParser, with_parent : SVGXMLElement = null):
+func _init(xml_parser : XMLParser = null, with_parent : SVGXMLElement = null):
+	if not xml_parser:
+		return
 	name = xml_parser.get_node_name()
 	for i in xml_parser.get_attribute_count():
 		attributes[xml_parser.get_attribute_name(i)] = xml_parser.get_attribute_value(i)
@@ -59,6 +61,22 @@ func find_child_by_id(id : String, n := self) -> SVGXMLElement:
 			return result
 	return null
 
+
+func find_by_node_name(nm : String) -> SVGXMLElement:
+	var ancestor = self
+	while ancestor.parent != null:
+		ancestor = ancestor.parent
+	return find_child_by_node_name(nm, ancestor)
+
+
+func find_child_by_node_name(nm : String, n := self) -> SVGXMLElement:
+	if n.name == nm:
+		return n
+	for nn in n.children:
+		var result := find_child_by_node_name(nm, nn)
+		if result:
+			return result
+	return null
 
 
 func is_empty() -> bool:

@@ -8,6 +8,7 @@ const PLC_EXP = "__PLC_EXP__"
 const SVG_ROOT_META_NAME := "svg_root"
 const SVG_STYLE_META_NAME := "svg_style"
 const IS_SVG_GROUP_META_NAME := "is_svg_group"
+const SVG_GROUP_ID_META_NAME := "svg_group_id"
 const INKSCAPE_TRANSFORM_CENTER_META_NAME := "transform_center"
 const INKSCAPE_TRANSFORM_CENTER_X_ATTR_NAME := "inkscape:transform-center-x"
 const INKSCAPE_TRANSFORM_CENTER_Y_ATTR_NAME := "inkscape:transform-center-y"
@@ -82,7 +83,9 @@ func log_message(msg : String, log_level : LogLevel = LogLevel.INFO) -> void:
 	log_consumer.call(msg, log_level)
 
 
-func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nodes : Array[Node] = []) -> Node:
+func load_svg(file_path : String, scene_root : Node = Node2D.new(),
+		selected_nodes : Array[Node] = [],
+		grease_pencil_import_form : Control = null) -> Node:
 	var xml_parser = XMLParser.new()
 	var parent_node := scene_root if selected_nodes.is_empty() else selected_nodes[0]
 	if not scene_root is Node:
@@ -93,15 +96,50 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 		return
 
 	log_message("Importing SVG file: %s" % file_path, LogLevel.INFO)
+	var svg_xml_node : SVGXMLElement = parse_svg_xml_file(xml_parser)
+
+	if GreasePencilAnimationImporter.detect_animation(svg_xml_node):
+		var proposed_anim_name : String = (Array(file_path.split("/", false))
+				.pop_back().replacen(".svg", "").to_snake_case())
+		grease_pencil_import_form.set_animation_name(proposed_anim_name)
+		grease_pencil_import_form.set_resource_dir(
+			"res://%s" % proposed_anim_name
+		)
+		grease_pencil_import_form.show_form()
+		await grease_pencil_import_form.choice_confirmed
+		if grease_pencil_import_form.is_confirmed():
+			var result := await GreasePencilAnimationImporter.import_blender_svg(
+				self, svg_xml_node, file_path,
+				grease_pencil_import_form.get_resource_dir(),
+				grease_pencil_import_form.get_animation_name()
+			)
+			return result
+	var result := await parse_svg_xml_to_nodes(svg_xml_node,
+			file_path.get_file().replace(".svg", "").to_pascal_case(),
+			scene_root, parent_node, selected_nodes,
+	)
+	return result
+
+
+func add_anim_track_if_absent(animation : Animation, node_path : NodePath) -> int:
+	var t_idx := animation.find_track(node_path, Animation.TrackType.TYPE_VALUE)
+	if t_idx < 0:
+		t_idx = animation.add_track(Animation.TrackType.TYPE_VALUE)
+		animation.track_set_path(t_idx, node_path)
+		animation.value_track_set_update_mode(t_idx, Animation.UPDATE_DISCRETE)
+	return t_idx
+
+
+func parse_svg_xml_to_nodes(svg_xml_node : SVGXMLElement, rt_name : String,
+		scene_root : Node, parent_node : Node, selected_nodes : Array[Node],
+		return_parent := true) -> Node2D:
 	var svg_root := Node2D.new()
-	svg_root.name = file_path.get_file().replace(".svg", "").to_pascal_case()
+	svg_root.name = rt_name
 	svg_root.set_meta(SVG_ROOT_META_NAME, true)
 	_managed_add_child_and_set_owner(parent_node, svg_root, scene_root)
 
 	var current_node := svg_root
 	var svg_gradients : Array[Dictionary] = []
-
-	var svg_xml_node : SVGXMLElement = parse_svg_xml_file(xml_parser)
 
 	process_svg_xml_tree(svg_xml_node, scene_root, svg_root, current_node, svg_gradients)
 	# global_position will be used to recenter Node2D so await at least one draw operation
@@ -123,7 +161,10 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 		_recursive_set_owner(final_svg_root, scene_root, scene_root)
 		undo_redo.add_undo_method(parent_node, "remove_child", final_svg_root)
 		undo_redo.commit_action(false)
-		return parent_node
+		if return_parent:
+			return parent_node
+		else:
+			return final_svg_root
 
 	undo_redo.create_action("Import SVG file as Nodes: %s" % svg_root.name)
 	undo_redo.add_do_method(parent_node, "add_child", svg_root, true)
@@ -131,6 +172,12 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(), selected_nod
 	undo_redo.add_undo_method(parent_node, "remove_child", svg_root)
 	undo_redo.commit_action(false)
 	return svg_root
+
+
+func _recursive_set_owner_direct(node : Node, new_owner : Node) -> void:
+	node.owner = new_owner
+	for child in node.get_children():
+		_recursive_set_owner_direct(child, new_owner)
 
 
 func _recursive_set_owner(node : Node, new_owner : Node, root : Node) -> void:
@@ -301,9 +348,10 @@ func process_svg_xml_tree(xml_data : SVGXMLElement, scene_root : Node, svg_root 
 			pass
 		_: log_message("⚠️ Skipping  unsupported node: <%s>" % xml_data.name, LogLevel.DEBUG)
 
-	var defs := xml_data.children.filter(func(ch): return ch.name == "defs")
-	var clip_paths := xml_data.children.filter(func(ch): return ch.name == "clipPath")
-	var remainder := xml_data.children.filter(func(ch): return ch.name != "defs" and ch.name != "clipPath")
+	var children = xml_data.children if xml_data.children else []
+	var defs := children.filter(func(ch): return ch.name == "defs")
+	var clip_paths := children.filter(func(ch): return ch.name == "clipPath")
+	var remainder := children.filter(func(ch): return ch.name != "defs" and ch.name != "clipPath")
 	for ch in defs + clip_paths + remainder:
 		process_svg_xml_tree(ch, scene_root, svg_root, current_node, svg_gradients)
 
@@ -356,6 +404,8 @@ func process_group(element:SVGXMLElement, current_node : Node2D, scene_root : No
 	var style := element.get_merged_styles(css_classes, log_message)
 	new_group.set_meta(SVG_STYLE_META_NAME, style)
 	new_group.set_meta(IS_SVG_GROUP_META_NAME, true)
+	if element.get_named_attribute_value_safe("id"):
+		new_group.set_meta(SVG_GROUP_ID_META_NAME, element.get_named_attribute_value_safe("id"))
 	store_inkscape_transform_center_md(element, new_group)
 	if style.has("display") and style['display'] == "none":
 		new_group.visible = false
@@ -760,7 +810,7 @@ func create_path2d(path_name: String, parent: Node, curve: Curve2D, arcs: Array[
 
 
 func _apply_clip_path_by_href(href : String, svs : ScalableVectorShape2D, scene_root : Node):
-	var clip_path_node := scene_root.find_child(href.replace("url(#", "").replace(")", "").replace(".", "_"))
+	var clip_path_node := scene_root.find_child(href.replace("url(", "").replace(")", "").replace("#", "").replace(".", "_"))
 	var new_clip_paths : Array[ScalableVectorShape2D] = []
 	for clip_path : ScalableVectorShape2D in clip_path_node.find_children("*", "ScalableVectorShape2D"):
 		clip_path.use_interect_when_clipping = true
