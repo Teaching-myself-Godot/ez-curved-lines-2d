@@ -91,13 +91,15 @@ static func import_blender_svg(svg_importer : SVGImporter, svg_xml_node : SVGXML
 			svg_importer._recursive_set_owner_direct(node, cpy)
 		var scene := PackedScene.new()
 		scene.pack(cpy)
-		ResourceSaver.save(scene, "%s/%s.scn" % [
+		ResourceSaver.save(scene, "%s/%s.%s.scn" % [
 			resource_dir.rstrip("/"),
+			animation_name.to_snake_case(),
 			fr.get_named_attribute_value_safe("frame_id")], ResourceSaver.FLAG_NONE)
 		scene_root.remove_child(src)
 		src.free()
-		scene = ResourceLoader.load("%s/%s.scn" % [
+		scene = ResourceLoader.load("%s/%s.%s.scn" % [
 			resource_dir.rstrip("/"),
+			animation_name.to_snake_case(),
 			fr.get_named_attribute_value_safe("frame_id")])
 		var imported_scene : Node2D = scene.instantiate()
 		if fr.get_named_attribute_value_safe("frame_id") != start_frame_id:
