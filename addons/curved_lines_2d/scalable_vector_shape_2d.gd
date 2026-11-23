@@ -540,7 +540,20 @@ func _process(_delta: float) -> void:
 		_update_curve()
 		should_update_curve = false
 		if Engine.is_editor_hint():
+			queue_redraw()
 			update_configuration_warnings()
+
+
+func _draw() -> void:
+	if not Engine.is_editor_hint():
+		return
+	if (not is_instance_valid(polygon) and not
+		is_instance_valid(poly_stroke) and not
+		is_instance_valid(line) and not
+		is_instance_valid(collision_object) and not
+		is_instance_valid(collision_polygon)):
+		draw_polyline(tessellate(), Color(shape_hint_color.r, shape_hint_color.g, shape_hint_color.b, 0.5), 1.0 / global_scale.x, false)
+
 
 
 func _on_clip_paths_changed():

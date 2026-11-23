@@ -306,6 +306,7 @@ func enable_svs_editors() -> void:
 	%RectangleButton.disabled = false
 	%SetPivotButton.disabled = false
 	%WidthCurveButton.disabled = false
+	%GeometryToolButton.disabled = false
 
 
 func set_default_mode() -> void:
