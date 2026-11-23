@@ -328,19 +328,20 @@ func disable_svs_editors(disable_all := false) -> void:
 	_disable_and_toggle_off(%SetPivotButton)
 	_disable_and_toggle_off(%KnifeButton)
 	_disable_and_toggle_off(%WidthCurveButton)
-	_disable_and_toggle_off(%GeometryToolButton)
 	if disable_all:
 		_disable_and_toggle_off(%BrushButton)
 		_disable_and_toggle_off(%MergeButton)
 		_disable_and_toggle_off(%PencilButton)
 		_disable_and_toggle_off(%CircleButton)
 		_disable_and_toggle_off(%RectangleButton)
+		_disable_and_toggle_off(%GeometryToolButton)
 	else:
 		%BrushButton.disabled = false
 		%MergeButton.disabled = false
 		%PencilButton.disabled = false
 		%CircleButton.disabled = false
 		%RectangleButton.disabled = false
+		%GeometryToolButton.disabled = false
 
 
 func disable_all_editors() -> void:
