@@ -121,15 +121,6 @@ func load_svg(file_path : String, scene_root : Node = Node2D.new(),
 	return result
 
 
-func add_anim_track_if_absent(animation : Animation, node_path : NodePath) -> int:
-	var t_idx := animation.find_track(node_path, Animation.TrackType.TYPE_VALUE)
-	if t_idx < 0:
-		t_idx = animation.add_track(Animation.TrackType.TYPE_VALUE)
-		animation.track_set_path(t_idx, node_path)
-		animation.value_track_set_update_mode(t_idx, Animation.UPDATE_DISCRETE)
-	return t_idx
-
-
 func parse_svg_xml_to_nodes(svg_xml_node : SVGXMLElement, rt_name : String,
 		scene_root : Node, parent_node : Node, selected_nodes : Array[Node],
 		return_parent := true) -> Node2D:
