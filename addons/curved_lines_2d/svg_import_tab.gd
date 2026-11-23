@@ -99,7 +99,7 @@ func _load_svg(svg_file_path : String) -> void:
 
 	var svg_root := await svg_importer.load_svg(svg_file_path,
 		EditorInterface.get_edited_scene_root(),
-		selection
+		selection, %GreasePencilImportForm
 	)
 
 	log_message("Import finished.\n\nThe SVG importer is still incrementally improving (slowly).")
@@ -135,3 +135,11 @@ func _on_keep_drawable_path_2d_node_check_box_toggled(toggled_on: bool) -> void:
 
 func _on_open_file_dialog_button_pressed() -> void:
 	import_file_dialog.popup_file_dialog()
+
+
+func _on_grease_pencil_import_form_choice_confirmed() -> void:
+	%LogScrollContainer.show()
+
+
+func _on_grease_pencil_import_form_opened() -> void:
+	%LogScrollContainer.hide()
