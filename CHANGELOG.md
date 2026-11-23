@@ -1,12 +1,51 @@
 # Changelog
 
-## 3.7.0 - Dedicated Width Curve Tool
+## 3.9.0 - Grease Pencil Flipbook
+
+I would love to get some test results for the Grease Pencil SVG importer! Read more about how it works in the [github readme manual](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#importing-grease-pencils-animated-svg-files)
+
+### Added
+
+- Import SVG File tab: when an animated SVG file from the Grease Pencil SVG exporter is recognized you get the choice to import it as a flip-book style, autoscaling, animation
+- `ScalableVectorShape2D.auto_fix_self_intersections`: a setting that uses merge_polygons to fix self-intersections in Polygon2D (common with grease pencil strokes)
+
+## 3.8.1 - Hold Toggling
+
+### Added
+
+- After holding the shortcut of an edit mode for 500ms it automatically toggles back to the previous mode you were using.
+- Shortcut 'Shift + R' to open the rectangle tool
+- Shortcut 'O' (not zero, but "letter o") to open the ellipse tool
+- Dragging the temporary pivot with mouse when using rotate and resize tool
+
+
+### Changed
+
+- Selecting by click is easier: topmost shape in draw order is now selected by default
+- Small performance improvent when selecting via click
+- Temporary pivot is only shown for rotate and resize tool
+- Rotate and Resize tool share the same temporary pivot
+- Using shift while rotating and resizing now uses the origin of the shape, while the temporary pivot is the default
+- When multiple points are selected, the temporary automatically centers inside the subselection by default
+- When using one of the drawing tools (rectangle, ellipse, brush, and pencil), the other tools are not disabled, even while the selected shape being drawn on is not a ScalableVectorShape2D
+- When "keep drawing" / "create another" is checked in the draw modes, upon toggling to another mode, the last drawn shape is now selected automatically
+- Width curve tool is always enabled, even if the shape has no Line2D stroke. A hint message is shown next to the cursor in stead
+- Regression bugfix: the "Create empty shape" button is reconnected so it works again
+
+
+## 3.7.2 - Dedicated Width Curve Tool
 
 ### Added
 
 - Dedicated width curve (line thickness) editing tool in create tab (shortcut: Shift + W when in edit mode)
 - Width curve handles can now move perpendicular to the line being edited
 - Start and end point of a looped curve now match thickness (best effort)
+
+### Changed
+
+- The Import SVG at runtime example script now uses "Keep File" mode for its example svg
+- This is also better documented in the readme now
+- Bugfix: prevent error message when missing a Line2D upon closing the curve
 
 ### Removed
 

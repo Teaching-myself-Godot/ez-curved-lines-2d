@@ -1,0 +1,526 @@
+[gd_scene load_steps=25 format=3 uid="uid://c7cfqopy0hlbx"]
+
+[ext_resource type="Script" uid="uid://bqafsuxlpswfv" path="res://car.gd" id="1_06lh1"]
+[ext_resource type="Script" uid="uid://de3jpss66xjfh" path="res://addons/curved_lines_2d/scalable_vector_shape_2d.gd" id="1_k61xc"]
+[ext_resource type="Script" uid="uid://dlbv4pit17dnu" path="res://addons/curved_lines_2d/scalable_arc.gd" id="2_06lh1"]
+[ext_resource type="Script" uid="uid://dl1t88tthmwts" path="res://addons/curved_lines_2d/scalable_arc_list.gd" id="3_td361"]
+[ext_resource type="Texture2D" uid="uid://dqds4ig8cclh3" path="res://addons/curved_lines_2d/LumAlpha8.tex" id="5_td361"]
+[ext_resource type="Script" uid="uid://dn747ucen5o8b" path="res://addons/curved_lines_2d/svs_vertex_merge_2d.gd" id="6_72krn"]
+
+[sub_resource type="Curve2D" id="Curve2D_72krn"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 126.167, -42.6667, -69, 123, -82.8333, -34.6667, 40.8817, -93.1391, 117.5, 134, 121.312, -8.75063, 0, 0, 12.3548, 11.9173, 24, -21, -24, 21, -84, 38, 0, 0, 0, 0, -69, 123)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_v0hk8"]
+resource_local_to_scene = true
+script = ExtResource("3_td361")
+arcs = Array[ExtResource("2_06lh1")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_mjudg"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -5, 56.5, 0, 0, -4.66667, -51, 132, 60, 88.6667, -7.66667, 0, 0, -14.6452, 29.9173, 0, 0, 0, 0, -5, 56.5)
+}
+point_count = 4
+
+[sub_resource type="Resource" id="Resource_lpol0"]
+resource_local_to_scene = true
+script = ExtResource("3_td361")
+arcs = Array[ExtResource("2_06lh1")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_u5era"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 27.615, 50, 0, 27.615, 0, -27.615, 0, 0, 50, 0, 27.615, 0, -27.615, -50, 0, -27.615, 0, 27.615, 0, 0, -50, 0, -27.615, 0, 0, 50, 0)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_uhg3g"]
+resource_local_to_scene = true
+script = ExtResource("3_td361")
+arcs = Array[ExtResource("2_06lh1")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_tssvf"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 27.615, 50, 0, 27.615, 0, -27.615, 0, 0, 50, 0, 27.615, 0, -27.615, -50, 0, -27.615, 0, 27.615, 0, 0, -50, 0, -27.615, 0, 0, 50, 0)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_2s4w4"]
+resource_local_to_scene = true
+script = ExtResource("3_td361")
+arcs = Array[ExtResource("2_06lh1")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_lpol0"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -50, -50, 0, 0, 0, 0, 50, -50, 0, 0, 0, 0, 157.355, 180.917, 0, 0, 0, 0, -50, 50, 0, 0, 0, 0, -50, -50)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_u5era"]
+resource_local_to_scene = true
+script = ExtResource("3_td361")
+arcs = Array[ExtResource("2_06lh1")]([])
+
+[sub_resource type="Animation" id="Animation_td361"]
+resource_name = "new_animation"
+length = 1.1
+loop_mode = 2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body:curve:point_0/position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-69, 123), Vector2(-157, 129)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Body:curve:point_0/out")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(126.167, -42.6667), Vector2(126.167, -42.6667)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Body:curve:point_1/position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(117.5, 134), Vector2(129, 182)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Body:curve:point_1/in")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-82.8333, -34.6667), Vector2(-82.8333, -34.6667)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Body:curve:point_1/out")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(40.8817, -93.1391), Vector2(34.2151, -142.639)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Body:curve:point_2/position")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-1.64522, -2.08271), Vector2(-113, -63)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Body:curve:point_2/in")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(121.312, -8.75063), Vector2(121.312, -19.9173)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Body:curve:point_2/out")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 0)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Body:curve:point_3/position")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-84, 38), Vector2(-84, 38)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Body:curve:point_3/in")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(24, -21), Vector2(24, -21)]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("Body:curve:point_3/out")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-24, 21), Vector2(-24, 21)]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("Body:curve:point_4/position")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-69, 123), Vector2(-157, 129)]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("Body:curve:point_4/in")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 0)]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("Body/Rectangle:rotation")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0, 0.98, 1.1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 1.03109]
+}
+
+[sub_resource type="Animation" id="Animation_72krn"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body/Rectangle:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_72krn"]
+_data = {
+&"RESET": SubResource("Animation_72krn"),
+&"new_animation": SubResource("Animation_td361")
+}
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_06lh1"]
+
+[sub_resource type="Curve2D" id="Curve2D_v0hk8"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -36.8333, 52.75, 8, 23.25, 16.1667, 31.5833, -14.7803, -18.2727, -71.5, 55, -10.2803, 15.7273, -2.1167, -38.7833, -78.25, 4, -43.2834, -24.6167, 0, 0, -16.5, -17.25)
+}
+point_count = 4
+
+[sub_resource type="Resource" id="Resource_mjudg"]
+resource_local_to_scene = true
+script = ExtResource("3_td361")
+arcs = Array[ExtResource("2_06lh1")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_td361"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -72.4446, 48.4444, 38.6667, 37.6667, -145.333, 7.55555, 37.8333, -5.5, 148, 99, 22.8333, 52.8333, -67.8334, -17.3889, 170.5, 11.5, 20.0555, -34.8334, 0, 0, 38.6667, 37.6667)
+}
+point_count = 4
+
+[sub_resource type="Resource" id="Resource_72krn"]
+resource_local_to_scene = true
+script = ExtResource("3_td361")
+arcs = Array[ExtResource("2_06lh1")]([])
+
+[node name="Car" type="Node2D"]
+script = ExtResource("1_06lh1")
+metadata/_custom_type_script = "uid://de3jpss66xjfh"
+metadata/_edit_horizontal_guides_ = [-248.0]
+
+[node name="Body" type="Node2D" parent="." node_paths=PackedStringArray("polygon", "line", "glue_map", "clip_paths")]
+position = Vector2(-89, -129)
+script = ExtResource("1_k61xc")
+polygon = NodePath("Fill")
+stroke_color = Color(0, 0, 0, 1)
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_72krn")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_v0hk8")
+glue_map = {
+0: NodePath("BackWheel"),
+1: NodePath("FrontWheel")
+}
+clip_paths = [NodePath("BackWheel"), NodePath("FrontWheel")]
+
+[node name="Fill" type="Polygon2D" parent="Body"]
+polygon = PackedVector2Array(70.6092, 11.9529, 85.7112, 14.2034, 98.7309, 17.5951, 104.474, 19.7231, 109.714, 22.1414, 114.455, 24.8515, 118.705, 27.8553, 122.468, 31.1542, 125.75, 34.75, 128.557, 38.6443, 130.894, 42.8388, 132.768, 47.335, 134.184, 52.1347, 135.147, 57.2395, 135.663, 62.651, 135.738, 68.371, 135.378, 74.401, 133.487, 86.6572, 132.369, 86.2478, 127.577, 85.0158, 122.612, 84.2581, 117.5, 84, 112.388, 84.2581, 107.423, 85.0158, 102.631, 86.2478, 98.0374, 87.9291, 93.6667, 90.0346, 89.5442, 92.539, 85.695, 95.4173, 82.1444, 98.6444, 78.9173, 102.195, 76.039, 106.044, 73.5346, 110.167, 72.504, 112.306, 71.1563, 111.656, 55.3556, 104.035, 47.9957, 101.348, 40.5001, 99.5, 32.4967, 98.5581, 23.6134, 98.5898, 13.4782, 99.6626, 1.71889, 101.844, -21.1086, 108.673, -21.2478, 108.131, -22.9291, 103.537, -25.0346, 99.1667, -27.539, 95.0442, -30.4173, 91.195, -33.6444, 87.6444, -37.195, 84.4173, -41.0442, 81.539, -45.1667, 79.0346, -49.5374, 76.9291, -54.1312, 75.2478, -58.923, 74.0158, -63.8877, 73.2581, -69, 73, -74.1123, 73.2581, -79.077, 74.0158, -83.8688, 75.2478, -88.4626, 76.9291, -88.8916, 77.1358, -89.8008, 74.123, -91.1558, 67.0198, -91.7813, 60.1406, -91.7737, 56.8341, -91.5278, 53.6423, -91.0248, 50.585, -90.2461, 47.6816, -89.1729, 44.9519, -87.7866, 42.4153, -86.9702, 41.2256, -86.0685, 40.0915, -85.0792, 39.0155, -84, 38, -81.612, 36.0776, -78.9628, 34.2464, -72.9691, 30.85, -58.8196, 25.0652, -26.8226, 17.0836, 12.3548, 11.9173, 53.3793, 10.8305)
+polygons = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81]]
+metadata/_edit_lock_ = true
+
+[node name="Path" type="Node2D" parent="Body" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(27, -18)
+script = ExtResource("1_k61xc")
+polygon = NodePath("Fill")
+stroke_color = Color(0, 0, 0, 1)
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_mjudg")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_lpol0")
+
+[node name="Fill" type="Polygon2D" parent="Body/Path"]
+color = Color(0, 0.976563, 1, 1)
+polygon = PackedVector2Array(-5, 56.5, 132, 60, 131.42, 55.4049, 130.558, 51.1734, 129.416, 47.2928, 127.996, 43.7504, 126.3, 40.5332, 124.332, 37.6286, 122.093, 35.0237, 119.587, 32.7058, 116.814, 30.6621, 113.779, 28.8797, 110.483, 27.346, 106.929, 26.048, 99.055, 24.1084, 90.1774, 22.9586, 69.4886, 22.6192, -14.6452, 29.9173)
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Path"]
+texture_filter = 6
+points = PackedVector2Array(-5, 56.5, 132, 60, 131.42, 55.4049, 130.558, 51.1734, 129.416, 47.2928, 127.996, 43.7504, 126.3, 40.5332, 124.332, 37.6286, 122.093, 35.0237, 119.587, 32.7058, 116.814, 30.6621, 113.779, 28.8797, 110.483, 27.346, 106.929, 26.048, 99.055, 24.1084, 90.1774, 22.9586, 69.4886, 22.6192, -14.6452, 29.9173)
+closed = true
+default_color = Color(0, 0, 0, 1)
+texture = ExtResource("5_td361")
+texture_mode = 1
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="FrontWheel" type="Node2D" parent="Body" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(117.5, 134)
+script = ExtResource("1_k61xc")
+polygon = NodePath("Fill")
+stroke_color = Color(0, 0, 0, 1)
+stroke_width = 20.0
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_u5era")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_uhg3g")
+shape_type = 2
+rx = 50.0
+ry = 50.0
+
+[node name="Fill" type="Polygon2D" parent="Body/FrontWheel"]
+color = Color(0.721569, 0.721569, 0.721569, 0.796078)
+polygon = PackedVector2Array(50, 0, 49.7419, 5.11234, 48.9842, 10.077, 47.7522, 14.8688, 46.0709, 19.4626, 43.9654, 23.8333, 41.461, 27.9558, 38.5827, 31.805, 35.3556, 35.3556, 31.805, 38.5827, 27.9558, 41.461, 23.8333, 43.9654, 19.4626, 46.0709, 14.8688, 47.7522, 10.077, 48.9842, 5.11234, 49.7419, 0, 50, -5.11234, 49.7419, -10.077, 48.9842, -14.8688, 47.7522, -19.4626, 46.0709, -23.8333, 43.9654, -27.9558, 41.461, -31.805, 38.5827, -35.3556, 35.3556, -38.5827, 31.805, -41.461, 27.9558, -43.9654, 23.8333, -46.0709, 19.4626, -47.7522, 14.8688, -48.9842, 10.077, -49.7419, 5.11234, -50, 0, -49.7419, -5.11234, -48.9842, -10.077, -47.7522, -14.8688, -46.0709, -19.4626, -43.9654, -23.8333, -41.461, -27.9558, -38.5827, -31.805, -35.3556, -35.3556, -31.805, -38.5827, -27.9558, -41.461, -23.8333, -43.9654, -19.4626, -46.0709, -14.8688, -47.7522, -10.077, -48.9842, -5.11234, -49.7419, 0, -50, 5.11234, -49.7419, 10.077, -48.9842, 14.8688, -47.7522, 19.4626, -46.0709, 23.8333, -43.9654, 27.9558, -41.461, 31.805, -38.5827, 35.3556, -35.3556, 38.5827, -31.805, 41.461, -27.9558, 43.9654, -23.8333, 46.0709, -19.4626, 47.7522, -14.8688, 48.9842, -10.077, 49.7419, -5.11234)
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/FrontWheel"]
+texture_filter = 6
+points = PackedVector2Array(50, 0, 49.7419, 5.11234, 48.9842, 10.077, 47.7522, 14.8688, 46.0709, 19.4626, 43.9654, 23.8333, 41.461, 27.9558, 38.5827, 31.805, 35.3556, 35.3556, 31.805, 38.5827, 27.9558, 41.461, 23.8333, 43.9654, 19.4626, 46.0709, 14.8688, 47.7522, 10.077, 48.9842, 5.11234, 49.7419, 0, 50, -5.11234, 49.7419, -10.077, 48.9842, -14.8688, 47.7522, -19.4626, 46.0709, -23.8333, 43.9654, -27.9558, 41.461, -31.805, 38.5827, -35.3556, 35.3556, -38.5827, 31.805, -41.461, 27.9558, -43.9654, 23.8333, -46.0709, 19.4626, -47.7522, 14.8688, -48.9842, 10.077, -49.7419, 5.11234, -50, 0, -49.7419, -5.11234, -48.9842, -10.077, -47.7522, -14.8688, -46.0709, -19.4626, -43.9654, -23.8333, -41.461, -27.9558, -38.5827, -31.805, -35.3556, -35.3556, -31.805, -38.5827, -27.9558, -41.461, -23.8333, -43.9654, -19.4626, -46.0709, -14.8688, -47.7522, -10.077, -48.9842, -5.11234, -49.7419, 0, -50, 5.11234, -49.7419, 10.077, -48.9842, 14.8688, -47.7522, 19.4626, -46.0709, 23.8333, -43.9654, 27.9558, -41.461, 31.805, -38.5827, 35.3556, -35.3556, 38.5827, -31.805, 41.461, -27.9558, 43.9654, -23.8333, 46.0709, -19.4626, 47.7522, -14.8688, 48.9842, -10.077, 49.7419, -5.11234)
+closed = true
+width = 20.0
+default_color = Color(0, 0, 0, 1)
+texture = ExtResource("5_td361")
+texture_mode = 1
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="BackWheel" type="Node2D" parent="Body" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(-69, 123)
+script = ExtResource("1_k61xc")
+polygon = NodePath("Fill")
+stroke_color = Color(0, 0, 0, 1)
+stroke_width = 20.0
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_tssvf")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_2s4w4")
+shape_type = 2
+rx = 50.0
+ry = 50.0
+
+[node name="Fill" type="Polygon2D" parent="Body/BackWheel"]
+color = Color(0.721569, 0.721569, 0.721569, 0.796078)
+polygon = PackedVector2Array(50, 0, 49.7419, 5.11234, 48.9842, 10.077, 47.7522, 14.8688, 46.0709, 19.4626, 43.9654, 23.8333, 41.461, 27.9558, 38.5827, 31.805, 35.3556, 35.3556, 31.805, 38.5827, 27.9558, 41.461, 23.8333, 43.9654, 19.4626, 46.0709, 14.8688, 47.7522, 10.077, 48.9842, 5.11234, 49.7419, 0, 50, -5.11234, 49.7419, -10.077, 48.9842, -14.8688, 47.7522, -19.4626, 46.0709, -23.8333, 43.9654, -27.9558, 41.461, -31.805, 38.5827, -35.3556, 35.3556, -38.5827, 31.805, -41.461, 27.9558, -43.9654, 23.8333, -46.0709, 19.4626, -47.7522, 14.8688, -48.9842, 10.077, -49.7419, 5.11234, -50, 0, -49.7419, -5.11234, -48.9842, -10.077, -47.7522, -14.8688, -46.0709, -19.4626, -43.9654, -23.8333, -41.461, -27.9558, -38.5827, -31.805, -35.3556, -35.3556, -31.805, -38.5827, -27.9558, -41.461, -23.8333, -43.9654, -19.4626, -46.0709, -14.8688, -47.7522, -10.077, -48.9842, -5.11234, -49.7419, 0, -50, 5.11234, -49.7419, 10.077, -48.9842, 14.8688, -47.7522, 19.4626, -46.0709, 23.8333, -43.9654, 27.9558, -41.461, 31.805, -38.5827, 35.3556, -35.3556, 38.5827, -31.805, 41.461, -27.9558, 43.9654, -23.8333, 46.0709, -19.4626, 47.7522, -14.8688, 48.9842, -10.077, 49.7419, -5.11234)
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/BackWheel"]
+texture_filter = 6
+points = PackedVector2Array(50, 0, 49.7419, 5.11234, 48.9842, 10.077, 47.7522, 14.8688, 46.0709, 19.4626, 43.9654, 23.8333, 41.461, 27.9558, 38.5827, 31.805, 35.3556, 35.3556, 31.805, 38.5827, 27.9558, 41.461, 23.8333, 43.9654, 19.4626, 46.0709, 14.8688, 47.7522, 10.077, 48.9842, 5.11234, 49.7419, 0, 50, -5.11234, 49.7419, -10.077, 48.9842, -14.8688, 47.7522, -19.4626, 46.0709, -23.8333, 43.9654, -27.9558, 41.461, -31.805, 38.5827, -35.3556, 35.3556, -38.5827, 31.805, -41.461, 27.9558, -43.9654, 23.8333, -46.0709, 19.4626, -47.7522, 14.8688, -48.9842, 10.077, -49.7419, 5.11234, -50, 0, -49.7419, -5.11234, -48.9842, -10.077, -47.7522, -14.8688, -46.0709, -19.4626, -43.9654, -23.8333, -41.461, -27.9558, -38.5827, -31.805, -35.3556, -35.3556, -31.805, -38.5827, -27.9558, -41.461, -23.8333, -43.9654, -19.4626, -46.0709, -14.8688, -47.7522, -10.077, -48.9842, -5.11234, -49.7419, 0, -50, 5.11234, -49.7419, 10.077, -48.9842, 14.8688, -47.7522, 19.4626, -46.0709, 23.8333, -43.9654, 27.9558, -41.461, 31.805, -38.5827, 35.3556, -35.3556, 38.5827, -31.805, 41.461, -27.9558, 43.9654, -23.8333, 46.0709, -19.4626, 47.7522, -14.8688, 48.9842, -10.077, 49.7419, -5.11234)
+closed = true
+width = 20.0
+default_color = Color(0, 0, 0, 1)
+texture = ExtResource("5_td361")
+texture_mode = 1
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body"]
+texture_filter = 6
+points = PackedVector2Array(70.6092, 11.9529, 85.7112, 14.2034, 98.7309, 17.5951, 104.474, 19.7231, 109.714, 22.1414, 114.455, 24.8515, 118.705, 27.8553, 122.468, 31.1542, 125.75, 34.75, 128.557, 38.6443, 130.894, 42.8388, 132.768, 47.335, 134.184, 52.1347, 135.147, 57.2395, 135.663, 62.651, 135.738, 68.371, 135.378, 74.401, 133.487, 86.6572, 132.369, 86.2478, 127.577, 85.0158, 122.612, 84.2581, 117.5, 84, 112.388, 84.2581, 107.423, 85.0158, 102.631, 86.2478, 98.0374, 87.9291, 93.6667, 90.0346, 89.5442, 92.539, 85.695, 95.4173, 82.1444, 98.6444, 78.9173, 102.195, 76.039, 106.044, 73.5346, 110.167, 72.504, 112.306, 71.1563, 111.656, 55.3556, 104.035, 47.9957, 101.348, 40.5001, 99.5, 32.4967, 98.5581, 23.6134, 98.5898, 13.4782, 99.6626, 1.71889, 101.844, -21.1086, 108.673, -21.2478, 108.131, -22.9291, 103.537, -25.0346, 99.1667, -27.539, 95.0442, -30.4173, 91.195, -33.6444, 87.6444, -37.195, 84.4173, -41.0442, 81.539, -45.1667, 79.0346, -49.5374, 76.9291, -54.1312, 75.2478, -58.923, 74.0158, -63.8877, 73.2581, -69, 73, -74.1123, 73.2581, -79.077, 74.0158, -83.8688, 75.2478, -88.4626, 76.9291, -88.8916, 77.1358, -89.8008, 74.123, -91.1558, 67.0198, -91.7813, 60.1406, -91.7737, 56.8341, -91.5278, 53.6423, -91.0248, 50.585, -90.2461, 47.6816, -89.1729, 44.9519, -87.7866, 42.4153, -86.9702, 41.2256, -86.0685, 40.0915, -85.0792, 39.0155, -84, 38, -81.612, 36.0776, -78.9628, 34.2464, -72.9691, 30.85, -58.8196, 25.0652, -26.8226, 17.0836, 12.3548, 11.9173, 53.3793, 10.8305)
+closed = true
+default_color = Color(0, 0, 0, 1)
+texture = ExtResource("5_td361")
+texture_mode = 1
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="ExtraStroke" type="Line2D" parent="Body/Stroke"]
+visible = false
+points = PackedVector2Array(-73.0551, 34.7601, -69.8001, 35.2515, -66.3803, 36.1928, -62.8172, 37.5487, -59.1321, 39.284, -51.4812, 43.7511, -43.5987, 49.3117, -27.8226, 62.5836, 8.20062, 100.641, 1.71889, 101.844, -21.1086, 108.673, -21.2478, 108.131, -22.9291, 103.537, -25.0346, 99.1667, -27.539, 95.0442, -30.4173, 91.195, -33.6444, 87.6444, -37.195, 84.4173, -41.0442, 81.539, -45.1667, 79.0346, -49.5374, 76.9291, -54.1312, 75.2478, -58.923, 74.0158, -63.8877, 73.2581, -69, 73, -74.1123, 73.2581, -79.077, 74.0158, -83.8688, 75.2478, -88.4626, 76.9291, -88.8916, 77.1358, -89.8008, 74.123, -91.1558, 67.0198, -91.7813, 60.1406, -91.7737, 56.8341, -91.5278, 53.6423, -91.0248, 50.585, -90.2461, 47.6816, -89.1729, 44.9519, -87.7866, 42.4153, -86.9702, 41.2256, -86.0685, 40.0915, -85.0792, 39.0155, -84, 38, -82.8415, 37.0932, -81.6178, 36.3386, -80.3315, 35.7318, -78.9853, 35.2684, -77.5819, 34.9439, -76.1239, 34.754, -74.6141, 34.6942)
+closed = true
+default_color = Color(0, 0, 0, 1)
+metadata/_edit_lock_ = true
+
+[node name="ExtraStroke2" type="Line2D" parent="Body/Stroke"]
+visible = false
+points = PackedVector2Array(39.4684, 99.3785, 10.3548, 102.917, 8.20062, 100.641, 13.4782, 99.6626, 23.6134, 98.5898, 32.4967, 98.5581)
+closed = true
+default_color = Color(0, 0, 0, 1)
+metadata/_edit_lock_ = true
+
+[node name="ExtraStroke3" type="Line2D" parent="Body/Stroke"]
+visible = false
+points = PackedVector2Array(-74.6141, 34.9604, -73.0551, 35.1039, -69.8001, 35.7764, -66.3803, 36.9311, -62.8172, 38.5297, -59.1321, 40.534, -51.4812, 45.6066, -43.5987, 51.843, -27.8226, 66.5836, 2.42793, 101.712, 1.71889, 101.844, -21.1086, 108.673, -21.2478, 108.131, -22.9291, 103.537, -25.0346, 99.1667, -27.539, 95.0442, -30.4173, 91.195, -33.6444, 87.6444, -37.195, 84.4173, -41.0442, 81.539, -45.1667, 79.0346, -49.5374, 76.9291, -54.1312, 75.2478, -58.923, 74.0158, -63.8877, 73.2581, -69, 73, -74.1123, 73.2581, -79.077, 74.0158, -83.8688, 75.2478, -88.4626, 76.9291, -88.8916, 77.1358, -89.8008, 74.123, -91.1558, 67.0198, -91.7813, 60.1406, -91.7737, 56.8341, -91.5278, 53.6423, -91.0248, 50.585, -90.2461, 47.6816, -89.1729, 44.9519, -87.7866, 42.4153, -86.9702, 41.2256, -86.0685, 40.0915, -85.0792, 39.0155, -84, 38, -82.8415, 37.099, -81.6178, 36.3615, -80.3315, 35.7829, -78.9853, 35.3582, -77.5819, 35.0827, -76.1239, 34.9517)
+closed = true
+default_color = Color(0, 0, 0, 1)
+metadata/_edit_lock_ = true
+
+[node name="Rectangle" type="Node2D" parent="Body" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(-145, -169)
+script = ExtResource("1_k61xc")
+polygon = NodePath("Fill")
+stroke_color = Color(0, 0, 0, 1)
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_lpol0")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_u5era")
+metadata/_select_hint_ = true
+metadata/_hover_closest_point_on_curve_ = Object(Object,"script":Resource("res://addons/curved_lines_2d/closest_point_on_curve_meta.gd"),"before_segment":3,"point_position":Vector2(-183.762, -189.874),"local_point_position":Vector2(64.238, 122.126))
+
+
+[node name="Fill" type="Polygon2D" parent="Body/Rectangle"]
+polygon = PackedVector2Array(-50, -50, 50, -50, 157.355, 180.917, -50, 50)
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Body/Rectangle"]
+points = PackedVector2Array(-50, -50, 50, -50, 157.355, 180.917, -50, 50)
+closed = true
+default_color = Color(0, 0, 0, 1)
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_72krn")
+}
+
+[node name="TestSprite2D" type="Sprite2D" parent="."]
+position = Vector2(184, 192)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(584, 184)
+sprite_frames = SubResource("SpriteFrames_06lh1")
+
+[node name="Path" type="Node2D" parent="." node_paths=PackedStringArray("polygon", "line")]
+script = ExtResource("1_k61xc")
+polygon = NodePath("Fill")
+stroke_color = Color(0, 0, 0, 1)
+stroke_width = 20.0
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_v0hk8")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_mjudg")
+
+[node name="Fill" type="Polygon2D" parent="Path"]
+color = Color(0.721569, 0.721569, 0.721569, 0.796078)
+polygon = PackedVector2Array(8, 23.25, -5.32811, 41.0547, -17.6875, 54.9062, -23.5039, 60.3496, -29.0781, 64.8047, -34.4101, 68.2715, -39.5, 70.75, -41.9541, 71.6186, -44.3476, 72.2402, -46.6806, 72.6147, -48.9531, 72.7422, -51.165, 72.6225, -53.3164, 72.2558, -55.4072, 71.6421, -57.4375, 70.7812, -59.4072, 69.6733, -61.3164, 68.3183, -63.165, 66.7163, -64.9531, 64.8672, -66.6807, 62.771, -68.3476, 60.4277, -71.5, 55, -76.4553, 48.2074, -80.2358, 41.5341, -81.6855, 38.2422, -82.8416, 34.9801, -83.704, 31.7479, -84.2727, 28.5455, -84.5478, 25.3729, -84.5291, 22.2301, -84.2168, 19.1172, -83.6108, 16.0341, -82.7111, 12.9808, -81.5178, 9.9574, -80.0307, 6.96378, -78.25, 4, -78.3809, -2.90039, -77.9797, -9.0578, -77.0465, -14.4723, -76.3804, -16.9009, -75.5813, -19.1437, -74.6492, -21.2009, -73.584, -23.0723, -72.3859, -24.7579, -71.0547, -26.2578, -69.5906, -27.572, -67.9934, -28.7004, -66.2632, -29.6431, -64.4, -30.4, -62.4038, -30.9712, -60.2747, -31.3566, -58.0124, -31.5564, -55.6172, -31.5703, -50.4278, -31.041, -44.7063, -29.7688, -38.4528, -27.7535, -31.6672, -24.9953, -16.5, -17.25)
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Path"]
+texture_filter = 6
+points = PackedVector2Array(8, 23.25, -5.32811, 41.0547, -17.6875, 54.9062, -23.5039, 60.3496, -29.0781, 64.8047, -34.4101, 68.2715, -39.5, 70.75, -41.9541, 71.6186, -44.3476, 72.2402, -46.6806, 72.6147, -48.9531, 72.7422, -51.165, 72.6225, -53.3164, 72.2558, -55.4072, 71.6421, -57.4375, 70.7812, -59.4072, 69.6733, -61.3164, 68.3183, -63.165, 66.7163, -64.9531, 64.8672, -66.6807, 62.771, -68.3476, 60.4277, -71.5, 55, -76.4553, 48.2074, -80.2358, 41.5341, -81.6855, 38.2422, -82.8416, 34.9801, -83.704, 31.7479, -84.2727, 28.5455, -84.5478, 25.3729, -84.5291, 22.2301, -84.2168, 19.1172, -83.6108, 16.0341, -82.7111, 12.9808, -81.5178, 9.9574, -80.0307, 6.96378, -78.25, 4, -78.3809, -2.90039, -77.9797, -9.0578, -77.0465, -14.4723, -76.3804, -16.9009, -75.5813, -19.1437, -74.6492, -21.2009, -73.584, -23.0723, -72.3859, -24.7579, -71.0547, -26.2578, -69.5906, -27.572, -67.9934, -28.7004, -66.2632, -29.6431, -64.4, -30.4, -62.4038, -30.9712, -60.2747, -31.3566, -58.0124, -31.5564, -55.6172, -31.5703, -50.4278, -31.041, -44.7063, -29.7688, -38.4528, -27.7535, -31.6672, -24.9953, -16.5, -17.25)
+width = 20.0
+default_color = Color(0, 0, 0, 1)
+texture = ExtResource("5_td361")
+texture_mode = 1
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Path2" type="Node2D" parent="." node_paths=PackedStringArray("polygon", "line")]
+script = ExtResource("1_k61xc")
+polygon = NodePath("Fill")
+stroke_color = Color(0, 0, 0, 1)
+stroke_width = 20.0
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_td361")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_72krn")
+
+[node name="Fill" type="Polygon2D" parent="Path2"]
+color = Color(0.721569, 0.721569, 0.721569, 0.796078)
+polygon = PackedVector2Array(38.6667, 37.6667, 26.3594, 46.4219, 16.6042, 54.5209, 9.40104, 61.9636, 6.75651, 65.4388, 4.75001, 68.75, 3.98601, 70.3441, 3.38153, 71.8971, 2.93654, 73.4092, 2.65106, 74.8802, 2.52509, 76.3102, 2.55863, 77.6992, 2.75166, 79.0472, 3.10421, 80.3542, 3.61626, 81.6201, 4.28781, 82.8451, 5.11887, 84.029, 6.10944, 85.1719, 7.25951, 86.2738, 8.56908, 87.3346, 11.6668, 89.3333, 15.4024, 91.168, 19.7761, 92.8385, 30.4376, 95.6875, 59.4168, 99.4167, 148, 99, 154.738, 97.6914, 160.766, 95.8281, 166.082, 93.4102, 168.474, 91.9932, 170.687, 90.4375, 172.724, 88.7432, 174.582, 86.9101, 176.263, 84.9385, 177.766, 82.8281, 179.091, 80.5791, 180.238, 78.1914, 181.208, 75.665, 182, 73, 183.051, 67.2539, 183.391, 60.9531, 183.02, 54.0976, 181.937, 46.6875, 177.641, 30.2031, 170.5, 11.5, 146.182, 6.20312, 124.104, 3.35416, 104.266, 2.95311, 95.1862, 3.67056, 86.6666, 4.99999, 78.707, 6.94139, 71.3073, 9.49478, 64.4674, 12.6601, 58.1875, 16.4375, 52.4674, 20.8268, 47.3073, 25.8281, 42.7071, 31.4414)
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Path2"]
+texture_filter = 6
+points = PackedVector2Array(38.6667, 37.6667, 26.3594, 46.4219, 16.6042, 54.5209, 9.40104, 61.9636, 6.75651, 65.4388, 4.75001, 68.75, 3.98601, 70.3441, 3.38153, 71.8971, 2.93654, 73.4092, 2.65106, 74.8802, 2.52509, 76.3102, 2.55863, 77.6992, 2.75166, 79.0472, 3.10421, 80.3542, 3.61626, 81.6201, 4.28781, 82.8451, 5.11887, 84.029, 6.10944, 85.1719, 7.25951, 86.2738, 8.56908, 87.3346, 11.6668, 89.3333, 15.4024, 91.168, 19.7761, 92.8385, 30.4376, 95.6875, 59.4168, 99.4167, 148, 99, 154.738, 97.6914, 160.766, 95.8281, 166.082, 93.4102, 168.474, 91.9932, 170.687, 90.4375, 172.724, 88.7432, 174.582, 86.9101, 176.263, 84.9385, 177.766, 82.8281, 179.091, 80.5791, 180.238, 78.1914, 181.208, 75.665, 182, 73, 183.051, 67.2539, 183.391, 60.9531, 183.02, 54.0976, 181.937, 46.6875, 177.641, 30.2031, 170.5, 11.5, 146.182, 6.20312, 124.104, 3.35416, 104.266, 2.95311, 95.1862, 3.67056, 86.6666, 4.99999, 78.707, 6.94139, 71.3073, 9.49478, 64.4674, 12.6601, 58.1875, 16.4375, 52.4674, 20.8268, 47.3073, 25.8281, 42.7071, 31.4414)
+closed = true
+width = 20.0
+default_color = Color(0, 0, 0, 1)
+texture = ExtResource("5_td361")
+texture_mode = 1
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D" type="Node2D" parent="." node_paths=PackedStringArray("vertex_map")]
+position = Vector2(-76.6452, -117.083)
+script = ExtResource("6_72krn")
+vertex_map = {
+NodePath("../Body/Path"): 2,
+NodePath("../Body"): 2,
+NodePath("../Body/Rectangle"): 2
+}
+metadata/_custom_type_script = "uid://dn747ucen5o8b"

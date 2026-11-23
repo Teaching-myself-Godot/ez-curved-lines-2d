@@ -1,0 +1,1158 @@
+[gd_scene load_steps=105 format=3 uid="uid://bio6if27irqdo"]
+
+[ext_resource type="Script" uid="uid://cx1no66jo1sdd" path="res://addons/curved_lines_2d/adaptable_vector_shape_3d.gd" id="1_kuby2"]
+[ext_resource type="Script" uid="uid://dlbv4pit17dnu" path="res://addons/curved_lines_2d/scalable_arc.gd" id="2_xentu"]
+[ext_resource type="Script" uid="uid://dl1t88tthmwts" path="res://addons/curved_lines_2d/scalable_arc_list.gd" id="3_28gkc"]
+
+[sub_resource type="Curve2D" id="Curve2D_s43kc"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -0.23431, -0.26715, -0.879219, 0.814774, 0.220825, -0.228027, -0.24773, -0.16136, -2.18208, 1.008, 0.0133743, 0.201157, 0.13851, -0.18284, -2.38738, -0.109955, -0.586411, 0.123703, 0.86097, 0.41449, -1.25397, -1.00798, -0.576988, 0.0657501, 0.81251, 0.0637, 0.921852, -0.592606, -0.340378, -0.0987549, -0.56206, 0.20328, 2.38739, -0.133148, -0.382698, -0.205032, -1.77583, -0.2051, 1.75011, 0.443115, 0.357956, -0.273788, 0, 0, -0.879372, 0.813797)
+}
+point_count = 8
+
+[sub_resource type="Resource" id="Resource_4djqv"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_kwgee"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -6.28039, 1.67583, 5.51884, 4.18761, 0.434135, 3.4061, -0.125796, -2.6136, -5.53716, -0.288345, -1.96944, -1.09375, 1.24552, 0.90829, -0.304665, -4.43425, 0.132904, -2.92767, 1.05972, 1.63182, 2.14174, 0.638733, 0.273033, -0.23851, 0, 0, 5.51884, 4.18759)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_lovdc"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_n6t8h"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -6.28039, 1.67583, 5.51884, 4.18761, 0.434135, 3.4061, -0.125796, -2.6136, -5.53716, -0.288345, -1.96944, -1.09375, 1.24552, 0.90829, -0.304665, -4.43425, 0.132904, -2.92767, 1.05972, 1.63182, 2.14174, 0.638733, 0.273033, -0.23851, 0, 0, 5.51884, 4.18759)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_aqat4"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xtuwt"]
+albedo_color = Color(0.219608, 0.219608, 0.168627, 1)
+
+[sub_resource type="Curve2D" id="Curve2D_kr2w6"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -0.23431, -0.26715, -0.879219, 0.814774, 0.220825, -0.228027, -0.24773, -0.16136, -2.18208, 1.008, 0.0133743, 0.201157, 0.13851, -0.18284, -2.38738, -0.109955, -0.586411, 0.123703, 0.86097, 0.41449, -1.25397, -1.00798, -0.576988, 0.0657501, 0.81251, 0.0637, 0.921852, -0.592606, -0.34037, -0.0987549, -0.56205, 0.20328, 2.38738, -0.133148, -0.382706, -0.205032, -1.77583, -0.2051, 1.75011, 0.443115, 0.357971, -0.273788, 0, 0, -0.879379, 0.813797)
+}
+point_count = 8
+
+[sub_resource type="Resource" id="Resource_42nk4"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qwcxo"]
+albedo_color = Color(1, 0.564706, 0.564706, 1)
+
+[sub_resource type="Curve2D" id="Curve2D_gx6pa"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -0.35363, 1.60134, 10.4944, 1.07936, 2.51987, -0.245102, -1.95963, 0.0187, 7.34878, 4.84154, 2.82453, 0.398468, -1.53269, -0.80029, -8.20749, 4.94481, -2.78937, 4.10057, 1.82102, -2.36172, -9.15901, -1.53905, -3.66972, 0.0839996, 4.53066, 0.35287, -1.04482, -4.94482, -1.97505, -2.30449, 0, 0, 10.4944, 1.07936)
+}
+point_count = 6
+
+[sub_resource type="Resource" id="Resource_h67u4"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_aaywv"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -1.81812, 1.07848, -6.25863, -3.43275, -1.27674, -2.685, 0.11379, 0.86457, -8.73032, 3.72292, 0.943481, -0.592072, -3.58738, -1.23789, -9.34155, 5.83583, -5.30821, 2.19952, 2.99382, -1.24053, -6.24954, -4.51163, -0.103104, -0.29538, -0.21168, 0.36941, 11.3393, -5.72659, 2.29504, -1.36139, 0, 0, -6.25862, -3.43274)
+}
+point_count = 6
+
+[sub_resource type="Resource" id="Resource_p6x7q"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Gradient" id="Gradient_e05fb"]
+colors = PackedColorArray(0.423529, 0.239216, 0.239216, 1, 1, 0.564706, 0.564706, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_2kqao"]
+gradient = SubResource("Gradient_e05fb")
+width = 22
+height = 11
+fill_from = Vector2(0.0793998, 0.921307)
+fill_to = Vector2(0.254151, 0.138763)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4wvqg"]
+albedo_texture = SubResource("GradientTexture2D_2kqao")
+
+[sub_resource type="Curve2D" id="Curve2D_8nky5"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -0.19304, -0.29833, -0.968994, 0.921921, 0.251595, -0.193527, -0.22168, -0.19562, -2.2861, 0.92392, -0.0159988, 0.200974, 0.16359, -0.1608, -2.3269, -0.21199, -0.59816, 0.0372467, 0.79166, 0.53511, -1.07511, -0.935944, -0.580414, -0.0187378, 0.79466, 0.181, 1.01735, -0.209061, -0.322433, -0.147125, -0.58561, 0.11952, 2.40065, 0.458313, -0.348877, -0.258453, -1.72724, -0.46076, 1.68647, 0.935959, 0.393921, -0.218964, 0, 0, -0.968979, 0.920959)
+}
+point_count = 8
+
+[sub_resource type="Resource" id="Resource_2dnkr"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_147u6"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -5.0838, 1.06782, 4.58061, 2.74669, 0.661606, 2.17719, -1.3095, -4.30906, -4.50574, 0.839996, -0.514069, -1.73581, 1.13027, 3.8166, 0.453224, -2.29562, 0.832664, -0.335251, 0, 0, 4.58061, 2.74669)
+}
+point_count = 4
+
+[sub_resource type="Resource" id="Resource_h2n33"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_b0m1a"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -5.0838, 1.06782, 4.58061, 2.74669, 0.661606, 2.17719, -1.3095, -4.30906, -4.50574, 0.839996, -0.514069, -1.73581, 1.13027, 3.8166, 0.453224, -2.29562, 0.832664, -0.335251, 0, 0, 4.58061, 2.74669)
+}
+point_count = 4
+
+[sub_resource type="Resource" id="Resource_mrm4g"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ciasp"]
+albedo_color = Color(0.298039, 0.298039, 0.247059, 1)
+
+[sub_resource type="Curve2D" id="Curve2D_g73gx"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -0.19304, -0.29833, -0.968994, 0.921921, 0.251595, -0.193527, -0.22168, -0.19562, -2.2861, 0.92392, -0.0159988, 0.200974, 0.16359, -0.1608, -2.3269, -0.21199, -0.59816, 0.0372467, 0.79166, 0.53511, -1.07511, -0.935944, -0.580414, -0.0187378, 0.79466, 0.181, 1.01735, -0.209061, -0.322433, -0.147125, -0.58561, 0.11952, 2.40065, 0.458313, -0.348877, -0.258453, -1.72724, -0.46076, 1.68647, 0.935959, 0.393921, -0.218964, 0, 0, -0.968979, 0.920959)
+}
+point_count = 8
+
+[sub_resource type="Resource" id="Resource_vh5vw"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6qi0r"]
+albedo_color = Color(0.960784, 0.545098, 0.545098, 1)
+
+[sub_resource type="Curve2D" id="Curve2D_rwnnf"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -1.12294, -0.16739, 1.56583, 2.4758, 0.989449, 0.653748, 0.0928, -1.18345, -1.56583, 1.10976, -0.646957, 1.03821, 1.71654, -1.69528, -0.66552, -2.15141, -0.12027, -0.882217, 0, 0, 1.56583, 2.4758)
+}
+point_count = 4
+
+[sub_resource type="Resource" id="Resource_4tjr3"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_1csov"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -0.79553, 0.41726, 1.56583, 2.43079, 0.989449, 0.653748, 0.0928, -1.18345, -1.56583, 1.06474, -0.646957, 1.03821, 1.71654, -1.69528, -0.66552, -2.19643, -0.12027, -0.882217, 0, 0, 1.56583, 2.43079)
+}
+point_count = 4
+
+[sub_resource type="Resource" id="Resource_oqqos"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Gradient" id="Gradient_8m7a0"]
+colors = PackedColorArray(0.478431, 0.478431, 0.431373, 1, 0.4, 0.4, 0.341176, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ge3lh"]
+gradient = SubResource("Gradient_8m7a0")
+width = 3
+height = 5
+fill = 1
+fill_from = Vector2(0.442296, 0.503586)
+fill_to = Vector2(0.846897, 0.426704)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uch1p"]
+albedo_texture = SubResource("GradientTexture2D_ge3lh")
+
+[sub_resource type="Curve2D" id="Curve2D_relyu"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -1.07378, -1.55783, -5.1235, 3.5421, -1.02036, 0.788071, 0.93788, -1.15335, -6.02928, -2.46782, -1.40748, -0.263031, 1.39986, 0.75262, -0.543823, -4.45009, -1.72014, -1.599, 1.05386, 1.45705, 3.26865, -1.53729, -1.54582, -0.97934, -1.39077, 3.47237, 6.48762, 1.2749, 1.05457, 1.70084, 0, 0, -5.1235, 3.5421)
+}
+point_count = 6
+
+[sub_resource type="Resource" id="Resource_vwvqe"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_gp4qc"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -0.19305, -0.29834, -0.968987, 0.921936, 0.251602, -0.193542, -0.22168, -0.19563, -2.28611, 0.923935, -0.0159988, 0.200974, 0.16359, -0.16079, -2.32691, -0.21199, -0.598152, 0.0372467, 0.79167, 0.5351, -1.07512, -0.935944, -0.580421, -0.0187225, 0.79465, 0.18101, 1.01735, -0.209076, -0.322441, -0.147125, -0.58562, 0.11953, 2.40065, 0.458298, -0.348885, -0.258438, -1.72724, -0.46076, 1.68646, 0.935944, 0.393929, -0.218964, 0, 0, -0.968987, 0.920944)
+}
+point_count = 8
+
+[sub_resource type="Resource" id="Resource_i6pil"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_e3wcs"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -5.0838, 1.06783, 4.58061, 2.74669, 0.661606, 2.1772, -1.30949, -4.30907, -4.50574, 0.839996, -0.514069, -1.73581, 1.13028, 3.8166, 0.453224, -2.29562, 0.832664, -0.335251, 0, 0, 4.58061, 2.74669)
+}
+point_count = 4
+
+[sub_resource type="Resource" id="Resource_oh3sn"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_am06v"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -0.23431, -0.26715, -0.879219, 0.814774, 0.220825, -0.228027, -0.24773, -0.16136, -2.18208, 1.008, 0.0133743, 0.201157, 0.13851, -0.18284, -2.38738, -0.109955, -0.586411, 0.123703, 0.86097, 0.4145, -1.25397, -1.00798, -0.576988, 0.0657501, 0.81251, 0.0637, 0.921852, -0.592606, -0.34037, -0.0987549, -0.56205, 0.20328, 2.38738, -0.133148, -0.382706, -0.205032, -1.77583, -0.2051, 1.75011, 0.443115, 0.357964, -0.273788, 0, 0, -0.879372, 0.813797)
+}
+point_count = 8
+
+[sub_resource type="Resource" id="Resource_frwxv"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_1bd55"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -6.28038, 1.67583, 5.51884, 4.18761, 0.434135, 3.40611, -0.125792, -2.61359, -5.53715, -0.288361, -1.96943, -1.09375, 1.24552, 0.9083, -0.304657, -4.43427, 0.132912, -2.92766, 1.05972, 1.63182, 2.14175, 0.638718, 0.273033, -0.23851, 0, 0, 5.51884, 4.18759)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_lwrnr"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_24pah"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -0.35363, 1.60134, 10.4944, 1.07936, 2.51987, -0.245102, -1.95963, 0.0187, 7.34878, 4.84154, 2.82453, 0.398468, -1.53269, -0.80029, -8.20749, 4.94481, -2.78937, 4.10057, 1.82102, -2.36172, -9.15901, -1.53905, -3.66972, 0.0839996, 4.53066, 0.35287, -1.04482, -4.94482, -1.97505, -2.30449, 0, 0, 10.4944, 1.07936)
+}
+point_count = 6
+
+[sub_resource type="Resource" id="Resource_ejnnv"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Gradient" id="Gradient_vpqs6"]
+colors = PackedColorArray(0.462745, 0.462745, 0.364706, 1, 0.180392, 0.180392, 0.137255, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_5asbj"]
+gradient = SubResource("Gradient_vpqs6")
+width = 20
+height = 9
+fill_from = Vector2(0.955745, 0.375904)
+fill_to = Vector2(0.150987, 0.875987)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lg0m8"]
+albedo_texture = SubResource("GradientTexture2D_5asbj")
+
+[sub_resource type="Curve2D" id="Curve2D_117dc"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0.28579, 1.3562, 2.82073, 0.00202942, 0.891403, -0.400421, -0.36573, 0.19583, 1.95353, 3.10449, 0.816719, 0.199814, -0.70756, -0.30259, -0.383751, 2.30913, 0.601791, 1.6467, -0.4031, -1.74774, -2.84409, -0.285995, -1.29292, 0.361877, 1.29293, -0.36188, -0.942841, -3.0862, -0.463181, -1.73282, 0, 0, 2.82073, 0.00204468)
+}
+point_count = 6
+
+[sub_resource type="Resource" id="Resource_b33k6"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_w5qun"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -1.07378, -1.55783, -5.1235, 3.5421, -1.02036, 0.788071, 0.93788, -1.15335, -6.02928, -2.46782, -1.40748, -0.263031, 1.39986, 0.75262, -0.543823, -4.45009, -1.72014, -1.599, 1.05386, 1.45705, 3.26865, -1.53729, -1.54582, -0.97934, -1.39077, 3.47237, 6.48762, 1.2749, 1.05457, 1.70084, 0, 0, -5.1235, 3.5421)
+}
+point_count = 6
+
+[sub_resource type="Resource" id="Resource_og6yt"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Gradient" id="Gradient_rhbyl"]
+offsets = PackedFloat32Array(0.494424, 1)
+colors = PackedColorArray(0.478431, 0.478431, 0.431373, 1, 0.301961, 0.301961, 0.235294, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_gm1rq"]
+gradient = SubResource("Gradient_rhbyl")
+width = 12
+height = 8
+fill = 1
+fill_from = Vector2(0.267746, 0.140616)
+fill_to = Vector2(-0.137976, 0.979422)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f7bnx"]
+albedo_texture = SubResource("GradientTexture2D_gm1rq")
+
+[sub_resource type="Curve2D" id="Curve2D_o4kbp"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0.15809, -0.78982, -1.51561, -0.200943, -0.751831, -0.10025, 0.3461, 0.0463, 0.0923691, -1.5119, -0.137466, -0.86937, 0.10993, 0.69512, 1.5096, 0.0415802, 0.142776, -0.0988922, -0.9662, -0.0387, 0.0885696, 1.52238, 0.408852, 1.24043, 0, 0, -1.51561, -0.200943)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_cqbuy"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_nrp5u"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0.14808, -0.73991, -1.4198, -0.188248, -0.704315, -0.0939026, 0.32424, 0.0432, 0.0865479, -1.41634, -0.128784, -0.814407, 0.10299, 0.65119, 1.41418, 0.0389557, 0.133736, -0.0926514, -1.09545, -0.0118, 0.0829926, 1.42616, 0.2873, 1.17397, 0, 0, -1.41981, -0.188248)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_nxkp8"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_t75ra"]
+
+[sub_resource type="Curve2D" id="Curve2D_2gb22"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0.538009, 0.909013, 0, 0.502048, 0, -0.502048, 0, 0, 0.974125, 0, 0.538009, 0, -0.538009, -0.909013, 0, -0.502048, 0, 0.502048, 0, 0, -0.974125, 0, -0.538009, 0, 0, 0.909013, 0)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_k0ggk"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h2qp0"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Curve2D" id="Curve2D_ckftj"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0.0929321, 0.432679, 0, 0.238968, 0, -0.238968, 0, 0, 0.168264, 0, 0.0929321, 0, -0.0929321, -0.432679, 0, -0.238968, 0, 0.238968, 0, 0, -0.168264, 0, -0.0929321, 0, 0, 0.432679, 0)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_6bq8j"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vyghp"]
+albedo_color = Color(0.952941, 0.952941, 0.952941, 1)
+
+[sub_resource type="Curve2D" id="Curve2D_j11n4"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0.59103, -0.0628, 0.671211, -0.780273, 0.397156, -0.38089, -0.39717, 0.3809, 0.547295, 0.481796, 0.32872, 0.316116, -0.32871, -0.31614, -0.767036, 0.599091, -0.4459, 0.322464, 0.36989, -0.26748, -0.64312, -0.662979, -0.426552, 0.0452881, 0, 0, 0.671211, -0.780273)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_4hps1"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_12wo5"]
+albedo_color = Color(0.960784, 0.545098, 0.545098, 1)
+
+[sub_resource type="Curve2D" id="Curve2D_cvg35"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0.28579, 1.3562, 2.82073, 0.00202942, 0.891403, -0.400421, -0.36573, 0.19583, 1.95353, 3.10449, 0.816719, 0.199814, -0.70756, -0.30259, -0.383751, 2.30913, 0.601791, 1.6467, -0.4031, -1.74774, -2.84409, -0.285995, -1.29292, 0.361877, 1.29293, -0.36188, -0.942841, -3.0862, -0.463181, -1.73282, 0, 0, 2.82073, 0.00204468)
+}
+point_count = 6
+
+[sub_resource type="Resource" id="Resource_cjsl7"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Gradient" id="Gradient_pvryq"]
+colors = PackedColorArray(1, 0.564706, 0.564706, 1, 0.423529, 0.239216, 0.239216, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_g22a5"]
+gradient = SubResource("Gradient_pvryq")
+width = 5
+height = 6
+fill_from = Vector2(0.829235, 0.95743)
+fill_to = Vector2(0.331858, 0.0881278)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ynpmq"]
+albedo_texture = SubResource("GradientTexture2D_g22a5")
+
+[sub_resource type="Curve2D" id="Curve2D_irgov"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -0.0521, 0.66759, 1.22853, 0.311752, 0.46772, -0.0643311, -0.5481, -0.087, 0.40435, 1.63196, -0.015976, -0.0813293, -0.38537, -0.35954, -0.596352, 0.905945, 0.139885, 0.794403, 0.0509, -0.86503, -1.22852, -0.590973, -0.648598, -0.00817871, 0.64859, 0.008, -0.0958862, -1.63196, 0.0210876, -0.866287, 0, 0, 1.22852, 0.311768)
+}
+point_count = 6
+
+[sub_resource type="Resource" id="Resource_aty6x"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_mfs5u"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0.12745, 0.173072, 0, 0.0955878, 0, -0.0955878, 0, 0, 0.230763, 0, 0.12745, 0, -0.12745, -0.173072, 0, -0.0955878, 0, 0.0955878, 0, 0, -0.230763, 0, -0.12745, 0, 0, 0.173072, 0)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_mfc0w"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_opoqm"]
+albedo_color = Color(0, 0, 0, 0.688525)
+
+[sub_resource type="Curve2D" id="Curve2D_3we08"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -5.0838, 1.06783, 4.58061, 2.74669, 0.661606, 2.1772, -1.30949, -4.30907, -4.50574, 0.839996, -0.514069, -1.73581, 1.13028, 3.8166, 0.453224, -2.29562, 0.832664, -0.335251, 0, 0, 4.58061, 2.74669)
+}
+point_count = 4
+
+[sub_resource type="Resource" id="Resource_45t0q"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Gradient" id="Gradient_qghjc"]
+colors = PackedColorArray(0.345098, 0.345098, 0.290196, 1, 0.462745, 0.462745, 0.384314, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_pbqc0"]
+gradient = SubResource("Gradient_qghjc")
+width = 9
+height = 6
+fill_from = Vector2(-0.000118592, 0.500395)
+fill_to = Vector2(1.00001, 0.500395)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ox3nw"]
+albedo_texture = SubResource("GradientTexture2D_pbqc0")
+
+[sub_resource type="Curve2D" id="Curve2D_i5tnh"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -0.19305, -0.29834, -0.968987, 0.921936, 0.251602, -0.193542, -0.22168, -0.19563, -2.28611, 0.923935, -0.0159988, 0.200974, 0.16359, -0.16079, -2.32691, -0.21199, -0.598152, 0.0372467, 0.79167, 0.5351, -1.07512, -0.935944, -0.580421, -0.0187225, 0.79465, 0.18101, 1.01735, -0.209076, -0.322441, -0.147125, -0.58562, 0.11953, 2.40065, 0.458298, -0.348885, -0.258438, -1.72724, -0.46076, 1.68646, 0.935944, 0.393929, -0.218964, 0, 0, -0.968987, 0.920944)
+}
+point_count = 8
+
+[sub_resource type="Resource" id="Resource_wwwkr"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3f4u3"]
+albedo_color = Color(1, 0.564706, 0.564706, 1)
+
+[sub_resource type="Curve2D" id="Curve2D_fucna"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -6.28038, 1.67583, 5.51884, 4.18761, 0.434135, 3.40611, -0.125792, -2.61359, -5.53715, -0.288361, -1.96943, -1.09375, 1.24552, 0.9083, -0.304657, -4.43427, 0.132912, -2.92766, 1.05972, 1.63182, 2.14175, 0.638718, 0.273033, -0.23851, 0, 0, 5.51884, 4.18759)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_g77tx"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Gradient" id="Gradient_fgjlv"]
+colors = PackedColorArray(0.262745, 0.262745, 0.207843, 1, 0.356863, 0.356863, 0.294118, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_dlq27"]
+gradient = SubResource("Gradient_fgjlv")
+width = 11
+height = 9
+fill_from = Vector2(0.107913, 0.426326)
+fill_to = Vector2(0.624601, 0.15084)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_164ps"]
+albedo_texture = SubResource("GradientTexture2D_dlq27")
+
+[sub_resource type="Curve2D" id="Curve2D_mbyvk"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -0.23431, -0.26715, -0.879219, 0.814774, 0.220825, -0.228027, -0.24773, -0.16136, -2.18208, 1.008, 0.0133743, 0.201157, 0.13851, -0.18284, -2.38738, -0.109955, -0.586411, 0.123703, 0.86097, 0.4145, -1.25397, -1.00798, -0.576988, 0.0657501, 0.81251, 0.0637, 0.921852, -0.592606, -0.34037, -0.0987549, -0.56205, 0.20328, 2.38738, -0.133148, -0.382706, -0.205032, -1.77583, -0.2051, 1.75011, 0.443115, 0.357964, -0.273788, 0, 0, -0.879372, 0.813797)
+}
+point_count = 8
+
+[sub_resource type="Resource" id="Resource_wmcd4"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ugl2d"]
+albedo_color = Color(1, 0.564706, 0.564706, 1)
+
+[sub_resource type="Curve2D" id="Curve2D_cw8lu"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -1.81812, 1.07848, -4.89558, -2.57349, -1.27674, -2.685, 0.11379, 0.86457, -7.36727, 4.58218, 0.943481, -0.592072, -3.58738, -1.23789, -7.9785, 6.69509, -5.30821, 2.19952, 2.99382, -1.24053, -4.88649, -3.65236, -0.103104, -0.29538, -0.21168, 0.36941, 12.7024, -4.86733, 2.29504, -1.36139, 0, 0, -4.89557, -2.57348)
+}
+point_count = 6
+
+[sub_resource type="Resource" id="Resource_of4tr"]
+resource_local_to_scene = true
+script = ExtResource("3_28gkc")
+arcs = Array[ExtResource("2_xentu")]([])
+
+[sub_resource type="Gradient" id="Gradient_0utb0"]
+colors = PackedColorArray(0.423529, 0.239216, 0.239216, 1, 1, 0.564706, 0.564706, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_fatl3"]
+gradient = SubResource("Gradient_0utb0")
+width = 22
+height = 11
+fill_from = Vector2(0.0793998, 0.921307)
+fill_to = Vector2(0.254151, 0.138763)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i1qea"]
+albedo_texture = SubResource("GradientTexture2D_fatl3")
+
+[node name="Node2D3D" type="Node3D"]
+
+[node name="Node2D" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 0, 0)
+
+[node name="RatConceptArt" type="Node3D" parent="Node2D"]
+transform = Transform3D(3.77953, 0, 0, 0, 3.77953, 0, 0, 0, 1, 0, 0, -0.04)
+
+[node name="defs1" type="Node3D" parent="Node2D/RatConceptArt"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.08)
+
+[node name="layer1" type="Node3D" parent="Node2D/RatConceptArt"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88.0224, -138.869, -0.1)
+
+[node name="path32" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 107.612, 156.711, -0.12)
+script = ExtResource("1_kuby2")
+metadata/_stored_curve_data_ = SubResource("Curve2D_s43kc")
+metadata/_stored_arc_list_data_ = SubResource("Resource_4djqv")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 0.534647
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 1
+metadata/_stored_joint_mode_ = 0
+
+[node name="path31" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 101.829, 152.272, -0.14)
+script = ExtResource("1_kuby2")
+metadata/_stored_curve_data_ = SubResource("Curve2D_kwgee")
+metadata/_stored_arc_list_data_ = SubResource("Resource_lovdc")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 1.06929
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 1
+metadata/_stored_joint_mode_ = 0
+
+[node name="path24" type="Node3D" parent="Node2D/RatConceptArt/layer1" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 101.829, 152.272, -0.16)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_n6t8h")
+metadata/_stored_arc_list_data_ = SubResource("Resource_aqat4")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path24"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(5.51884, 4.18761, 4.36447, 4.45093, 3.25842, 4.61613, 2.20359, 4.68872, 1.20285, 4.67421, 0.259085, 4.57811, -0.624818, 4.40593, -1.44598, 4.16317, -2.20151, 3.85535, -2.88853, 3.48798, -3.50416, 3.06656, -4.0455, 2.59661, -4.50969, 2.08363, -4.89384, 1.53314, -5.19505, 0.950638, -5.41045, 0.34164, -5.48507, 0.0289267, -5.53716, -0.288345, -5.53881, -0.533293, -5.52077, -0.77763, -5.48394, -1.02067, -5.42922, -1.26174, -5.26976, -1.73521, -5.04961, -2.19256, -4.77599, -2.62834, -4.45613, -3.03708, -4.09727, -3.41331, -3.70663, -3.75155, -3.29143, -4.04636, -2.8589, -4.29224, -2.41628, -4.48375, -1.97079, -4.61542, -1.74922, -4.6571, -1.52965, -4.68176, -1.31298, -4.68874, -1.1001, -4.67733, -0.891929, -4.64686, -0.689363, -4.59665, -0.493307, -4.526, -0.304665, -4.43425, 0.163506, -4.07557, 0.621729, -3.67012, 1.05178, -3.20192, 1.25055, -2.93931, 1.43545, -2.65503, 1.60419, -2.34708, 1.7545, -2.01348, 1.8841, -1.65221, 1.99071, -1.2613, 2.07206, -0.83875, 2.12586, -0.382555, 2.14174, 0.638733, 2.6023, 1.24995, 3.15488, 1.84813, 5.25537, 3.76194, 5.39938, 3.91135, 5.45386, 3.97599, 5.49558, 4.03355, 5.51141, 4.0596, 5.52375, 4.08377, 5.53249, 4.10603, 5.53755, 4.12636, 5.53881, 4.14471, 5.53618, 4.16106, 5.52955, 4.17536, 5.51884, 4.18759)
+depth = 0.01
+material = SubResource("StandardMaterial3D_xtuwt")
+
+[node name="path25" type="Node3D" parent="Node2D/RatConceptArt/layer1" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 107.834, 156.711, -0.18)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_kr2w6")
+metadata/_stored_arc_list_data_ = SubResource("Resource_42nk4")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path25"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(-0.879219, 0.814774, -0.902945, 0.791176, -0.930038, 0.770413, -0.960271, 0.752393, -0.993416, 0.737022, -1.02925, 0.724209, -1.06754, 0.713862, -1.15059, 0.700194, -1.24074, 0.695282, -1.33619, 0.698386, -1.5357, 0.725693, -1.73458, 0.776212, -1.91829, 0.844038, -1.99992, 0.882596, -2.0723, 0.923267, -2.13363, 0.965313, -2.15957, 0.986621, -2.18208, 1.008, -2.20442, 0.991163, -2.22506, 0.971059, -2.24405, 0.947895, -2.26147, 0.921881, -2.27739, 0.893227, -2.29187, 0.862144, -2.31679, 0.79353, -2.35238, 0.636398, -2.37261, 0.463944, -2.38738, -0.109955, -2.23432, -0.310011, -1.98864, -0.581144, -1.83377, -0.717688, -1.65898, -0.841189, -1.56446, -0.894838, -1.46536, -0.941376, -1.36182, -0.979518, -1.25397, -1.00798, -0.936955, -0.868431, -0.631919, -0.758969, -0.339309, -0.677068, -0.0595682, -0.620203, 0.206861, -0.585849, 0.459536, -0.571482, 0.921852, -0.592606, 1.20414, -0.558625, 1.44575, -0.507829, 1.65287, -0.445276, 1.83167, -0.376022, 2.26001, -0.178631, 2.38738, -0.133148, 1.99688, 0.013819, 1.83784, 0.0844559, 1.71447, 0.154326, 1.66884, 0.189239, 1.65052, 0.206737, 1.63537, 0.224279, 1.62353, 0.241879, 1.61889, 0.250706, 1.61513, 0.259551, 1.61226, 0.268418, 1.61031, 0.277308, 1.60928, 0.286222, 1.6092, 0.295162, 1.61007, 0.30413, 1.61193, 0.313128, 1.61478, 0.322157, 1.61865, 0.331218, 1.62354, 0.340314, 1.62948, 0.349446, 1.64457, 0.367825, 1.66404, 0.386368, 1.68803, 0.405089, 1.75011, 0.443115, 0.640417, 0.376006, 0.232119, 0.398079, -0.0963295, 0.448873, -0.358316, 0.522115, -0.567228, 0.611531, -0.736453, 0.71085, -0.879379, 0.813797)
+depth = 0.01
+material = SubResource("StandardMaterial3D_qwcxo")
+
+[node name="path30" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 101.023, 149.242, -0.2)
+script = ExtResource("1_kuby2")
+metadata/_stored_curve_data_ = SubResource("Curve2D_gx6pa")
+metadata/_stored_arc_list_data_ = SubResource("Resource_h67u4")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 1.06929
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 1
+metadata/_stored_joint_mode_ = 0
+
+[node name="path44" type="Node3D" parent="Node2D/RatConceptArt/layer1" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 99.8976, 145.24, -0.22)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_aaywv")
+metadata/_stored_arc_list_data_ = SubResource("Resource_p6x7q")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 1.06929
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 1
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path44"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(-6.25863, -3.43275, -6.60003, -3.20416, -6.9392, -2.92577, -7.27127, -2.602, -7.59139, -2.23728, -7.89469, -1.83602, -8.1763, -1.40267, -8.43138, -0.941644, -8.65504, -0.457363, -8.84244, 0.0457432, -8.98871, 0.563251, -9.08899, 1.09074, -9.13841, 1.62377, -9.13212, 2.15793, -9.06525, 2.68879, -8.93293, 3.21193, -8.73032, 3.72292, -8.64514, 4.33454, -8.62494, 4.61528, -8.62693, 4.75012, -8.63945, 4.88156, -8.66437, 5.0098, -8.70353, 5.13507, -8.75879, 5.25756, -8.83201, 5.37749, -8.92504, 5.49507, -9.03973, 5.61051, -9.17795, 5.72403, -9.34155, 5.83583, -9.66337, 5.70348, -9.95632, 5.53979, -10.2206, 5.34667, -10.4564, 5.12602, -10.6638, 4.87974, -10.8432, 4.60972, -10.9946, 4.31788, -11.1183, 4.00611, -11.2144, 3.67632, -11.2832, 3.3304, -11.3248, 2.97025, -11.3393, 2.59779, -11.2882, 1.82349, -11.1314, 1.02271, -10.8703, 0.210669, -10.5065, -0.597436, -10.0414, -1.38639, -9.47655, -2.14099, -8.81344, -2.84602, -8.05358, -3.48628, -7.19845, -4.04655, -6.24954, -4.51163, -5.55978, -4.73295, -4.63845, -4.93212, -2.25276, -5.26635, 3.62891, -5.69508, 8.96857, -5.83582, 10.6767, -5.81007, 11.1577, -5.77525, 11.2883, -5.75262, 11.3241, -5.74002, 11.3393, -5.72659, 11.3186, -5.70913, 11.2767, -5.69138, 11.132, -5.65491, 10.6165, -5.57781, -2.57049, -4.31354, -4.85221, -3.90702, -5.6851, -3.67879, -6.00682, -3.55805, -6.25862, -3.43274)
+depth = 0.01
+material = SubResource("StandardMaterial3D_4wvqg")
+
+[node name="path27" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 113.143, 155.984, -0.24)
+script = ExtResource("1_kuby2")
+metadata/_stored_curve_data_ = SubResource("Curve2D_8nky5")
+metadata/_stored_arc_list_data_ = SubResource("Resource_2dnkr")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 0.534647
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 1
+metadata/_stored_joint_mode_ = 0
+
+[node name="path26" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 108.027, 152.994, -0.26)
+script = ExtResource("1_kuby2")
+metadata/_stored_curve_data_ = SubResource("Curve2D_147u6")
+metadata/_stored_arc_list_data_ = SubResource("Resource_h2n33")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 1.06929
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 1
+metadata/_stored_joint_mode_ = 0
+
+[node name="path18" type="Node3D" parent="Node2D/RatConceptArt/layer1" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 108.027, 152.994, -0.28)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_b0m1a")
+metadata/_stored_arc_list_data_ = SubResource("Resource_mrm4g")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path18"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(4.58061, 2.74669, 2.75771, 3.06064, 1.10918, 3.20542, -0.354013, 3.18672, -1.01268, 3.11784, -1.62089, 3.01022, -2.17728, 2.86457, -2.68047, 2.68161, -3.1291, 2.46204, -3.5218, 2.20658, -3.69674, 2.06561, -3.85718, 1.91593, -4.00295, 1.75764, -4.13388, 1.59081, -4.24979, 1.41555, -4.35052, 1.23193, -4.4359, 1.04005, -4.50574, 0.839996, -4.60819, 0.446954, -4.6715, 0.0756004, -4.69792, -0.274331, -4.68972, -0.603104, -4.64913, -0.910985, -4.57842, -1.19824, -4.47984, -1.46513, -4.35564, -1.71193, -4.20807, -1.93889, -4.03939, -2.14629, -3.85185, -2.33439, -3.64771, -2.50345, -3.4292, -2.65374, -3.1986, -2.78552, -2.95815, -2.89907, -2.7101, -2.99464, -2.20023, -3.13292, -1.68701, -3.20248, -1.18847, -3.20545, -0.95034, -3.18262, -0.722636, -3.14394, -0.507613, -3.08967, -0.307524, -3.02008, -0.124622, -2.93544, 0.0388396, -2.836, 0.112576, -2.78081, 0.180608, -2.72203, 0.242653, -2.65968, 0.29843, -2.5938, 0.347657, -2.52442, 0.390053, -2.45158, 0.425336, -2.3753, 0.453224, -2.29562, 0.694987, -1.61372, 0.989236, -0.996931, 1.32519, -0.441774, 1.69205, 0.0552211, 2.07906, 0.497527, 2.47541, 0.888616, 3.25302, 1.53104, 4.44593, 2.3541, 4.60577, 2.48392, 4.63413, 2.51258, 4.65752, 2.53983, 4.67576, 2.56572, 4.68869, 2.59031, 4.69613, 2.61366, 4.69793, 2.63581, 4.69391, 2.65682, 4.6839, 2.67674, 4.66773, 2.69564, 4.64524, 2.71356, 4.61626, 2.73056, 4.58061, 2.74669)
+depth = 0.01
+material = SubResource("StandardMaterial3D_ciasp")
+
+[node name="path19" type="Node3D" parent="Node2D/RatConceptArt/layer1" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 113.143, 155.984, -0.3)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_g73gx")
+metadata/_stored_arc_list_data_ = SubResource("Resource_vh5vw")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path19"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(-0.968994, 0.921921, -0.989042, 0.89513, -1.01283, 0.870654, -1.04013, 0.848435, -1.07069, 0.828416, -1.10428, 0.810537, -1.14067, 0.79474, -1.22085, 0.76916, -1.30934, 0.75121, -1.40423, 0.740424, -1.60559, 0.738474, -1.8097, 0.75958, -2.00131, 0.80001, -2.08767, 0.826306, -2.16519, 0.856034, -2.23197, 0.888727, -2.26074, 0.90604, -2.2861, 0.92392, -2.30577, 0.90402, -2.32327, 0.881134, -2.3387, 0.855457, -2.35216, 0.82719, -2.36374, 0.796529, -2.37356, 0.763673, -2.38825, 0.692168, -2.40065, 0.531536, -2.39563, 0.357972, -2.3269, -0.21199, -2.14641, -0.387708, -1.86397, -0.620299, -1.69092, -0.732911, -1.50005, -0.829725, -1.39873, -0.869082, -1.29393, -0.900738, -1.18595, -0.923442, -1.07511, -0.935944, -0.781714, -0.751844, -0.495804, -0.599254, -0.218185, -0.475738, 0.0503362, -0.378863, 0.308955, -0.306192, 0.556867, -0.255291, 1.01735, -0.209061, 1.29172, -0.134452, 1.52339, -0.0491136, 1.71923, 0.0428488, 1.88608, 0.137329, 2.28123, 0.39482, 2.40065, 0.458313, 1.99294, 0.547023, 1.82534, 0.59382, 1.69313, 0.645036, 1.64292, 0.672955, 1.62225, 0.687607, 1.60472, 0.702765, 1.59045, 0.71846, 1.58457, 0.726519, 1.57957, 0.734725, 1.57544, 0.743082, 1.57222, 0.751594, 1.56991, 0.760265, 1.56853, 0.769099, 1.56809, 0.7781, 1.56862, 0.787273, 1.57014, 0.796621, 1.57264, 0.806148, 1.57617, 0.815859, 1.58072, 0.825757, 1.59297, 0.846133, 1.60954, 0.867308, 1.63056, 0.889316, 1.68647, 0.935959, 0.598272, 0.70844, 0.191094, 0.670996, -0.141249, 0.673563, -0.411093, 0.707992, -0.630773, 0.766133, -0.812623, 0.839839, -0.968979, 0.920959)
+depth = 0.01
+material = SubResource("StandardMaterial3D_6qi0r")
+
+[node name="path12" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 110.63, 143.619, -0.32)
+script = ExtResource("1_kuby2")
+metadata/_stored_curve_data_ = SubResource("Curve2D_rwnnf")
+metadata/_stored_arc_list_data_ = SubResource("Resource_4tjr3")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 1.06929
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 1
+metadata/_stored_joint_mode_ = 0
+
+[node name="path9" type="Node3D" parent="Node2D/RatConceptArt/layer1" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 110.63, 143.664, -0.34)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_1csov")
+metadata/_stored_arc_list_data_ = SubResource("Resource_oqqos")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path9"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(1.56583, 2.43079, 1.48967, 2.46543, 1.41044, 2.49139, 1.32831, 2.50902, 1.24345, 2.5187, 1.15603, 2.5208, 1.06621, 2.51569, 0.880039, 2.48531, 0.686276, 2.43052, 0.486249, 2.3543, 0.0727233, 2.14939, -1.56583, 1.06474, -1.47698, 0.201915, -1.32348, -0.620307, -1.21022, -1.02037, -1.06608, -1.4153, -0.886146, -1.80676, -0.66552, -2.19643, -0.508435, -2.33481, -0.432738, -2.38899, -0.358905, -2.43353, -0.286913, -2.46868, -0.216737, -2.49471, -0.148354, -2.5119, -0.0817398, -2.52052, -0.0168702, -2.52082, 0.0462788, -2.51307, 0.107731, -2.49755, 0.16751, -2.47453, 0.225641, -2.44426, 0.282147, -2.40701, 0.337052, -2.36307, 0.390381, -2.31268, 0.492403, -2.19367, 0.588405, -2.05212, 0.763119, -1.70996, 0.916058, -1.30334, 1.04875, -0.849382, 1.56583, 2.43079)
+depth = 0.01
+material = SubResource("StandardMaterial3D_uch1p")
+
+[node name="path15" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 112.629, 149.627, -0.36)
+script = ExtResource("1_kuby2")
+metadata/_stored_curve_data_ = SubResource("Curve2D_relyu")
+metadata/_stored_arc_list_data_ = SubResource("Resource_vwvqe")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 1.06929
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 1
+metadata/_stored_joint_mode_ = 0
+
+[node name="path28" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 110.388, 156.233, -0.38)
+script = ExtResource("1_kuby2")
+metadata/_stored_curve_data_ = SubResource("Curve2D_gp4qc")
+metadata/_stored_arc_list_data_ = SubResource("Resource_i6pil")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 0.534647
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 1
+metadata/_stored_joint_mode_ = 0
+
+[node name="path29" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 105.399, 153.305, -0.4)
+script = ExtResource("1_kuby2")
+metadata/_stored_curve_data_ = SubResource("Curve2D_e3wcs")
+metadata/_stored_arc_list_data_ = SubResource("Resource_oh3sn")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 1.06929
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 1
+metadata/_stored_joint_mode_ = 0
+
+[node name="path34" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 103.347, 157.383, -0.42)
+script = ExtResource("1_kuby2")
+metadata/_stored_curve_data_ = SubResource("Curve2D_am06v")
+metadata/_stored_arc_list_data_ = SubResource("Resource_frwxv")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 0.534647
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 1
+metadata/_stored_joint_mode_ = 0
+
+[node name="path33" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 97.1251, 152.843, -0.44)
+script = ExtResource("1_kuby2")
+metadata/_stored_curve_data_ = SubResource("Curve2D_1bd55")
+metadata/_stored_arc_list_data_ = SubResource("Resource_lwrnr")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 1.06929
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 1
+metadata/_stored_joint_mode_ = 0
+
+[node name="path37" type="Node3D" parent="Node2D/RatConceptArt/layer1" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 101.023, 149.242, -0.46)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_24pah")
+metadata/_stored_arc_list_data_ = SubResource("Resource_ejnnv")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path37"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(10.4944, 1.07936, 10.208, 2.3083, 10.0081, 2.90882, 9.882, 3.19542, 9.73392, 3.46904, 9.56045, 3.72676, 9.35819, 3.96568, 9.12371, 4.18289, 8.85362, 4.37548, 8.54449, 4.54055, 8.19291, 4.67519, 7.79548, 4.77649, 7.34878, 4.84154, -8.20749, 4.94481, -8.80283, 4.60462, -9.10348, 4.40066, -9.39502, 4.17073, -9.66916, 3.91228, -9.91758, 3.62279, -10.132, 3.29971, -10.2238, 3.12477, -10.304, 2.94049, -10.3716, 2.74653, -10.4254, 2.54259, -10.4645, 2.32835, -10.4879, 2.10348, -10.4944, 1.86767, -10.483, 1.62061, -10.4026, 1.09144, -10.2383, 0.513434, -9.98184, -0.115956, -9.62484, -0.79927, -9.15901, -1.53905, -8.43804, -2.36002, -7.63898, -3.05574, -6.75898, -3.63237, -5.79518, -4.09608, -4.74472, -4.45302, -3.60474, -4.70935, -2.37239, -4.87123, -1.04482, -4.94482, -0.190294, -4.84434, 0.670796, -4.67918, 2.39181, -4.17875, 4.07651, -3.49129, 5.68314, -2.66459, 7.16997, -1.7464, 8.49528, -0.784502, 9.61733, 0.173342, 10.4944, 1.07936)
+depth = 0.01
+material = SubResource("StandardMaterial3D_lg0m8")
+
+[node name="path6" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.853, 144.476, -0.48)
+script = ExtResource("1_kuby2")
+metadata/_stored_curve_data_ = SubResource("Curve2D_117dc")
+metadata/_stored_arc_list_data_ = SubResource("Resource_b33k6")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 1.06929
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 1
+metadata/_stored_joint_mode_ = 0
+
+[node name="path1" type="Node3D" parent="Node2D/RatConceptArt/layer1" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 112.629, 149.627, -0.5)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_w5qun")
+metadata/_stored_arc_list_data_ = SubResource("Resource_og6yt")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(-5.1235, 3.5421, -5.32184, 3.22654, -5.51257, 2.86892, -5.86152, 2.05666, -6.15101, 1.16372, -6.36169, 0.24848, -6.47421, -0.630679, -6.48761, -1.03848, -6.46922, -1.41537, -6.4166, -1.75405, -6.37671, -1.90678, -6.32736, -2.04721, -6.26824, -2.17445, -6.19906, -2.28757, -6.16059, -2.33855, -6.1195, -2.38566, -6.07575, -2.42879, -6.02928, -2.46782, -5.82858, -2.68304, -5.58203, -2.89492, -4.97444, -3.30111, -4.25261, -3.67122, -3.46265, -3.9901, -2.65068, -4.24258, -1.86282, -4.41352, -1.14516, -4.48774, -0.827069, -4.48384, -0.543823, -4.45009, 0.400548, -3.90231, 1.24231, -3.31108, 3.26865, -1.53729, 3.99883, -0.620914, 4.34269, -0.265416, 4.69365, 0.0479463, 6.48762, 1.2749, 6.33494, 1.59174, 6.13961, 1.89128, 5.90455, 2.17366, 5.63265, 2.43903, 5.32684, 2.68753, 4.99001, 2.9193, 4.23495, 3.33324, 3.39074, 3.68198, 2.48067, 3.96666, 0.555983, 4.34845, -1.35294, 4.48775, -2.24332, 4.46932, -3.05995, 4.39369, -3.77955, 4.26201, -4.09569, 4.17551, -4.37885, 4.07543, -4.62613, 3.9619, -4.8346, 3.83507, -4.92337, 3.76672, -5.00136, 3.69509, -5.06819, 3.62021, -5.1235, 3.5421)
+depth = 0.01
+material = SubResource("StandardMaterial3D_f7bnx")
+
+[node name="path7" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 113.165, 148.36, -0.52)
+script = ExtResource("1_kuby2")
+metadata/_stored_curve_data_ = SubResource("Curve2D_o4kbp")
+metadata/_stored_arc_list_data_ = SubResource("Resource_cqbuy")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 0.365313
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 1
+metadata/_stored_joint_mode_ = 0
+
+[node name="path10" type="Node3D" parent="Node2D/RatConceptArt/layer1" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 113.265, 148.268, -0.54)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_nrp5u")
+metadata/_stored_arc_list_data_ = SubResource("Resource_nxkp8")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path10"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(-1.4198, -0.188248, -1.38622, -0.325005, -1.34145, -0.457304, -1.28615, -0.584385, -1.22101, -0.705491, -1.14667, -0.819861, -1.06382, -0.926738, -0.973108, -1.02536, -0.875214, -1.11497, -0.770802, -1.19481, -0.660539, -1.26412, -0.545092, -1.32214, -0.425128, -1.36811, -0.301315, -1.40128, -0.17432, -1.42087, -0.0448098, -1.42615, 0.0865479, -1.41634, 0.118518, -1.41067, 0.153476, -1.40182, 0.231405, -1.3748, 0.318436, -1.33578, 0.41267, -1.28525, 0.615152, -1.15162, 0.823662, -0.977893, 1.02301, -0.768011, 1.1145, -0.65075, 1.19801, -0.525937, 1.27163, -0.394064, 1.33346, -0.255628, 1.38161, -0.111124, 1.41418, 0.0389557, 1.41981, 0.0999653, 1.41768, 0.16083, 1.40826, 0.221449, 1.39204, 0.281725, 1.36947, 0.341557, 1.34104, 0.400846, 1.26844, 0.517398, 1.17801, 0.630586, 1.07351, 0.739615, 0.837361, 0.942011, 0.0829926, 1.42616, -0.284311, 1.40156, -0.437856, 1.3734, -0.573561, 1.33402, -0.693101, 1.28295, -0.747332, 1.25288, -0.798149, 1.21971, -0.845761, 1.18337, -0.890378, 1.14381, -0.971464, 1.05477, -1.04308, 0.952112, -1.1069, 0.835353, -1.21784, 0.557611, -1.41981, -0.188248)
+depth = 0.01
+material = SubResource("StandardMaterial3D_t75ra")
+
+[node name="ellipse8Transform" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(0.707389, 0.706825, 0, -0.706825, 0.707389, 0, 0, 0, 1, 0, 0, -0.56)
+
+[node name="ellipse8" type="Node3D" parent="Node2D/RatConceptArt/layer1/ellipse8Transform" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.4529, 184.948, -0.16)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_2gb22")
+metadata/_stored_arc_list_data_ = SubResource("Resource_k0ggk")
+metadata/_stored_shape_type_ = 2
+metadata/_stored_shape_size_ = Vector2(1.81803, 1.94825)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.909013
+metadata/_stored_shape_ry_ = 0.974125
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/ellipse8Transform/ellipse8"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(0.909013, 0, 0.90432, 0.0996011, 0.890546, 0.196325, 0.868147, 0.289681, 0.837581, 0.37918, 0.799303, 0.464333, 0.753772, 0.544649, 0.701443, 0.61964, 0.642775, 0.688816, 0.578223, 0.751687, 0.508244, 0.807764, 0.433296, 0.856557, 0.353835, 0.897576, 0.270318, 0.930332, 0.183202, 0.954335, 0.0929436, 0.969096, 0, 0.974125, -0.0929436, 0.969096, -0.183202, 0.954335, -0.270318, 0.930332, -0.353835, 0.897576, -0.433296, 0.856557, -0.508244, 0.807764, -0.578223, 0.751687, -0.642775, 0.688816, -0.701443, 0.61964, -0.753772, 0.544649, -0.799303, 0.464333, -0.837581, 0.37918, -0.868147, 0.289681, -0.890546, 0.196324, -0.90432, 0.0996011, -0.909013, 0, -0.90432, -0.0996011, -0.890546, -0.196325, -0.868147, -0.289681, -0.837581, -0.37918, -0.799303, -0.464333, -0.753772, -0.544649, -0.701443, -0.61964, -0.642775, -0.688816, -0.578223, -0.751687, -0.508244, -0.807764, -0.433296, -0.856557, -0.353835, -0.897576, -0.270318, -0.930332, -0.183202, -0.954335, -0.0929436, -0.969096, 0, -0.974125, 0.0929436, -0.969096, 0.183202, -0.954335, 0.270318, -0.930332, 0.353835, -0.897576, 0.433296, -0.856557, 0.508244, -0.807764, 0.578223, -0.751687, 0.642775, -0.688816, 0.701443, -0.61964, 0.753772, -0.544649, 0.799303, -0.464333, 0.837581, -0.37918, 0.868147, -0.289681, 0.890546, -0.196324, 0.90432, -0.0996011, 0.909013, 0)
+depth = 0.01
+material = SubResource("StandardMaterial3D_h2qp0")
+
+[node name="path8Transform" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(0.993434, 0.114403, 0, -0.114403, 0.993434, 0, 0, 0, 1, 0, 0, -0.58)
+
+[node name="path8" type="Node3D" parent="Node2D/RatConceptArt/layer1/path8Transform" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 95.9156, 159.659, -0.16)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_ckftj")
+metadata/_stored_arc_list_data_ = SubResource("Resource_6bq8j")
+metadata/_stored_shape_type_ = 2
+metadata/_stored_shape_size_ = Vector2(0.865357, 0.336528)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.432679
+metadata/_stored_shape_ry_ = 0.168264
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path8Transform/path8"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(0.432679, 0, 0.432116, 0.00865906, 0.430445, 0.0172044, 0.427693, 0.0256255, 0.423888, 0.0339118, 0.419057, 0.0420526, 0.413227, 0.0500375, 0.406425, 0.0578558, 0.398678, 0.065497, 0.380458, 0.0802057, 0.358786, 0.0940791, 0.333878, 0.107033, 0.305952, 0.118982, 0.241918, 0.139528, 0.168421, 0.155041, 0.0872017, 0.164845, 0, 0.168264, -0.0872017, 0.164845, -0.168421, 0.155041, -0.241918, 0.139528, -0.305952, 0.118982, -0.333878, 0.107033, -0.358786, 0.0940791, -0.380458, 0.0802057, -0.398678, 0.065497, -0.406425, 0.0578558, -0.413227, 0.0500375, -0.419057, 0.0420526, -0.423888, 0.0339118, -0.427693, 0.0256255, -0.430445, 0.0172044, -0.432116, 0.00865906, -0.432679, 0, -0.432116, -0.00865906, -0.430445, -0.0172044, -0.427693, -0.0256255, -0.423888, -0.0339118, -0.419057, -0.0420526, -0.413227, -0.0500375, -0.406425, -0.0578558, -0.398678, -0.065497, -0.380458, -0.0802057, -0.358786, -0.0940791, -0.333878, -0.107033, -0.305952, -0.118982, -0.241918, -0.139528, -0.168421, -0.155041, -0.0872017, -0.164845, 0, -0.168264, 0.0872017, -0.164845, 0.168421, -0.155041, 0.241918, -0.139528, 0.305952, -0.118982, 0.333878, -0.107033, 0.358786, -0.0940791, 0.380458, -0.0802057, 0.398678, -0.065497, 0.406425, -0.0578558, 0.413227, -0.0500375, 0.419057, -0.0420526, 0.423888, -0.0339118, 0.427693, -0.0256255, 0.430445, -0.0172044, 0.432116, -0.00865906, 0.432679, 0)
+depth = 0.01
+material = SubResource("StandardMaterial3D_vyghp")
+
+[node name="path36" type="Node3D" parent="Node2D/RatConceptArt/layer1" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 118.284, 151.293, -0.6)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_j11n4")
+metadata/_stored_arc_list_data_ = SubResource("Resource_4hps1")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path36"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(0.671211, -0.780273, 0.723983, -0.783259, 0.771582, -0.780634, 0.814159, -0.772684, 0.833612, -0.766802, 0.851867, -0.759697, 0.868942, -0.751404, 0.884857, -0.741961, 0.89963, -0.731402, 0.913281, -0.719763, 0.925829, -0.707081, 0.937292, -0.693391, 0.947689, -0.678729, 0.95704, -0.663131, 0.972679, -0.629273, 0.984359, -0.592102, 0.992233, -0.551907, 0.996452, -0.508974, 0.997169, -0.463592, 0.994535, -0.416048, 0.979823, -0.315622, 0.95353, -0.209997, 0.916872, -0.101472, 0.81732, 0.115079, 0.690888, 0.315634, 0.620629, 0.404164, 0.547295, 0.481796, 0.470694, 0.549357, 0.390271, 0.609162, 0.306686, 0.661152, 0.220601, 0.70527, 0.132675, 0.741454, 0.0435687, 0.769648, -0.0460562, 0.789791, -0.13554, 0.801825, -0.224221, 0.80569, -0.311439, 0.801329, -0.396534, 0.788681, -0.478845, 0.767689, -0.557712, 0.738293, -0.632473, 0.700433, -0.702468, 0.654052, -0.767036, 0.599091, -0.824713, 0.536361, -0.874376, 0.46732, -0.915874, 0.392859, -0.949054, 0.313867, -0.973764, 0.231237, -0.989852, 0.14586, -0.997167, 0.0586261, -0.995557, -0.0295728, -0.984869, -0.117846, -0.964952, -0.205302, -0.935653, -0.29105, -0.896821, -0.374198, -0.848303, -0.453857, -0.789949, -0.529134, -0.721605, -0.599138, -0.64312, -0.662979, -0.572089, -0.707878, -0.497941, -0.742958, -0.421025, -0.769248, -0.341692, -0.787781, -0.260293, -0.799586, -0.177178, -0.805696, -0.00720246, -0.804948, 0.337911, -0.780455, 0.50744, -0.773202, 0.671211, -0.780273)
+depth = 0.01
+material = SubResource("StandardMaterial3D_12wo5")
+
+[node name="path2" type="Node3D" parent="Node2D/RatConceptArt/layer1" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 106.853, 144.476, -0.62)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_cvg35")
+metadata/_stored_arc_list_data_ = SubResource("Resource_cjsl7")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 0.293621
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 1
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(2.82073, 0.00202942, 2.90208, 0.508293, 2.93115, 1.00263, 2.90697, 1.47407, 2.82858, 1.91168, 2.76875, 2.11436, 2.695, 2.30448, 2.60722, 2.48065, 2.50528, 2.64152, 2.38906, 2.78571, 2.25844, 2.91184, 2.11331, 3.01856, 2.03526, 3.06421, 1.95353, 3.10449, 1.93581, 3.11295, 1.91696, 3.12001, 1.89701, 3.12569, 1.87598, 3.13003, 1.83079, 3.13484, 1.78159, 3.13474, 1.7286, 3.13, 1.67201, 3.12093, 1.54889, 3.09093, 0.95401, 2.85518, 0.274572, 2.54524, -0.0638338, 2.4087, -0.383751, 2.30913, -0.982054, 2.00755, -1.31448, 1.78923, -1.65359, 1.51561, -1.98773, 1.17898, -2.30528, 0.771642, -2.59462, 0.285885, -2.84409, -0.285995, -2.90337, -0.601486, -2.93116, -0.893266, -2.92912, -1.1624, -2.8989, -1.40997, -2.84216, -1.63702, -2.76058, -1.84463, -2.65579, -2.03387, -2.52948, -2.20579, -2.38328, -2.36148, -2.21887, -2.502, -2.03791, -2.62841, -1.84205, -2.74177, -1.41228, -2.93366, -0.942841, -3.0862, -0.819604, -3.11409, -0.692594, -3.13019, -0.562225, -3.13485, -0.42891, -3.12847, -0.293062, -3.11142, -0.155096, -3.08407, 0.125538, -3, 0.409683, -2.8793, 0.694032, -2.72498, 0.975274, -2.54007, 1.2501, -2.32759, 1.76728, -1.832, 2.21909, -1.26242, 2.41221, -0.957426, 2.57906, -0.643004, 2.71634, -0.322173, 2.82073, 0.00204468)
+depth = 0.01
+material = SubResource("StandardMaterial3D_ynpmq")
+
+[node name="path3" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 108.659, 145.357, -0.64)
+script = ExtResource("1_kuby2")
+metadata/_stored_curve_data_ = SubResource("Curve2D_irgov")
+metadata/_stored_arc_list_data_ = SubResource("Resource_aty6x")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="path13Transform" type="Node3D" parent="Node2D/RatConceptArt/layer1"]
+transform = Transform3D(0.99992, -0.0126108, 0, 0.0126108, 0.99992, 0, 0, 0, 1, 0, 0, -0.66)
+
+[node name="path13" type="Node3D" parent="Node2D/RatConceptArt/layer1/path13Transform" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 120.392, 149.758, -0.16)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_mfs5u")
+metadata/_stored_arc_list_data_ = SubResource("Resource_mfc0w")
+metadata/_stored_shape_type_ = 2
+metadata/_stored_shape_size_ = Vector2(0.346144, 0.461526)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.173072
+metadata/_stored_shape_ry_ = 0.230763
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path13Transform/path13"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(0.173072, 0, 0.172179, 0.0235948, 0.169556, 0.0465078, 0.165292, 0.0686232, 0.159472, 0.0898248, 0.152184, 0.109997, 0.143515, 0.129023, 0.133552, 0.146788, 0.122382, 0.163175, 0.110091, 0.178069, 0.0967675, 0.191353, 0.0824977, 0.202912, 0.0673686, 0.212629, 0.0514674, 0.220389, 0.0348809, 0.226075, 0.0176961, 0.229572, 0, 0.230763, -0.0176961, 0.229572, -0.0348809, 0.226075, -0.0514674, 0.220389, -0.0673686, 0.212629, -0.0824977, 0.202912, -0.0967675, 0.191353, -0.110091, 0.178069, -0.122382, 0.163175, -0.133552, 0.146788, -0.143515, 0.129023, -0.152184, 0.109997, -0.159472, 0.0898249, -0.165291, 0.0686232, -0.169556, 0.0465078, -0.172179, 0.0235948, -0.173072, 0, -0.172179, -0.0235948, -0.169556, -0.0465078, -0.165292, -0.0686232, -0.159472, -0.0898248, -0.152184, -0.109997, -0.143515, -0.129023, -0.133552, -0.146788, -0.122382, -0.163175, -0.110091, -0.178069, -0.0967675, -0.191353, -0.0824977, -0.202912, -0.0673686, -0.212629, -0.0514674, -0.220389, -0.0348809, -0.226075, -0.0176961, -0.229572, 0, -0.230763, 0.0176961, -0.229572, 0.0348809, -0.226075, 0.0514674, -0.220389, 0.0673686, -0.212629, 0.0824977, -0.202912, 0.0967675, -0.191353, 0.110091, -0.178069, 0.122382, -0.163175, 0.133552, -0.146788, 0.143515, -0.129023, 0.152184, -0.109997, 0.159472, -0.0898249, 0.165291, -0.0686232, 0.169556, -0.0465078, 0.172179, -0.0235948, 0.173072, 0)
+depth = 0.01
+material = SubResource("StandardMaterial3D_opoqm")
+
+[node name="path16" type="Node3D" parent="Node2D/RatConceptArt/layer1" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 105.399, 153.305, -0.68)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_3we08")
+metadata/_stored_arc_list_data_ = SubResource("Resource_45t0q")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path16"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(4.58061, 2.74669, 2.75771, 3.06064, 1.10918, 3.20543, -0.354013, 3.18673, -1.01268, 3.11785, -1.62089, 3.01023, -2.17728, 2.86458, -2.68047, 2.68162, -3.1291, 2.46205, -3.5218, 2.20659, -3.69674, 2.06562, -3.85718, 1.91594, -4.00295, 1.75764, -4.13388, 1.59082, -4.24979, 1.41555, -4.35052, 1.23193, -4.4359, 1.04005, -4.50574, 0.839996, -4.60819, 0.446953, -4.6715, 0.0755987, -4.69792, -0.274333, -4.68972, -0.603107, -4.64913, -0.910989, -4.57842, -1.19824, -4.47984, -1.46514, -4.35564, -1.71193, -4.20807, -1.9389, -4.03939, -2.14629, -3.85185, -2.33439, -3.6477, -2.50345, -3.4292, -2.65374, -3.1986, -2.78553, -2.95814, -2.89907, -2.7101, -2.99464, -2.20023, -3.13292, -1.68701, -3.20248, -1.18847, -3.20545, -0.950339, -3.18262, -0.722635, -3.14394, -0.507612, -3.08967, -0.307523, -3.02008, -0.124622, -2.93544, 0.0388398, -2.836, 0.112576, -2.78081, 0.180608, -2.72203, 0.242653, -2.65968, 0.29843, -2.5938, 0.347657, -2.52442, 0.390053, -2.45158, 0.425336, -2.3753, 0.453224, -2.29562, 0.694989, -1.61372, 0.989239, -0.996931, 1.32519, -0.441774, 1.69206, 0.0552211, 2.07906, 0.497527, 2.47541, 0.888616, 3.25302, 1.53104, 4.44593, 2.3541, 4.60577, 2.48392, 4.63413, 2.51258, 4.65752, 2.53983, 4.67576, 2.56572, 4.68869, 2.59031, 4.69613, 2.61366, 4.69793, 2.63581, 4.69391, 2.65682, 4.6839, 2.67674, 4.66773, 2.69564, 4.64524, 2.71356, 4.61626, 2.73056, 4.58061, 2.74669)
+depth = 0.01
+material = SubResource("StandardMaterial3D_ox3nw")
+
+[node name="path17" type="Node3D" parent="Node2D/RatConceptArt/layer1" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 110.388, 156.233, -0.7)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_i5tnh")
+metadata/_stored_arc_list_data_ = SubResource("Resource_wwwkr")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path17"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(-0.968987, 0.921936, -0.989036, 0.895144, -1.01283, 0.870667, -1.04012, 0.848448, -1.07069, 0.828428, -1.10428, 0.810548, -1.14066, 0.79475, -1.22085, 0.769169, -1.30934, 0.751218, -1.40423, 0.74043, -1.60559, 0.73848, -1.8097, 0.759586, -2.00131, 0.800018, -2.08767, 0.826315, -2.1652, 0.856045, -2.23198, 0.88874, -2.26074, 0.906054, -2.28611, 0.923935, -2.30578, 0.904035, -2.32328, 0.881147, -2.33871, 0.85547, -2.35217, 0.827201, -2.36375, 0.79654, -2.37356, 0.763683, -2.38826, 0.692177, -2.40066, 0.531542, -2.39564, 0.357976, -2.32691, -0.21199, -2.14642, -0.387704, -1.86398, -0.620296, -1.69092, -0.732908, -1.50005, -0.829724, -1.39874, -0.869081, -1.29393, -0.900737, -1.18595, -0.923442, -1.07512, -0.935944, -0.781719, -0.751847, -0.495807, -0.599258, -0.218188, -0.475743, 0.0503333, -0.378868, 0.308952, -0.306198, 0.556864, -0.255299, 1.01735, -0.209076, 1.29171, -0.134464, 1.52339, -0.0491247, 1.71923, 0.0428379, 1.88608, 0.137318, 2.28123, 0.394805, 2.40065, 0.458298, 1.99294, 0.547014, 1.82533, 0.593813, 1.69312, 0.64503, 1.64291, 0.67295, 1.62224, 0.687602, 1.60471, 0.702759, 1.59043, 0.718454, 1.58456, 0.726513, 1.57956, 0.734719, 1.57543, 0.743076, 1.57221, 0.751587, 1.5699, 0.760258, 1.56852, 0.769092, 1.56808, 0.778093, 1.56861, 0.787265, 1.57013, 0.796612, 1.57263, 0.806139, 1.57615, 0.815849, 1.58071, 0.825747, 1.59296, 0.846122, 1.60954, 0.867297, 1.63055, 0.889303, 1.68646, 0.935944, 0.598265, 0.708425, 0.191089, 0.670981, -0.141254, 0.673548, -0.411097, 0.707976, -0.630777, 0.766118, -0.812628, 0.839824, -0.968987, 0.920944)
+depth = 0.01
+material = SubResource("StandardMaterial3D_3f4u3")
+
+[node name="path20" type="Node3D" parent="Node2D/RatConceptArt/layer1" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 97.1251, 152.843, -0.72)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_fucna")
+metadata/_stored_arc_list_data_ = SubResource("Resource_g77tx")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path20"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(5.51884, 4.18761, 4.36447, 4.45093, 3.25843, 4.61613, 2.20359, 4.68872, 1.20285, 4.67421, 0.259092, 4.57811, -0.624809, 4.40593, -1.44597, 4.16317, -2.2015, 3.85535, -2.88852, 3.48798, -3.50414, 3.06656, -4.04549, 2.59661, -4.50968, 2.08363, -4.89382, 1.53313, -5.19503, 0.950628, -5.41044, 0.341628, -5.48506, 0.0289128, -5.53715, -0.288361, -5.53879, -0.533307, -5.52075, -0.777644, -5.48392, -1.02069, -5.42921, -1.26175, -5.26975, -1.73522, -5.04959, -2.19257, -4.77597, -2.62836, -4.45612, -3.03709, -4.09725, -3.41332, -3.70661, -3.75157, -3.29141, -4.04637, -2.85889, -4.29226, -2.41627, -4.48377, -1.97078, -4.61543, -1.74921, -4.65711, -1.52964, -4.68178, -1.31297, -4.68875, -1.10009, -4.67734, -0.89192, -4.64688, -0.689354, -4.59666, -0.493299, -4.52602, -0.304657, -4.43427, 0.163514, -4.07558, 0.621738, -3.67012, 1.05179, -3.20193, 1.25056, -2.93931, 1.43546, -2.65503, 1.6042, -2.34709, 1.75451, -2.01348, 1.88411, -1.65222, 1.99072, -1.26131, 2.07207, -0.838758, 2.12587, -0.382566, 2.14175, 0.638718, 2.60231, 1.24994, 3.15488, 1.84811, 5.25538, 3.76193, 5.39938, 3.91135, 5.45386, 3.97599, 5.49558, 4.03355, 5.51141, 4.05959, 5.52375, 4.08377, 5.53249, 4.10603, 5.53755, 4.12636, 5.53881, 4.14471, 5.53618, 4.16106, 5.52955, 4.17536, 5.51884, 4.18759)
+depth = 0.01
+material = SubResource("StandardMaterial3D_164ps")
+
+[node name="path21" type="Node3D" parent="Node2D/RatConceptArt/layer1" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 103.347, 157.383, -0.74)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_mbyvk")
+metadata/_stored_arc_list_data_ = SubResource("Resource_wmcd4")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path21"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(-0.879219, 0.814774, -0.902945, 0.791176, -0.930038, 0.770413, -0.960271, 0.752393, -0.993416, 0.737022, -1.02925, 0.724209, -1.06754, 0.713862, -1.15059, 0.700194, -1.24074, 0.695282, -1.33619, 0.698386, -1.5357, 0.725693, -1.73458, 0.776212, -1.91829, 0.844038, -1.99992, 0.882596, -2.0723, 0.923267, -2.13363, 0.965313, -2.15957, 0.986621, -2.18208, 1.008, -2.20442, 0.991163, -2.22506, 0.971059, -2.24405, 0.947895, -2.26147, 0.921881, -2.27739, 0.893227, -2.29187, 0.862144, -2.31679, 0.79353, -2.35238, 0.636398, -2.37261, 0.463944, -2.38738, -0.109955, -2.23432, -0.310011, -1.98864, -0.581144, -1.83377, -0.717688, -1.65898, -0.841189, -1.56446, -0.894838, -1.46536, -0.941376, -1.36182, -0.979518, -1.25397, -1.00798, -0.936955, -0.868429, -0.631919, -0.758965, -0.339309, -0.677063, -0.0595682, -0.620199, 0.206861, -0.585847, 0.459536, -0.571481, 0.921852, -0.592606, 1.20414, -0.558625, 1.44575, -0.507829, 1.65287, -0.445276, 1.83167, -0.376022, 2.26001, -0.178631, 2.38738, -0.133148, 1.99688, 0.013819, 1.83784, 0.0844559, 1.71447, 0.154326, 1.66884, 0.189239, 1.65052, 0.206737, 1.63537, 0.224279, 1.62353, 0.241879, 1.61889, 0.250706, 1.61513, 0.259551, 1.61226, 0.268418, 1.61031, 0.277308, 1.60928, 0.286222, 1.6092, 0.295162, 1.61007, 0.30413, 1.61193, 0.313128, 1.61478, 0.322157, 1.61865, 0.331218, 1.62354, 0.340314, 1.62948, 0.349446, 1.64457, 0.367825, 1.66404, 0.386368, 1.68803, 0.405089, 1.75011, 0.443115, 0.640418, 0.376006, 0.232119, 0.398079, -0.0963285, 0.448873, -0.358314, 0.522115, -0.567225, 0.611531, -0.736448, 0.71085, -0.879372, 0.813797)
+depth = 0.01
+material = SubResource("StandardMaterial3D_ugl2d")
+
+[node name="path35" type="Node3D" parent="Node2D/RatConceptArt/layer1" node_paths=PackedStringArray("fill_polygons")]
+transform = Transform3D(0.999987, 0.00517514, 0, -0.00517514, 0.999987, 0, 0, 0, 1, 98.5301, 144.388, -0.76)
+script = ExtResource("1_kuby2")
+fill_polygons = [NodePath("Fill")]
+metadata/_stored_curve_data_ = SubResource("Curve2D_cw8lu")
+metadata/_stored_arc_list_data_ = SubResource("Resource_of4tr")
+metadata/_stored_shape_type_ = 0
+metadata/_stored_shape_size_ = Vector2(100, 100)
+metadata/_stored_shape_offset_ = Vector2(0, 0)
+metadata/_stored_stroke_width_ = 10.0
+metadata/_stored_shape_rx_ = 0.0
+metadata/_stored_shape_ry_ = 0.0
+metadata/_stored_line_cap_ = 0
+metadata/_stored_joint_mode_ = 0
+
+[node name="Fill" type="CSGPolygon3D" parent="Node2D/RatConceptArt/layer1/path35"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+polygon = PackedVector2Array(-4.89558, -2.57349, -5.23698, -2.3449, -5.57615, -2.06651, -5.90822, -1.74274, -6.22834, -1.37801, -6.53164, -0.976761, -6.81325, -0.543409, -7.06833, -0.0823804, -7.292, 0.4019, -7.47939, 0.905007, -7.62566, 1.42251, -7.72594, 1.95, -7.77536, 2.48303, -7.76907, 3.01719, -7.7022, 3.54806, -7.56988, 4.07119, -7.36727, 4.58218, -7.28209, 5.1938, -7.26189, 5.47454, -7.26388, 5.60939, -7.2764, 5.74082, -7.30132, 5.86907, -7.34048, 5.99433, -7.39574, 6.11682, -7.46896, 6.23675, -7.56199, 6.35433, -7.67668, 6.46978, -7.8149, 6.58329, -7.9785, 6.69509, -8.30031, 6.56274, -8.59327, 6.39905, -8.85754, 6.20593, -9.09333, 5.98528, -9.3008, 5.739, -9.48016, 5.46899, -9.63158, 5.17715, -9.75526, 4.86538, -9.85139, 4.53558, -9.92014, 4.18966, -9.96171, 3.82952, -9.97628, 3.45705, -9.92518, 2.68275, -9.76834, 1.88198, -9.50726, 1.06993, -9.14342, 0.261827, -8.67834, -0.527129, -8.11349, -1.28173, -7.45039, -1.98676, -6.69053, -2.62702, -5.8354, -3.18729, -4.88649, -3.65236, -4.19673, -3.87369, -3.2754, -4.07285, -0.889714, -4.40709, 4.99196, -4.83581, 10.3316, -4.97655, 12.0398, -4.95081, 12.5207, -4.91599, 12.6513, -4.89335, 12.6871, -4.88076, 12.7024, -4.86733, 12.6817, -4.84987, 12.6398, -4.83211, 12.4951, -4.79565, 11.9796, -4.71854, -1.20744, -3.45428, -3.48916, -3.04776, -4.32205, -2.81953, -4.64377, -2.69879, -4.89557, -2.57348)
+depth = 0.01
+material = SubResource("StandardMaterial3D_i1qea")

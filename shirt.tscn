@@ -1,0 +1,361 @@
+[gd_scene load_steps=20 format=3 uid="uid://cyeaeoiy7fa70"]
+
+[ext_resource type="Script" uid="uid://c0vl3grk7j6jn" path="res://addons/curved_lines_2d/dynamic_outline_2d.gd" id="1_5scod"]
+[ext_resource type="Script" uid="uid://de3jpss66xjfh" path="res://addons/curved_lines_2d/scalable_vector_shape_2d.gd" id="1_15nso"]
+[ext_resource type="Script" uid="uid://dlbv4pit17dnu" path="res://addons/curved_lines_2d/scalable_arc.gd" id="2_4nnui"]
+[ext_resource type="Script" uid="uid://dl1t88tthmwts" path="res://addons/curved_lines_2d/scalable_arc_list.gd" id="3_5scod"]
+[ext_resource type="Script" uid="uid://dn747ucen5o8b" path="res://addons/curved_lines_2d/svs_vertex_merge_2d.gd" id="4_35v0t"]
+[ext_resource type="Texture2D" uid="uid://dqds4ig8cclh3" path="res://addons/curved_lines_2d/LumAlpha8.tex" id="5_4nnui"]
+
+[sub_resource type="Curve2D" id="Curve2D_4nnui"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 87.0229, 0.0845337, 13.8354, -201.726, -40.3239, -19.6722, 20.0902, -1.46438, 182.327, -145.016, -20.2253, -23.7716, -11.8957, 24.1683, 317.697, -13.9125, 24.7655, -40.0589, 0, 0, 117.699, -9.7874, 3.31701, -61.313, 0, 0, 140.793, 203.099, 0, 0, 0, 0, 125.61, 234.093, 0, 0, 5.21568, -27.4312, -17.1604, 179.06, 0, 0, 0, 0, -95.6526, -25.8251, 0, 0, 0, 0, -63.3739, -131.034, -74.4818, 19.2214, 0, 0, 13.8354, -201.726)
+}
+point_count = 10
+
+[sub_resource type="Resource" id="Resource_iktao"]
+resource_local_to_scene = true
+script = ExtResource("3_5scod")
+arcs = Array[ExtResource("2_4nnui")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_5scod"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -155.94, -10.6142, 0, 0, -43.6835, 75.5099, -189.419, 59.2512, 2.33334, 17, 0, 0, -21.575, 117.85, 0, 0, 0, 0, -34.1234, 0.004776, 0, 0, 0, 0, -155.94, -10.6142)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_4nnui"]
+resource_local_to_scene = true
+script = ExtResource("3_5scod")
+arcs = Array[ExtResource("2_4nnui")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_35v0t"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -51.6368, -40.0395, 0, 0, 0, 0, 88.5948, 21.1741, 0, 0, -38, 14.6667, 134.216, 145.313, 3.33333, 30.6667, 0, 0, -68.9279, 117.748, 0, 0, 0, 0, -51.6368, -40.0395)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_5scod"]
+resource_local_to_scene = true
+script = ExtResource("3_5scod")
+arcs = Array[ExtResource("2_4nnui")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_itut1"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 38.9082, -35.9187, -114.627, 69.4171, -33.1662, -19.3522, 25.7702, 40.5878, 79.531, 117.569, 57.2824, -26.6508, 0, 0, 72.3553, 366.142, 0, 0, 0, 0, -68.37, 346.302, -9.4826, 39.1505, 0, 0, -114.627, 69.4171)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_q2aj4"]
+resource_local_to_scene = true
+script = ExtResource("3_5scod")
+arcs = Array[ExtResource("2_4nnui")]([])
+
+[sub_resource type="Curve2D" id="Curve2D_pp5h3"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, -10.9047, -36.7435, -2.17233, 52.7394, -44.0003, -14.2116, 41.9874, 35.1431, 107.516, 43.8336, -43.2051, -94.5646, 0, 0, 223.039, 217.743, 0, 0, -58.1778, -37.3146, 138.127, 230.35, 26.2801, 53.4291, 0, 0, -2.17233, 52.7394)
+}
+point_count = 5
+
+[sub_resource type="Resource" id="Resource_5v68w"]
+resource_local_to_scene = true
+script = ExtResource("3_5scod")
+arcs = Array[ExtResource("2_4nnui")]([])
+
+[sub_resource type="Animation" id="Animation_4nnui"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Shirt/Arm:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.9495]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Shirt/Arm2:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.263722]
+}
+
+[sub_resource type="Animation" id="Animation_15nso"]
+resource_name = "new_animation"
+loop_mode = 2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Shirt/Arm:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1.9495, 1.29756]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Shirt/Arm2:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-1.01817, -0.263722]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_5scod"]
+_data = {
+&"RESET": SubResource("Animation_4nnui"),
+&"new_animation": SubResource("Animation_15nso")
+}
+
+[node name="Node2D" type="Node2D"]
+rotation = 0.0406212
+
+[node name="DynamicOutline2D" type="Node2D" parent="." node_paths=PackedStringArray("shapes")]
+rotation = -0.0406212
+script = ExtResource("1_5scod")
+stroke_color = Color(0.427493, 0.427493, 0.427493, 1)
+stroke_width = 50.0
+shapes = [NodePath("../Shirt/Leg"), NodePath("../Shirt/Arm2"), NodePath("../Shirt/Arm"), NodePath("../Shirt/Neck"), NodePath("../Shirt")]
+metadata/_custom_type_script = "uid://c0vl3grk7j6jn"
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D" type="Node2D" parent="." node_paths=PackedStringArray("vertex_map")]
+position = Vector2(266.834, 125.789)
+script = ExtResource("4_35v0t")
+vertex_map = {
+NodePath("../Shirt"): 8,
+NodePath("../Shirt/Arm"): 0
+}
+metadata/_custom_type_script = "uid://dn747ucen5o8b"
+metadata/_edit_lock = true
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D2" type="Node2D" parent="." node_paths=PackedStringArray("vertex_map")]
+position = Vector2(241.412, 232.861)
+script = ExtResource("4_35v0t")
+vertex_map = {
+NodePath("../Shirt"): 7,
+NodePath("../Shirt/Arm"): 1
+}
+metadata/_custom_type_script = "uid://dn747ucen5o8b"
+metadata/_edit_lock = true
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D3" type="Node2D" parent="." node_paths=PackedStringArray("vertex_map")]
+position = Vector2(455.354, 235.098)
+script = ExtResource("4_35v0t")
+vertex_map = {
+NodePath("../Shirt"): 3,
+NodePath("../Shirt/Arm2"): 0
+}
+metadata/_custom_type_script = "uid://dn747ucen5o8b"
+metadata/_edit_lock = true
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D4" type="Node2D" parent="." node_paths=PackedStringArray("vertex_map")]
+position = Vector2(654.669, 218.075)
+script = ExtResource("4_35v0t")
+vertex_map = {
+NodePath("../Shirt"): 2,
+NodePath("../Shirt/Arm2"): 1
+}
+metadata/_custom_type_script = "uid://dn747ucen5o8b"
+metadata/_edit_lock = true
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D5" type="Node2D" parent="." node_paths=PackedStringArray("vertex_map")]
+position = Vector2(339.321, 50.2616)
+script = ExtResource("4_35v0t")
+vertex_map = {
+NodePath("../Shirt"): 0,
+NodePath("../Shirt/Neck"): 1
+}
+metadata/_custom_type_script = "uid://dn747ucen5o8b"
+metadata/_edit_lock = true
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D6" type="Node2D" parent="." node_paths=PackedStringArray("vertex_map")]
+position = Vector2(511.121, 95.9802)
+script = ExtResource("4_35v0t")
+vertex_map = {
+NodePath("../Shirt"): 1,
+NodePath("../Shirt/Neck"): 2
+}
+metadata/_custom_type_script = "uid://dn747ucen5o8b"
+metadata/_edit_lock = true
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D7" type="Node2D" parent="." node_paths=PackedStringArray("vertex_map")]
+position = Vector2(332.963, 432.254)
+script = ExtResource("4_35v0t")
+vertex_map = {
+NodePath("../Shirt"): 6,
+NodePath("../Shirt/Leg"): 0
+}
+metadata/_custom_type_script = "uid://dn747ucen5o8b"
+metadata/_edit_lock_ = true
+
+[node name="SVSVertexMerge2D8" type="Node2D" parent="." node_paths=PackedStringArray("vertex_map")]
+position = Vector2(478.987, 477.959)
+script = ExtResource("4_35v0t")
+vertex_map = {
+NodePath("../Shirt"): 5,
+NodePath("../Shirt/Leg"): 1
+}
+metadata/_custom_type_script = "uid://dn747ucen5o8b"
+metadata/_edit_lock_ = true
+
+[node name="Shirt" type="Node2D" parent="." node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(338.532, 252.46)
+rotation = -0.0645772
+script = ExtResource("1_15nso")
+polygon = NodePath("Fill")
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_4nnui")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_iktao")
+
+[node name="Stroke" type="Line2D" parent="Shirt"]
+texture_filter = 6
+points = PackedVector2Array(13.8354, -201.726, 44.4065, -200.072, 71.2045, -195.596, 94.7574, -188.932, 115.593, -180.716, 182.327, -145.016, 183.323, -145.005, 184.425, -144.836, 185.631, -144.515, 186.936, -144.046, 189.831, -142.682, 193.082, -140.778, 200.547, -135.498, 209.11, -128.492, 249.961, -88.9278, 317.697, -13.9125, 317.029, -12.8407, 316.147, -11.888, 315.056, -11.0504, 313.762, -10.3235, 312.274, -9.70318, 310.597, -9.18521, 306.704, -8.43938, 302.135, -8.05224, 296.945, -7.99002, 284.911, -8.70527, 222.524, -17.8089, 188.726, -22.3241, 157.724, -23.9331, 144.333, -22.9724, 138.351, -21.9325, 132.915, -20.4747, 128.079, -18.565, 125.902, -17.4301, 123.896, -16.1697, 122.065, -14.7794, 120.418, -13.2551, 118.96, -11.5925, 117.699, -9.7874, 130.49, 73.6634, 138.584, 143.969, 140.793, 203.099, 125.61, 234.093, -17.1604, 179.06, -16.9804, 177.666, -16.9267, 176.059, -17.1824, 172.239, -19.0356, 162.381, -27.2244, 135.474, -54.4506, 66.3308, -95.6526, -25.8251, -63.3739, -131.034, -63.1112, -133.283, -61.7839, -139.377, -60.4683, -143.558, -58.5831, -148.333, -56.0274, -153.579, -52.6999, -159.172, -48.4996, -164.991, -43.3253, -170.912, -37.076, -176.813, -29.6505, -182.571, -20.9477, -188.065, -10.8666, -193.17, 0.694131, -197.765)
+closed = true
+texture = ExtResource("5_4nnui")
+texture_mode = 1
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Fill" type="Polygon2D" parent="Shirt"]
+polygon = PackedVector2Array(13.8354, -201.726, 44.4065, -200.072, 71.2045, -195.596, 94.7574, -188.932, 115.593, -180.716, 182.327, -145.016, 183.323, -145.005, 184.425, -144.836, 185.631, -144.515, 186.936, -144.046, 189.831, -142.682, 193.082, -140.778, 200.547, -135.498, 209.11, -128.492, 249.961, -88.9278, 317.697, -13.9125, 317.029, -12.8407, 316.147, -11.888, 315.056, -11.0504, 313.762, -10.3235, 312.274, -9.70318, 310.597, -9.18521, 306.704, -8.43938, 302.135, -8.05224, 296.945, -7.99002, 284.911, -8.70527, 222.524, -17.8089, 188.726, -22.3241, 157.724, -23.9331, 144.333, -22.9724, 138.351, -21.9325, 132.915, -20.4747, 128.079, -18.565, 125.902, -17.4301, 123.896, -16.1697, 122.065, -14.7794, 120.418, -13.2551, 118.96, -11.5925, 117.699, -9.7874, 130.49, 73.6634, 138.584, 143.969, 140.793, 203.099, 125.61, 234.093, -17.1604, 179.06, -16.9804, 177.666, -16.9267, 176.059, -17.1824, 172.239, -19.0356, 162.381, -27.2244, 135.474, -54.4506, 66.3308, -95.6526, -25.8251, -63.3739, -131.034, -63.1112, -133.283, -61.7839, -139.377, -60.4683, -143.558, -58.5831, -148.333, -56.0274, -153.579, -52.6999, -159.172, -48.4996, -164.991, -43.3253, -170.912, -37.076, -176.813, -29.6505, -182.571, -20.9477, -188.065, -10.8666, -193.17, 0.694131, -197.765)
+metadata/_edit_lock_ = true
+
+[node name="Neck" type="Node2D" parent="Shirt" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(202.577, -263.101)
+rotation = -0.0112319
+script = ExtResource("1_15nso")
+fill_color = Color(0.984314, 0.662745, 0.764706, 1)
+polygon = NodePath("Fill")
+stroke_color = Color(0.984314, 0.658824, 0.764706, 1)
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_5scod")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_4nnui")
+
+[node name="Fill" type="Polygon2D" parent="Shirt/Neck"]
+color = Color(0.984314, 0.662745, 0.764706, 1)
+polygon = PackedVector2Array(-155.94, -10.6142, -189.419, 59.2512, -191.28, 62.7357, -192.774, 66.1111, -193.913, 69.3786, -194.707, 72.5397, -195.167, 75.5957, -195.305, 78.5478, -195.13, 81.3975, -194.653, 84.146, -193.886, 86.7947, -192.84, 89.345, -191.524, 91.7981, -189.951, 94.1555, -188.13, 96.4184, -186.073, 98.5881, -181.294, 102.654, -175.7, 106.363, -169.377, 109.726, -154.894, 115.458, -138.538, 119.935, -121.003, 123.242, -85.1746, 126.69, -52.9592, 126.484, -39.9414, 125.226, -29.9088, 123.31, -26.2288, 122.133, -24.7609, 121.494, -23.5554, 120.823, -22.6232, 120.122, -21.9752, 119.392, -21.6222, 118.634, -21.575, 117.85, -34.1234, 0.004776)
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Shirt/Neck"]
+texture_filter = 6
+points = PackedVector2Array(-155.94, -10.6142, -189.419, 59.2512, -191.28, 62.7357, -192.774, 66.1111, -193.913, 69.3786, -194.707, 72.5397, -195.167, 75.5957, -195.305, 78.5478, -195.13, 81.3975, -194.653, 84.146, -193.886, 86.7947, -192.84, 89.345, -191.524, 91.7981, -189.951, 94.1555, -188.13, 96.4184, -186.073, 98.5881, -181.294, 102.654, -175.7, 106.363, -169.377, 109.726, -154.894, 115.458, -138.538, 119.935, -121.003, 123.242, -85.1746, 126.69, -52.9592, 126.484, -39.9414, 125.226, -29.9088, 123.31, -26.2288, 122.133, -24.7609, 121.494, -23.5554, 120.823, -22.6232, 120.122, -21.9752, 119.392, -21.6222, 118.634, -21.575, 117.85, -34.1234, 0.004776)
+closed = true
+default_color = Color(0.984314, 0.658824, 0.764706, 1)
+texture = ExtResource("5_4nnui")
+texture_mode = 1
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Leg" type="Node2D" parent="Shirt" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(36.1752, 216.807)
+rotation = -0.0436726
+script = ExtResource("1_15nso")
+fill_color = Color(0.073349, 0.988281, 0.302082, 1)
+polygon = NodePath("Fill")
+stroke_color = Color(0.0705882, 0.988235, 0.301961, 1)
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_35v0t")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_5scod")
+
+[node name="Fill" type="Polygon2D" parent="Shirt/Leg"]
+color = Color(0.073349, 0.988281, 0.302082, 1)
+polygon = PackedVector2Array(-51.6368, -40.0395, 88.5948, 21.1741, 134.216, 145.313, 130.299, 146.611, 125.709, 147.757, 114.714, 149.597, 86.9123, 151.506, 19.644, 148.531, -13.2066, 143.814, -41.1242, 137.055, -52.1993, 132.936, -56.835, 130.697, -60.8006, 128.339, -64.0444, 125.863, -65.3795, 124.582, -66.5147, 123.272, -67.4436, 121.934, -68.1597, 120.567, -68.6567, 119.171, -68.9279, 117.748)
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Shirt/Leg"]
+texture_filter = 6
+points = PackedVector2Array(-51.6368, -40.0395, 88.5948, 21.1741, 134.216, 145.313, 130.299, 146.611, 125.709, 147.757, 114.714, 149.597, 86.9123, 151.506, 19.644, 148.531, -13.2066, 143.814, -41.1242, 137.055, -52.1993, 132.936, -56.835, 130.697, -60.8006, 128.339, -64.0444, 125.863, -65.3795, 124.582, -66.5147, 123.272, -67.4436, 121.934, -68.1597, 120.567, -68.6567, 119.171, -68.9279, 117.748)
+closed = true
+default_color = Color(0.0705882, 0.988235, 0.301961, 1)
+texture = ExtResource("5_4nnui")
+texture_mode = 1
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Arm2" type="Node2D" parent="Shirt" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(210.268, -106.685)
+rotation = -0.263722
+script = ExtResource("1_15nso")
+fill_color = Color(0.984314, 0.662745, 0.764706, 1)
+polygon = NodePath("Fill")
+stroke_color = Color(0.984314, 0.658824, 0.764706, 1)
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_itut1")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_q2aj4")
+
+[node name="Fill" type="Polygon2D" parent="Shirt/Arm2"]
+color = Color(0.984314, 0.662745, 0.764706, 1)
+polygon = PackedVector2Array(-114.627, 69.4171, -112.743, 67.8066, -110.741, 66.3401, -106.399, 63.826, -101.633, 61.8482, -96.4737, 60.3798, -90.9533, 59.3941, -85.1031, 58.8645, -72.5394, 59.0662, -59.0346, 60.7712, -44.8409, 63.7654, -15.3947, 72.7665, 40.6733, 96.83, 79.531, 117.569, 81.9403, 121.777, 84.3265, 126.756, 88.971, 138.81, 97.3369, 169.784, 103.689, 207.028, 107.088, 247.082, 106.594, 286.482, 104.593, 304.855, 101.266, 321.767, 96.497, 336.784, 93.5344, 343.447, 90.1669, 349.474, 86.38, 354.811, 82.1589, 359.404, 79.8809, 361.405, 77.4889, 363.199, 74.9809, 364.781, 72.3553, 366.142, -68.37, 346.302, -95.0545, 222.541, -111.4, 129.197, -115.362, 92.555, -115.67, 78.9784, -115.329, 73.6559)
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Shirt/Arm2"]
+texture_filter = 6
+points = PackedVector2Array(-114.627, 69.4171, -112.743, 67.8066, -110.741, 66.3401, -106.399, 63.826, -101.633, 61.8482, -96.4737, 60.3798, -90.9533, 59.3941, -85.1031, 58.8645, -72.5394, 59.0662, -59.0346, 60.7712, -44.8409, 63.7654, -15.3947, 72.7665, 40.6733, 96.83, 79.531, 117.569, 81.9403, 121.777, 84.3265, 126.756, 88.971, 138.81, 97.3369, 169.784, 103.689, 207.028, 107.088, 247.082, 106.594, 286.482, 104.593, 304.855, 101.266, 321.767, 96.497, 336.784, 93.5344, 343.447, 90.1669, 349.474, 86.38, 354.811, 82.1589, 359.404, 79.8809, 361.405, 77.4889, 363.199, 74.9809, 364.781, 72.3553, 366.142, -68.37, 346.302, -95.0545, 222.541, -111.4, 129.197, -115.362, 92.555, -115.67, 78.9784, -115.329, 73.6559)
+closed = true
+default_color = Color(0.984314, 0.658824, 0.764706, 1)
+texture = ExtResource("5_4nnui")
+texture_mode = 1
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="Arm" type="Node2D" parent="Shirt" node_paths=PackedStringArray("polygon", "line")]
+position = Vector2(-15.1745, -109.517)
+rotation = 1.9495
+script = ExtResource("1_15nso")
+fill_color = Color(0.984314, 0.662745, 0.764706, 1)
+polygon = NodePath("Fill")
+line = NodePath("Stroke")
+curve = SubResource("Curve2D_pp5h3")
+update_curve_at_runtime = true
+arc_list = SubResource("Resource_5v68w")
+
+[node name="Fill" type="Polygon2D" parent="Shirt/Arm"]
+color = Color(0.984314, 0.662745, 0.764706, 1)
+polygon = PackedVector2Array(-2.17233, 52.7394, -2.94197, 49.4407, -3.14141, 47.8992, -3.22092, 46.4281, -3.18326, 45.0262, -3.03117, 43.6924, -2.7674, 42.4255, -2.3947, 41.2244, -1.91582, 40.088, -1.33351, 39.0152, -0.650517, 38.0047, 0.130413, 37.0554, 1.00653, 36.1663, 1.97508, 35.3362, 3.03333, 34.5638, 4.17851, 33.8482, 6.7187, 32.5825, 9.57367, 31.5298, 12.7214, 30.6811, 16.14, 30.0273, 23.7016, 29.2678, 32.0825, 29.1783, 50.5986, 30.7179, 70.2811, 34.0626, 107.516, 43.8336, 122.763, 57.5176, 137.204, 72.5348, 151.128, 89.3693, 164.821, 108.505, 192.666, 155.617, 223.039, 217.743, 138.127, 230.35, 116.473, 214.196, 95.3571, 194.37, 56.0157, 147.588, 22.6551, 97.7841)
+metadata/_edit_lock_ = true
+
+[node name="Stroke" type="Line2D" parent="Shirt/Arm"]
+texture_filter = 6
+points = PackedVector2Array(-2.17233, 52.7394, -2.94197, 49.4407, -3.14141, 47.8992, -3.22092, 46.4281, -3.18326, 45.0262, -3.03117, 43.6924, -2.7674, 42.4255, -2.3947, 41.2244, -1.91582, 40.088, -1.33351, 39.0152, -0.650517, 38.0047, 0.130413, 37.0554, 1.00653, 36.1663, 1.97508, 35.3362, 3.03333, 34.5638, 4.17851, 33.8482, 6.7187, 32.5825, 9.57367, 31.5298, 12.7214, 30.6811, 16.14, 30.0273, 23.7016, 29.2678, 32.0825, 29.1783, 50.5986, 30.7179, 70.2811, 34.0626, 107.516, 43.8336, 122.763, 57.5176, 137.204, 72.5348, 151.128, 89.3693, 164.821, 108.505, 192.666, 155.617, 223.039, 217.743, 138.127, 230.35, 116.473, 214.196, 95.3571, 194.37, 56.0157, 147.588, 22.6551, 97.7841)
+closed = true
+texture = ExtResource("5_4nnui")
+texture_mode = 1
+sharp_limit = 90.0
+metadata/_edit_lock_ = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_5scod")
+}

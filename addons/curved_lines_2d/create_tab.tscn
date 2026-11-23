@@ -223,7 +223,7 @@ custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
-tooltip_text = "Create ellipse / circle shapes"
+tooltip_text = "Create ellipse / circle shapes (O)"
 theme_override_styles/normal = ExtResource("2_2chn8")
 theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
@@ -239,7 +239,7 @@ custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
-tooltip_text = "Create rectangle shapes"
+tooltip_text = "Create rectangle shapes (Shift + R)"
 theme_override_styles/normal = ExtResource("2_2chn8")
 theme_override_styles/pressed = ExtResource("3_hti8q")
 theme_override_styles/hover = ExtResource("4_powka")
@@ -604,7 +604,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "When checked, if you use the brush on a selected shape, it will try to color between the lines. This works best with a low granularity and perfectly when \"extract curve\" is turned off (but you get a lot of points).
 When checked off, you're ignoring the parent shape and simply drawing anywhere."
-button_pressed = true
 text = "Fill in parent shape"
 
 [node name="PencilToolContainer" type="ScrollContainer" parent="ToolsContainer/MarginContainer" unique_id=333204050]
@@ -646,6 +645,7 @@ text = "Extract curve"
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "When checked, the path you draw is an closed to an outline."
+button_pressed = true
 text = "Close path"
 
 [node name="KeepPencilDrawingCheckBox" type="CheckBox" parent="ToolsContainer/MarginContainer/PencilToolContainer/VBoxContainer/HFlowContainer2" unique_id=445290022]
@@ -970,7 +970,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 tooltip_text = "Enable Fill"
-button_pressed = true
 text = "Fill"
 
 [node name="FillPickerButton" type="ColorPickerButton" parent="SettingsContainer/HBoxContainer" unique_id=1356466570]
@@ -979,7 +978,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Set Fill Color"
 text = "Fill"
-color = Color(0.93333334, 0.93333334, 0.99607843, 1)
+color = Color(1, 1, 1, 1)
 
 [node name="VSeparator4" type="VSeparator" parent="SettingsContainer/HBoxContainer" unique_id=265864135]
 layout_mode = 2

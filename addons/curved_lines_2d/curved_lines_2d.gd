@@ -119,7 +119,6 @@ var select_mode_button : Button
 var undo_redo : EditorUndoRedoManager
 var in_undo_redo_transaction := false
 var shape_preview : Curve2D = null
-var selection_candidate : Node = null
 var current_cutout_shape := ScalableVectorShape2D.ShapeType.RECT
 var current_clip_operation := Geometry2D.OPERATION_DIFFERENCE
 
@@ -183,6 +182,8 @@ var _current_brush_stroke := PackedVector2Array()
 var _brush_start_pos := Vector2.ZERO
 var _last_brush_pos := Vector2.ZERO
 
+# Draw mode helpers
+var _last_drawn_svs : ScalableVectorShape2D = null
 
 # Bone Paint helper vars
 var _current_bone_idx := 0
@@ -249,6 +250,7 @@ func _enter_tree():
 		scalable_vector_shapes_2d_dock.create_tab.ellipse_created.connect(_on_ellipse_created)
 	if not scalable_vector_shapes_2d_dock.create_tab.rect_created.is_connected(_on_rect_created):
 		scalable_vector_shapes_2d_dock.create_tab.rect_created.connect(_on_rect_created)
+	scalable_vector_shapes_2d_dock.create_tab.on_hotkey_released_to_draw_mode.connect(_on_hotkey_released_to_draw_mode)
 	scalable_vector_shapes_2d_dock.create_tab.flip_horizontal.connect(_flip_svs_horizontal)
 	scalable_vector_shapes_2d_dock.create_tab.flip_vertical.connect(_flip_svs_vertical)
 	scene_changed.connect(_on_scene_changed)
@@ -368,15 +370,16 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _drawing_pencil_line:
 		return
-	if toggled_on and _is_svs_valid(current_selection):
+	if toggled_on and (_is_svs_valid(current_selection) or _svs_edit_mode in DRAW_MODES):
 		svs_edit_buttons.show()
 		svs_edit_buttons.show_svs_editors()
-		scalable_vector_shapes_2d_dock.create_tab.enable_svs_editors(current_selection)
+		scalable_vector_shapes_2d_dock.create_tab.enable_svs_editors()
 		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
 				_svs_edit_mode in DRAW_MODES) and not Input.is_key_pressed(KEY_Q)):
 					return
-		svs_edit_buttons.set_default_mode()
-		scalable_vector_shapes_2d_dock.create_tab.set_default_mode()
+		# TODO: regression test this!
+		# svs_edit_buttons.set_default_mode()
+		# scalable_vector_shapes_2d_dock.create_tab.set_default_mode()
 	elif toggled_on and current_selection:
 		svs_edit_buttons.show()
 		svs_edit_buttons.hide_svs_editors()
@@ -392,10 +395,24 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 		scalable_vector_shapes_2d_dock.create_tab.disable_all_editors()
 
 
+func _on_hotkey_released_to_draw_mode() -> void:
+	if _last_drawn_svs and is_instance_valid(_last_drawn_svs):
+		select_node_reversibly(_last_drawn_svs.get_parent())
+
+
 func _on_svs_edit_mode_changed(new_mode : SVSEditMode) -> void:
+	if _svs_edit_mode == SVSEditMode.ROTATE:
+		UniformRotateHandler.clear_settings()
+	if _svs_edit_mode == SVSEditMode.SCALE:
+		UniformResizeHandler.clear_settings()
 	var sel := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if new_mode not in DRAW_MODES and _is_svs_valid(sel):
 		scalable_vector_shapes_2d_dock.create_tab.sync_svs_settings(sel)
+	if new_mode in DRAW_MODES and new_mode != SVSEditMode.KNIFE:
+		scalable_vector_shapes_2d_dock.create_tab.enable_svs_editors()
+	elif _svs_edit_mode in DRAW_MODES and _svs_edit_mode != SVSEditMode.KNIFE:
+		if _last_drawn_svs and _is_svs_valid(_last_drawn_svs):
+			select_node_reversibly(_last_drawn_svs)
 	if _svs_edit_mode == SVSEditMode.MERGE and new_mode != SVSEditMode.MERGE:
 		_merge_box_rect.size = Vector2.ZERO
 	if new_mode != SVSEditMode.PENCIL:
@@ -659,8 +676,8 @@ func _scene_can_export_animations() -> bool:
 
 func _on_selection_changed():
 	MultiSelectHandler.clear_selection()
-	UniformRotateHandler.clear_settings()
-	UniformResizeHandler.clear_settings()
+	UniformRotateHandler.clear_settings(true)
+	UniformResizeHandler.clear_settings(true)
 	var scene_root := EditorInterface.get_edited_scene_root()
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if _is_editing_enabled() and is_instance_valid(scene_root):
@@ -668,7 +685,8 @@ func _on_selection_changed():
 		# _forward_canvas_gui_input will still be called upon losing focus
 		if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
 				and EditorInterface.get_selection().get_selected_nodes().is_empty()
-				and not scene_root is Control):
+				and not scene_root is Control
+				and not scene_root is Node3D):
 			EditorInterface.edit_node(scene_root)
 	if current_selection is AnimationPlayer and _scene_can_export_animations():
 		scalable_vector_shapes_2d_dock.set_selected_animation_player(current_selection)
@@ -1371,18 +1389,28 @@ func _draw_outline_for_uniform_transforms(viewport_control : Control, svs : Scal
 			viewport_control.draw_circle(_vp_transform(p * mul), 6, VIEWPORT_ORANGE, false, 4)
 		else:
 			_draw_crosshair(viewport_control, _vp_transform(p * mul), 2.0, 4.0, Color.WHITE)
-	if _svs_edit_mode == SVSEditMode.ROTATE and UniformRotateHandler.temp_pivot_hint != Vector2.INF:
-		_draw_crosshair(viewport_control, _vp_transform(UniformRotateHandler.temp_pivot_hint * mul), 2.0, 5.0, Color.ROYAL_BLUE)
-	elif _svs_edit_mode == SVSEditMode.SCALE and UniformResizeHandler.temp_pivot_hint != Vector2.INF:
-		_draw_crosshair(viewport_control, _vp_transform(UniformResizeHandler.temp_pivot_hint * mul), 2.0, 5.0, Color.ROYAL_BLUE)
-	var temp_pivot := svs.to_global(svs.get_center())
-	if _svs_edit_mode == SVSEditMode.ROTATE and UniformRotateHandler.temp_pivot != Vector2.INF:
-		temp_pivot = UniformRotateHandler.temp_pivot
-	if _svs_edit_mode == SVSEditMode.SCALE and UniformResizeHandler.temp_pivot != Vector2.INF:
-		temp_pivot = UniformResizeHandler.temp_pivot
+	_draw_temp_pivot(viewport_control, svs, mul)
 
-	_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 5.0, Color.WHITE, 3)
-	_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 5.0, Color.ROYAL_BLUE)
+
+func _draw_temp_pivot(viewport_control : Control, svs : ScalableVectorShape2D, mul : Transform2D) -> void:
+	if svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:
+		return
+	if (_svs_edit_mode == SVSEditMode.ROTATE or _svs_edit_mode == SVSEditMode.SCALE) and UniformTransformUtil.temp_pivot_hint != Vector2.INF:
+		_draw_crosshair(viewport_control, _vp_transform(UniformTransformUtil.temp_pivot_hint * mul), 2.0, 5.0, Color.ROYAL_BLUE)
+
+	if _svs_edit_mode in [SVSEditMode.ROTATE, SVSEditMode.SCALE]:
+		var temp_pivot := svs.to_global(svs.get_center(MultiSelectHandler.selection(svs)))
+		var hovered := false
+		if (_svs_edit_mode == SVSEditMode.ROTATE or _svs_edit_mode == SVSEditMode.SCALE) and UniformTransformUtil.temp_pivot != Vector2.INF:
+			temp_pivot = UniformTransformUtil.temp_pivot
+			hovered = UniformTransformUtil.temp_pivot_is_hovered
+
+		if hovered:
+			_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 7.0, Color.WHITE, 5)
+			_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 7.0, Color.ROYAL_BLUE, 2)
+		else:
+			_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 5.0, Color.WHITE, 3)
+			_draw_crosshair(viewport_control, _vp_transform(temp_pivot * mul), 2.0, 5.0, Color.ROYAL_BLUE)
 
 
 func _draw_canvas_for_uniform_translate(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
@@ -2404,7 +2432,8 @@ func _toggle_loop_if_applies(svs : ScalableVectorShape2D, idx : int) -> void:
 
 	if idx == 0 or idx == svs.curve.point_count - 1:
 		_add_point_to_curve(svs, svs.curve.get_point_position(0))
-		WidthCurveTool.match_start_end_point(svs, svs.line.width_curve)
+		if is_instance_valid(svs.line):
+			WidthCurveTool.match_start_end_point(svs, svs.line.width_curve)
 
 
 func _break_loop_at(svs : ScalableVectorShape2D, idx : int) -> void:
@@ -2718,6 +2747,7 @@ func _handle_pencil_draw_input(event : InputEvent) -> bool:
 					svs.curve = _polyline_to_curve(poly)
 					if _get_close_pencil_path() and _pencil_stroke.size() > 1:
 						svs.curve.add_point(svs.to_local(_pencil_stroke[0]))
+					_last_drawn_svs = svs
 					if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 						select_node_reversibly(svs.get_parent())
 					else:
@@ -2816,6 +2846,7 @@ func _handle_brush_draw_input(event : InputEvent) -> bool:
 				var svs := _create_freehand_shape("BrushStroke")
 				_set_curve_from_brush_stroke(svs, _current_brush_stroke)
 				_current_brush_stroke.clear()
+				_last_drawn_svs = svs
 				if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 					select_node_reversibly(svs.get_parent())
 				else:
@@ -3115,6 +3146,7 @@ func _handle_create_primitive_input(event) -> bool:
 				), null, true)
 
 			svs.global_position = _drag_start * _get_svp_transform(svs).affine_inverse()
+			_last_drawn_svs = svs
 			if _get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT:
 				select_node_reversibly(svs.get_parent())
 			else:
@@ -3129,7 +3161,8 @@ func _handle_create_primitive_input(event) -> bool:
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
-
+	if (event is InputEventKey and (event as InputEventKey).keycode == KEY_Q):
+		scalable_vector_shapes_2d_dock.create_tab._unhandled_input(event)
 	if (
 			event is InputEventMouseButton and
 			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT
@@ -3192,18 +3225,13 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		var mouse_pos := _svp_mouse_pos(
 			EditorInterface.get_editor_viewport_2d().get_mouse_position(), current_selection
 		)
-		if event is InputEventKey and (event as InputEventKey).keycode == KEY_A and (
-				not (event as InputEventKey).is_command_or_control_pressed() and
-				not (event as InputEventKey).shift_pressed and
-				not (event as InputEventKey).alt_pressed
-		):
-			_on_svs_edit_mode_changed(SVSEditMode.SET_PIVOT)
 		if _svs_edit_mode == SVSEditMode.TRANSLATE:
 			return _handle_input_for_uniform_translate(event, current_selection)
 		elif _svs_edit_mode == SVSEditMode.SCALE:
 			if UniformResizeHandler.handle_input(
 					event, current_selection, mouse_pos,
-					_is_snapped_to_pixel(), _get_snap_resolution()
+					_is_snapped_to_pixel(), _get_snap_resolution(),
+					_vp_transform
 			):
 				update_overlays()
 				return true
@@ -3211,19 +3239,22 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		elif _svs_edit_mode == SVSEditMode.ROTATE:
 			if UniformRotateHandler.handle_input(
 					event, current_selection, mouse_pos,
-					_is_snapped_to_pixel(), _get_snap_resolution()
+					_is_snapped_to_pixel(), _get_snap_resolution(),
+					_vp_transform
 			):
 				update_overlays()
 				return true
 			return false
 		elif _svs_edit_mode == SVSEditMode.WIDTH_CURVE_TOOL:
-			if WidthCurveTool.handle_input(event, current_selection, mouse_pos,
-					_vp_transform, _on_svs_edit_mode_changed.bind(SVSEditMode.NONE),
-					_is_snapped_to_pixel(), _get_snap_resolution()):
+			if is_instance_valid(current_selection.line):
+				if WidthCurveTool.handle_input(event, current_selection, mouse_pos,
+						_vp_transform, _on_svs_edit_mode_changed.bind(SVSEditMode.NONE),
+						_is_snapped_to_pixel(), _get_snap_resolution()):
+					update_overlays()
+					return true
+				return false
+			else:
 				update_overlays()
-				return true
-			return false
-
 		if MultiSelectHandler.is_selecting(event, current_selection,
 				_handle_has_hover(current_selection), _hover_point_idx):
 			MultiSelectHandler.handle_selecting(event, current_selection,
@@ -3316,26 +3347,17 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			elif _is_svs_valid(current_selection) and current_selection.has_fine_point(_svp_mouse_pos(mouse_pos, current_selection)) and event.double_click:
 				_subdivide_curve(current_selection)
 				return true
-			else:
+			elif Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 				var results := _find_scalable_vector_shape_2d_nodes_at(mouse_pos)
-				var refined_result := results.rfind_custom(func(x): return x.has_fine_point(_svp_mouse_pos(mouse_pos, x)))
-				if refined_result > -1 and results[refined_result]:
-					if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-						selection_candidate = results[refined_result]
-						return true
-					else:
-						if selection_candidate == results[refined_result]:
-							EditorInterface.edit_node(results[refined_result])
-							return true
-				var result = results.pop_back()
-				if is_instance_valid(result):
-					if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-						selection_candidate = result
-						return true
-					else:
-						if selection_candidate == result:
-							EditorInterface.edit_node(result)
-							return true
+				var refined_result := results.filter(func(x):
+					return x.has_fine_point(_svp_mouse_pos(mouse_pos, x))
+				)
+				if not refined_result.is_empty():
+					EditorInterface.edit_node(refined_result.pop_back())
+					return true
+				elif not results.is_empty():
+					EditorInterface.edit_node(results.pop_back())
+					return true
 		return false
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:

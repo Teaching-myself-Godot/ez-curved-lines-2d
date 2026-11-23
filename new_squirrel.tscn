@@ -1,0 +1,223 @@
+[gd_scene format=3 uid="uid://djf3atf0r10jl"]
+
+[node name="Node2D" type="Node2D" unique_id=86840223]
+
+[node name="SquirrelSkeleton2D" type="Skeleton2D" parent="." unique_id=1112369046]
+
+[node name="Root" type="Bone2D" parent="SquirrelSkeleton2D" unique_id=1309122814]
+position = Vector2(-90, -101)
+rotation = 1.5707964
+rest = Transform2D(-4.371139e-08, 1, -1, -4.371139e-08, -90, -101)
+
+[node name="LegUpperL" type="Bone2D" parent="SquirrelSkeleton2D/Root" unique_id=2100818853]
+position = Vector2(3, 0)
+rotation = 1.5844157
+rest = Transform2D(-0.0136189265, 0.99990726, -0.99990726, -0.0136189265, 3, 0)
+
+[node name="LegLowerL" type="Bone2D" parent="SquirrelSkeleton2D/Root/LegUpperL" unique_id=1791040764]
+position = Vector2(54, -55)
+rotation = -1.3525584
+scale = Vector2(0.9999999, 0.9999999)
+rest = Transform2D(0.21650971, -0.97628045, 0.97628045, 0.21650971, 54, -55)
+
+[node name="FootL" type="Bone2D" parent="SquirrelSkeleton2D/Root/LegUpperL/LegLowerL" unique_id=1306491479]
+position = Vector2(4.9992, 88.0001)
+rotation = 0.79608995
+rest = Transform2D(0.6995063, 0.71462643, -0.71462643, 0.6995063, 4.9992, 88.0001)
+
+[node name="ToesL" type="Bone2D" parent="SquirrelSkeleton2D/Root/LegUpperL/LegLowerL/FootL" unique_id=573315911]
+position = Vector2(47, -4.76837e-07)
+rotation = 0.06844131
+scale = Vector2(1.0000002, 1.0000002)
+rest = Transform2D(0.997659, 0.0683879, -0.0683879, 0.997659, 47, -4.76837e-07)
+auto_calculate_length_and_angle = false
+length = 16.0
+bone_angle = 3.9213989
+
+[node name="LegUpperR" type="Bone2D" parent="SquirrelSkeleton2D/Root" unique_id=1219313841]
+position = Vector2(3, 0)
+rotation = 1.1918231
+rest = Transform2D(0.36996672, 0.929045, -0.929045, 0.36996672, 3, 0)
+
+[node name="LegLowerR" type="Bone2D" parent="SquirrelSkeleton2D/Root/LegUpperR" unique_id=1434547506]
+position = Vector2(54, -55)
+rotation = -1.2755661
+rest = Transform2D(0.29096013, -0.9567352, 0.9567352, 0.29096013, 54, -55)
+
+[node name="FootR" type="Bone2D" parent="SquirrelSkeleton2D/Root/LegUpperR/LegLowerR" unique_id=955267469]
+position = Vector2(4.9992, 88.0001)
+rotation = 1.0330427
+rest = Transform2D(0.512208, 0.85886145, -0.85886145, 0.512208, 4.9992, 88.0001)
+
+[node name="ToesR" type="Bone2D" parent="SquirrelSkeleton2D/Root/LegUpperR/LegLowerR/FootR" unique_id=1708424476]
+position = Vector2(47, -4.76837e-07)
+rotation = 0.06844131
+scale = Vector2(1.0000002, 1.0000002)
+rest = Transform2D(0.997659, 0.0683879, -0.0683879, 0.997659, 47, -4.76837e-07)
+auto_calculate_length_and_angle = false
+length = 16.0
+bone_angle = 3.9213989
+
+[node name="TailBone" type="Bone2D" parent="SquirrelSkeleton2D/Root" unique_id=1438228557]
+position = Vector2(2, -1)
+rotation = 2.0185137
+rest = Transform2D(-0.432909, 0.90143764, -0.90143764, -0.432909, 2, -1)
+
+[node name="TailBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/TailBone" unique_id=221126486]
+position = Vector2(20, 1.74846e-06)
+rest = Transform2D(1, 0, 0, 1, 20, 1.74846e-06)
+
+[node name="TailBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/TailBone/TailBone" unique_id=1195132751]
+position = Vector2(20, 1.74846e-06)
+rest = Transform2D(1, 0, 0, 1, 20, 1.74846e-06)
+
+[node name="TailBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/TailBone/TailBone/TailBone" unique_id=630424408]
+position = Vector2(20, 1.74846e-06)
+rest = Transform2D(1, 0, 0, 1, 20, 1.74846e-06)
+
+[node name="TailBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/TailBone/TailBone/TailBone/TailBone" unique_id=1856023951]
+position = Vector2(20, 1.74846e-06)
+rest = Transform2D(1, 0, 0, 1, 20, 1.74846e-06)
+
+[node name="TailBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/TailBone/TailBone/TailBone/TailBone/TailBone" unique_id=1489393465]
+position = Vector2(20, 1.74846e-06)
+rest = Transform2D(1, 0, 0, 1, 20, 1.74846e-06)
+
+[node name="TailBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone" unique_id=865972292]
+position = Vector2(20, 1.74846e-06)
+rest = Transform2D(1, 0, 0, 1, 20, 1.74846e-06)
+
+[node name="TailBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone" unique_id=84601700]
+position = Vector2(20, 1.74846e-06)
+rest = Transform2D(1, 0, 0, 1, 20, 1.74846e-06)
+
+[node name="TailBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone" unique_id=1717569796]
+position = Vector2(20, 1.74846e-06)
+rest = Transform2D(1, 0, 0, 1, 20, 1.74846e-06)
+
+[node name="TailBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone" unique_id=1876292216]
+position = Vector2(20, 1.74846e-06)
+rest = Transform2D(1, 0, 0, 1, 20, 1.74846e-06)
+
+[node name="TailBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone" unique_id=374374123]
+position = Vector2(20, 1.74846e-06)
+rest = Transform2D(1, 0, 0, 1, 20, 1.74846e-06)
+
+[node name="TailBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone" unique_id=1452736971]
+position = Vector2(20, 1.74846e-06)
+rest = Transform2D(1, 0, 0, 1, 20, 1.74846e-06)
+
+[node name="TailBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone" unique_id=640673239]
+position = Vector2(20, 1.74846e-06)
+rest = Transform2D(1, 0, 0, 1, 20, 1.74846e-06)
+
+[node name="TailBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone" unique_id=2066882958]
+position = Vector2(20, 1.74846e-06)
+rest = Transform2D(1, 0, 0, 1, 20, 1.74846e-06)
+
+[node name="TailBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone/TailBone" unique_id=1320075338]
+position = Vector2(20, 1.74846e-06)
+rest = Transform2D(1, 0, 0, 1, 20, 1.74846e-06)
+auto_calculate_length_and_angle = false
+length = 14.0
+bone_angle = 5.0089593e-06
+
+[node name="BackBone" type="Bone2D" parent="SquirrelSkeleton2D/Root" unique_id=872925898]
+position = Vector2(2, 0)
+rotation = -1.5831418
+scale = Vector2(1.0000001, 1.0000001)
+rest = Transform2D(-0.012345165, -0.99992394, 0.99992394, -0.012345165, 2, 0)
+
+[node name="BackBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone" unique_id=1280101840]
+position = Vector2(19.9242, 6.24693)
+rest = Transform2D(1, 0, 0, 1, 19.9242, 6.24693)
+
+[node name="BackBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone" unique_id=2022513178]
+position = Vector2(17.9986, 0.222213)
+rest = Transform2D(1, 0, 0, 1, 17.9986, 0.222213)
+
+[node name="BackBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone/BackBone" unique_id=520554810]
+position = Vector2(19.9985, 0.246903)
+rest = Transform2D(1, 0, 0, 1, 19.9985, 0.246903)
+
+[node name="BackBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone/BackBone/BackBone" unique_id=1731028914]
+position = Vector2(19.9985, 0.246903)
+rest = Transform2D(1, 0, 0, 1, 19.9985, 0.246903)
+
+[node name="BackBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone/BackBone/BackBone/BackBone" unique_id=1741639374]
+position = Vector2(24.9981, 0.308629)
+rest = Transform2D(1, 0, 0, 1, 24.9981, 0.308629)
+
+[node name="BackBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone" unique_id=1255013189]
+position = Vector2(20.9984, 0.259248)
+rest = Transform2D(1, 0, 0, 1, 20.9984, 0.259248)
+
+[node name="BackBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone" unique_id=1370425415]
+position = Vector2(22.9982, 0.283939)
+rest = Transform2D(1, 0, 0, 1, 22.9982, 0.283939)
+
+[node name="BackBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone" unique_id=1122192236]
+position = Vector2(19.9985, 0.246903)
+rest = Transform2D(1, 0, 0, 1, 19.9985, 0.246903)
+
+[node name="BackBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone" unique_id=2110329534]
+position = Vector2(19.9985, 0.246903)
+rest = Transform2D(1, 0, 0, 1, 19.9985, 0.246903)
+
+[node name="BackBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone" unique_id=1380815001]
+position = Vector2(24.9981, 0.308629)
+rest = Transform2D(1, 0, 0, 1, 24.9981, 0.308629)
+
+[node name="BackBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone" unique_id=545166666]
+position = Vector2(20.9984, 0.259248)
+rest = Transform2D(1, 0, 0, 1, 20.9984, 0.259248)
+auto_calculate_length_and_angle = false
+length = 16.0
+bone_angle = 0.0
+
+[node name="EarBone" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone" unique_id=245435176]
+position = Vector2(13.3206, -25.8325)
+rotation = -1.3010684
+scale = Vector2(0.9999995, 0.9999995)
+rest = Transform2D(0.26646906, -0.963843, 0.963843, 0.26646906, 13.3206, -25.8325)
+auto_calculate_length_and_angle = false
+length = 16.0
+bone_angle = 0.0
+
+[node name="FrontPawUpperR" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone" unique_id=616236540]
+position = Vector2(-4.3341722, 16.922638)
+rotation = 2.650356
+rest = Transform2D(-0.8817502, 0.4717166, -0.4717166, -0.8817502, -4.3341722, 16.922638)
+
+[node name="FrontPawLowerR" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/FrontPawUpperR" unique_id=1365935382]
+position = Vector2(37.440697, -0.4403801)
+rotation = -0.44142255
+rest = Transform2D(0.9041448, -0.4272261, 0.4272261, 0.9041448, 37.440697, -0.4403801)
+
+[node name="FrontToesR" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/FrontPawUpperR/FrontPawLowerR" unique_id=1291299579]
+position = Vector2(19.797321, 1.1036501)
+rotation = 0.32550207
+scale = Vector2(0.9999999, 0.9999999)
+rest = Transform2D(0.9474903, 0.31978452, -0.31978452, 0.9474903, 19.797321, 1.1036501)
+auto_calculate_length_and_angle = false
+length = 16.0
+bone_angle = 0.0
+
+[node name="FrontPawUpperL" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone" unique_id=673152091]
+position = Vector2(23.680305, 16.487932)
+rotation = 0.8226582
+rest = Transform2D(0.68027526, 0.7329567, -0.7329567, 0.68027526, 23.680305, 16.487932)
+
+[node name="FrontPawLowerL" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/FrontPawUpperL" unique_id=1415891426]
+position = Vector2(37.440697, -0.4403801)
+rotation = -0.5981353
+rest = Transform2D(0.82638705, -0.5631025, 0.5631025, 0.82638705, 37.440697, -0.4403801)
+
+[node name="FrontToesL" type="Bone2D" parent="SquirrelSkeleton2D/Root/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/BackBone/FrontPawUpperL/FrontPawLowerL" unique_id=722496606]
+position = Vector2(19.797321, 1.1036501)
+rotation = 0.32550207
+scale = Vector2(0.9999999, 0.9999999)
+rest = Transform2D(0.9474903, 0.31978452, -0.31978452, 0.9474903, 19.797321, 1.1036501)
+auto_calculate_length_and_angle = false
+length = 16.0
+bone_angle = 0.0
