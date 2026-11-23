@@ -143,6 +143,7 @@ func parse_svg_xml_to_nodes(svg_xml_node : SVGXMLElement, rt_name : String,
 		realign_offset_for_svs(svs, svg_root.scale)
 
 	if not import_as_svs:
+
 		# await another render frame for translations to tessellate
 		await RenderingServer.frame_post_draw
 		var final_svg_root = SVSSceneExporter.copy_baked_node(svg_root, parent_node, scene_root)
@@ -820,6 +821,7 @@ func _apply_clip_path_by_href(href : String, svs : ScalableVectorShape2D, scene_
 func _post_process_shape(svs : ScalableVectorShape2D, parent : Node, transform : Transform2D,
 			style : Dictionary, scene_root : Node, gradients : Array[Dictionary],
 			is_cutout := false, image_texture : ImageTexture = null) -> void:
+	svs.auto_fix_self_intersections = not import_as_svs
 	svs.lock_assigned_shapes = lock_shapes
 	svs.update_curve_at_runtime = update_curve_at_runtime
 	svs.arc_list.resource_local_to_scene = resource_local_to_scene

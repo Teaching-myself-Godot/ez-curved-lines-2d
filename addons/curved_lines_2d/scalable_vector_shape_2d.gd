@@ -99,6 +99,17 @@ enum StrokeExtrusionDirection {
 			polygon.color = _c
 		assigned_node_changed.emit()
 
+## Will look for and auto-repair self-intersections that prevent the polygon
+## from being drawn. When animating curves this will slow down perfomance
+## significantly so use with caution.
+## It is turned on by default when using the SVG importer to import as Polygon2D
+## in stead of ScalableVectorShape2D
+@export var auto_fix_self_intersections := false:
+	set(_autofix):
+		auto_fix_self_intersections = _autofix
+		assigned_node_changed.emit()
+
+
 ## The 'Fill' of a [ScalableVectorShape2D] is simply an instance of a [Polygon2D] node
 ## assigned to the `polygon` property.
 ## If you remove that [Polygon2D] node, you need to unassign it here as well, before
@@ -828,8 +839,16 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 		poly_stroke.polygons = polygon_indices
 		_update_polygon_texture(poly_stroke, true)
 	if is_instance_valid(polygon):
-		polygon.polygons.clear()
-		polygon.polygon = polygon_points
+		if auto_fix_self_intersections and not _validate_fill():
+			var result := Geometry2DUtil.apply_clips_to_polygon(
+				[polygon_points], [PackedVector2Array()], Geometry2D.OPERATION_UNION
+			)
+			var indices = []
+			polygon.polygon = Geometry2DUtil.get_polygon_indices(result, indices)
+			polygon.polygons = indices
+		else:
+			polygon.polygons.clear()
+			polygon.polygon = polygon_points
 		_update_polygon_texture()
 	if is_instance_valid(collision_polygon):
 		collision_polygon.polygon = polygon_points
@@ -894,8 +913,16 @@ func _update_assigned_nodes_with_clips(polygon_points : PackedVector2Array, vali
 	var clips := valid_clip_paths.filter(func(cp : ScalableVectorShape2D): return cp.use_interect_when_clipping)
 	var cutouts := valid_clip_paths.filter(func(cp : ScalableVectorShape2D): return not cp.use_interect_when_clipping and not cp.use_union_in_stead_of_clipping)
 
+	var fix_results := Array([polygon_points], TYPE_PACKED_VECTOR2_ARRAY, "", null)
+	if auto_fix_self_intersections and not _validate_fill():
+		fix_results = Geometry2DUtil.apply_clips_to_polygon(
+			[polygon_points],
+			[PackedVector2Array()],
+			Geometry2D.PolyBooleanOperation.OPERATION_UNION
+		)
+
 	var merge_results := Geometry2DUtil.apply_clips_to_polygon(
-		[polygon_points],
+		fix_results,
 		Array(merges.map(_clip_path_to_local), TYPE_PACKED_VECTOR2_ARRAY, "", null),
 		Geometry2D.PolyBooleanOperation.OPERATION_UNION
 	)
@@ -1558,20 +1585,21 @@ func tessellate_arc_segment(start : Vector2, arc_radius : Vector2, arc_rotation_
 	return points
 
 
-func _validate_fill() -> void:
-	if is_instance_valid(polygon) and clip_paths.is_empty():
+func _validate_fill() -> bool:
+	if is_instance_valid(polygon) and (clip_paths.is_empty() or auto_fix_self_intersections):
 		if Geometry2D.triangulate_polygon(self.tessellate()).is_empty():
 			self_intersections = Geometry2DUtil.get_self_intersections(self.tessellate())
+			return false
 		else:
 			self_intersections = []
 	else:
 		self_intersections = []
+	return true
 
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var warnings := PackedStringArray()
-	_validate_fill()
-	if not self_intersections.is_empty():
+	if not _validate_fill():
 		warnings.append("Cannot create reliable fill due to self-intersection in outline.")
 	return warnings
 
