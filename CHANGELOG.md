@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.9.0 - Grease Pencil Flipbook
+
+I would love to get some test results for the Grease Pencil SVG importer! Read more about how it works in the [github readme manual](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#importing-grease-pencils-animated-svg-files)
+
+### Added
+
+- Import SVG File tab: when an animated SVG file from the Grease Pencil SVG exporter is recognized you get the choice to import it as a flip-book style, autoscaling, animation
+
 ## 3.8.1 - Hold Toggling
 
 ### Added
