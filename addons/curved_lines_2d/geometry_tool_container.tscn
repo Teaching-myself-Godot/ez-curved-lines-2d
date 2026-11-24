@@ -96,7 +96,7 @@ custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
-tooltip_text = "Clip off shapes  (Ctrl + Shift + 0)
+tooltip_text = "Clip off shapes  (Ctrl + Shift + Backspace)
 Operates on the farthest shape in the draw order (more precisely: the topmost in the scene tree)"
 theme_override_styles/normal = ExtResource("1_fe3v0")
 theme_override_styles/pressed = ExtResource("2_6aeu8")

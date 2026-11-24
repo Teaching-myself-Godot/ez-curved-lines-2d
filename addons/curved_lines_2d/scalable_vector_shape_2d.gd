@@ -424,7 +424,11 @@ var stroke_width := 10.0:
 
 @export_group("Editor settings")
 ## The [Color] used to draw the this shape's curve in the editor
-@export var shape_hint_color := Color.LIME_GREEN
+@export var shape_hint_color := Color.LIME_GREEN:
+	set(new_color):
+		shape_hint_color = new_color
+		queue_redraw()
+
 ## When this field is checked, the 'Strokes', 'Fills' and 'Collisions' created
 ## with the 'Add ...' buttons will be locked from transforming to prevent
 ## inadvertently changing them, whilst the idea is that [ScalableVectorShape2D]
@@ -552,7 +556,7 @@ func _draw() -> void:
 		is_instance_valid(line) and not
 		is_instance_valid(collision_object) and not
 		is_instance_valid(collision_polygon)):
-		draw_polyline(tessellate(), Color(shape_hint_color.r, shape_hint_color.g, shape_hint_color.b, 0.5), 1.0 / global_scale.x, false)
+		draw_polyline(tessellate(), shape_hint_color, 1.0 / global_scale.x, false)
 
 
 

@@ -40,15 +40,60 @@ func _get_selected_shapes() -> Array:
 
 
 func _on_clip_off_shapes_button_pressed() -> void:
-	print(_get_selected_shapes())
+	var sel := _get_selected_shapes()
+	var clipper : ScalableVectorShape2D = sel.pop_front()
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	undo_redo.create_action(%ClipHintLabel.text)
+	undo_redo.add_do_property(clipper, 'use_interect_when_clipping', true)
+	undo_redo.add_do_property(clipper, 'use_union_in_stead_of_clipping', false)
+	undo_redo.add_undo_property(clipper, 'use_interect_when_clipping', clipper.use_interect_when_clipping)
+	undo_redo.add_undo_property(clipper, 'use_union_in_stead_of_clipping', clipper.use_union_in_stead_of_clipping)
+	for svs : ScalableVectorShape2D in sel:
+		if clipper not in svs.clip_paths:
+			var orig_clip_paths := svs.clip_paths.duplicate(true)
+			var new_clip_paths := svs.clip_paths.duplicate(true)
+			new_clip_paths.append(clipper)
+			undo_redo.add_do_property(svs, 'clip_paths', new_clip_paths)
+			undo_redo.add_undo_property(svs, 'clip_paths', orig_clip_paths)
+	undo_redo.commit_action()
 
 
 func _on_cut_out_shapes_button_pressed() -> void:
-	print(_get_selected_shapes())
+	var sel := _get_selected_shapes()
+	var clipper : ScalableVectorShape2D = sel.pop_back()
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	undo_redo.create_action(%ClipHintLabel.text)
+	undo_redo.add_do_property(clipper, 'use_interect_when_clipping', false)
+	undo_redo.add_do_property(clipper, 'use_union_in_stead_of_clipping', false)
+	undo_redo.add_undo_property(clipper, 'use_interect_when_clipping', clipper.use_interect_when_clipping)
+	undo_redo.add_undo_property(clipper, 'use_union_in_stead_of_clipping', clipper.use_union_in_stead_of_clipping)
+	for svs : ScalableVectorShape2D in sel:
+		if clipper not in svs.clip_paths:
+			var orig_clip_paths := svs.clip_paths.duplicate(true)
+			var new_clip_paths := svs.clip_paths.duplicate(true)
+			new_clip_paths.append(clipper)
+			undo_redo.add_do_property(svs, 'clip_paths', new_clip_paths)
+			undo_redo.add_undo_property(svs, 'clip_paths', orig_clip_paths)
+	undo_redo.commit_action()
 
 
 func _on_merge_shapes_button_pressed() -> void:
-	print(_get_selected_shapes())
+	var sel := _get_selected_shapes()
+	var clipper : ScalableVectorShape2D = sel.pop_back()
+	var undo_redo := EditorInterface.get_editor_undo_redo()
+	undo_redo.create_action(%ClipHintLabel.text)
+	undo_redo.add_do_property(clipper, 'use_interect_when_clipping', false)
+	undo_redo.add_do_property(clipper, 'use_union_in_stead_of_clipping', true)
+	undo_redo.add_undo_property(clipper, 'use_interect_when_clipping', clipper.use_interect_when_clipping)
+	undo_redo.add_undo_property(clipper, 'use_union_in_stead_of_clipping', clipper.use_union_in_stead_of_clipping)
+	for svs : ScalableVectorShape2D in sel:
+		if clipper not in svs.clip_paths:
+			var orig_clip_paths := svs.clip_paths.duplicate(true)
+			var new_clip_paths := svs.clip_paths.duplicate(true)
+			new_clip_paths.append(clipper)
+			undo_redo.add_do_property(svs, 'clip_paths', new_clip_paths)
+			undo_redo.add_undo_property(svs, 'clip_paths', orig_clip_paths)
+	undo_redo.commit_action()
 
 
 func _on_merge_shapes_button_mouse_entered() -> void:
@@ -89,6 +134,19 @@ func _on_clip_off_shapes_button_mouse_entered() -> void:
 		%ClipHintLabel.text = "Clip " + sel.pop_front().name + " off of " + str(sel.size()) + " nodes"
 
 
-
 func _on_clip_off_shapes_button_mouse_exited() -> void:
 	%ClipHintLabel.text = HINT_LABEL_TEXT
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not (event is InputEventKey):
+		return
+	var ev := event as InputEventKey
+	if ev.shift_pressed and ev.is_command_or_control_pressed() and ev.pressed:
+		match (ev.keycode):
+			KEY_EQUAL:
+				_on_merge_shapes_button_pressed()
+			KEY_MINUS:
+				_on_cut_out_shapes_button_pressed()
+			KEY_BACKSPACE:
+				_on_clip_off_shapes_button_pressed()
