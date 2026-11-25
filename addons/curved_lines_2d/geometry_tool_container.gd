@@ -12,7 +12,7 @@ func sync_svs_settings(svs : ScalableVectorShape2D, sel : Array) -> void:
 		ch.queue_free()
 
 	if sel.size() == 1:
-		for s : ScalableVectorShape2D in svs.clip_paths:
+		for s : ScalableVectorShape2D in svs.clip_paths.filter(func(s): return is_instance_valid(s)):
 			var list_item := AssignedGeometryListItemScene.instantiate()
 			list_item.svs = s
 			%AssignmentList.add_child(list_item)
@@ -49,16 +49,8 @@ func _on_clip_off_shapes_button_pressed() -> void:
 	undo_redo.add_undo_property(clipper, 'use_interect_when_clipping', clipper.use_interect_when_clipping)
 	undo_redo.add_undo_property(clipper, 'use_union_in_stead_of_clipping', clipper.use_union_in_stead_of_clipping)
 	for svs : ScalableVectorShape2D in sel:
-		if clipper not in svs.clip_paths:
-			var orig_clip_paths := svs.clip_paths.duplicate(true)
-			var new_clip_paths := svs.clip_paths.duplicate(true)
-			new_clip_paths.append(clipper)
-			for n in [svs.line, svs.polygon, svs.poly_stroke]:
-				if is_instance_valid(n):
-					undo_redo.add_do_reference(n)
-					undo_redo.add_undo_property(n, 'visible', true)
-			undo_redo.add_do_property(svs, 'clip_paths', new_clip_paths)
-			undo_redo.add_undo_property(svs, 'clip_paths', orig_clip_paths)
+		undo_redo.add_do_method(svs, 'add_clip_path', clipper)
+		undo_redo.add_undo_property(svs, 'clip_paths', svs.clip_paths.duplicate())
 	undo_redo.commit_action()
 
 
@@ -72,17 +64,9 @@ func _on_cut_out_shapes_button_pressed() -> void:
 	undo_redo.add_undo_property(clipper, 'use_interect_when_clipping', clipper.use_interect_when_clipping)
 	undo_redo.add_undo_property(clipper, 'use_union_in_stead_of_clipping', clipper.use_union_in_stead_of_clipping)
 	for svs : ScalableVectorShape2D in sel:
-		if clipper not in svs.clip_paths:
-			var orig_clip_paths := svs.clip_paths.duplicate(true)
-			var new_clip_paths := svs.clip_paths.duplicate(true)
-			new_clip_paths.append(clipper)
-			for n in [svs.line, svs.polygon, svs.poly_stroke]:
-				if is_instance_valid(n):
-					undo_redo.add_do_reference(n)
-					undo_redo.add_undo_property(n, 'visible', true)
-			undo_redo.add_do_property(svs, 'clip_paths', new_clip_paths)
-			undo_redo.add_undo_property(svs, 'clip_paths', orig_clip_paths)
-	undo_redo.commit_action()
+		undo_redo.add_do_method(svs, 'add_clip_path', clipper)
+		undo_redo.add_undo_property(svs, 'clip_paths', svs.clip_paths.duplicate())
+	undo_redo.commit_action(true)
 
 
 func _on_merge_shapes_button_pressed() -> void:
