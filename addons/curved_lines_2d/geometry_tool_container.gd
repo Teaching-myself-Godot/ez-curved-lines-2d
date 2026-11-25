@@ -79,20 +79,20 @@ func _on_cut_out_shapes_button_pressed() -> void:
 
 func _on_merge_shapes_button_pressed() -> void:
 	var sel := _get_selected_shapes()
-	var clipper : ScalableVectorShape2D = sel.pop_back()
+	var merged_one : ScalableVectorShape2D = sel.pop_front()
 	var undo_redo := EditorInterface.get_editor_undo_redo()
 	undo_redo.create_action(%ClipHintLabel.text)
-	undo_redo.add_do_property(clipper, 'use_interect_when_clipping', false)
-	undo_redo.add_do_property(clipper, 'use_union_in_stead_of_clipping', true)
-	undo_redo.add_undo_property(clipper, 'use_interect_when_clipping', clipper.use_interect_when_clipping)
-	undo_redo.add_undo_property(clipper, 'use_union_in_stead_of_clipping', clipper.use_union_in_stead_of_clipping)
+	var orig_clip_paths := merged_one.clip_paths.duplicate(true)
+	var new_clip_paths := merged_one.clip_paths.duplicate(true)
 	for svs : ScalableVectorShape2D in sel:
-		if clipper not in svs.clip_paths:
-			var orig_clip_paths := svs.clip_paths.duplicate(true)
-			var new_clip_paths := svs.clip_paths.duplicate(true)
-			new_clip_paths.append(clipper)
-			undo_redo.add_do_property(svs, 'clip_paths', new_clip_paths)
-			undo_redo.add_undo_property(svs, 'clip_paths', orig_clip_paths)
+		if svs not in merged_one.clip_paths:
+			new_clip_paths.append(svs)
+			undo_redo.add_do_property(svs, 'use_interect_when_clipping', false)
+			undo_redo.add_do_property(svs, 'use_union_in_stead_of_clipping', true)
+			undo_redo.add_undo_property(svs, 'use_interect_when_clipping', svs.use_interect_when_clipping)
+			undo_redo.add_undo_property(svs, 'use_union_in_stead_of_clipping', svs.use_union_in_stead_of_clipping)
+	undo_redo.add_do_property(merged_one, 'clip_paths', new_clip_paths)
+	undo_redo.add_undo_property(merged_one, 'clip_paths', orig_clip_paths)
 	undo_redo.commit_action()
 
 
