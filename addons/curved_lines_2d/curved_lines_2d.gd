@@ -81,22 +81,13 @@ const PAINT_ORDER_MAP := {
 	PaintOrder.STROKE_MARKERS_FILL: ['_add_stroke_to_created_shape', '_add_collision_to_created_shape', '_add_fill_to_created_shape'],
 	PaintOrder.MARKERS_STROKE_FILL: ['_add_collision_to_created_shape', '_add_stroke_to_created_shape', '_add_fill_to_created_shape']
 }
-const SHAPE_NAME_MAP := {
-	ScalableVectorShape2D.ShapeType.RECT: "a rectangle",
-	ScalableVectorShape2D.ShapeType.ELLIPSE: "a circle",
-	ScalableVectorShape2D.ShapeType.PATH: "an empty shape"
-}
-const OPERATION_NAME_MAP := {
-	Geometry2D.OPERATION_DIFFERENCE: { "verb": "cut out", "noun": "cutout" },
-	Geometry2D.OPERATION_INTERSECTION: { "verb": "clip off", "noun": "clip" },
-	Geometry2D.OPERATION_UNION: { "verb": "merge with", "noun": "merged shape" }
-}
 
 enum SVSEditMode {
 	NONE, TRANSLATE, ROTATE, SCALE,
 	MERGE, BRUSH, PENCIL, PAINT_BONE,
 	KNIFE, CREATE_ELLIPSE, CREATE_RECT,
-	SET_PIVOT, COLOR_TOOL, WIDTH_CURVE_TOOL
+	SET_PIVOT, COLOR_TOOL, WIDTH_CURVE_TOOL,
+	GEOMETRY_TOOL
 }
 
 const CANCELABLE_MODES : Array[SVSEditMode] = [
@@ -376,9 +367,6 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
 				_svs_edit_mode in DRAW_MODES) and not Input.is_key_pressed(KEY_Q)):
 					return
-		# TODO: regression test this!
-		# svs_edit_buttons.set_default_mode()
-		# scalable_vector_shapes_2d_dock.create_tab.set_default_mode()
 	elif toggled_on and current_selection:
 		svs_edit_buttons.show()
 		svs_edit_buttons.hide_svs_editors()
@@ -501,7 +489,7 @@ func _copy_prop(src : ScalableVectorShape2D, prop_name : String, default : Varia
 
 
 func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_name : String,
-		is_cutout_for : ScalableVectorShape2D = null, force_no_realign := false,
+		force_no_realign := false,
 		parent : Node = null, src : ScalableVectorShape2D = null) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if parent == null:
@@ -512,8 +500,7 @@ func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_na
 	new_shape.tolerance_degrees = _copy_prop(src, "tolerance_degrees", _get_default_tolerance_degrees())
 	new_shape.max_stages = _copy_prop(src, "max_stages", _get_default_max_stages())
 	new_shape.name = node_name
-	if not is_instance_valid(is_cutout_for):
-		new_shape.position = Vector2.ZERO
+	new_shape.position = Vector2.ZERO
 	if is_instance_valid(src) and src != scene_root:
 		new_shape.transform = src.transform
 	undo_redo.create_action("Add a %s to the scene " % node_name)
@@ -524,22 +511,8 @@ func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_na
 	undo_redo.add_do_method(new_shape, 'set_owner', scene_root)
 	undo_redo.add_do_reference(new_shape)
 	undo_redo.add_undo_method(parent, 'remove_child', new_shape)
-	if is_instance_valid(is_cutout_for):
-		var new_clip_paths := is_cutout_for.clip_paths.duplicate()
-		match current_clip_operation:
-			Geometry2D.OPERATION_UNION:
-				new_shape.use_union_in_stead_of_clipping = true
-			Geometry2D.OPERATION_INTERSECTION:
-				new_shape.use_interect_when_clipping = true
-			Geometry2D.OPERATION_DIFFERENCE:
-				new_shape.use_interect_when_clipping = false
-				new_shape.use_union_in_stead_of_clipping  = false
-		new_clip_paths.append(new_shape)
-		undo_redo.add_do_property(is_cutout_for, 'clip_paths', new_clip_paths)
-		undo_redo.add_undo_property(is_cutout_for, 'clip_paths', is_cutout_for.clip_paths)
-	else:
-		for draw_fn in PAINT_ORDER_MAP[_get_default_paint_order()]:
-			call(draw_fn, new_shape, scene_root, src)
+	for draw_fn in PAINT_ORDER_MAP[_get_default_paint_order()]:
+		call(draw_fn, new_shape, scene_root, src)
 	undo_redo.add_do_method(self, 'select_node_reversibly', new_shape)
 	undo_redo.add_undo_method(self, 'select_node_reversibly', parent)
 	undo_redo.commit_action()
@@ -549,7 +522,7 @@ func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_na
 	new_shape.end_cap_mode = _copy_prop(src, "end_cap_mode",  _get_default_end_cap())
 	new_shape.line_joint_mode = _copy_prop(src, "line_joint_mode", _get_default_joint_mode())
 	new_shape.extrusion_direction = _copy_prop(src, "extrusion_direction", _get_default_stroke_extrusion_direction())
-	if not force_no_realign and not is_instance_valid(is_cutout_for):
+	if not force_no_realign:
 		_set_viewport_pos_to_selection()
 
 
@@ -829,7 +802,6 @@ func _get_snap_resolution() -> Vector2:
 	return Vector2.ONE
 
 
-
 func _get_select_mode_button() -> Button:
 	if is_instance_valid(select_mode_button):
 		return select_mode_button
@@ -839,13 +811,6 @@ func _get_select_mode_button() -> Button:
 					.find_child("*Button*", true, false)
 		)
 		return select_mode_button
-
-
-func _get_viewport_center() -> Vector2:
-	var tr := EditorInterface.get_editor_viewport_2d().global_canvas_transform
-	var og := tr.get_origin()
-	var sz := Vector2(EditorInterface.get_editor_viewport_2d().size)
-	return (sz / 2) / tr.get_scale() - og / tr.get_scale()
 
 
 func _set_viewport_pos_to_selection() -> void:
@@ -867,7 +832,6 @@ func _is_svs_valid(svs : Object) -> bool:
 
 
 func _get_hovered_handle_metadata(svs : ScalableVectorShape2D) -> Dictionary:
-
 	if _hover_point_idx > -1:
 		return {
 			'global_pos': svs.to_global(svs.curve.get_point_position(
@@ -1266,36 +1230,13 @@ func _draw_crosshair(viewport_control : Control, p : Vector2, orbit := 2.0, oute
 	viewport_control.draw_line(p - line_len * Vector2.LEFT, p - orbit * Vector2.LEFT, color, width)
 
 
-func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2D, only_cutout_hints : bool) -> void:
+func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2D) -> void:
 	var mouse_pos := EditorInterface.get_editor_viewport_2d().get_mouse_position()
 	if _is_snapped_to_pixel():
 		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
 	var p := _vp_transform(mouse_pos)
 
-	if _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
-		if svs.has_fine_point(_svp_mouse_pos(mouse_pos, svs)):
-			_draw_crosshair(viewport_control, p)
-			_draw_hint(viewport_control,
-					"- Click to %s %s here (Ctrl+Shift held)\n" %
-							[OPERATION_NAME_MAP[current_clip_operation]["verb"], SHAPE_NAME_MAP[current_cutout_shape]] +
-					"- Use mousewheel to to change the shape of your %s (Ctrl+Shift held)\n" %
-							OPERATION_NAME_MAP[current_clip_operation]["noun"] +
-					"- Use right click to change the clipping operation (Ctrl+Shift held)"
-			)
-		else:
-			_draw_hint(viewport_control,
-					"- Hover over the selected shape to %s %s  (Ctrl+Shift held)\n" %
-							[
-								OPERATION_NAME_MAP[current_clip_operation]["verb"],
-								SHAPE_NAME_MAP[current_cutout_shape]
-							] +
-					"- Use mousewheel to to change the shape of your %s (Ctrl+Shift held)\n" %
-							OPERATION_NAME_MAP[current_clip_operation]["noun"] +
-					"- Use right click to change the clipping operation (Ctrl+Shift held)"
-			)
-	elif _is_ctrl_or_cmd_pressed() and _hover_point_idx > -1 and svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:
-		pass
-	elif _is_ctrl_or_cmd_pressed() and not only_cutout_hints and not svs.is_curve_closed():
+	if _is_ctrl_or_cmd_pressed() and _hover_point_idx < 0 and svs.shape_type == ScalableVectorShape2D.ShapeType.PATH and not svs.is_curve_closed():
 		_draw_crosshair(viewport_control, p)
 		_draw_hint(viewport_control, "- Click to add point here (Ctrl held)")
 	elif Input.is_key_pressed(KEY_SHIFT):
@@ -1324,14 +1265,8 @@ func _draw_add_point_hint(viewport_control : Control, svs : ScalableVectorShape2
 		if svs.shape_type == ScalableVectorShape2D.ShapeType.PATH:
 			hint += "- Use Shift + Drag to select multiple points / controls\n"
 		hint += "- Hold Shift to resize shape with mousewheel"
-		if only_cutout_hints:
-			hint = "- Hold Shift to resize shape with mousewheel"
 		if svs.has_fine_point(_svp_mouse_pos(mouse_pos, svs)):
-			hint += "\n- Double click to subdivide all curve segments
-				- Hold Ctrl+Shift to %s %s here (or Cmd+Shift for mac)\n" % [
-					OPERATION_NAME_MAP[current_clip_operation]["verb"],
-					SHAPE_NAME_MAP[current_cutout_shape]
-			]
+			hint += "\n- Double click to subdivide all curve segments"
 		_draw_hint(viewport_control, hint)
 
 
@@ -1363,13 +1298,11 @@ func _draw_closest_point_on_curve(viewport_control : Control, svs : ScalableVect
 					else:
 						hint = "- Double click to add point on the line"
 						hint += "\n- Alt + Click to add point halfway the line"
-						if is_instance_valid(svs.line):
-							hint += "\n- Use Ctrl+mousewheel to thin/thicken the stroke Line2D"
 						if md_p.before_segment < svs.curve.point_count:
 							hint += "\n- Drag to change curve"
 							hint += "\n- Right click to convert line segment to arc"
 				else:
-					_draw_add_point_hint(viewport_control, svs, false)
+					_draw_add_point_hint(viewport_control, svs)
 		if not hint.is_empty():
 			_draw_hint(viewport_control, hint)
 
@@ -1808,9 +1741,9 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 					if _hover_closest_point_on_curve:
 						_draw_closest_point_on_curve(viewport_control, result)
 					else:
-						_draw_add_point_hint(viewport_control, result, false)
+						_draw_add_point_hint(viewport_control, result)
 				else:
-						_draw_add_point_hint(viewport_control, result, true)
+						_draw_add_point_hint(viewport_control, result)
 		elif result in _select_hinted_svs:
 			var mul := _get_svp_transform(result)
 			viewport_control.draw_polyline(result
@@ -1874,7 +1807,7 @@ func _draw_preview(viewport_control : Control) -> void:
 			viewport_control.draw_polyline(points, Color.LIME, 1)
 		_draw_crosshair(viewport_control, _vp_transform(mouse_pos))
 
-
+# HERE BE GUI INPUT HANDLERS
 func _start_undo_redo_transaction(name := "", undo_redo_action_type := UndoRedoActionType.UNSPECIFIED) -> void:
 	in_undo_redo_transaction = true
 	undo_redo_transaction = {
@@ -2332,22 +2265,6 @@ func _add_point_on_position(svs : ScalableVectorShape2D, pos : Vector2) -> void:
 	_add_point_to_curve(svs, svs.to_local(pos))
 
 
-func _start_cutout_shape(svs : ScalableVectorShape2D, pos : Vector2) -> void:
-	var new_shape = ScalableVectorShape2D.new()
-	var mouse_pos := _svp_mouse_pos(
-			EditorInterface.get_editor_viewport_2d().get_mouse_position(),
-			svs
-	)
-	if _is_snapped_to_pixel():
-		mouse_pos = mouse_pos.snapped(_get_snap_resolution())
-	new_shape.curve = Curve2D.new()
-	new_shape.position = svs.to_local(mouse_pos)
-	new_shape.shape_type = current_cutout_shape
-	new_shape.curve.add_point(Vector2.ZERO)
-
-	_create_shape(new_shape, EditorInterface.get_edited_scene_root(), "CutoutOf%s" % svs.name, svs)
-
-
 func _add_point_on_curve_segment(svs : ScalableVectorShape2D, subdivide := false) -> void:
 	if svs.shape_type != ScalableVectorShape2D.ShapeType.PATH:
 		return
@@ -2580,9 +2497,6 @@ func _flip_svs_vertical():
 		update_overlays()
 
 
-
-
-
 func _handle_draw_merge_box_input(event) -> bool:
 	if event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 		if event.is_pressed():
@@ -2617,7 +2531,7 @@ func _create_freehand_shape(name : String) -> ScalableVectorShape2D:
 
 	var new_shape := ScalableVectorShape2D.new()
 	new_shape.curve = Curve2D.new()
-	_create_shape(new_shape, EditorInterface.get_edited_scene_root(), name, null, true)
+	_create_shape(new_shape, EditorInterface.get_edited_scene_root(), name, true)
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	return current_selection
 
@@ -2679,8 +2593,7 @@ func _apply_valid_knife_cuts(svs : ScalableVectorShape2D, cursor_pos : Vector2) 
 		cut_svs.curve = halves[1]
 		if svs == scene_root:
 			parent = svs
-		_create_shape(cut_svs, EditorInterface.get_edited_scene_root(), svs.name,
-				null, true, parent, svs)
+		_create_shape(cut_svs, EditorInterface.get_edited_scene_root(), svs.name, true, parent, svs)
 		select_node_reversibly(svs)
 
 	_pencil_start_pos = cursor_pos
@@ -2819,7 +2732,7 @@ func _extract_svs_from_selected_node() -> void:
 			svs.curve = BasicFit.fit_curve_to_polyline(poly, fitness_prep)
 			svs.position = node.position
 			_create_shape(svs, EditorInterface.get_edited_scene_root(), "Extracted" + node.name,
-				null, true, node.get_parent())
+				true, node.get_parent())
 
 
 func _handle_brush_draw_input(event : InputEvent) -> bool:
@@ -3128,21 +3041,19 @@ func _handle_create_primitive_input(event) -> bool:
 				svs.shape_type = ScalableVectorShape2D.ShapeType.ELLIPSE
 				svs.size = _get_preview_ellipse_size()
 				svs.offset = _get_preview_ellipse_offset()
-				_create_shape(svs, EditorInterface.get_edited_scene_root(), "Ellipse",
-					null, true)
+				_create_shape(svs, EditorInterface.get_edited_scene_root(), "Ellipse", true)
 			elif _svs_edit_mode == SVSEditMode.CREATE_RECT and not _get_create_rect_as_path():
 				svs.shape_type = ScalableVectorShape2D.ShapeType.RECT
 				svs.size = _get_preview_rect_size()
 				svs.rx = _get_default_rect_rx()
 				svs.ry = _get_default_rect_ry()
 				svs.offset = _get_preview_rect_offset()
-				_create_shape(svs, EditorInterface.get_edited_scene_root(), "Rectangle",
-					null, true)
+				_create_shape(svs, EditorInterface.get_edited_scene_root(), "Rectangle", true)
 			else:
 				svs.curve = shape_preview.duplicate(true)
 				_create_shape(svs, EditorInterface.get_edited_scene_root(), (
 					"Rectangle" if _svs_edit_mode == SVSEditMode.CREATE_RECT else "Ellipse"
-				), null, true)
+				), true)
 
 			svs.global_position = _drag_start * _get_svp_transform(svs).affine_inverse()
 			_last_drawn_svs = svs
@@ -3315,14 +3226,6 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 							_is_snapped_to_pixel(),
 							_get_snap_resolution()
 					)
-				return true
-			elif _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed() and Input.is_key_pressed(KEY_SHIFT):
-				if _is_snapped_to_pixel():
-					mouse_pos = mouse_pos.snapped(_get_snap_resolution())
-				if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and
-							current_selection.has_fine_point(
-									_svp_mouse_pos(mouse_pos, current_selection))):
-					_start_cutout_shape(current_selection, mouse_pos)
 				return true
 			elif _is_svs_valid(current_selection) and _is_ctrl_or_cmd_pressed():
 				if _is_snapped_to_pixel():

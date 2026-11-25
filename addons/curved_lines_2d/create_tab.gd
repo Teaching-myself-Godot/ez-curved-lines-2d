@@ -43,7 +43,8 @@ var _held_keycode : int = -1
 	%CreateEllipseContainer, %CreateRectContainer,
 	%SelectModeContainer, %PencilToolContainer,
 	%BrushToolContainer, %KnifeToolContainer,
-	%SetPivotContainer, %ColorToolContainer
+	%SetPivotContainer, %ColorToolContainer,
+	%GeometryToolContainer
 ]
 
 @onready var tool_mode_button_group : ButtonGroup =	%CircleButton.button_group
@@ -79,6 +80,7 @@ func _ready() -> void:
 	%MergeButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.MERGE))
 	%ColorToolButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.COLOR_TOOL))
 	%WidthCurveButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.WIDTH_CURVE_TOOL))
+	%GeometryToolButton.toggled.connect(_on_mode_toggled.bind(CurvedLines2D.SVSEditMode.GEOMETRY_TOOL))
 	%FlipHorizontalButton.pressed.connect(flip_horizontal.emit)
 	%FlipVerticalButton.pressed.connect(flip_vertical.emit)
 
@@ -246,6 +248,9 @@ func set_edit_mode_toggle_button(mode : CurvedLines2D.SVSEditMode) -> void:
 		CurvedLines2D.SVSEditMode.WIDTH_CURVE_TOOL:
 			if not %WidthCurveButton.button_pressed:
 				%WidthCurveButton.button_pressed = true
+		CurvedLines2D.SVSEditMode.GEOMETRY_TOOL:
+			if not %GeometryToolButton.button_pressed:
+				%GeometryToolButton.button_pressed = true
 		_:
 			if not %EditButton.button_pressed:
 				%EditButton.button_pressed = true
@@ -281,6 +286,8 @@ func show_details_for_current_mode(mode : CurvedLines2D.SVSEditMode) -> void:
 			%KnifeToolContainer.show()
 		CurvedLines2D.SVSEditMode.COLOR_TOOL:
 			%ColorToolContainer.show()
+		CurvedLines2D.SVSEditMode.GEOMETRY_TOOL:
+			%GeometryToolContainer.show()
 
 
 func enable_svs_editors() -> void:
@@ -299,6 +306,7 @@ func enable_svs_editors() -> void:
 	%RectangleButton.disabled = false
 	%SetPivotButton.disabled = false
 	%WidthCurveButton.disabled = false
+	%GeometryToolButton.disabled = false
 
 
 func set_default_mode() -> void:
@@ -326,12 +334,14 @@ func disable_svs_editors(disable_all := false) -> void:
 		_disable_and_toggle_off(%PencilButton)
 		_disable_and_toggle_off(%CircleButton)
 		_disable_and_toggle_off(%RectangleButton)
+		_disable_and_toggle_off(%GeometryToolButton)
 	else:
 		%BrushButton.disabled = false
 		%MergeButton.disabled = false
 		%PencilButton.disabled = false
 		%CircleButton.disabled = false
 		%RectangleButton.disabled = false
+		%GeometryToolButton.disabled = false
 
 
 func disable_all_editors() -> void:
@@ -347,8 +357,10 @@ func sync_draw_settings() -> void:
 
 
 func sync_svs_settings(svs : ScalableVectorShape2D) -> void:
+	var sel := EditorInterface.get_selection().get_selected_nodes()
 	if svs not in EditorInterface.get_selection().get_selected_nodes():
 		return
+	%GeometryToolContainer.sync_svs_settings(svs, _find_shapes_in_open_scene().filter(func(x): return x in sel))
 	%SelectModeContainer.sync_svs_settings(svs)
 	%OriginInput.set_value_no_signal(svs.global_position)
 	%FillPickerButton.color = svs.fill_color
