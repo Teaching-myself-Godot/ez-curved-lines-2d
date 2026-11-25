@@ -500,6 +500,7 @@ func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_na
 	new_shape.tolerance_degrees = _copy_prop(src, "tolerance_degrees", _get_default_tolerance_degrees())
 	new_shape.max_stages = _copy_prop(src, "max_stages", _get_default_max_stages())
 	new_shape.name = node_name
+	new_shape.position = Vector2.ZERO
 	if is_instance_valid(src) and src != scene_root:
 		new_shape.transform = src.transform
 	undo_redo.create_action("Add a %s to the scene " % node_name)
