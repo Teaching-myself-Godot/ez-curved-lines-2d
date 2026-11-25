@@ -53,6 +53,10 @@ func _on_clip_off_shapes_button_pressed() -> void:
 			var orig_clip_paths := svs.clip_paths.duplicate(true)
 			var new_clip_paths := svs.clip_paths.duplicate(true)
 			new_clip_paths.append(clipper)
+			for n in [svs.line, svs.polygon, svs.poly_stroke]:
+				if is_instance_valid(n):
+					undo_redo.add_do_reference(n)
+					undo_redo.add_undo_property(n, 'visible', true)
 			undo_redo.add_do_property(svs, 'clip_paths', new_clip_paths)
 			undo_redo.add_undo_property(svs, 'clip_paths', orig_clip_paths)
 	undo_redo.commit_action()
@@ -72,6 +76,10 @@ func _on_cut_out_shapes_button_pressed() -> void:
 			var orig_clip_paths := svs.clip_paths.duplicate(true)
 			var new_clip_paths := svs.clip_paths.duplicate(true)
 			new_clip_paths.append(clipper)
+			for n in [svs.line, svs.polygon, svs.poly_stroke]:
+				if is_instance_valid(n):
+					undo_redo.add_do_reference(n)
+					undo_redo.add_undo_property(n, 'visible', true)
 			undo_redo.add_do_property(svs, 'clip_paths', new_clip_paths)
 			undo_redo.add_undo_property(svs, 'clip_paths', orig_clip_paths)
 	undo_redo.commit_action()
