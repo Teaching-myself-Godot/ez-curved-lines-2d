@@ -377,9 +377,6 @@ func _on_select_mode_toggled(toggled_on : bool) -> void:
 		if (_get_keep_drawing_behavior() == KeepDrawingBehavior.KEEP_DRAWING_ON_SAME_PARENT and (
 				_svs_edit_mode in DRAW_MODES) and not Input.is_key_pressed(KEY_Q)):
 					return
-		# TODO: regression test this!
-		# svs_edit_buttons.set_default_mode()
-		# scalable_vector_shapes_2d_dock.create_tab.set_default_mode()
 	elif toggled_on and current_selection:
 		svs_edit_buttons.show()
 		svs_edit_buttons.hide_svs_editors()
@@ -502,7 +499,8 @@ func _copy_prop(src : ScalableVectorShape2D, prop_name : String, default : Varia
 
 
 func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_name : String,
-		is_cutout_for : ScalableVectorShape2D = null, force_no_realign := false,
+		#is_cutout_for : ScalableVectorShape2D = null,
+		force_no_realign := false,
 		parent : Node = null, src : ScalableVectorShape2D = null) -> void:
 	var current_selection := EditorInterface.get_selection().get_selected_nodes().pop_back()
 	if parent == null:
@@ -513,8 +511,6 @@ func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_na
 	new_shape.tolerance_degrees = _copy_prop(src, "tolerance_degrees", _get_default_tolerance_degrees())
 	new_shape.max_stages = _copy_prop(src, "max_stages", _get_default_max_stages())
 	new_shape.name = node_name
-	if not is_instance_valid(is_cutout_for):
-		new_shape.position = Vector2.ZERO
 	if is_instance_valid(src) and src != scene_root:
 		new_shape.transform = src.transform
 	undo_redo.create_action("Add a %s to the scene " % node_name)
@@ -525,22 +521,8 @@ func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_na
 	undo_redo.add_do_method(new_shape, 'set_owner', scene_root)
 	undo_redo.add_do_reference(new_shape)
 	undo_redo.add_undo_method(parent, 'remove_child', new_shape)
-	if is_instance_valid(is_cutout_for):
-		var new_clip_paths := is_cutout_for.clip_paths.duplicate()
-		match current_clip_operation:
-			Geometry2D.OPERATION_UNION:
-				new_shape.use_union_in_stead_of_clipping = true
-			Geometry2D.OPERATION_INTERSECTION:
-				new_shape.use_interect_when_clipping = true
-			Geometry2D.OPERATION_DIFFERENCE:
-				new_shape.use_interect_when_clipping = false
-				new_shape.use_union_in_stead_of_clipping  = false
-		new_clip_paths.append(new_shape)
-		undo_redo.add_do_property(is_cutout_for, 'clip_paths', new_clip_paths)
-		undo_redo.add_undo_property(is_cutout_for, 'clip_paths', is_cutout_for.clip_paths)
-	else:
-		for draw_fn in PAINT_ORDER_MAP[_get_default_paint_order()]:
-			call(draw_fn, new_shape, scene_root, src)
+	for draw_fn in PAINT_ORDER_MAP[_get_default_paint_order()]:
+		call(draw_fn, new_shape, scene_root, src)
 	undo_redo.add_do_method(self, 'select_node_reversibly', new_shape)
 	undo_redo.add_undo_method(self, 'select_node_reversibly', parent)
 	undo_redo.commit_action()
@@ -550,7 +532,7 @@ func _create_shape(new_shape : ScalableVectorShape2D, scene_root : Node, node_na
 	new_shape.end_cap_mode = _copy_prop(src, "end_cap_mode",  _get_default_end_cap())
 	new_shape.line_joint_mode = _copy_prop(src, "line_joint_mode", _get_default_joint_mode())
 	new_shape.extrusion_direction = _copy_prop(src, "extrusion_direction", _get_default_stroke_extrusion_direction())
-	if not force_no_realign and not is_instance_valid(is_cutout_for):
+	if not force_no_realign:
 		_set_viewport_pos_to_selection()
 
 
@@ -830,7 +812,6 @@ func _get_snap_resolution() -> Vector2:
 	return Vector2.ONE
 
 
-
 func _get_select_mode_button() -> Button:
 	if is_instance_valid(select_mode_button):
 		return select_mode_button
@@ -840,13 +821,6 @@ func _get_select_mode_button() -> Button:
 					.find_child("*Button*", true, false)
 		)
 		return select_mode_button
-
-
-func _get_viewport_center() -> Vector2:
-	var tr := EditorInterface.get_editor_viewport_2d().global_canvas_transform
-	var og := tr.get_origin()
-	var sz := Vector2(EditorInterface.get_editor_viewport_2d().size)
-	return (sz / 2) / tr.get_scale() - og / tr.get_scale()
 
 
 func _set_viewport_pos_to_selection() -> void:
@@ -868,7 +842,6 @@ func _is_svs_valid(svs : Object) -> bool:
 
 
 func _get_hovered_handle_metadata(svs : ScalableVectorShape2D) -> Dictionary:
-
 	if _hover_point_idx > -1:
 		return {
 			'global_pos': svs.to_global(svs.curve.get_point_position(
