@@ -1,7 +1,5 @@
 # Changelog
 
-<<<<<<< HEAD
-
 ## 3.10.0
 
 ### Added
@@ -12,12 +10,7 @@
 
 - Shortcuts to make cut-outs, merges and clips in edit mode
 
-## 3.9.0 - Grease Pencil Flipbook
-=======
 ## 3.9.1 - Grease Pencil Flipbook
->>>>>>> c52e2311e82a5e21a11d50a3b9adaaefa8fabee2
-
-I would love to get some test results for the Grease Pencil SVG importer! Read more about how it works in the [github readme manual](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#importing-grease-pencils-animated-svg-files)
 
 ### Added
 
