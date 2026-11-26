@@ -71,6 +71,8 @@ func _on_cut_out_shapes_button_pressed() -> void:
 
 func _on_merge_shapes_button_pressed() -> void:
 	var sel := _get_selected_shapes()
+	if sel.size() > 4:
+		return
 	var merged_one : ScalableVectorShape2D = sel.pop_front()
 	var undo_redo := EditorInterface.get_editor_undo_redo()
 	undo_redo.create_action(%ClipHintLabel.text)
@@ -92,6 +94,8 @@ func _on_merge_shapes_button_mouse_entered() -> void:
 	var sel := _get_selected_shapes()
 	if sel.size() < 2:
 		%ClipHintLabel.text = HINT_LABEL_SELECT_MORE_HINT % "merge"
+	elif sel.size() > 4:
+		%ClipHintLabel.text = "Select 4 or less shapes to apply merge"
 	elif sel.size() == 2:
 		%ClipHintLabel.text = "Merge " + sel[0].name + " with " + sel[1].name
 	else:
