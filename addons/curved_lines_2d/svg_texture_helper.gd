@@ -227,7 +227,7 @@ func _queue_render() -> void:
 		# This prevents rendering a huge texture during initialization in the editor.
 		# The 'resized' signal will trigger a correct render once the size is calculated.
 		if target_size.x <= 0 or target_size.y <= 0:
-			target_size = Vector2i(1, 1)
+			target_size = original_size
 
 		var stretch_mode : TextureRect.StretchMode = get_parent().stretch_mode if "stretch_mode" in get_parent() else TextureRect.STRETCH_SCALE
 		if (
@@ -247,14 +247,13 @@ func _queue_render() -> void:
 			return
 
 		var image_texture := ImageTexture.create_from_image(image)
+		get_parent().set(target_property, image_texture)
 		if (
 			stretch_mode == TextureRect.StretchMode.STRETCH_KEEP or
 			stretch_mode == TextureRect.StretchMode.STRETCH_TILE or
 			stretch_mode == TextureRect.StretchMode.STRETCH_KEEP_CENTERED
 		):
 			image_texture.set_size_override(original_size)
-		else:
-			get_parent().set(target_property, image_texture)
 
 
 # Helper function to refresh the property list in the editor
