@@ -41,6 +41,8 @@ func _get_selected_shapes() -> Array:
 
 func _on_clip_off_shapes_button_pressed() -> void:
 	var sel := _get_selected_shapes()
+	if sel.size() < 2:
+		return
 	var clipper : ScalableVectorShape2D = sel.pop_front()
 	var undo_redo := EditorInterface.get_editor_undo_redo()
 	undo_redo.create_action(%ClipHintLabel.text)
@@ -56,6 +58,8 @@ func _on_clip_off_shapes_button_pressed() -> void:
 
 func _on_cut_out_shapes_button_pressed() -> void:
 	var sel := _get_selected_shapes()
+	if sel.size() < 2:
+		return
 	var clipper : ScalableVectorShape2D = sel.pop_back()
 	var undo_redo := EditorInterface.get_editor_undo_redo()
 	undo_redo.create_action(%ClipHintLabel.text)
@@ -71,7 +75,7 @@ func _on_cut_out_shapes_button_pressed() -> void:
 
 func _on_merge_shapes_button_pressed() -> void:
 	var sel := _get_selected_shapes()
-	if sel.size() > 4:
+	if sel.size() > 4 or sel.size() < 2:
 		return
 	var merged_one : ScalableVectorShape2D = sel.pop_front()
 	var undo_redo := EditorInterface.get_editor_undo_redo()

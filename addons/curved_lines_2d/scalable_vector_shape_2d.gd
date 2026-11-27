@@ -558,7 +558,7 @@ func _draw() -> void:
 		is_instance_valid(line) and not
 		is_instance_valid(collision_object) and not
 		is_instance_valid(collision_polygon)):
-		draw_polyline(tessellate(), shape_hint_color, 1.0 / global_scale.x, false)
+		draw_polyline(tessellate(), shape_hint_color, 1.0 / global_scale.x / get_viewport().get_final_transform().get_scale().x, false)
 
 
 func _on_clip_paths_changed():
