@@ -69,7 +69,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 tooltip_text = "Merge shapes (Ctrl + Shift + =)
-Operates on the farthest shape in the draw order (more precisely: the topmost in the scene tree)"
+Merges up to 3 shapes into the backmost selected shape. The effect will only be visible if the shapes that are merged into it have no fill or stroke set."
 theme_override_styles/normal = ExtResource("1_fe3v0")
 theme_override_styles/pressed = ExtResource("2_6aeu8")
 theme_override_styles/hover = ExtResource("3_ggq6l")
@@ -83,7 +83,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 tooltip_text = "Cut out shapes (Ctrl + Shift + -)
-Operates on the farthest shape in the draw order (more precisely: the topmost in the scene tree)"
+Makes a cutout in the shape of the frontmost ScalableVectorShape2D out of the shapes behind it."
 theme_override_styles/normal = ExtResource("1_fe3v0")
 theme_override_styles/pressed = ExtResource("2_6aeu8")
 theme_override_styles/hover = ExtResource("3_ggq6l")
@@ -97,7 +97,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 tooltip_text = "Clip off shapes  (Ctrl + Shift + Backspace)
-Operates on the farthest shape in the draw order (more precisely: the topmost in the scene tree)"
+Clips off the edges of all the selected shapes in front of the backmost selected shape."
 theme_override_styles/normal = ExtResource("1_fe3v0")
 theme_override_styles/pressed = ExtResource("2_6aeu8")
 theme_override_styles/hover = ExtResource("3_ggq6l")

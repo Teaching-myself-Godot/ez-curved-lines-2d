@@ -296,6 +296,8 @@ var stroke_width := 10.0:
 ## is flagged on
 @export var clip_paths : Array[ScalableVectorShape2D] = []:
 	set(_clip_paths):
+		if _clip_paths:
+			_clip_paths = _clip_paths.filter(func(n): return is_instance_valid(n))
 		clip_paths = _clip_paths if clip_paths != null else []
 		for i in clip_paths.size():
 			if clip_paths[i] == self:
@@ -559,20 +561,31 @@ func _draw() -> void:
 		draw_polyline(tessellate(), shape_hint_color, 1.0 / global_scale.x, false)
 
 
-
 func _on_clip_paths_changed():
 	for cp in clip_paths:
 		if is_instance_valid(cp) and not cp.path_changed.is_connected(_on_assigned_node_changed):
 			cp.path_changed.connect(_on_assigned_node_changed)
 			cp.transform_changed.connect(_on_assigned_node_changed)
 			cp.tree_entered.connect(_on_assigned_node_changed)
-			cp.tree_exited.connect(func(): if is_inside_tree(): _on_assigned_node_changed())
+			cp.tree_exited.connect(_on_assigned_node_changed_if_inside_tree)
 			if Engine.is_editor_hint() or update_curve_at_runtime:
 				cp.set_notify_local_transform(true)
 				if not cp in get_children():
 					set_notify_local_transform(true)
 					transform_changed.connect(func(_x): curve_changed())
+	if clip_paths.is_empty():
+		if is_instance_valid(line):
+			line.show()
+		if is_instance_valid(polygon):
+			polygon.show()
+		if is_instance_valid(poly_stroke):
+			poly_stroke.show()
 	_on_assigned_node_changed()
+
+
+func _on_assigned_node_changed_if_inside_tree():
+	if is_inside_tree():
+		_on_assigned_node_changed()
 
 
 func _notification(what: int) -> void:
@@ -758,6 +771,8 @@ func tessellate() -> PackedVector2Array:
 
 ## Redraw the line based on the new curve, using its tessellate method
 func curve_changed():
+	if Engine.is_editor_hint():
+		should_update_curve = true
 	if (not is_instance_valid(line) and not is_instance_valid(polygon)
 			and not is_instance_valid(poly_stroke)
 			and not is_instance_valid(collision_polygon)
@@ -808,7 +823,7 @@ func _update_curve():
 			.filter(func(cp : Node2D): return cp.is_inside_tree())
 	)
 
-	if clip_paths.is_empty():
+	if valid_clip_paths.is_empty():
 		_update_assigned_nodes(polygon_points)
 		polygons_updated.emit(
 			Array([cached_outline] if is_instance_valid(polygon) else [], TYPE_PACKED_VECTOR2_ARRAY, "", null),
@@ -891,8 +906,9 @@ func _update_assigned_nodes(polygon_points : PackedVector2Array) -> void:
 
 
 func add_clip_path(svs : ScalableVectorShape2D):
-	clip_paths.append(svs)
-	_on_clip_paths_changed()
+	if svs not in clip_paths and is_instance_valid(svs):
+		clip_paths.append(svs)
+		_on_clip_paths_changed()
 
 
 func _update_polygon_texture(poly := polygon, grow := false):

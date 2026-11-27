@@ -1743,7 +1743,7 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 					else:
 						_draw_add_point_hint(viewport_control, result)
 				else:
-						_draw_add_point_hint(viewport_control, result)
+					_draw_add_point_hint(viewport_control, result)
 		elif result in _select_hinted_svs:
 			var mul := _get_svp_transform(result)
 			viewport_control.draw_polyline(result

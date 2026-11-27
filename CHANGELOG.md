@@ -1,8 +1,16 @@
 # Changelog
 
-## 3.9.1 - Grease Pencil Flipbook
+## 3.10.0
 
-I would love to get some test results for the Grease Pencil SVG importer! Read more about how it works in the [github readme manual](https://github.com/Teaching-myself-Godot/ez-curved-lines-2d#importing-grease-pencils-animated-svg-files)
+### Added
+
+- New geometric operations tool button in create tab
+
+### Removed
+
+- ⚠️ Removed shortcuts to make cut-outs, merges and clips in edit mode
+
+## 3.9.1 - Grease Pencil Flipbook
 
 ### Added
 

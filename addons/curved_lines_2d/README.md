@@ -17,6 +17,8 @@ In this 10 minute video I explain how to use all the features of Scalable Vector
 
 [^1]: Looking for EZ Curved Lines 2D? The renamed plugin deprecates the old [`DrawablePath2D`](./drawable_path_2d.gd) custom node in favor of `ScalableVectorShape2D`. A Conversion button is provided: [converter button](./screenshots/00-converter.png). The reason is that [`ScalableVectorShape2D`](./scalable_vector_shape_2d.gd) inherits directly from `Node2D` giving much more control to the plugin over how you can draw.
 
+_⚠️ Notice: cutting holes and clipping has moved to a new tool as of release 3.10. [This preview video](https://youtu.be/THELrteT6TM) shows how it works now. The tool is explained in detail [here](#geometry-tool)_
+
 ## Don't miss the new features!
 
 Since the recording of the A-Z Explainer, a lot of new features have been added:
@@ -82,13 +84,16 @@ You can find the rest of the explainer videos on this playlist:
   - [Closing the loop and breaking the loop](#closing-the-loop-and-breaking-the-loop)
   - [Deleting points and control points](#deleting-points-and-control-points)
   - [Setting the global position of a point / curve handle manually](#setting-the-global-position-of-a-point--curve-handle-manually)
-  - [Create a cutout/clip/merge shape (a hole, a clipped frame, ...)](#create-a-cutoutclipmerge-shape-a-hole-a-clipped-frame-)
-    - [Cutting out an empty shape](#cutting-out-an-empty-shape)
   - [Converting a line segment into an arc-segment](#converting-a-line-segment-into-an-arc-segment)
   - [Editing arc properties](#editing-arc-properties)
   - [The Line Thickness Editor Tool (Line2D based strokes only)](#the-line-thickness-editor-tool-line2d-based-strokes-only)
   - [Setting the pivot of your shape](#setting-the-pivot-of-your-shape)
   - [Sticking two or more shapes together by vertex merge](#sticking-two-or-more-shapes-together-by-vertex-merge)
+- [Geometry tool](#geometry-tool)
+  - [A short demo video about the geometry tool](#a-short-demo-video-about-the-geometry-tool)
+  - [Cut out a shape from the shapes behind it (Ctrl + Shift + -)](#cut-out-a-shape-from-the-shapes-behind-it-ctrl--shift---)
+  - [Clip off a piece of a shape (Ctrl + Shift + Backspace)](#clip-off-a-piece-of-a-shape-ctrl--shift--backspace)
+  - [Merge up to 4 shapes (Ctrl + Shift + =)](#merge-up-to-4-shapes-ctrl--shift--)
 - [Useful shortcuts](#useful-shortcuts)
 - [The select tool settings form](#the-select-tool-settings-form)
   - [Shape Type Settings](#shape-type-settings)
@@ -176,6 +181,8 @@ You can find the rest of the explainer videos on this playlist:
 ## Basic Drawing Explainer on youtube
 
 [![Explainer basic drawing on youtube](./screenshots/basic-drawing-youtube-thumnail.png)](https://youtu.be/gaug5zv57IE)
+
+_⚠️ Notice: cutting holes and clipping of has moved to a new tool as of release 3.10. [This preview video](https://youtu.be/THELrteT6TM) shows how it works now. The tool is explained in detail [here](#geometry-tool)_
 
 ## Quick Start
 After activating this plugin a new bottom panel item appears, called "Scalable Vector Shapes 2D".
@@ -571,21 +578,6 @@ Using `Alt+Click` you can now open a form to set the global position of a point 
 
 ![global position popup dialog](./screenshots/global_position_popup.png)
 
-## Create a cutout/clip/merge shape (a hole, a clipped frame, ...)
-
-While holding `Ctrl+Shift`[^5] on a selected shape you can start adding cutouts to your selected shape:
-- Use `mousewheel` to change shapes (rectangle, ellipse, or empty path)
-- Use `right click` to change operation (cut out, clip, or merge)
-- Use `left click` __on__ your selected shape to create _and_ select the new `ScalableVectorShape2D` which acta as a cutout, a frame clipping, or merged shape:
-
-![add a hole](./screenshots/add_a_hole.png)
-
-### Cutting out an empty shape
-
-When cutting out an empty shapem, the created cutout will have only _one_ point, so to see the effect you'd need to add more points to using regular `Ctrl+Click`[^5]:
-
-![a hole was added](./screenshots/hole_added.png)
-
 ## Converting a line segment into an arc-segment
 
 Use `Right click` on a line segment to convert it into an arc[^3] (a an ellipse-shaped bend with an x- and y-radius).
@@ -652,6 +644,35 @@ This action create a new instance of the `SVSVertexMerge2D` node. Delete this no
 
 ![merge 2 points](./screenshots/svs_vertex_merge_2d_node.png)
 
+# Geometry tool
+
+With this tool you can make cut-outs, clips and merges between shapes. It works by selecting multiple shapes in the scene tree or the 2D viewport and then pressing one of three buttons:
+
+![alt text](./screenshots/geometry-tool.png)
+
+These geometric operations are dynamic and not permanent and they work via assigment of shapes to the [clip_paths](#the-masking-inspector-form) property of a `ScalableVectorShape2D`
+
+## A short demo video about the geometry tool
+
+In this video the creation of an eye is demoed using the clipping and cut-out operations of the geometry tool.
+
+[![Watch a clip on clipping](https://i3.ytimg.com/vi/THELrteT6TM/maxresdefault.jpg)](https://youtu.be/THELrteT6TM)
+
+## Cut out a shape from the shapes behind it (Ctrl + Shift + -)
+
+The middle button makes a cutout in the shape of the frontmost `ScalableVectorShape2D` out of the shapes behind it. 
+
+## Clip off a piece of a shape (Ctrl + Shift + Backspace)
+
+The rightmost button clips off the edges of all the selected shapes in front of the backmost selected shape.
+
+## Merge up to 4 shapes (Ctrl + Shift + =)
+
+The leftmost button 'merges' up to 3 shapes into the backmost selected shape. The effect will only be visible if the shapes that are merged into it have no fill or stroke set. A more performant solution for a similar effect is the [`DynamicOutline2D` node](#create-one-outline-for-multiple-shapes-with-dynamicoutline2d).
+
+Hopefully in the near future I can make this button more useful by merging the actual curves of 2 or more shapes.
+
+
 
 # Useful shortcuts
 
@@ -671,6 +692,8 @@ Aside from the curve editing features there is a growing list of common shortcut
 | Unlink Resources | Ctrl + U | Make curves, arcs and gradients unique in the selected shape and all its descendants. Especially useful when combined in a 'chord' after pressing `Ctrl + D`, which duplicates a node and its descendants, but does not make the nodes' resources unique. |
 | Move shape forward | Ctrl + ] | Moves the node below (in front of in draw order) the next shape node (`ScalableVectorShape2D`) - this only works with direct siblings |
 | Move shape backward | Ctrl + [ | Moves the node above (behind in draw order) the next shape node (`ScalableVectorShape2D`) - this only works with direct siblings |
+| Cut out shape | Ctrl + Shift + - | Makes a cutout in the shape of the frontmost `ScalableVectorShape2D` out of the selected shapes behind it.  | The Geometry tools do not yet support permanently 'baking' a new curve yet. They work dynamically via the [clip_paths](#the-masking-inspector-form) property. |
+| Clip off shape | Ctrl + Shift + Backspace | clips off the edges of all the selected shapes in front of the backmost selected shape. | |
 
 # The select tool settings form
 
