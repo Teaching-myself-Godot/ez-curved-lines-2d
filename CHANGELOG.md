@@ -8,7 +8,7 @@
 
 ### Removed
 
-- Shortcuts to make cut-outs, merges and clips in edit mode
+- ⚠️ Removed shortcuts to make cut-outs, merges and clips in edit mode
 
 ## 3.9.1 - Grease Pencil Flipbook
 
