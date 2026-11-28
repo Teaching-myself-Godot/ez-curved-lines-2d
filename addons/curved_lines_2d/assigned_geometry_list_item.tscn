@@ -59,6 +59,7 @@ expand_icon = true
 [node name="Button" type="Button" parent="." unique_id=246000053]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
+custom_maximum_size = Vector2(-1, 32)
 layout_mode = 2
 tooltip_text = "Select assigned node"
 theme_override_styles/normal = ExtResource("2_6b0nk")
